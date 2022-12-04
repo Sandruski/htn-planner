@@ -29,6 +29,7 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
+[Ii]nt/
 [Ll]og/
 [Ll]ogs/
 
@@ -396,3 +397,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Premake
+*.sln
+*.vcxproj*
