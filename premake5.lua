@@ -21,6 +21,8 @@ workspace "HTN"
     filter "system:windows"
         systemversion "latest"
 
+outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
 -- HTN
 project "HTN"
     location "HTN"
@@ -28,7 +30,6 @@ project "HTN"
     language "C++"
     cppdialect "C++20"
 
-    outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("int/" .. outputdir .. "/%{prj.name}")
 
@@ -39,3 +40,25 @@ project "HTN"
     files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h" }
 
     includedirs { "%{prj.name}/src" }
+
+-- HTNTest
+project "HTNTest"
+    location "HTNTest"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++20"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("int/" .. outputdir .. "/%{prj.name}")
+
+    pchheader "pch.h"
+    pchsource "%{prj.name}/src/pch.cpp"
+    forceincludes "pch.h"
+
+    files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h" }
+
+    includedirs { "%{prj.name}/src", "HTN/src" }
+
+    links { "HTN" }
+
+    nuget { "Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1.7" }

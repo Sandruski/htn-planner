@@ -402,3 +402,4 @@ FodyWeavers.xsd
 !vendor/**
 *.sln
 *.vcxproj*
+*.config
