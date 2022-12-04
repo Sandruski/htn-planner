@@ -399,5 +399,6 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Premake
+!vendor/**
 *.sln
 *.vcxproj*
