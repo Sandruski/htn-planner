@@ -2,6 +2,6 @@
 
 TEST(HTNAtom, HTNAtomInitialization) 
 {
-	HTNAtom HTNAtom;
-	EXPECT_EQ(HTNAtom.IntValue, 0);
+	HTNAtom HTNAtom(0);
+	EXPECT_EQ(HTNAtom.Data.IntValue, 0);
 }
