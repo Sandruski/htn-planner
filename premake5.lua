@@ -1,22 +1,16 @@
 -- HTN
 workspace "HTN"
     startproject "HTN"
-    configurations { "Debug", "Release" }
-    platforms { "Win32", "Win64" }
+    architecture "x64"
+    configurations { "Debug"--[[, "Release"--]] }
 
     filter "configurations:Debug"
         defines { "HTN_DEBUG" }
         symbols "On"
 
-    filter "configurations:Release"
+    --[[filter "configurations:Release"
         defines { "HTN_RELEASE" }
-        optimize "On"
-
-    filter "platforms:Win32"
-        architecture "x86"
-
-    filter "platforms:Win64"
-        architecture "x86_64"
+        optimize "On"--]]
 
     filter "system:windows"
         systemversion "latest"
