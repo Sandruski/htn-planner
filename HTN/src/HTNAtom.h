@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 class HTNAtom
 {
 public:
@@ -11,22 +9,33 @@ public:
 		EInt,
 		EFloat,
 		EString,
-		EObject,
-		EList,
+		EObject, // TODO
+		EList, // TODO
 	};
 
-	HTNAtom() : Type(AtomType::EInvalid) {}
+	HTNAtom() = default;
 
-	HTNAtom(const char* inValue) 
+	explicit HTNAtom(int inValue)
+	{
+		Type = AtomType::EInt;
+		Data.IntValue = inValue;
+	}
+
+	explicit HTNAtom(float inValue)
+	{
+		Type = AtomType::EFloat;
+		Data.FloatValue = inValue;
+	}
+
+	explicit HTNAtom(const char* inValue)
 	{
 		Type = AtomType::EString;
 		Data.StringValue = inValue;
 	}
 
-	HTNAtom(int inValue)
+	bool IsSet() const
 	{
-		Type = AtomType::EInt;
-		Data.IntValue = inValue;
+		return (AtomType::EInvalid != Type);
 	}
 
 	union HtnData
@@ -36,6 +45,6 @@ public:
 		const char* StringValue;
 	};
 
-	AtomType		Type = EInt;
-	HtnData			Data;
+	AtomType Type = EInvalid;
+	HtnData Data;
 };
