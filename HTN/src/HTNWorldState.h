@@ -49,7 +49,7 @@ inline void HTNTable::AddEntry(const taArg0& inArg0, const taArg1& inArg1)
 	Arg1.emplace_back(inArg1);
 }
 
-int HTNTable::GetNumArgs() const
+inline int HTNTable::GetNumArgs() const
 {
 	return static_cast<int>(mEntries.size());
 }
@@ -125,7 +125,7 @@ inline void HTNWorldState::MakeFact(const char* inKey, const taArg0& inArg0, con
 	}
 }
 
-int HTNWorldState::GetNumFactTables(const char* inKey) const
+inline int HTNWorldState::GetNumFactTables(const char* inKey) const
 {
 	const std::unordered_map<std::string, std::vector<HTNTable>>::const_iterator FactsIt = mFacts.find(inKey);
 	if (FactsIt == mFacts.end())
@@ -137,7 +137,7 @@ int HTNWorldState::GetNumFactTables(const char* inKey) const
 	return static_cast<int>(Tables.size());
 }
 
-int HTNWorldState::GetNumFactTablesByArgNumber(const char* inKey, const int inNumArguments) const
+inline int HTNWorldState::GetNumFactTablesByArgNumber(const char* inKey, const int inNumArguments) const
 {
 	const std::unordered_map<std::string, std::vector<HTNTable>>::const_iterator FactsIt = mFacts.find(inKey);
 	if (FactsIt == mFacts.end())
