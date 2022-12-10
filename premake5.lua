@@ -4,6 +4,9 @@ workspace "HTN"
     architecture "x64"
     configurations { "Debug"--[[, "Release"--]] }
 
+    warnings "Extra"
+    flags { "FatalWarnings" }
+
     filter "configurations:Debug"
         defines { "HTN_DEBUG" }
         symbols "On"
