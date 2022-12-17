@@ -111,7 +111,7 @@ inline void HTNWorldState::MakeFact(const char* inKey, Args&&... inArgs)
 	static_assert(ArgsSize <= MaxNumArgs);
 
 	HTNFact& Fact = mFacts[inKey];
-	if (ArgsSize == 0)
+	if constexpr (ArgsSize == 0)
 	{
 		// Skip creating a table if there are no args
 		return;
