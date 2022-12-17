@@ -6,7 +6,6 @@ TEST(HTNAtom, HTNArgumentBinding)
 	HTNWorldState world_state;
 
 	const char* sFood("food");
-	//const char* sFish("favorite_color");
 
 	world_state.MakeFact(sFood, "fish");
 	world_state.MakeFact(sFood, "beef");
@@ -28,7 +27,6 @@ TEST(HTNAtom, HTNArgumentBinding)
 		EXPECT_EQ(atom_from_unbinded_to_fish.Type, HTNAtom::AtomType::EString);
 		EXPECT_EQ(strcmp(atom_from_unbinded_to_fish.Data.StringValue, "fish"), 0);
 	}
-
 
 	// Query Row specific 1
 	{

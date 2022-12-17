@@ -2,6 +2,7 @@
 
 #include "HTNAtom.h"
 
+#include <algorithm>
 #include <array>
 #include <string>
 #include <unordered_map>
@@ -20,12 +21,18 @@ template <int NumArgs>
 class HTNTable final : public HTNTableBase
 {
 public:
+	typedef std::array<HTNAtom, NumArgs> HTNEntry;
+
 	// Adds an entry with n arguments
 	template <typename... Args>
 	void AddEntry(Args&&... inArgs);
 
+	int Query(int inIndex, HTNAtom& ioArg1) const;
+
+	// Returns the number of HTNEntry
+	int GetNumEntries() const;
+
 private:
-	typedef std::array<HTNAtom, NumArgs> HTNEntry;
 	std::vector<HTNEntry> mEntries;
 };
 
@@ -40,6 +47,26 @@ inline void HTNTable<NumArgs>::AddEntry(Args&&... inArgs)
 	Entry = { std::forward<Args>(inArgs)... };
 }
 
+template <int NumArgs>
+inline int HTNTable<NumArgs>::Query(int inIndex, HTNAtom& ioArg1) const
+{
+	if (inIndex < 0 || inIndex >= mEntries.size())
+	{
+		return 0;
+	}
+
+	const HTNEntry& Entry = mEntries[inIndex];
+	ioArg1 = Entry[0];
+
+	return 1;
+}
+
+template <int NumArgs>
+inline int HTNTable<NumArgs>::GetNumEntries() const
+{
+	return static_cast<int>(mEntries.size());
+}
+
 static constexpr int MaxNumArgs = 8;
 
 // World state for the HTN planner. 
@@ -48,6 +75,8 @@ static constexpr int MaxNumArgs = 8;
 class HTNWorldState
 {
 public:
+	typedef std::array<HTNTableBase*, MaxNumArgs> HTNFact;
+
 	// Writes a fact with n arguments
 	template <typename... Args>
 	void MakeFact(const char* inKey, Args&&... inArgs);
@@ -56,33 +85,13 @@ public:
 	// If all the arguments are binded then the result is like a binary operation, that query results in true or false.
 	// If not all the arguments are binded then the result might return more than 1.
 	// Return the number of possible results in the database.
-	int Query(const char* inKey, HTNAtom& ioArg1)
-	{
-		// TODO JOSE: This is here to compile it, but we need to remove it.
-		{
-			(void)inKey;
-			(void)ioArg1;
-		}
-		
-		// TODO:
-		return 0;
-	}
+	int Query(const char* inKey, HTNAtom& ioArg1);
 
 	// It checks if there is an existing entry for the inKey + arguments.
 	// If all the arguments are binded then the result is like a binary operation, that query results in true or false.
 	// If not all the arguments are binded then we need to bind it according to the row that correspond to inIndex, the result will always be 0 or 1.
 	// Return either 0 or 1 because we are pointing to a specific row withing a table.
-	int QueryIndex(int inIndex, const char* inKey, HTNAtom& ioArg1)
-	{
-		// TODO JOSE: This is here to compile it, but we need to remove it.
-		{
-			(void)inIndex;
-			(void)inKey;
-			(void)ioArg1;
-		}
-		// TODO:
-		return 0;
-	}
+	int QueryIndex(int inIndex, const char* inKey, HTNAtom& ioArg1);
 
 	// Returns the number of HTNTables registered for the fact inKey.
 	int GetNumFactTables(const char* inKey) const;
@@ -92,7 +101,6 @@ public:
 	int GetNumFactTablesByNumArgs(const char* inKey, const int inNumArgs) const;
 
 private:
-	typedef std::array<HTNTableBase*, MaxNumArgs> HTNFact;
 	std::unordered_map<std::string, HTNFact> mFacts;
 };
 
@@ -117,6 +125,64 @@ inline void HTNWorldState::MakeFact(const char* inKey, Args&&... inArgs)
 	}
 
 	Table->AddEntry(std::forward<Args>(inArgs)...);
+}
+
+inline int HTNWorldState::Query(const char* inKey, HTNAtom& ioArg1)
+{
+	static constexpr int ArgsSize = 1;
+
+	if (ioArg1.IsSet())
+	{
+		// All arguments are bound
+		return 1;
+	}
+
+	const auto FactIt = mFacts.find(inKey);
+	if (FactIt == mFacts.end())
+	{
+		// Fact not found
+		return 0;
+	}
+
+	const HTNFact& Fact = FactIt->second;
+	static constexpr int TableIndex = ArgsSize - 1;
+	const HTNTable<1>* Table = static_cast<HTNTable<1>*>(Fact[TableIndex]);
+	if (!Table)
+	{
+		// Table not found
+		return 0;
+	}
+
+	return Table->GetNumEntries();
+}
+
+inline int HTNWorldState::QueryIndex(int inIndex, const char* inKey, HTNAtom& ioArg1)
+{
+	static constexpr int ArgsSize = 1;
+
+	if (ioArg1.IsSet())
+	{
+		// All arguments are bound
+		return 1;
+	}
+
+	const auto FactIt = mFacts.find(inKey);
+	if (FactIt == mFacts.end())
+	{
+		// Fact not found
+		return 0;
+	}
+
+	const HTNFact& Fact = FactIt->second;
+	static constexpr int TableIndex = ArgsSize - 1;
+	const HTNTable<1>* Table = static_cast<HTNTable<1>*>(Fact[TableIndex]);
+	if (!Table)
+	{
+		// Table not found
+		return 0;
+	}
+
+	return Table->Query(inIndex, ioArg1);
 }
 
 inline int HTNWorldState::GetNumFactTables(const char* inKey) const
