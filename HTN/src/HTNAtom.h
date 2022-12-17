@@ -15,19 +15,19 @@ public:
 
 	HTNAtom() = default;
 
-	explicit HTNAtom(int inValue)
+	HTNAtom(int inValue)
 	{
 		Type = AtomType::EInt;
 		Data.IntValue = inValue;
 	}
 
-	explicit HTNAtom(float inValue)
+	HTNAtom(float inValue)
 	{
 		Type = AtomType::EFloat;
 		Data.FloatValue = inValue;
 	}
 
-	explicit HTNAtom(const char* inValue)
+	HTNAtom(const char* inValue)
 	{
 		Type = AtomType::EString;
 		Data.StringValue = inValue;

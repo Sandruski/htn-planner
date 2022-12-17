@@ -2,57 +2,45 @@
 
 #include "HTNAtom.h"
 
+#include <array>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-// Contains the array with a list of arguments that corresponds to certain HtnWorldState key.
-class HTNTable
+class HTNTableBase
 {
 public:
-	explicit HTNTable(const int inNumberOfArguments);
-
-	// Adds an entry with 1 argument
-	template <typename taArg0>
-	void AddEntry(const taArg0& inArg0);
-
-	// Adds an entry with 2 arguments
-	template <typename taArg0, typename taArg1>
-	void AddEntry(const taArg0& inArg0, const taArg1& inArg1);
-
-	// Returns the number of arguments
-	int GetNumArgs() const;
-
-private:
-	std::vector<std::vector<HTNAtom>> mEntries;
+	virtual ~HTNTableBase() = 0;
 };
 
-inline HTNTable::HTNTable(const int inNumberOfArguments)
+HTNTableBase::~HTNTableBase() {}
+
+// Contains the array with a list of arguments that corresponds to certain HtnWorldState key.
+template <int NumArgs>
+class HTNTable final : public HTNTableBase
 {
-	mEntries.resize(inNumberOfArguments);
+public:
+	// Adds an entry with n arguments
+	template <typename... Args>
+	void AddEntry(const Args&... inArgs);
+
+private:
+	typedef std::array<HTNAtom, NumArgs> HTNEntry;
+	std::vector<HTNEntry> mEntries;
+};
+
+template <int NumArgs>
+template <typename... Args>
+inline void HTNTable<NumArgs>::AddEntry(const Args&... inArgs)
+{
+	static constexpr int ArgsSize = sizeof...(Args);
+	static_assert(ArgsSize == NumArgs);
+	
+	HTNEntry& Entry = mEntries.emplace_back();
+	Entry = { inArgs... };
 }
 
-template <typename taArg0>
-inline void HTNTable::AddEntry(const taArg0& inArg0)
-{
-	std::vector<HTNAtom>& Arg0 = mEntries[0];
-	Arg0.emplace_back(inArg0);
-}
-
-template <typename taArg0, typename taArg1>
-inline void HTNTable::AddEntry(const taArg0& inArg0, const taArg1& inArg1)
-{
-	std::vector<HTNAtom>& Arg0 = mEntries[0];
-	Arg0.emplace_back(inArg0);
-
-	std::vector<HTNAtom>& Arg1 = mEntries[1];
-	Arg1.emplace_back(inArg1);
-}
-
-inline int HTNTable::GetNumArgs() const
-{
-	return static_cast<int>(mEntries.size());
-}
+static constexpr int MaxNumArgs = 8;
 
 // World state for the HTN planner. 
 // Data structure includes a map of <sKey, Array<HTNTable>>. Each key can contain multiple tables, each table has a specific number of arguments.
@@ -60,97 +48,86 @@ inline int HTNTable::GetNumArgs() const
 class HTNWorldState
 {
 public:
-	// Writes a fact with 0 arguments
-	void MakeFact(const char* inKey);
-
-	// Writes a fact with 1 argument
-	template <typename taArg0>
-	void MakeFact(const char* inKey, const taArg0& inArg0);
-
-	// Writes a fact with 2 arguments
-	template <typename taArg0, typename taArg1>
-	void MakeFact(const char* inKey, const taArg0& inArg0, const taArg1& inArg1);
+	// Writes a fact with n arguments
+	template <typename... Args>
+	void MakeFact(const char* inKey, const Args&... inArgs);
 
 	// Returns the number of HTNTables registered for the fact inKey.
 	int GetNumFactTables(const char* inKey) const;
 
-	// Returns the number of HTNTables registered for the fact inKey and the inNumArguments. This function should only return 0 or 1.
+	// Returns the number of HTNTables registered for the fact inKey and the inNumArgs. This function should only return 0 or 1.
 	// If it does returns something different then this will cause problems later on during decomposition.
-	int GetNumFactTablesByArgNumber(const char* inKey, const int inNumArguments) const;
+	int GetNumFactTablesByNumArgs(const char* inKey, const int inNumArgs) const;
 
 private:
-	std::unordered_map<std::string, std::vector<HTNTable>> mFacts;
+	typedef std::array<HTNTableBase*, MaxNumArgs> HTNFact;
+	std::unordered_map<std::string, HTNFact> mFacts;
 };
 
-inline void HTNWorldState::MakeFact(const char* inKey)
+template <typename... Args>
+inline void HTNWorldState::MakeFact(const char* inKey, const Args&... inArgs)
 {
-	mFacts[inKey];
-}
+	static constexpr int ArgsSize = sizeof...(Args);
+	static_assert(ArgsSize <= MaxNumArgs);
 
-template <typename taArg0>
-inline void HTNWorldState::MakeFact(const char* inKey, const taArg0& inArg0)
-{
-	std::vector<HTNTable>& Tables = mFacts[inKey];
-	const std::vector<HTNTable>::iterator TablesIt = std::find_if(Tables.begin(), Tables.end(), [](const HTNTable& _Other)
-		{
-			return (_Other.GetNumArgs() == 1);
-		});
-	if (TablesIt == Tables.end())
+	HTNFact& Fact = mFacts[inKey];
+	if (ArgsSize == 0)
 	{
-		HTNTable& Table = Tables.emplace_back(HTNTable(1));
-		Table.AddEntry(inArg0);
+		// Skip creating a table if there are no args
+		return;
 	}
-	else
-	{
-		TablesIt->AddEntry(inArg0);
-	}
-}
 
-template <typename taArg0, typename taArg1>
-inline void HTNWorldState::MakeFact(const char* inKey, const taArg0& inArg0, const taArg1& inArg1)
-{
-	std::vector<HTNTable>& Tables = mFacts[inKey];
-	const std::vector<HTNTable>::iterator TablesIt = std::find_if(Tables.begin(), Tables.end(), [](const HTNTable& _Other)
-		{
-			return (_Other.GetNumArgs() == 2);
-		});
-	if (TablesIt == Tables.end())
+	static constexpr int TableIndex = ArgsSize - 1;
+	HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
+	if (!Table)
 	{
-		HTNTable& Table = Tables.emplace_back(HTNTable(2));
-		Table.AddEntry(inArg0, inArg1);
+		Fact[TableIndex] = Table = new HTNTable<ArgsSize>();
 	}
-	else
-	{
-		TablesIt->AddEntry(inArg0, inArg1);
-	}
+
+	Table->AddEntry(inArgs...);
 }
 
 inline int HTNWorldState::GetNumFactTables(const char* inKey) const
 {
-	const std::unordered_map<std::string, std::vector<HTNTable>>::const_iterator FactsIt = mFacts.find(inKey);
-	if (FactsIt == mFacts.end())
+	const auto FactIt = mFacts.find(inKey);
+	if (FactIt == mFacts.end())
 	{
-		return 0;
+		// Fact not found
+		return -1;
+	}
+	
+	int NumFactTables = 0;
+
+	const HTNFact& Fact = FactIt->second;
+	for (const HTNTableBase* Table : Fact)
+	{
+		if (Table)
+		{
+			++NumFactTables;
+		}
 	}
 
-	const std::vector<HTNTable>& Tables = FactsIt->second;
-	return static_cast<int>(Tables.size());
+	return NumFactTables;
 }
 
-inline int HTNWorldState::GetNumFactTablesByArgNumber(const char* inKey, const int inNumArguments) const
+inline int HTNWorldState::GetNumFactTablesByNumArgs(const char* inKey, const int inNumArgs) const
 {
-	const std::unordered_map<std::string, std::vector<HTNTable>>::const_iterator FactsIt = mFacts.find(inKey);
-	if (FactsIt == mFacts.end())
+	const auto FactIt = mFacts.find(inKey);
+	if (FactIt == mFacts.end())
+	{
+		// Fact not found
+		return -1;
+	}
+
+	if (inNumArgs == 0)
 	{
 		return 0;
 	}
 
-	const std::vector<HTNTable>& Tables = FactsIt->second;
-	const std::vector<HTNTable>::const_iterator TablesIt = std::find_if(Tables.begin(), Tables.end(), [&inNumArguments](const HTNTable& _Other)
-		{
-			return (_Other.GetNumArgs() == inNumArguments);
-		});
-	if (TablesIt == Tables.end())
+	const HTNFact& Fact = FactIt->second;
+	const int TableIndex = inNumArgs - 1;
+	const HTNTableBase* Table = Fact[TableIndex];
+	if (!Table)
 	{
 		return 0;
 	}
