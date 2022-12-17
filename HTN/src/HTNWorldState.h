@@ -13,7 +13,7 @@ public:
 	virtual ~HTNTableBase() = 0;
 };
 
-HTNTableBase::~HTNTableBase() {}
+inline HTNTableBase::~HTNTableBase() {}
 
 // Contains the array with a list of arguments that corresponds to certain HtnWorldState key.
 template <int NumArgs>
@@ -22,7 +22,7 @@ class HTNTable final : public HTNTableBase
 public:
 	// Adds an entry with n arguments
 	template <typename... Args>
-	void AddEntry(const Args&... inArgs);
+	void AddEntry(Args&&... inArgs);
 
 private:
 	typedef std::array<HTNAtom, NumArgs> HTNEntry;
@@ -31,13 +31,13 @@ private:
 
 template <int NumArgs>
 template <typename... Args>
-inline void HTNTable<NumArgs>::AddEntry(const Args&... inArgs)
+inline void HTNTable<NumArgs>::AddEntry(Args&&... inArgs)
 {
 	static constexpr int ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize == NumArgs);
 	
 	HTNEntry& Entry = mEntries.emplace_back();
-	Entry = { inArgs... };
+	Entry = { std::forward<Args>(inArgs)... };
 }
 
 static constexpr int MaxNumArgs = 8;
@@ -50,7 +50,7 @@ class HTNWorldState
 public:
 	// Writes a fact with n arguments
 	template <typename... Args>
-	void MakeFact(const char* inKey, const Args&... inArgs);
+	void MakeFact(const char* inKey, Args&&... inArgs);
 
 	// It checks if there is an existing entry for the inKey + arguments.
 	// If all the arguments are binded then the result is like a binary operation, that query results in true or false.
@@ -97,7 +97,7 @@ private:
 };
 
 template <typename... Args>
-inline void HTNWorldState::MakeFact(const char* inKey, const Args&... inArgs)
+inline void HTNWorldState::MakeFact(const char* inKey, Args&&... inArgs)
 {
 	static constexpr int ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize <= MaxNumArgs);
@@ -116,7 +116,7 @@ inline void HTNWorldState::MakeFact(const char* inKey, const Args&... inArgs)
 		Fact[TableIndex] = Table = new HTNTable<ArgsSize>();
 	}
 
-	Table->AddEntry(inArgs...);
+	Table->AddEntry(std::forward<Args>(inArgs)...);
 }
 
 inline int HTNWorldState::GetNumFactTables(const char* inKey) const
