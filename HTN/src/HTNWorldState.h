@@ -77,6 +77,9 @@ class HTNWorldState
 public:
 	typedef std::array<HTNTableBase*, MaxNumArgs> HTNFact;
 
+	// Writes a fact with no arguments. (workaround for vs2019)
+	void MakeFact(const char* inKey);
+
 	// Writes a fact with n arguments
 	template <typename... Args>
 	void MakeFact(const char* inKey, Args&&... inArgs);
@@ -103,6 +106,12 @@ public:
 private:
 	std::unordered_map<std::string, HTNFact> mFacts;
 };
+
+
+inline void HTNWorldState::MakeFact(const char* inKey)
+{
+	mFacts.insert(std::make_pair(inKey, HTNFact()));
+}
 
 template <typename... Args>
 inline void HTNWorldState::MakeFact(const char* inKey, Args&&... inArgs)
