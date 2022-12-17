@@ -68,5 +68,4 @@ TEST(HTNAtom, HTNArgumentBinding)
 		EXPECT_FALSE(atom_from_unbinded_to_nothing.IsSet());
 		EXPECT_EQ(atom_from_unbinded_to_nothing.Type, HTNAtom::AtomType::EInvalid);
 	}
-
 }

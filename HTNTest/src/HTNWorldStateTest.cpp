@@ -1,7 +1,7 @@
 #include "HTNAtom.h"
 #include "HTNWorldState.h"
 
-TEST(HTNAtom, HTNWorldStateTest) 
+TEST(HTNAtom, HTNWorldState) 
 {
 	HTNWorldState world_state;
 
