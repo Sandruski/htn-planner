@@ -37,12 +37,44 @@ public:
 	{
 		return (AtomType::EInvalid != Type);
 	}
+	
+	bool IsListType() const 
+	{
+		return (AtomType::EList == Type);
+	}
+
+	// TODO: I think you need to implement operator==
+	
+	// Adds a new element to this list type, and return the next element in the list.
+	HTNAtom* AddElementList(HTNAtom* inElement)
+	{
+		// TODO:
+		(void*)inElement;
+		return nullptr;
+	}
+
+	int GetListNumItems() const
+	{
+		if (AtomType::EList != Type)
+			return -1;
+
+		// TODO...
+		return 0;
+	}
+
+	// Return the list element
+	HTNAtom* GetListElement(int inElementIdx) const
+	{
+		(void*)&inElementIdx;
+		return nullptr;
+	}
 
 	union HtnData
 	{
 		int			IntValue;
 		float		FloatValue;
 		const char* StringValue;
+		HTNAtom*	mListValue;				///< Used for EList types.
 	};
 
 	AtomType Type = EInvalid;
