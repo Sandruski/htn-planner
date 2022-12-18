@@ -74,7 +74,7 @@ public:
 		int			IntValue;
 		float		FloatValue;
 		const char* StringValue;
-		HTNAtom*	mListValue;				///< Used for EList types.
+		HTNAtom*	mListValue;				///< Used for EList types. I am not sure about this being part of the HtnData, I suspect this might have to be moved out so we can have tree structures of HtnAtoms
 	};
 
 	AtomType Type = EInvalid;
