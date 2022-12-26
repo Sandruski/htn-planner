@@ -24,10 +24,10 @@ class HTNTable final : public HTNTableBase
 public:
 	// Adds an entry with arguments
 	template <typename... Args>
-	void AddEntry(Args&&... inArgs);
+	void AddEntry(const Args&... inArgs);
 
 	// Binds the arguments of the entry at the specified index to the unbound arguments passed
-	template <typename... Args, typename = std::enable_if_t<std::is_same<HTNAtom, Args...>::value>>
+	template <typename... Args>
 	int Query(int inIndex, Args&... inArgs) const;
 
 	// Returns the number of entries
@@ -45,19 +45,22 @@ private:
 
 template <int NumArgs>
 template <typename... Args>
-inline void HTNTable<NumArgs>::AddEntry(Args&&... inArgs)
+inline void HTNTable<NumArgs>::AddEntry(const Args&... inArgs)
 {
 	static constexpr int ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize == NumArgs);
 	
 	HTNEntry& Entry = mEntries.emplace_back();
-	Entry = { std::forward<Args>(inArgs)... };
+	Entry = { inArgs... };
 }
 
 template <int NumArgs>
-template <typename... Args, typename>
+template <typename... Args>
 inline int HTNTable<NumArgs>::Query(int inIndex, Args&... inArgs) const
 {
+	static constexpr int ArgsSize = sizeof...(Args);
+	static_assert(ArgsSize == NumArgs);
+
 	if (inIndex < 0 || inIndex >= mEntries.size())
 	{
 		return 0;
@@ -96,25 +99,25 @@ static constexpr int MaxNumArgs = 8;
 class HTNWorldState
 {
 public:
-	// Writes a fact with no arguments. (workaround for vs2019)
+	// Writes a fact with no arguments. (workaround for vs2019) // TODO salvarez Check this
 	void MakeFact(const char* inKey);
 
 	// Writes a fact with n arguments
 	template <typename... Args>
-	void MakeFact(const char* inKey, Args&&... inArgs);
+	void MakeFact(const char* inKey, const Args&... inArgs);
 
 	// It checks if there is an existing entry for the inKey + arguments.
 	// If all the arguments are binded then the result is like a binary operation, that query results in true or false.
 	// If not all the arguments are binded then the result might return more than 1.
 	// Return the number of possible results in the database.
-	template <typename... Args, typename = std::enable_if_t<std::is_same<HTNAtom, Args...>::value>>
+	template <typename... Args>
 	int Query(const char* inKey, Args&... inArgs);
 
 	// It checks if there is an existing entry for the inKey + arguments.
 	// If all the arguments are binded then the result is like a binary operation, that query results in true or false.
 	// If not all the arguments are binded then we need to bind it according to the row that correspond to inIndex, the result will always be 0 or 1.
 	// Return either 0 or 1 because we are pointing to a specific row withing a table.
-	template <typename... Args, typename = std::enable_if_t<std::is_same<HTNAtom, Args...>::value>>
+	template <typename... Args>
 	int QueryIndex(const char* inKey, const int inIndex, Args&... inArgs);
 
 	// Returns the number of HTNTables registered for the fact inKey.
@@ -133,14 +136,13 @@ private:
 	std::unordered_map<std::string, HTNFact> mFacts;
 };
 
-
 inline void HTNWorldState::MakeFact(const char* inKey)
 {
 	mFacts.insert(std::make_pair(inKey, HTNFact()));
 }
 
 template <typename... Args>
-inline void HTNWorldState::MakeFact(const char* inKey, Args&&... inArgs)
+inline void HTNWorldState::MakeFact(const char* inKey, const Args&... inArgs)
 {
 	static constexpr int ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize <= MaxNumArgs);
@@ -159,10 +161,10 @@ inline void HTNWorldState::MakeFact(const char* inKey, Args&&... inArgs)
 		Fact[TableIndex] = Table = new HTNTable<ArgsSize>();
 	}
 
-	Table->AddEntry(std::forward<Args>(inArgs)...);
+	Table->AddEntry(inArgs...);
 }
 
-template <typename... Args, typename>
+template <typename... Args>
 inline int HTNWorldState::Query(const char* inKey, Args&... inArgs)
 {
 	static constexpr int ArgsSize = sizeof...(Args);
@@ -185,7 +187,7 @@ inline int HTNWorldState::Query(const char* inKey, Args&... inArgs)
 
 	const HTNFact& Fact = FactIt->second;
 	static constexpr int TableIndex = ArgsSize - 1;
-	const HTNTable<1>* Table = static_cast<HTNTable<1>*>(Fact[TableIndex]);
+	const HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
 	if (!Table)
 	{
 		// Table not found
@@ -195,10 +197,11 @@ inline int HTNWorldState::Query(const char* inKey, Args&... inArgs)
 	return Table->GetNumEntries();
 }
 
-template <typename... Args, typename>
+template <typename... Args>
 inline int HTNWorldState::QueryIndex(const char* inKey, const int inIndex, Args&... inArgs)
 {
-	static constexpr int ArgsSize = 1;
+	static constexpr int ArgsSize = sizeof...(Args);
+	static_assert(ArgsSize <= MaxNumArgs);
 
 	int NumArgsBound = 0;
 	(CountArgsBound(inArgs, NumArgsBound), ...);
@@ -217,7 +220,7 @@ inline int HTNWorldState::QueryIndex(const char* inKey, const int inIndex, Args&
 
 	const HTNFact& Fact = FactIt->second;
 	static constexpr int TableIndex = ArgsSize - 1;
-	const HTNTable<1>* Table = static_cast<HTNTable<1>*>(Fact[TableIndex]);
+	const HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
 	if (!Table)
 	{
 		// Table not found

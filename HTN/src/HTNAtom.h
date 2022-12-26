@@ -9,11 +9,19 @@ class HTNAtomNode;
 class HTNAtomList
 {
 public:
+	HTNAtomList() = default;
+	HTNAtomList(const HTNAtomList& _Other);
+
 	~HTNAtomList();
 
-	void Add(const HTNAtom& _Data);
+	void Add(const HTNAtom& inData);
 
-	int GetSize() const;
+	const HTNAtom* Find(int inIndex) const;
+
+	int GetSize() const
+	{
+		return mSize;
+	}
 
 private:
 	HTNAtomNode* mHead = nullptr;
@@ -41,6 +49,17 @@ public:
 		mData = inValue;
 	}
 
+	HTNAtom(const HTNAtomList& inValue)
+	{
+		mData = inValue;
+	}
+
+	template<typename T>
+	T& GetValue()
+	{
+		return std::get<T>(mData.value());
+	}
+
 	template<typename T>
 	const T& GetValue() const
 	{
@@ -60,36 +79,13 @@ public:
 
 	// TODO: I think you need to implement operator==
 	
-	// Adds a new element to this list type, and return the next element in the list.
-	HTNAtom* AddElementList(HTNAtom* inElement)
-	{
-		// TODO:
-		(void*)inElement;
-		return nullptr;
-	}
-
-	int GetListNumItems() const
-	{
-		if (!IsSet())
-		{
-			return -1;
-		}
-
-		if (!IsType<HTNAtomList>())
-		{
-			return -1;
-		}
-
-		// TODO...
-		return 0;
-	}
+	// Adds a new element to this list type
+	void AddListElement(const HTNAtom& inElement);
 
 	// Return the list element
-	HTNAtom* GetListElement(int inElementIdx) const
-	{
-		(void*)&inElementIdx;
-		return nullptr;
-	}
+	const HTNAtom* FindListElement(int inElementIdx) const;
+
+	int GetListNumItems() const;
 
 private:
 	std::optional<std::variant<int, float, const char*, HTNAtomList>> mData;
@@ -98,15 +94,42 @@ private:
 class HTNAtomNode
 {
 public:
-	HTNAtomNode(const HTNAtom& _Data);
+	HTNAtomNode(const HTNAtom& inData) : mData(inData)
+	{
+	}
 
-	void SetNext(HTNAtomNode* _Next);
-	HTNAtomNode* GetNext() const;
+	HTNAtom& GetData()
+	{
+		return mData;
+	}
+
+	const HTNAtom& GetData() const
+	{
+		return mData;
+	}
+
+	void SetNext(HTNAtomNode* inNext)
+	{
+		mNext = inNext;
+	}
+
+	HTNAtomNode* GetNext() const
+	{
+		return mNext;
+	}
 
 private:
 	HTNAtom mData;
 	HTNAtomNode* mNext = nullptr;
 };
+
+inline HTNAtomList::HTNAtomList(const HTNAtomList& _Other)
+{
+	for (HTNAtomNode* Current = _Other.mHead; Current; Current = Current->GetNext())
+	{
+		Add(Current->GetData());
+	}
+}
 
 inline HTNAtomList::~HTNAtomList()
 {
@@ -116,14 +139,11 @@ inline HTNAtomList::~HTNAtomList()
 		delete Current;
 		Current = Next;
 	}
-
-	mHead = nullptr;
-	mTail = nullptr;
 }
 
-inline void HTNAtomList::Add(const HTNAtom& _Data)
+inline void HTNAtomList::Add(const HTNAtom& inData)
 {
-	HTNAtomNode* Node = new HTNAtomNode(_Data);
+	HTNAtomNode* Node = new HTNAtomNode(inData);
 
 	if (!mHead)
 	{
@@ -140,21 +160,66 @@ inline void HTNAtomList::Add(const HTNAtom& _Data)
 	mSize++;
 }
 
-inline int HTNAtomList::GetSize() const
+inline const HTNAtom* HTNAtomList::Find(int inIndex) const
 {
-	return mSize;
+	if (inIndex < 0 || inIndex >= mSize)
+	{
+		return nullptr;
+	}
+
+	HTNAtomNode* Current = mHead;
+	for (int i = 0; i < inIndex; ++i)
+	{
+		Current = Current->GetNext();
+	}
+
+	return &Current->GetData();
 }
 
-inline HTNAtomNode::HTNAtomNode(const HTNAtom& _Data) : mData(_Data)
+inline void HTNAtom::AddListElement(const HTNAtom& inElement)
 {
+	if (!IsSet())
+	{
+		mData = HTNAtomList();
+	}
+
+	if (!IsType<HTNAtomList>())
+	{
+		return;
+	}
+	
+	HTNAtomList& List = GetValue<HTNAtomList>();
+	List.Add(inElement);
 }
 
-inline void HTNAtomNode::SetNext(HTNAtomNode* _Next)
+inline const HTNAtom* HTNAtom::FindListElement(int inElementIdx) const
 {
-	mNext = _Next;
+	if (!IsSet())
+	{
+		return nullptr;
+	}
+
+	if (!IsType<HTNAtomList>())
+	{
+		return nullptr;
+	}
+
+	const HTNAtomList& List = GetValue<HTNAtomList>();
+	return List.Find(inElementIdx);
 }
 
-inline HTNAtomNode* HTNAtomNode::GetNext() const
+inline int HTNAtom::GetListNumItems() const 
 {
-	return mNext;
+	if (!IsSet())
+	{
+		return -1;
+	}
+
+	if (!IsType<HTNAtomList>())
+	{
+		return -1;
+	}
+
+	const HTNAtomList& List = GetValue<HTNAtomList>();
+	return List.GetSize();
 }
