@@ -24,8 +24,8 @@ TEST(HTNAtom, HTNArgumentBinding)
 		EXPECT_FALSE(atom_from_unbinded_to_fish.IsSet());
 		EXPECT_EQ(world_state.QueryIndex(0, sFood, atom_from_unbinded_to_fish), 1);
 		EXPECT_TRUE(atom_from_unbinded_to_fish.IsSet());
-		EXPECT_EQ(atom_from_unbinded_to_fish.Type, HTNAtom::AtomType::EString);
-		EXPECT_EQ(strcmp(atom_from_unbinded_to_fish.Data.StringValue, "fish"), 0);
+		EXPECT_TRUE(atom_from_unbinded_to_fish.IsType<const char*>());
+		EXPECT_EQ(strcmp(atom_from_unbinded_to_fish.GetValue<const char*>(), "fish"), 0);
 	}
 
 	// Query Row specific 1
@@ -34,8 +34,8 @@ TEST(HTNAtom, HTNArgumentBinding)
 		EXPECT_FALSE(atom_from_unbinded_to_beef.IsSet());
 		EXPECT_EQ(world_state.QueryIndex(1, sFood, atom_from_unbinded_to_beef), 1);
 		EXPECT_TRUE(atom_from_unbinded_to_beef.IsSet());
-		EXPECT_EQ(atom_from_unbinded_to_beef.Type, HTNAtom::AtomType::EString);
-		EXPECT_EQ(strcmp(atom_from_unbinded_to_beef.Data.StringValue, "beef"), 0);
+		EXPECT_TRUE(atom_from_unbinded_to_beef.IsType<const char*>());
+		EXPECT_EQ(strcmp(atom_from_unbinded_to_beef.GetValue<const char*>(), "beef"), 0);
 	}
 
 	// Query Row specific 2
@@ -44,8 +44,8 @@ TEST(HTNAtom, HTNArgumentBinding)
 		EXPECT_FALSE(atom_from_unbinded_to_meat.IsSet());
 		EXPECT_EQ(world_state.QueryIndex(2, sFood, atom_from_unbinded_to_meat), 1);
 		EXPECT_TRUE(atom_from_unbinded_to_meat.IsSet());
-		EXPECT_EQ(atom_from_unbinded_to_meat.Type, HTNAtom::AtomType::EString);
-		EXPECT_EQ(strcmp(atom_from_unbinded_to_meat.Data.StringValue, "meat"), 0);
+		EXPECT_TRUE(atom_from_unbinded_to_meat.IsType<const char*>());
+		EXPECT_EQ(strcmp(atom_from_unbinded_to_meat.GetValue<const char*>(), "meat"), 0);
 	}
 
 	// Query Row specific 3
@@ -54,8 +54,8 @@ TEST(HTNAtom, HTNArgumentBinding)
 		EXPECT_FALSE(atom_from_unbinded_to_fruit.IsSet());
 		EXPECT_EQ(world_state.QueryIndex(3, sFood, atom_from_unbinded_to_fruit), 1);
 		EXPECT_TRUE(atom_from_unbinded_to_fruit.IsSet());
-		EXPECT_EQ(atom_from_unbinded_to_fruit.Type, HTNAtom::AtomType::EString);
-		EXPECT_EQ(strcmp(atom_from_unbinded_to_fruit.Data.StringValue, "fruit"), 0);
+		EXPECT_TRUE(atom_from_unbinded_to_fruit.IsType<const char*>());
+		EXPECT_EQ(strcmp(atom_from_unbinded_to_fruit.GetValue<const char*>(), "fruit"), 0);
 	}
 
 	// Query Row specific 4 (doesn't exist)
@@ -64,6 +64,5 @@ TEST(HTNAtom, HTNArgumentBinding)
 		EXPECT_FALSE(atom_from_unbinded_to_nothing.IsSet());
 		EXPECT_EQ(world_state.QueryIndex(4, sFood, atom_from_unbinded_to_nothing), 0);
 		EXPECT_FALSE(atom_from_unbinded_to_nothing.IsSet());
-		EXPECT_EQ(atom_from_unbinded_to_nothing.Type, HTNAtom::AtomType::EInvalid);
 	}
 }

@@ -25,7 +25,6 @@ TEST(HTNAtom, HTNWorldStateSimpleFacts)
 	EXPECT_EQ(world_state.GetNumFactTablesByNumArgs(sWeather, 2), 1);
 }
 
-
 // Test adding facts
 TEST(HTNAtom, HTNWorldStateComplexFacts)
 {
@@ -71,7 +70,7 @@ TEST(HTNAtom, HTNWorldStateComplexFacts)
 
 	EXPECT_TRUE(first_dish_unbinded.IsSet());
 
-	EXPECT_TRUE(first_dish_unbinded.IsListType());
+	EXPECT_TRUE(first_dish_unbinded.IsType<HTNAtomList>());
 
 	EXPECT_EQ(first_dish_unbinded.GetListNumItems(), 3);
 }
