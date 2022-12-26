@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <array>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 #include <vector>
 
@@ -26,7 +27,7 @@ public:
 	void AddEntry(Args&&... inArgs);
 
 	// Binds the arguments of the entry at the specified index to the unbound arguments passed
-	template <typename... Args>
+	template <typename... Args, typename = std::enable_if_t<std::is_same<HTNAtom, Args...>::value>>
 	int Query(int inIndex, Args&... inArgs) const;
 
 	// Returns the number of entries
@@ -54,7 +55,7 @@ inline void HTNTable<NumArgs>::AddEntry(Args&&... inArgs)
 }
 
 template <int NumArgs>
-template <typename... Args>
+template <typename... Args, typename>
 inline int HTNTable<NumArgs>::Query(int inIndex, Args&... inArgs) const
 {
 	if (inIndex < 0 || inIndex >= mEntries.size())
@@ -106,14 +107,14 @@ public:
 	// If all the arguments are binded then the result is like a binary operation, that query results in true or false.
 	// If not all the arguments are binded then the result might return more than 1.
 	// Return the number of possible results in the database.
-	template <typename... Args>
+	template <typename... Args, typename = std::enable_if_t<std::is_same<HTNAtom, Args...>::value>>
 	int Query(const char* inKey, Args&... inArgs);
 
 	// It checks if there is an existing entry for the inKey + arguments.
 	// If all the arguments are binded then the result is like a binary operation, that query results in true or false.
 	// If not all the arguments are binded then we need to bind it according to the row that correspond to inIndex, the result will always be 0 or 1.
 	// Return either 0 or 1 because we are pointing to a specific row withing a table.
-	template <typename... Args>
+	template <typename... Args, typename = std::enable_if_t<std::is_same<HTNAtom, Args...>::value>>
 	int QueryIndex(const char* inKey, const int inIndex, Args&... inArgs);
 
 	// Returns the number of HTNTables registered for the fact inKey.
@@ -161,7 +162,7 @@ inline void HTNWorldState::MakeFact(const char* inKey, Args&&... inArgs)
 	Table->AddEntry(std::forward<Args>(inArgs)...);
 }
 
-template <typename... Args>
+template <typename... Args, typename>
 inline int HTNWorldState::Query(const char* inKey, Args&... inArgs)
 {
 	static constexpr int ArgsSize = sizeof...(Args);
@@ -194,7 +195,7 @@ inline int HTNWorldState::Query(const char* inKey, Args&... inArgs)
 	return Table->GetNumEntries();
 }
 
-template <typename... Args>
+template <typename... Args, typename>
 inline int HTNWorldState::QueryIndex(const char* inKey, const int inIndex, Args&... inArgs)
 {
 	static constexpr int ArgsSize = 1;
