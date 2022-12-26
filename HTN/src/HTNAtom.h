@@ -92,8 +92,7 @@ public:
 	}
 
 private:
-	typedef std::variant<int, float, const char*, HTNAtomList> HTNAtomType;
-	std::optional<HTNAtomType> mData;
+	std::optional<std::variant<int, float, const char*, HTNAtomList>> mData;
 };
 
 class HTNAtomNode

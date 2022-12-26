@@ -21,18 +21,24 @@ template <int NumArgs>
 class HTNTable final : public HTNTableBase
 {
 public:
-	typedef std::array<HTNAtom, NumArgs> HTNEntry;
-
-	// Adds an entry with n arguments
+	// Adds an entry with arguments
 	template <typename... Args>
 	void AddEntry(Args&&... inArgs);
 
-	int Query(int inIndex, HTNAtom& ioArg1) const;
+	// Binds the arguments of the entry at the specified index to the unbound arguments passed
+	template <typename... Args>
+	int Query(int inIndex, Args&... inArgs) const;
 
-	// Returns the number of HTNEntry
+	// Returns the number of entries
 	int GetNumEntries() const;
 
 private:
+	typedef std::array<HTNAtom, NumArgs> HTNEntry;
+
+	// Helper method for fold expression
+	template <typename T>
+	static void BindArgsUnbound(const HTNEntry& inEntry, T& inArg, int& outIndex);
+
 	std::vector<HTNEntry> mEntries;
 };
 
@@ -48,7 +54,8 @@ inline void HTNTable<NumArgs>::AddEntry(Args&&... inArgs)
 }
 
 template <int NumArgs>
-inline int HTNTable<NumArgs>::Query(int inIndex, HTNAtom& ioArg1) const
+template <typename... Args>
+inline int HTNTable<NumArgs>::Query(int inIndex, Args&... inArgs) const
 {
 	if (inIndex < 0 || inIndex >= mEntries.size())
 	{
@@ -56,7 +63,8 @@ inline int HTNTable<NumArgs>::Query(int inIndex, HTNAtom& ioArg1) const
 	}
 
 	const HTNEntry& Entry = mEntries[inIndex];
-	ioArg1 = Entry[0];
+	int Index = 0;
+	(BindArgsUnbound(Entry, inArgs, Index), ...);
 
 	return 1;
 }
@@ -67,6 +75,18 @@ inline int HTNTable<NumArgs>::GetNumEntries() const
 	return static_cast<int>(mEntries.size());
 }
 
+template <int NumArgs>
+template <typename T>
+inline void HTNTable<NumArgs>::BindArgsUnbound(const HTNEntry& inEntry, T& inArg, int& outIndex)
+{
+	if (!inArg.IsSet())
+	{
+		inArg = inEntry[outIndex];
+	}
+
+	++outIndex;
+}
+
 static constexpr int MaxNumArgs = 8;
 
 // World state for the HTN planner. 
@@ -75,8 +95,6 @@ static constexpr int MaxNumArgs = 8;
 class HTNWorldState
 {
 public:
-	typedef std::array<HTNTableBase*, MaxNumArgs> HTNFact;
-
 	// Writes a fact with no arguments. (workaround for vs2019)
 	void MakeFact(const char* inKey);
 
@@ -88,13 +106,15 @@ public:
 	// If all the arguments are binded then the result is like a binary operation, that query results in true or false.
 	// If not all the arguments are binded then the result might return more than 1.
 	// Return the number of possible results in the database.
-	int Query(const char* inKey, HTNAtom& ioArg1);
+	template <typename... Args>
+	int Query(const char* inKey, Args&... inArgs);
 
 	// It checks if there is an existing entry for the inKey + arguments.
 	// If all the arguments are binded then the result is like a binary operation, that query results in true or false.
 	// If not all the arguments are binded then we need to bind it according to the row that correspond to inIndex, the result will always be 0 or 1.
 	// Return either 0 or 1 because we are pointing to a specific row withing a table.
-	int QueryIndex(int inIndex, const char* inKey, HTNAtom& ioArg1);
+	template <typename... Args>
+	int QueryIndex(const char* inKey, const int inIndex, Args&... inArgs);
 
 	// Returns the number of HTNTables registered for the fact inKey.
 	int GetNumFactTables(const char* inKey) const;
@@ -104,6 +124,11 @@ public:
 	int GetNumFactTablesByNumArgs(const char* inKey, const int inNumArgs) const;
 
 private:
+	// Helper method for fold expression
+	template <typename T>
+	static void CountArgsBound(T&& inArg, int& outNumArgsBound);
+
+	typedef std::array<HTNTableBase*, MaxNumArgs> HTNFact;
 	std::unordered_map<std::string, HTNFact> mFacts;
 };
 
@@ -136,12 +161,16 @@ inline void HTNWorldState::MakeFact(const char* inKey, Args&&... inArgs)
 	Table->AddEntry(std::forward<Args>(inArgs)...);
 }
 
-inline int HTNWorldState::Query(const char* inKey, HTNAtom& ioArg1)
+template <typename... Args>
+inline int HTNWorldState::Query(const char* inKey, Args&... inArgs)
 {
-	static constexpr int ArgsSize = 1;
+	static constexpr int ArgsSize = sizeof...(Args);
+	static_assert(ArgsSize <= MaxNumArgs);
 
-	if (ioArg1.IsSet())
-	{
+	int NumArgsBound = 0;
+	(CountArgsBound(inArgs, NumArgsBound), ...);
+	if (ArgsSize == NumArgsBound)
+	{		
 		// All arguments are bound
 		return 1;
 	}
@@ -165,11 +194,14 @@ inline int HTNWorldState::Query(const char* inKey, HTNAtom& ioArg1)
 	return Table->GetNumEntries();
 }
 
-inline int HTNWorldState::QueryIndex(int inIndex, const char* inKey, HTNAtom& ioArg1)
+template <typename... Args>
+inline int HTNWorldState::QueryIndex(const char* inKey, const int inIndex, Args&... inArgs)
 {
 	static constexpr int ArgsSize = 1;
 
-	if (ioArg1.IsSet())
+	int NumArgsBound = 0;
+	(CountArgsBound(inArgs, NumArgsBound), ...);
+	if (ArgsSize == NumArgsBound)
 	{
 		// All arguments are bound
 		return 1;
@@ -191,7 +223,7 @@ inline int HTNWorldState::QueryIndex(int inIndex, const char* inKey, HTNAtom& io
 		return 0;
 	}
 
-	return Table->Query(inIndex, ioArg1);
+	return Table->Query(inIndex, inArgs...);
 }
 
 inline int HTNWorldState::GetNumFactTables(const char* inKey) const
@@ -240,4 +272,13 @@ inline int HTNWorldState::GetNumFactTablesByNumArgs(const char* inKey, const int
 	}
 
 	return 1;
+}
+
+template <typename T>
+inline void HTNWorldState::CountArgsBound(T&& inArg, int& outNumArgsBound)
+{
+	if (inArg.IsSet())
+	{
+		++outNumArgsBound;
+	}
 }
