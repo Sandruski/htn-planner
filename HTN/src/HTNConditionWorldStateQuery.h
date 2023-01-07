@@ -2,6 +2,7 @@
 
 #include "HTNCondition.h"
 #include "HTNDecompositionContext.h"
+#include "HTNWorldState.h"
 
 #include <array>
 #include <type_traits>
@@ -20,7 +21,7 @@ public:
 		mKey = inKey; 
 	}
 
-	void SetArgument(int inIndex, HTNAtom* inAtom)
+	void SetArgument(const int inIndex, HTNAtom* inAtom)
 	{
 		if (inIndex < 0 || inIndex >= NumArgs)
 		{
@@ -32,7 +33,7 @@ public:
 
 private:
 	template <std::size_t... Is>
-	bool Check(const HTNWorldState& inWorldState, std::index_sequence<Is...>);
+	bool Check(const HTNWorldState& inWorldState, const int inIndex, std::index_sequence<Is...>);
 
 	const char* mKey = nullptr;
 	std::array<HTNAtom*, NumArgs> mArgs;
@@ -47,13 +48,13 @@ inline bool HTNConditionWorldStateQuery<NumArgs>::Check(HTNDecompositionContext&
 		return false;
 	}
 
-	return Check(*WorldState, std::make_index_sequence<NumArgs>{});
+	const int Index = ioContext.GetIndex();
+	return Check(*WorldState, Index, std::make_index_sequence<NumArgs>{});
 }
 
 template <int NumArgs>
 template <std::size_t... I>
-inline bool HTNConditionWorldStateQuery<NumArgs>::Check(const HTNWorldState& inWorldState, std::index_sequence<I...>)
+inline bool HTNConditionWorldStateQuery<NumArgs>::Check(const HTNWorldState& inWorldState, const int inIndex, std::index_sequence<I...>)
 {
-	int Index = 0; // TODO salvarez Store the index in the context
-	return inWorldState.CheckIndex(mKey, Index, *mArgs[I]...);
+	return inWorldState.CheckIndex(mKey, inIndex, *mArgs[I]...);
 }

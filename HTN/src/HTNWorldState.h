@@ -27,10 +27,10 @@ public:
 
 	// Binds the arguments of the entry at the specified index to the unbound arguments passed
 	template <typename... Args>
-	int Query(int inIndex, Args&... inArgs) const;
+	int Query(const int inIndex, Args&... inArgs) const;
 
 	template <typename... Args>
-	bool Check(int inIndex, Args&... inArgs) const;
+	bool Check(const int inIndex, Args&... inArgs) const;
 
 	// Returns the number of entries
 	int GetNumEntries() const;
@@ -62,7 +62,7 @@ inline void HTNTable<NumArgs>::AddEntry(const Args&... inArgs)
 
 template <int NumArgs>
 template <typename... Args>
-inline int HTNTable<NumArgs>::Query(int inIndex, Args&... inArgs) const
+inline int HTNTable<NumArgs>::Query(const int inIndex, Args&... inArgs) const
 {
 	static constexpr int ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize == NumArgs);
@@ -81,7 +81,7 @@ inline int HTNTable<NumArgs>::Query(int inIndex, Args&... inArgs) const
 
 template <int NumArgs>
 template <typename... Args>
-inline bool HTNTable<NumArgs>::Check(int inIndex, Args&... inArgs) const
+inline bool HTNTable<NumArgs>::Check(const int inIndex, Args&... inArgs) const
 {
 	static constexpr int ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize == NumArgs);

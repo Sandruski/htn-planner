@@ -18,7 +18,7 @@ public:
 
 	void Add(const HTNAtom& inData);
 
-	const HTNAtom* Find(int inIndex) const;
+	const HTNAtom* Find(const int inIndex) const;
 
 	int GetSize() const
 	{
@@ -88,7 +88,7 @@ public:
 	void AddListElement(const HTNAtom& inElement);
 
 	// Return the list element
-	const HTNAtom* FindListElement(int inElementIdx) const;
+	const HTNAtom* FindListElement(const int inElementIdx) const;
 
 	int GetListNumItems() const;
 
@@ -180,7 +180,7 @@ inline void HTNAtomList::Add(const HTNAtom& inData)
 	mSize++;
 }
 
-inline const HTNAtom* HTNAtomList::Find(int inIndex) const
+inline const HTNAtom* HTNAtomList::Find(const int inIndex) const
 {
 	if (inIndex < 0 || inIndex >= mSize)
 	{
@@ -212,7 +212,7 @@ inline void HTNAtom::AddListElement(const HTNAtom& inElement)
 	List.Add(inElement);
 }
 
-inline const HTNAtom* HTNAtom::FindListElement(int inElementIdx) const
+inline const HTNAtom* HTNAtom::FindListElement(const int inElementIdx) const
 {
 	if (!IsSet())
 	{
