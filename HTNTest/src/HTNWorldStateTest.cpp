@@ -62,9 +62,7 @@ TEST(HTNAtom, HTNWorldStateComplexFacts)
 	EXPECT_EQ(world_state.QueryIndex(sMenu, 0, first_dish_unbinded, second_dish_unbinded, third_dish_unbinded), 1);
 
 	EXPECT_TRUE(first_dish_unbinded.IsSet());
-
 	EXPECT_TRUE(first_dish_unbinded.IsType<HTNAtomList>());
-
 	EXPECT_EQ(first_dish_unbinded.GetListNumItems(), 3);
 
 	const HTNAtom* first_dish_paella = first_dish_unbinded.FindListElement(0);

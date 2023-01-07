@@ -10,9 +10,11 @@ class HTNAtomList
 {
 public:
 	HTNAtomList() = default;
-	HTNAtomList(const HTNAtomList& _Other);
+	HTNAtomList(const HTNAtomList& inOther);
 
 	~HTNAtomList();
+
+	bool operator==(const HTNAtomList& inOther) const;
 
 	void Add(const HTNAtom& inData);
 
@@ -54,6 +56,11 @@ public:
 		mData = inValue;
 	}
 
+	bool operator==(const HTNAtom& inOther) const 
+	{
+		return (mData == inOther.mData);
+	}
+
 	template<typename T>
 	T& GetValue()
 	{
@@ -76,8 +83,6 @@ public:
 	{
 		return mData.has_value();
 	}
-
-	// TODO: I think you need to implement operator==
 	
 	// Adds a new element to this list type
 	void AddListElement(const HTNAtom& inElement);
@@ -98,34 +103,29 @@ public:
 	{
 	}
 
-	HTNAtom& GetData()
-	{
-		return mData;
-	}
-
 	const HTNAtom& GetData() const
 	{
 		return mData;
 	}
 
-	void SetNext(HTNAtomNode* inNext)
+	void SetNext(const HTNAtomNode* inNext)
 	{
 		mNext = inNext;
 	}
 
-	HTNAtomNode* GetNext() const
+	const HTNAtomNode* GetNext() const
 	{
 		return mNext;
 	}
 
 private:
 	HTNAtom mData;
-	HTNAtomNode* mNext = nullptr;
+	const HTNAtomNode* mNext = nullptr;
 };
 
-inline HTNAtomList::HTNAtomList(const HTNAtomList& _Other)
+inline HTNAtomList::HTNAtomList(const HTNAtomList& inOther)
 {
-	for (HTNAtomNode* Current = _Other.mHead; Current; Current = Current->GetNext())
+	for (const HTNAtomNode* Current = inOther.mHead; Current; Current = Current->GetNext())
 	{
 		Add(Current->GetData());
 	}
@@ -133,12 +133,32 @@ inline HTNAtomList::HTNAtomList(const HTNAtomList& _Other)
 
 inline HTNAtomList::~HTNAtomList()
 {
-	for (HTNAtomNode* Current = mHead; Current;)
+	for (const HTNAtomNode* Current = mHead; Current;)
 	{
-		HTNAtomNode* Next = Current->GetNext();
+		const HTNAtomNode* Next = Current->GetNext();
 		delete Current;
 		Current = Next;
 	}
+}
+
+inline bool HTNAtomList::operator==(const HTNAtomList& inOther) const
+{
+	if (mSize != inOther.mSize)
+	{
+		return false;
+	}
+
+	const HTNAtomNode* ThisCurrent = mHead;
+	const HTNAtomNode* OtherCurrent = inOther.mHead;
+	for (; ThisCurrent && OtherCurrent; ThisCurrent = ThisCurrent->GetNext(), OtherCurrent = OtherCurrent->GetNext())
+	{
+		if (ThisCurrent->GetData() != OtherCurrent->GetData())
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 inline void HTNAtomList::Add(const HTNAtom& inData)
@@ -167,7 +187,7 @@ inline const HTNAtom* HTNAtomList::Find(int inIndex) const
 		return nullptr;
 	}
 
-	HTNAtomNode* Current = mHead;
+	const HTNAtomNode* Current = mHead;
 	for (int i = 0; i < inIndex; ++i)
 	{
 		Current = Current->GetNext();

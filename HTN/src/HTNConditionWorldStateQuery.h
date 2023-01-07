@@ -1,27 +1,59 @@
 #pragma once
 
 #include "HTNCondition.h"
+#include "HTNDecompositionContext.h"
 
-struct HTNDecompositionContext;
-class HTNConditionWorldStateQuery : public HTNCondition
+#include <array>
+#include <type_traits>
+
+class HTNAtom;
+
+template <int NumArgs>
+class HTNConditionWorldStateQuery final : public HTNCondition
 {
 public:
 	// Check if the condition is true.
-	virtual bool check(HTNDecompositionContext& ioContext) override
+	bool Check(HTNDecompositionContext& ioContext) final;
+
+	void SetKey(const char* inKey)
+	{ 
+		mKey = inKey; 
+	}
+
+	void SetArgument(int inIndex, HTNAtom* inAtom)
 	{
-		(void*)&ioContext;
-		// TODO JOSE:
+		if (inIndex < 0 || inIndex >= NumArgs)
+		{
+			return;
+		}
+
+		mArgs[inIndex] = inAtom;
+	}
+
+private:
+	template <std::size_t... Is>
+	bool Check(const HTNWorldState& inWorldState, std::index_sequence<Is...>);
+
+	const char* mKey = nullptr;
+	std::array<HTNAtom*, NumArgs> mArgs;
+};
+
+template <int NumArgs>
+inline bool HTNConditionWorldStateQuery<NumArgs>::Check(HTNDecompositionContext& ioContext)
+{
+	const HTNWorldState* WorldState = ioContext.GetWorldState();
+	if (!WorldState)
+	{
 		return false;
 	}
 
-	void				setKey(const char* inKey) { mKey = inKey; }
-	void				setArgument(int inIdx, HTNAtom* inAtom0)
-	{
-		(void*)&inIdx;
-		(void*)inAtom0;
-		// TODO JOSE:
-	}
-private:
-	const char*			mKey	= nullptr;
-	// TODO JOSE: Add arguments?
-};
+	return Check(*WorldState, std::make_index_sequence<NumArgs>{});
+}
+
+template <int NumArgs>
+template <std::size_t... I>
+inline bool HTNConditionWorldStateQuery<NumArgs>::Check(const HTNWorldState& inWorldState, std::index_sequence<I...>)
+{
+	int Index = 0; // TODO salvarez Store the index in the context
+	return inWorldState.CheckIndex(mKey, Index, *mArgs[I]...);
+}

@@ -19,38 +19,37 @@ TEST(HTNAtom, HTNConditionTest)
 	const char* sLeadProgrammer("lead_programmer");
 	world_state.MakeFact(sLeadProgrammer, "andres");
 	
-	HTNDecompositionContext decomposition_context;
-	decomposition_context.mWorldState = &world_state;
+	HTNDecompositionContext decomposition_context = HTNDecompositionContext(world_state);
 
 	HTNAtom binded_to_jota("jota");
 	HTNAtom unbinded_programmer;
 
 	// Test condition node to ensure certain query with all the arguments binded decompose to true (Jota is a programmer)
 	{
-		HTNConditionWorldStateQuery	condition_world_state_query;
-		condition_world_state_query.setKey(sProgrammer);
+		HTNConditionWorldStateQuery<1>	condition_world_state_query;
+		condition_world_state_query.SetKey(sProgrammer);
 		EXPECT_TRUE(binded_to_jota.IsSet());
-		condition_world_state_query.setArgument(0, &binded_to_jota);
-		EXPECT_TRUE(condition_world_state_query.check(decomposition_context));
+		condition_world_state_query.SetArgument(0, &binded_to_jota);
+		EXPECT_TRUE(condition_world_state_query.Check(decomposition_context));
 	}
 
 	// Test condition node to ensure certain query with all the arguments binded decompose to false (Jota is not a lead)
 	{
-		HTNConditionWorldStateQuery	condition_world_state_query;
-		condition_world_state_query.setKey(sLeadProgrammer);
+		HTNConditionWorldStateQuery<1>	condition_world_state_query;
+		condition_world_state_query.SetKey(sLeadProgrammer);
 		EXPECT_TRUE(binded_to_jota.IsSet());
-		condition_world_state_query.setArgument(0, &binded_to_jota);
-		EXPECT_FALSE(condition_world_state_query.check(decomposition_context));
+		condition_world_state_query.SetArgument(0, &binded_to_jota);
+		EXPECT_FALSE(condition_world_state_query.Check(decomposition_context));
 	}
 
-	// Test condition node to ensure certain query with all the arguments binded decompose to false (Jota is not a lead)
+	// Test condition node to ensure certain query with all the arguments unbinded decompose to true
 	{
-		HTNConditionWorldStateQuery	condition_world_state_query;
-		condition_world_state_query.setKey(sLeadProgrammer);
+		HTNConditionWorldStateQuery<1>	condition_world_state_query;
+		condition_world_state_query.SetKey(sLeadProgrammer);
 		EXPECT_FALSE(unbinded_programmer.IsSet());
-		condition_world_state_query.setArgument(0, &unbinded_programmer);
+		condition_world_state_query.SetArgument(0, &unbinded_programmer);
 		// 
-		EXPECT_TRUE(condition_world_state_query.check(decomposition_context));
+		EXPECT_TRUE(condition_world_state_query.Check(decomposition_context));
 		EXPECT_TRUE(unbinded_programmer.IsSet());
 	}
 }

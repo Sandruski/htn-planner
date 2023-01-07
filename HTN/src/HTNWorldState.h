@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <array>
 #include <string>
-#include <type_traits>
 #include <unordered_map>
 #include <vector>
 
@@ -30,6 +29,9 @@ public:
 	template <typename... Args>
 	int Query(int inIndex, Args&... inArgs) const;
 
+	template <typename... Args>
+	bool Check(int inIndex, Args&... inArgs) const;
+
 	// Returns the number of entries
 	int GetNumEntries() const;
 
@@ -38,7 +40,11 @@ private:
 
 	// Helper method for fold expression
 	template <typename T>
-	static void BindArgsUnbound(const HTNEntry& inEntry, T& inArg, int& outIndex);
+	static void BindArgsUnbound(const HTNEntry& inEntry, T& inArg, int& ioIndex);
+
+	// Helper method for fold expression
+	template <typename T>
+	static bool CheckArgsBound(const HTNEntry& inEntry, const T& inArg, int& ioIndex);
 
 	std::vector<HTNEntry> mEntries;
 };
@@ -74,6 +80,32 @@ inline int HTNTable<NumArgs>::Query(int inIndex, Args&... inArgs) const
 }
 
 template <int NumArgs>
+template <typename... Args>
+inline bool HTNTable<NumArgs>::Check(int inIndex, Args&... inArgs) const
+{
+	static constexpr int ArgsSize = sizeof...(Args);
+	static_assert(ArgsSize == NumArgs);
+
+	if (inIndex < 0 || inIndex >= mEntries.size())
+	{
+		return false;
+	}
+
+	const HTNEntry& Entry = mEntries[inIndex];
+	int Index = 0;
+	const bool Result = (CheckArgsBound(Entry, inArgs, Index) && ...);
+	if (!Result)
+	{
+		return false;
+	}
+
+	Index = 0;
+	(BindArgsUnbound(Entry, inArgs, Index), ...);
+
+	return true;
+}
+
+template <int NumArgs>
 inline int HTNTable<NumArgs>::GetNumEntries() const
 {
 	return static_cast<int>(mEntries.size());
@@ -81,14 +113,30 @@ inline int HTNTable<NumArgs>::GetNumEntries() const
 
 template <int NumArgs>
 template <typename T>
-inline void HTNTable<NumArgs>::BindArgsUnbound(const HTNEntry& inEntry, T& inArg, int& outIndex)
+inline void HTNTable<NumArgs>::BindArgsUnbound(const HTNEntry& inEntry, T& inArg, int& ioIndex)
 {
 	if (!inArg.IsSet())
 	{
-		inArg = inEntry[outIndex];
+		inArg = inEntry[ioIndex];
 	}
 
-	++outIndex;
+	++ioIndex;
+}
+
+template <int NumArgs>
+template <typename T>
+inline bool HTNTable<NumArgs>::CheckArgsBound(const HTNEntry& inEntry, const T& inArg, int& ioIndex)
+{
+	bool Result = true;
+
+	if (inArg.IsSet())
+	{
+		Result = (inEntry[ioIndex] == inArg);
+	}
+
+	++ioIndex;
+
+	return Result;
 }
 
 static constexpr int MaxNumArgs = 8;
@@ -99,7 +147,7 @@ static constexpr int MaxNumArgs = 8;
 class HTNWorldState
 {
 public:
-	// Writes a fact with no arguments. (workaround for vs2019) // TODO salvarez Check this
+	// Writes a fact with no arguments. (workaround for vs2019)
 	void MakeFact(const char* inKey);
 
 	// Writes a fact with n arguments
@@ -111,14 +159,17 @@ public:
 	// If not all the arguments are binded then the result might return more than 1.
 	// Return the number of possible results in the database.
 	template <typename... Args>
-	int Query(const char* inKey, Args&... inArgs);
+	int Query(const char* inKey, Args&... inArgs) const;
 
 	// It checks if there is an existing entry for the inKey + arguments.
 	// If all the arguments are binded then the result is like a binary operation, that query results in true or false.
 	// If not all the arguments are binded then we need to bind it according to the row that correspond to inIndex, the result will always be 0 or 1.
 	// Return either 0 or 1 because we are pointing to a specific row withing a table.
 	template <typename... Args>
-	int QueryIndex(const char* inKey, const int inIndex, Args&... inArgs);
+	int QueryIndex(const char* inKey, const int inIndex, Args&... inArgs) const;
+
+	template <typename... Args>
+	bool CheckIndex(const char* inKey, const int inIndex, Args&... inArgs) const;
 
 	// Returns the number of HTNTables registered for the fact inKey.
 	int GetNumFactTables(const char* inKey) const;
@@ -130,7 +181,7 @@ public:
 private:
 	// Helper method for fold expression
 	template <typename T>
-	static void CountArgsBound(T&& inArg, int& outNumArgsBound);
+	static void CountArgsBound(const T& inArg, int& outNumArgsBound);
 
 	typedef std::array<HTNTableBase*, MaxNumArgs> HTNFact;
 	std::unordered_map<std::string, HTNFact> mFacts;
@@ -165,7 +216,7 @@ inline void HTNWorldState::MakeFact(const char* inKey, const Args&... inArgs)
 }
 
 template <typename... Args>
-inline int HTNWorldState::Query(const char* inKey, Args&... inArgs)
+inline int HTNWorldState::Query(const char* inKey, Args&... inArgs) const
 {
 	static constexpr int ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize <= MaxNumArgs);
@@ -198,7 +249,7 @@ inline int HTNWorldState::Query(const char* inKey, Args&... inArgs)
 }
 
 template <typename... Args>
-inline int HTNWorldState::QueryIndex(const char* inKey, const int inIndex, Args&... inArgs)
+inline int HTNWorldState::QueryIndex(const char* inKey, const int inIndex, Args&... inArgs) const
 {
 	static constexpr int ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize <= MaxNumArgs);
@@ -228,6 +279,31 @@ inline int HTNWorldState::QueryIndex(const char* inKey, const int inIndex, Args&
 	}
 
 	return Table->Query(inIndex, inArgs...);
+}
+
+template <typename... Args>
+inline bool HTNWorldState::CheckIndex(const char* inKey, const int inIndex, Args&... inArgs) const
+{
+	static constexpr int ArgsSize = sizeof...(Args);
+	static_assert(ArgsSize <= MaxNumArgs);
+
+	const auto FactIt = mFacts.find(inKey);
+	if (FactIt == mFacts.end())
+	{
+		// Fact not found
+		return false;
+	}
+
+	const HTNFact& Fact = FactIt->second;
+	static constexpr int TableIndex = ArgsSize - 1;
+	const HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
+	if (!Table)
+	{
+		// Table not found
+		return false;
+	}
+
+	return Table->Check(inIndex, inArgs...);
 }
 
 inline int HTNWorldState::GetNumFactTables(const char* inKey) const
@@ -279,7 +355,7 @@ inline int HTNWorldState::GetNumFactTablesByNumArgs(const char* inKey, const int
 }
 
 template <typename T>
-inline void HTNWorldState::CountArgsBound(T&& inArg, int& outNumArgsBound)
+inline void HTNWorldState::CountArgsBound(const T& inArg, int& outNumArgsBound)
 {
 	if (inArg.IsSet())
 	{
