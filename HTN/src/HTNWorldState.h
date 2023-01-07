@@ -53,7 +53,7 @@ template <int NumArgs>
 template <typename... Args>
 inline void HTNTable<NumArgs>::AddEntry(const Args&... inArgs)
 {
-	static constexpr int ArgsSize = sizeof...(Args);
+	static constexpr std::size_t ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize == NumArgs);
 	
 	HTNEntry& Entry = mEntries.emplace_back();
@@ -64,7 +64,7 @@ template <int NumArgs>
 template <typename... Args>
 inline int HTNTable<NumArgs>::Query(const int inIndex, Args&... inArgs) const
 {
-	static constexpr int ArgsSize = sizeof...(Args);
+	static constexpr std::size_t ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize == NumArgs);
 
 	if (inIndex < 0 || inIndex >= mEntries.size())
@@ -83,7 +83,7 @@ template <int NumArgs>
 template <typename... Args>
 inline bool HTNTable<NumArgs>::Check(const int inIndex, Args&... inArgs) const
 {
-	static constexpr int ArgsSize = sizeof...(Args);
+	static constexpr std::size_t ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize == NumArgs);
 
 	if (inIndex < 0 || inIndex >= mEntries.size())
@@ -147,9 +147,6 @@ static constexpr int MaxNumArgs = 8;
 class HTNWorldState
 {
 public:
-	// Writes a fact with no arguments. (workaround for vs2019)
-	void MakeFact(const char* inKey);
-
 	// Writes a fact with n arguments
 	template <typename... Args>
 	void MakeFact(const char* inKey, const Args&... inArgs);
@@ -187,38 +184,32 @@ private:
 	std::unordered_map<std::string, HTNFact> mFacts;
 };
 
-inline void HTNWorldState::MakeFact(const char* inKey)
-{
-	mFacts.insert(std::make_pair(inKey, HTNFact()));
-}
-
 template <typename... Args>
 inline void HTNWorldState::MakeFact(const char* inKey, const Args&... inArgs)
 {
-	static constexpr int ArgsSize = sizeof...(Args);
+	static constexpr std::size_t ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize <= MaxNumArgs);
 
 	HTNFact& Fact = mFacts[inKey];
-	if constexpr (ArgsSize == 0)
-	{
-		// Skip creating a table if there are no args
-		return;
-	}
 
-	static constexpr int TableIndex = ArgsSize - 1;
-	HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
-	if (!Table)
+	// Skip creating a table if there are no args
+	if constexpr (ArgsSize > 0)
 	{
-		Fact[TableIndex] = Table = new HTNTable<ArgsSize>();
-	}
+		static constexpr int TableIndex = ArgsSize - 1;
+		HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
+		if (!Table)
+		{
+			Fact[TableIndex] = Table = new HTNTable<ArgsSize>();
+		}
 
-	Table->AddEntry(inArgs...);
+		Table->AddEntry(inArgs...);
+	}
 }
 
 template <typename... Args>
 inline int HTNWorldState::Query(const char* inKey, Args&... inArgs) const
 {
-	static constexpr int ArgsSize = sizeof...(Args);
+	static constexpr std::size_t ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize <= MaxNumArgs);
 
 	int NumArgsBound = 0;
@@ -251,7 +242,7 @@ inline int HTNWorldState::Query(const char* inKey, Args&... inArgs) const
 template <typename... Args>
 inline int HTNWorldState::QueryIndex(const char* inKey, const int inIndex, Args&... inArgs) const
 {
-	static constexpr int ArgsSize = sizeof...(Args);
+	static constexpr std::size_t ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize <= MaxNumArgs);
 
 	int NumArgsBound = 0;
@@ -284,7 +275,7 @@ inline int HTNWorldState::QueryIndex(const char* inKey, const int inIndex, Args&
 template <typename... Args>
 inline bool HTNWorldState::CheckIndex(const char* inKey, const int inIndex, Args&... inArgs) const
 {
-	static constexpr int ArgsSize = sizeof...(Args);
+	static constexpr std::size_t ArgsSize = sizeof...(Args);
 	static_assert(ArgsSize <= MaxNumArgs);
 
 	const auto FactIt = mFacts.find(inKey);
