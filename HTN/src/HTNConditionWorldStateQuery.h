@@ -48,9 +48,8 @@ inline bool HTNConditionWorldStateQuery<NumArgs>::Check(HTNDecompositionContext&
 		return false;
 	}
 
-	ioContext.IncrementIndex(*this);
+	const int Index = ioContext.IncrementIndex(*this);
 
-	const int Index = ioContext.GetIndex(*this);
 	return Check(*WorldState, Index, std::make_index_sequence<NumArgs>{});
 }
 
