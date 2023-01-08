@@ -92,6 +92,10 @@ public:
 
 	int GetListNumItems() const;
 
+	// TODO JOSE: Unbinds this HtnAtom, this can be used in the context of multiresult queries where we might want to reuse the same HtnAtom
+	// multiple times because the backtracking mechanism (we will talk about this later) is making us reevaluate the planner.
+	void UnBind();
+
 private:
 	std::optional<std::variant<int, float, const char*, HTNAtomList>> mData;
 };
@@ -242,4 +246,11 @@ inline int HTNAtom::GetListNumItems() const
 
 	const HTNAtomList& List = GetValue<HTNAtomList>();
 	return List.GetSize();
+}
+
+
+inline void HTNAtom::UnBind()
+{
+	// TODO JOSE:
+
 }
