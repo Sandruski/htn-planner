@@ -92,7 +92,7 @@ public:
 
 	int GetListNumItems() const;
 
-	// TODO JOSE: Unbinds this HtnAtom, this can be used in the context of multiresult queries where we might want to reuse the same HtnAtom
+	// Unbinds this HtnAtom, this can be used in the context of multiresult queries where we might want to reuse the same HtnAtom
 	// multiple times because the backtracking mechanism (we will talk about this later) is making us reevaluate the planner.
 	void UnBind();
 
@@ -248,9 +248,7 @@ inline int HTNAtom::GetListNumItems() const
 	return List.GetSize();
 }
 
-
 inline void HTNAtom::UnBind()
 {
-	// TODO JOSE:
-
+	mData.reset();
 }
