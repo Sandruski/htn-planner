@@ -1,5 +1,5 @@
-#include "HTNAtom.h"
-#include "HTNWorldState.h"
+#include "Runtime/HTNAtom.h"
+#include "Runtime/HTNWorldState.h"
 
 TEST(HTNAtom, HTNArgumentBinding)
 {

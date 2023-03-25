@@ -1,6 +1,6 @@
 -- HTN
 workspace "HTN"
-    startproject "HTN"
+    startproject "HTNTest"
     architecture "x64"
     configurations { "Debug"--[[, "Release"--]] }
 
@@ -23,7 +23,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- HTN
 project "HTN"
     location "HTN"
-    kind "ConsoleApp"
+    kind "StaticLib"
     language "C++"
     cppdialect "C++20"
 
