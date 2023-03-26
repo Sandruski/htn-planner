@@ -2,7 +2,7 @@
 
 #include "Interpreter/Expressions/HTNExpressionVisitorBase.h"
 
-bool HTNLiteralExpression::Accept(const HTNExpressionVisitorBase& inVisitor, std::any& outResult) const
+bool HTNLiteralExpression::Accept(const HTNExpressionVisitorBase& inVisitor, std::any& outValue) const
 {
-	return inVisitor.Visit(*this, outResult);
+	return inVisitor.Visit(*this, outValue);
 }

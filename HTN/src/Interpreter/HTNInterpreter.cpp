@@ -1,18 +1,20 @@
 #include "Interpreter/HTNInterpreter.h"
 
 #include "Interpreter/Expressions/HTNBinaryExpression.h"
-#include "Interpreter/Expressions/HTNExpressionBase.h"
 #include "Interpreter/Expressions/HTNLiteralExpression.h"
 #include "Log.h"
 
-#include <cassert>
-
-bool HTNInterpreter::Interpret(std::any& outResult) const
+bool HTNInterpreter::Interpret(std::any& outValue) const
 {
-	return (mRoot ? mRoot->Accept(*this, outResult) : false);
+	if (!mRoot)
+	{
+		return false;
+	}
+
+	return mRoot->Accept(*this, outValue);
 }
 
-bool HTNInterpreter::Visit(const HTNBinaryExpression& inBinaryExpression, std::any& outResult) const
+bool HTNInterpreter::Visit(const HTNBinaryExpression& inBinaryExpression, std::any& outValue) const
 {
 	const HTNExpressionBase* LeftOperand = inBinaryExpression.GetLeftOperand();
 	if (!LeftOperand)
@@ -29,31 +31,42 @@ bool HTNInterpreter::Visit(const HTNBinaryExpression& inBinaryExpression, std::a
 	}
 
 	std::any LeftValue;
-	bool Result = LeftOperand->Accept(*this, LeftValue);
-	std::any RightValue;
-	Result = Result && RightOperand->Accept(*this, RightValue);
+	const bool LeftResult = LeftOperand->Accept(*this, LeftValue);
+	if (!LeftResult)
+	{
+		LOG("Left result failed");
+		return false;
+	}
 
-	const HTNTokenType Operator = inBinaryExpression.GetOperator();
+	std::any RightValue;
+	const bool RightResult = RightOperand->Accept(*this, RightValue);
+	if (!RightResult)
+	{
+		LOG("Right result failed");
+		return false;
+	}
+
+	const HTNTokenType Operator = inBinaryExpression.GetOperatorType();
 	switch (Operator)
 	{
 	case HTNTokenType::PLUS:
 	{
-		outResult = std::any_cast<double>(LeftValue) + std::any_cast<double>(RightValue);
+		outValue = std::any_cast<double>(LeftValue) + std::any_cast<double>(RightValue);
 		break;
 	}
 	case HTNTokenType::MINUS:
 	{
-		outResult = std::any_cast<double>(LeftValue) - std::any_cast<double>(RightValue);
+		outValue = std::any_cast<double>(LeftValue) - std::any_cast<double>(RightValue);
 		break;
 	}
 	case HTNTokenType::STAR:
 	{
-		outResult = std::any_cast<double>(LeftValue) * std::any_cast<double>(RightValue);
+		outValue = std::any_cast<double>(LeftValue) * std::any_cast<double>(RightValue);
 		break;
 	}
 	case HTNTokenType::SLASH:
 	{
-		outResult = std::any_cast<double>(LeftValue) / std::any_cast<double>(RightValue);
+		outValue = std::any_cast<double>(LeftValue) / std::any_cast<double>(RightValue);
 		break;
 	}
 	default:
@@ -63,12 +76,12 @@ bool HTNInterpreter::Visit(const HTNBinaryExpression& inBinaryExpression, std::a
 	}
 	}
 
-	return Result;
+	return true;
 }
 
-bool HTNInterpreter::Visit(const HTNLiteralExpression& inLiteralExpression, std::any& outResult) const
+bool HTNInterpreter::Visit(const HTNLiteralExpression& inLiteralExpression, std::any& outValue) const
 {
-	outResult = inLiteralExpression.GetValue();
+	outValue = inLiteralExpression.GetValue();
 
 	return true;
 }

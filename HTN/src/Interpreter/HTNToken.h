@@ -26,12 +26,13 @@ public:
 	explicit HTNToken(const HTNTokenType inType, const std::string& inLexeme, const std::any inValue);
 
 	HTNTokenType GetType() const;
+	const std::string& GetLexeme() const;
 	std::any GetValue() const;
 
 private:
 	HTNTokenType mType;
 	std::string mLexeme;
-	std::optional<const std::any> mValue;
+	std::optional<std::any> mValue;
 };
 
 inline HTNToken::HTNToken(const HTNTokenType inType, const std::string& inLexeme)
@@ -47,6 +48,11 @@ inline HTNToken::HTNToken(const HTNTokenType inType, const std::string& inLexeme
 inline HTNTokenType HTNToken::GetType() const
 {
 	return mType;
+}
+
+inline const std::string& HTNToken::GetLexeme() const
+{
+	return mLexeme;
 }
 
 inline std::any HTNToken::GetValue() const

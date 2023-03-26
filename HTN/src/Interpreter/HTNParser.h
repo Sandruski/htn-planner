@@ -8,7 +8,6 @@
 
 class HTNExpressionBase;
 
-// Builds an abstract syntax tree
 class HTNParser
 {
 public:

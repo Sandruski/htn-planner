@@ -11,7 +11,7 @@ class HTNExpressionBase
 public:
 	explicit HTNExpressionBase(const HTNToken& inToken);
 
-	virtual [[nodiscard]] bool Accept(const HTNExpressionVisitorBase& inVisitor, std::any& outResult) const = 0;
+	virtual [[nodiscard]] bool Accept(const HTNExpressionVisitorBase& inVisitor, std::any& outValue) const = 0;
 
 protected:
 	HTNToken mToken;
