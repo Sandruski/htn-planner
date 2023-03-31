@@ -105,6 +105,7 @@ bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
 				break;
 			}
 
+			// TODO jose If the character contains a '\', convert it to a '\\' so it is displayed correctly
 			LOG_HTN_ERROR(mLine, mColumn, "Character {} not recognized", Character);
 			AdvancePosition();
 			Result = false;

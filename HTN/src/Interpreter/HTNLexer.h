@@ -24,16 +24,9 @@ private:
 	char GetCharacter(const unsigned int inLookAhead = 0) const;
 	void AdvancePosition();
 
-	// Text to lex
 	std::string mText;
-
-	// Current position in the text
 	unsigned int mPosition = 0;
-
-	// Current line in the text
 	unsigned int mLine = 0;
-
-	// Current column in the text
 	unsigned int mColumn = 0;
 };
 
