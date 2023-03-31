@@ -36,21 +36,29 @@ bool HTNParser::Term(std::unique_ptr<const HTNExpressionBase>& outNode)
 	// factor ((PLUS | MINUS) factor)*
 
 	std::unique_ptr<const HTNExpressionBase> Left;
-	bool Result = Factor(Left);
+	const bool LeftResult = Factor(Left);
+	if (!LeftResult)
+	{
+		return false;
+	}
 
 	for (const HTNToken* Token = GetToken(); IsTokenType(Token, { HTNTokenType::PLUS , HTNTokenType::MINUS }); Token = GetToken())
 	{
 		AdvancePosition();
 
 		std::unique_ptr<const HTNExpressionBase> Right;
-		Result = Result && Factor(Right);
+		const bool RightResult = Factor(Right);
+		if (!RightResult)
+		{
+			return false;
+		}
 
 		Left = std::make_unique<HTNBinaryExpression>(std::move(Left), *Token, std::move(Right));
 	}
 
 	outNode = std::move(Left);
 
-	return Result;
+	return true;
 }
 
 bool HTNParser::Factor(std::unique_ptr<const HTNExpressionBase>& outNode)
@@ -58,21 +66,29 @@ bool HTNParser::Factor(std::unique_ptr<const HTNExpressionBase>& outNode)
 	// primary ((MUL | DIV) primary)*
 
 	std::unique_ptr<const HTNExpressionBase> Left;
-	bool Result = Primary(Left);
+	const bool LeftResult = Primary(Left);
+	if (!LeftResult)
+	{
+		return false;
+	}
 
 	for (const HTNToken* Token = GetToken(); IsTokenType(Token, { HTNTokenType::STAR , HTNTokenType::SLASH }); Token = GetToken())
 	{
 		AdvancePosition();
 
 		std::unique_ptr<const HTNExpressionBase> Right;
-		Result = Result && Primary(Right);
+		const bool RightResult = Primary(Right);
+		if (!RightResult)
+		{
+			return false;
+		}
 
 		Left = std::make_unique<HTNBinaryExpression>(std::move(Left), *Token, std::move(Right)); 
 	}
 
 	outNode = std::move(Left);
 
-	return Result;
+	return true;
 }
 
 bool HTNParser::Primary(std::unique_ptr<const HTNExpressionBase>& outNode)
@@ -91,20 +107,35 @@ bool HTNParser::Primary(std::unique_ptr<const HTNExpressionBase>& outNode)
 	{
 		AdvancePosition();
 
-		bool Result = Expression(outNode);
+		const bool Result = Expression(outNode);
+		if (!Result)
+		{
+			return false;
+		}
 
 		Token = GetToken();
 		if (!IsTokenType(Token, { HTNTokenType::RIGHT_PAREN }))
 		{
-			LOG("Token type is not a right parenthesis");
+#ifdef HTN_DEBUG
+			if (Token)
+			{
+				LOG_HTN_ERROR(Token->GetLine(), Token->GetColumn(), "Token type is not a right parenthesis");
+			}
+#endif
 			return false;
 		}
 
 		AdvancePosition();
 
-		return Result;
+		return true;
 	}
 
-	LOG("Token type is not a number or a left parenthesis");
+#ifdef HTN_DEBUG
+	if (Token)
+	{
+		LOG_HTN_ERROR(Token->GetLine(), Token->GetColumn(), "Token type is not a number or a left parenthesis");
+	}
+#endif
+
 	return false;
 }

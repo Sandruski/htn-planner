@@ -6,6 +6,7 @@
 
 class HTNExpressionBase;
 
+// Traverses an abstract syntax tree
 class HTNInterpreter final : public HTNExpressionVisitorBase
 {
 public:

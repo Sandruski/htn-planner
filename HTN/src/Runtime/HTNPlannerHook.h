@@ -11,7 +11,7 @@ public:
 	// The information needed would be: ConstantsGroups, Methods, Axioms.
 	// Once we got all this information we need to know before hand what is the top_level method. 
 	// The top level method determines the root/parent node of the entire hierarchy.
-	void parseDomain(const char* inDomainPath);
+	bool parseDomain(const char* inDomainPath);
 
 	// Returns an HTNAtom with the information about the constant requested. 
 	// Returns an unbinded atom if the constant wasn't found.

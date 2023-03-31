@@ -8,6 +8,8 @@
 
 class HTNExpressionBase;
 
+// Builds an abstract syntax tree from a series of tokens
+// Reports the first syntax error of the tokens
 class HTNParser
 {
 public:

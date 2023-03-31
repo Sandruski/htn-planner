@@ -29,43 +29,43 @@ bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
 		case '+':
 		{
 			// Plus
+			AddToken(HTNTokenType::PLUS, std::string(1, Character), outTokens);
 			AdvancePosition();
-			outTokens.emplace_back(HTNTokenType::PLUS, std::string(1, Character));
 			break;
 		}
 		case '-':
 		{
 			// Minus
+			AddToken(HTNTokenType::MINUS, std::string(1, Character), outTokens);
 			AdvancePosition();
-			outTokens.emplace_back(HTNTokenType::MINUS, std::string(1, Character));
 			break;
 		}
 		case '*':
 		{
 			// Multiplication
+			AddToken(HTNTokenType::STAR, std::string(1, Character), outTokens);
 			AdvancePosition();
-			outTokens.emplace_back(HTNTokenType::STAR, std::string(1, Character));
 			break;
 		}
 		case '/':
 		{
 			// Division
+			AddToken(HTNTokenType::SLASH, std::string(1, Character), outTokens);
 			AdvancePosition();
-			outTokens.emplace_back(HTNTokenType::SLASH, std::string(1, Character));
 			break;
 		}
 		case '(':
 		{
 			// Left parenthesis
+			AddToken(HTNTokenType::LEFT_PAREN, std::string(1, Character), outTokens);
 			AdvancePosition();
-			outTokens.emplace_back(HTNTokenType::LEFT_PAREN, std::string(1, Character));
 			break;
 		}
 		case ')':
 		{
 			// Right parenthesis
+			AddToken(HTNTokenType::RIGHT_PAREN, std::string(1, Character), outTokens);
 			AdvancePosition();
-			outTokens.emplace_back(HTNTokenType::RIGHT_PAREN, std::string(1, Character));
 			break;
 		}
 		/*
@@ -88,6 +88,14 @@ bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
 			AdvancePosition();
 			break;
 		}
+		case '\n':
+		{
+			// New line
+			AdvancePosition();
+			++mLine;
+			mColumn = 0;
+			break;
+		}
 		default:
 		{
 			// Number
@@ -97,7 +105,7 @@ bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
 				break;
 			}
 
-			LOG("Character {} not recognized", Character);
+			LOG_HTN_ERROR(mLine, mColumn, "Character {} not recognized", Character);
 			AdvancePosition();
 			Result = false;
 			break;
@@ -112,7 +120,7 @@ bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
 		*/
 	}
 
-	outTokens.emplace_back(HTNTokenType::END_OF_FILE, "");
+	AddToken(HTNTokenType::END_OF_FILE, "", outTokens);
 
 	return Result;
 }
@@ -153,7 +161,12 @@ bool HTNLexer::LexNumber(const char inCharacter, std::vector<HTNToken>& outToken
 
 	const std::string Lexeme = mText.substr(StartPosition, (mPosition - StartPosition));
 	const double Number = std::stod(Lexeme);
-	outTokens.emplace_back(HTNTokenType::NUMBER, Lexeme, Number);
+	AddToken(HTNTokenType::NUMBER, Lexeme, outTokens, Number);
 
 	return true;
+}
+
+void HTNLexer::AddToken(const HTNTokenType inType, const std::string& inLexeme, std::vector<HTNToken>& outTokens, const std::any inValue) const
+{
+	outTokens.emplace_back(inType, inLexeme, mLine, mColumn, inValue);
 }

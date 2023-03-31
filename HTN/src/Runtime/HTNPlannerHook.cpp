@@ -8,29 +8,44 @@
 #include "Log.h"
 
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
-void HTNPlannerHook::parseDomain(const char* inDomainPath)
+namespace
 {
-	std::ifstream File = std::ifstream(inDomainPath);
-	if (!File.is_open())
+	bool ReadFile(const std::string& inPath, std::string& outText)
 	{
-		LOG("File {} could not be opened", inDomainPath);
-		return;
+		// Open file
+		std::ifstream File;
+		File.open(inPath);
+		if (!File.is_open())
+		{
+			LOG("File {} could not be opened", inPath);
+			return false;
+		}
+
+		// Read file
+		std::stringstream Buffer;
+		Buffer << File.rdbuf();
+		outText = Buffer.str();
+
+		// Close file
+		File.close();
+
+		return true;
 	}
 
-	std::string Line;
-	while (getline(File, Line))
+	bool InterpretText(const std::string& inText, std::any& outValue)
 	{
 		// Lex
-		HTNLexer Lexer = HTNLexer(Line);
+		HTNLexer Lexer = HTNLexer(inText);
 		std::vector<HTNToken> Tokens;
 		const bool LexerResult = Lexer.Lex(Tokens);
 		if (!LexerResult)
 		{
-			LOG("Lex failed")
-			break;
+			LOG("Lex failed");
+			return false;
 		}
 
 		// Parse
@@ -39,21 +54,18 @@ void HTNPlannerHook::parseDomain(const char* inDomainPath)
 		const bool ParseResult = Parser.Parse(Root);
 		if (!ParseResult)
 		{
-			LOG("Parse failed")
-			break;
+			LOG("Parse failed");
+			return false;
 		}
 
 		// Interpret
 		const HTNInterpreter Interpreter = HTNInterpreter(std::move(Root));
-		std::any Value;
-		const bool InterpretResult = Interpreter.Interpret(Value);
+		const bool InterpretResult = Interpreter.Interpret(outValue);
 		if (!InterpretResult)
 		{
-			LOG("Interpret failed")
-			break;
+			LOG("Interpret failed");
+			return false;
 		}
-
-		LOG("Value is {}", std::any_cast<double>(Value));
 
 		// Print
 		/*
@@ -68,7 +80,30 @@ void HTNPlannerHook::parseDomain(const char* inDomainPath)
 
 		LOG("Text is {}", Text);
 		*/
+
+		return true;
+	}
+}
+
+bool HTNPlannerHook::parseDomain(const char* inDomainPath)
+{
+	std::string Text;
+	const bool ReadFileResult = ReadFile(inDomainPath, Text);
+	if (!ReadFileResult)
+	{
+		LOG("File {} could not be read", inDomainPath);
+		return false;
 	}
 
-	File.close();
+	std::any Value;
+	const bool InterpretTextResult = InterpretText(Text, Value);
+	if (!InterpretTextResult)
+	{
+		LOG(R"(Text "{}" could not be interpreted)", Text);
+		return false;
+	}
+
+	LOG("Value is {}", std::any_cast<double>(Value));
+
+	return true;
 }

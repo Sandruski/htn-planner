@@ -22,26 +22,24 @@ enum class HTNTokenType : uint8_t
 class HTNToken
 {
 public:
-	explicit HTNToken(const HTNTokenType inType, const std::string& inLexeme);
-	explicit HTNToken(const HTNTokenType inType, const std::string& inLexeme, const std::any inValue);
+	explicit HTNToken(const HTNTokenType inType, const std::string& inLexeme, const unsigned int inLine, const unsigned int inColumn, const std::any inValue = std::any());
 
 	HTNTokenType GetType() const;
 	const std::string& GetLexeme() const;
 	std::any GetValue() const;
+	unsigned int GetLine() const;
+	unsigned int GetColumn() const;
 
 private:
 	HTNTokenType mType;
 	std::string mLexeme;
 	std::optional<std::any> mValue;
+	unsigned int mLine = 0;
+	unsigned int mColumn = 0;
 };
 
-inline HTNToken::HTNToken(const HTNTokenType inType, const std::string& inLexeme)
-	: mType(inType), mLexeme(inLexeme)
-{
-}
-
-inline HTNToken::HTNToken(const HTNTokenType inType, const std::string& inLexeme, const std::any inValue)
-	: mType(inType), mLexeme(inLexeme), mValue(inValue)
+inline HTNToken::HTNToken(const HTNTokenType inType, const std::string& inLexeme, const unsigned int inLine, const unsigned int inColumn, const std::any inValue)
+	: mType(inType), mLexeme(inLexeme), mLine(inLine), mColumn(inColumn), mValue(inValue)
 {
 }
 
@@ -58,4 +56,14 @@ inline const std::string& HTNToken::GetLexeme() const
 inline std::any HTNToken::GetValue() const
 {
 	return mValue.value();
+}
+
+inline unsigned int HTNToken::GetLine() const
+{
+	return mLine;
+}
+
+inline unsigned int HTNToken::GetColumn() const
+{
+	return mColumn;
 }
