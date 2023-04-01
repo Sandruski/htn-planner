@@ -7,6 +7,8 @@
 // because it provides a rather limited API to the end-user. We provide this backend for the sake of completeness.
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
+#include "LexerDebuggerWindow.h"
+
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer.h"
@@ -79,6 +81,7 @@ int main(int, char**)
     // Our state
     bool show_demo_window = true;
     bool show_another_window = false;
+	bool showLexerWindow = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Main loop
@@ -135,12 +138,19 @@ int main(int, char**)
         // 3. Show another simple window.
         if (show_another_window)
         {
+
             ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
             ImGui::Text("Hello from another window!");
             if (ImGui::Button("Close Me"))
                 show_another_window = false;
             ImGui::End();
         }
+
+		if (showLexerWindow)
+		{
+			static LexerDebuggerWindow sLexerWindow;
+			sLexerWindow.Render();
+		}
 
         // Rendering
         ImGui::Render();
