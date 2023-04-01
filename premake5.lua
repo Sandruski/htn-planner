@@ -59,3 +59,26 @@ project "HTNTest"
     links { "HTN" }
 
     nuget { "Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1.7" }
+
+
+-- HTNTest
+project "HTNDemo"
+    location "HTNDemo"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++20"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("int/" .. outputdir .. "/%{prj.name}")
+
+    pchheader "pch.h"
+    pchsource "%{prj.name}/src/pch.cpp"
+    forceincludes "pch.h"
+
+    files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h" }
+
+    includedirs { "%{prj.name}/src", "HTN/src" }
+
+    links { "HTN" }
+
+    nuget { "Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1.7" }
