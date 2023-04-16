@@ -1,0 +1,28 @@
+
+
+(:domain simple_domain
+
+	// Entry point to call from C++ for the planner, this is consider the main behave function for
+	// an AIIndividual.
+	(:method (entry_point)
+
+		( branch_never_decompose
+			(and (never_decompose)
+			)
+			(    (!log "nunca entrare aqui!")
+			)
+		)
+
+		// Always decompose (fallback)
+		( branch_fallback
+			(
+			)
+			( 	 (!log "comenzando el plan")
+				 (!wait 5.0)
+				 (!log "terminando el plan")
+			)
+		)
+	)
+)
+
+
