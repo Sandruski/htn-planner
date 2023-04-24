@@ -1,6 +1,6 @@
 #include "HTNPlannerHook.h"
 
-#include "Interpreter/Expressions/HTNExpressionBase.h"
+#include "Interpreter/AST/HTNDomain.h"
 #include "Interpreter/HTNInterpreter.h"
 #include "Interpreter/HTNLexer.h"
 #include "Interpreter/HTNParser.h"
@@ -36,53 +36,7 @@ namespace
 		return true;
 	}
 
-	bool InterpretText(const std::string& inText, std::any& outValue)
-	{
-		// Lex
-		HTNLexer Lexer = HTNLexer(inText);
-		std::vector<HTNToken> Tokens;
-		const bool LexerResult = Lexer.Lex(Tokens);
-		if (!LexerResult)
-		{
-			LOG("Lex failed");
-			return false;
-		}
-
-		// Parse
-		HTNParser Parser = HTNParser(Tokens);
-		std::unique_ptr<const HTNExpressionBase> Root;
-		const bool ParseResult = Parser.Parse(Root);
-		if (!ParseResult)
-		{
-			LOG("Parse failed");
-			return false;
-		}
-
-		// Interpret
-		const HTNInterpreter Interpreter = HTNInterpreter(std::move(Root));
-		const bool InterpretResult = Interpreter.Interpret(outValue);
-		if (!InterpretResult)
-		{
-			LOG("Interpret failed");
-			return false;
-		}
-
-		// Print
-		/*
-		const HTNPrinter Printer = HTNPrinter(std::move(Root));
-		std::string Text;
-		const bool PrintResult = Printer.Print(Text);
-		if (!PrintResult)
-		{
-			LOG("Printer failed")
-			break;
-		}
-
-		LOG("Text is {}", Text);
-		*/
-
-		return true;
-	}
+	const std::string kStartCompoundTaskName = "entry_point";
 }
 
 bool HTNPlannerHook::parseDomain(const char* inDomainPath)
@@ -95,6 +49,7 @@ bool HTNPlannerHook::parseDomain(const char* inDomainPath)
 		return false;
 	}
 
+	/*
 	std::any Value;
 	const bool InterpretTextResult = InterpretText(Text, Value);
 	if (!InterpretTextResult)
@@ -104,6 +59,62 @@ bool HTNPlannerHook::parseDomain(const char* inDomainPath)
 	}
 
 	LOG("Value is {}", std::any_cast<double>(Value));
+	*/
 
 	return true;
+}
+
+HTNPlan HTNPlannerHook::MakePlan(const std::string& inDomainPath, const HTNWorldState& inWorldState) const
+{
+	std::string Text;
+	const bool ReadFileResult = ReadFile(inDomainPath, Text);
+	if (!ReadFileResult)
+	{
+		LOG("File {} could not be read", inDomainPath);
+		return {};
+	}
+
+	// Lex
+	HTNLexer Lexer = HTNLexer(Text);
+	std::vector<HTNToken> Tokens;
+	const bool LexerResult = Lexer.Lex(Tokens);
+	if (!LexerResult)
+	{
+		LOG("Lex failed");
+		return {};
+	}
+
+	// Parse
+	HTNParser Parser = HTNParser(Tokens);
+	std::shared_ptr<const HTNDomain> Domain = Parser.Parse();
+	if (!Domain)
+	{
+		LOG("Parse failed");
+		return {};
+	}
+
+	// Interpret
+	const HTNInterpreter Interpreter = HTNInterpreter(Domain, kStartCompoundTaskName);
+	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Tasks = Interpreter.Interpret(inWorldState);
+	if (Tasks.empty())
+	{
+		LOG("Interpret failed");
+		return {};
+	}
+
+	// Print
+	/*
+	const HTNPrinter Printer = HTNPrinter(std::move(Domain));
+	std::string Text;
+	const bool PrintResult = Printer.Print(Text);
+	if (!PrintResult)
+	{
+		LOG("Printer failed")
+		return false;
+	}
+
+	LOG("Text is {}", Text);
+	*/
+
+	return Tasks;
 }

@@ -6,7 +6,14 @@
 #include <memory>
 #include <vector>
 
-class HTNExpressionBase;
+class HTNBranch;
+class HTNCompoundTask;
+class HTNCondition;
+class HTNDomain;
+class HTNMethod;
+class HTNPrimitiveTask;
+class HTNTask;
+class HTNValue;
 
 // Builds an abstract syntax tree from a series of tokens
 // Reports the first syntax error of the tokens
@@ -15,13 +22,19 @@ class HTNParser
 public:
 	explicit HTNParser(const std::vector<HTNToken>& inTokens);
 
-	[[nodiscard]] bool Parse(std::unique_ptr<const HTNExpressionBase>& outRoot);
+	std::shared_ptr<const HTNDomain> Parse();
 
 private:
-	[[nodiscard]] bool Expression(std::unique_ptr<const HTNExpressionBase>& outNode);
-	[[nodiscard]] bool Term(std::unique_ptr<const HTNExpressionBase>& outNode); // + -
-	[[nodiscard]] bool Factor(std::unique_ptr<const HTNExpressionBase>& outNode); // * /
-	[[nodiscard]] bool Primary(std::unique_ptr<const HTNExpressionBase>& outNode); // Number Parenthesis
+	std::shared_ptr<const HTNDomain> ParseDomain();
+	std::shared_ptr<const HTNMethod> ParseMethod();
+	std::shared_ptr<const HTNBranch> ParseBranch();
+	std::shared_ptr<const HTNCondition> ParseCondition();
+	std::shared_ptr<const HTNTask> ParseTask();
+	std::unique_ptr<const HTNValue> ParseIdentifier();
+	std::unique_ptr<const HTNValue> ParseSymbol();
+	std::unique_ptr<const HTNValue> ParseNumber();
+	std::unique_ptr<const HTNValue> ParseString();
+	const HTNToken* ParseToken(const HTNTokenType inTokenType);
 
 	const HTNToken* GetToken() const;
 	void AdvancePosition();

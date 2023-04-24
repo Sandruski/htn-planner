@@ -8,14 +8,9 @@ class HTNWorldState;
 struct HTNDecompositionContext
 {
 public:
-	HTNDecompositionContext(const HTNWorldState& inWorldState) : mWorldState(&inWorldState)
-	{
-	}
+	HTNDecompositionContext(const HTNWorldState& inWorldState);
 
-	const HTNWorldState* GetWorldState() const
-	{
-		return mWorldState;
-	}
+	const HTNWorldState* GetWorldState() const;
 
 	int GetIndex(const HTNCondition& _Condition) const;
 
@@ -25,6 +20,16 @@ private:
 	const HTNWorldState* mWorldState = nullptr; ///< Pointer to world state. All the queries will just not be able to modify the world state at all, this is why it is important this is a const pointer.
 	std::unordered_map<const HTNCondition*, int> mIndices; ///< Index used to query the row in the database. It is initialized to -1 and incremented before querying the row in the database, so the first index used is 0
 };
+
+inline HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldState)
+	: mWorldState(&inWorldState)
+{
+}
+
+inline const HTNWorldState* HTNDecompositionContext::GetWorldState() const
+{
+	return mWorldState;
+}
 
 inline int HTNDecompositionContext::GetIndex(const HTNCondition& _Condition) const
 {

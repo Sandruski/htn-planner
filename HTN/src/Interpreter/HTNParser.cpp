@@ -1,141 +1,272 @@
 #include "Interpreter/HTNParser.h"
 
-#include "Interpreter/Expressions/HTNBinaryExpression.h"
-#include "Interpreter/Expressions/HTNLiteralExpression.h"
+#include "Interpreter/AST/HTNBranch.h"
+#include "Interpreter/AST/HTNCondition.h"
+#include "Interpreter/AST/HTNDomain.h"
+#include "Interpreter/AST/HTNMethod.h"
+#include "Interpreter/AST/HTNTask.h"
+#include "Interpreter/AST/HTNValue.h"
 #include "Log.h"
 
-#include <initializer_list>
-
-namespace
+std::shared_ptr<const HTNDomain> HTNParser::Parse()
 {
-	bool IsTokenType(const HTNToken* inToken, const std::initializer_list<HTNTokenType>& inTokenTypes)
-	{
-		if (!inToken)
-		{
-			return false;
-		}
-
-		const HTNTokenType TokenType = inToken->GetType();
-		const auto It = std::find(inTokenTypes.begin(), inTokenTypes.end(), TokenType);
-		return (It != inTokenTypes.end());
-	}
+	return ParseDomain();
 }
 
-bool HTNParser::Parse(std::unique_ptr<const HTNExpressionBase>& outRoot)
+std::shared_ptr<const HTNDomain> HTNParser::ParseDomain()
 {
-	return Expression(outRoot);
-}
+	// LEFT_PARENTHESIS COLON DOMAIN <identifier> <method>* RIGHT_PARENTHESIS
 
-bool HTNParser::Expression(std::unique_ptr<const HTNExpressionBase>& outNode)
-{
-	return Term(outNode);
-}
-
-bool HTNParser::Term(std::unique_ptr<const HTNExpressionBase>& outNode)
-{
-	// factor ((PLUS | MINUS) factor)*
-
-	std::unique_ptr<const HTNExpressionBase> Left;
-	const bool LeftResult = Factor(Left);
-	if (!LeftResult)
+	if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
 	{
-		return false;
+		return nullptr;
 	}
 
-	for (const HTNToken* Token = GetToken(); IsTokenType(Token, { HTNTokenType::PLUS , HTNTokenType::MINUS }); Token = GetToken())
+	if (!ParseToken(HTNTokenType::COLON))
 	{
-		AdvancePosition();
-
-		std::unique_ptr<const HTNExpressionBase> Right;
-		const bool RightResult = Factor(Right);
-		if (!RightResult)
-		{
-			return false;
-		}
-
-		Left = std::make_unique<HTNBinaryExpression>(std::move(Left), *Token, std::move(Right));
+		return nullptr;
 	}
 
-	outNode = std::move(Left);
+	if (!ParseToken(HTNTokenType::HTN_DOMAIN))
+	{
+		return nullptr;
+	}
 
-	return true;
+	std::unique_ptr<const HTNValue> Name = ParseIdentifier();
+	if (!Name)
+	{
+		return nullptr;
+	}
+
+	std::vector<std::shared_ptr<const HTNMethod>> Methods;
+	while (std::shared_ptr<const HTNMethod> Method = ParseMethod())
+	{
+		Methods.emplace_back(Method);
+	}
+
+	if (Methods.empty())
+	{
+		return nullptr;
+	}
+
+	if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	return std::make_shared<HTNDomain>(std::move(Name), Methods);
 }
 
-bool HTNParser::Factor(std::unique_ptr<const HTNExpressionBase>& outNode)
+std::shared_ptr<const HTNMethod> HTNParser::ParseMethod()
 {
-	// primary ((MUL | DIV) primary)*
+	// LEFT_PARENTHESIS COLON METHOD LEFT_PARENTHESIS <identifier> RIGHT_PARENTHESIS <branch>* RIGHT_PARENTHESIS
 
-	std::unique_ptr<const HTNExpressionBase> Left;
-	const bool LeftResult = Primary(Left);
-	if (!LeftResult)
+	if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
 	{
-		return false;
+		return nullptr;
 	}
 
-	for (const HTNToken* Token = GetToken(); IsTokenType(Token, { HTNTokenType::STAR , HTNTokenType::SLASH }); Token = GetToken())
+	if (!ParseToken(HTNTokenType::COLON))
 	{
-		AdvancePosition();
-
-		std::unique_ptr<const HTNExpressionBase> Right;
-		const bool RightResult = Primary(Right);
-		if (!RightResult)
-		{
-			return false;
-		}
-
-		Left = std::make_unique<HTNBinaryExpression>(std::move(Left), *Token, std::move(Right)); 
+		return nullptr;
 	}
 
-	outNode = std::move(Left);
+	if (!ParseToken(HTNTokenType::HTN_METHOD))
+	{
+		return nullptr;
+	}
 
-	return true;
+	if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	std::unique_ptr<const HTNValue> Name = ParseIdentifier();
+	if (!Name)
+	{
+		return nullptr;
+	}
+
+	if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	std::vector<std::shared_ptr<const HTNBranch>> Branches;
+	while (std::shared_ptr<const HTNBranch> Branch = ParseBranch())
+	{
+		Branches.emplace_back(Branch);
+	}
+
+	if (Branches.empty())
+	{
+		return nullptr;
+	}
+
+	if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	return std::make_shared<HTNMethod>(std::move(Name), Branches);
 }
 
-bool HTNParser::Primary(std::unique_ptr<const HTNExpressionBase>& outNode)
+std::shared_ptr<const HTNBranch> HTNParser::ParseBranch()
+{
+	// LEFT_PARENTHESIS <identifier> LEFT_PARENTHESIS <condition>* RIGHT_PARENTHESIS LEFT_PARENTHESIS <task>* RIGHT_PARENTHESIS RIGHT_PARENTHESIS
+
+	if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	std::unique_ptr<const HTNValue> Name = ParseIdentifier();
+	if (!Name)
+	{
+		return nullptr;
+	}
+
+	if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	std::vector<std::shared_ptr<const HTNCondition>> Conditions;
+	while (std::shared_ptr<const HTNCondition> Condition = ParseCondition())
+	{
+		Conditions.emplace_back(Condition);
+	}
+
+	if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	std::vector<std::shared_ptr<const HTNTask>> Tasks;
+	while (std::shared_ptr<const HTNTask> Task = ParseTask())
+	{
+		Tasks.emplace_back(Task);
+	}
+
+	if (Tasks.empty())
+	{
+		return nullptr;
+	}
+
+	if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	return std::make_shared<HTNBranch>(std::move(Name), Conditions, Tasks);
+}
+
+std::shared_ptr<const HTNCondition> HTNParser::ParseCondition()
+{
+	// TODO
+
+	return nullptr;
+}
+
+std::shared_ptr<const HTNTask> HTNParser::ParseTask()
+{
+	// LEFT_PARENTHESIS EXCLAMATION_MARK* <identifier> (<number> | <string>)* RIGHT_PARENTHESIS
+
+	if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	const EHTNTaskType Type = ParseToken(HTNTokenType::EXCLAMATION_MARK) ? EHTNTaskType::PRIMITIVE : EHTNTaskType::COMPOUND;
+
+	std::unique_ptr<const HTNValue> Name = ParseIdentifier();
+	if (!Name)
+	{
+		return nullptr;
+	}
+
+	std::vector<std::shared_ptr<const HTNValue>> Arguments;
+	while (std::shared_ptr<const HTNValue> Argument = ParseSymbol())
+	{
+		Arguments.emplace_back(Argument);
+	}
+
+	if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	return std::make_shared<HTNTask>(Type, std::move(Name), Arguments);
+}
+
+std::unique_ptr<const HTNValue> HTNParser::ParseIdentifier()
+{
+	// IDENTIFIER
+
+	const HTNToken* Identifier = ParseToken(HTNTokenType::IDENTIFIER);
+	return Identifier ? std::make_unique<HTNValue>(*Identifier) : nullptr;
+}
+
+std::unique_ptr<const HTNValue> HTNParser::ParseSymbol()
+{
+	// <number> | <string>
+
+	std::unique_ptr<const HTNValue> Number = ParseNumber();
+	if (Number)
+	{
+		return Number;
+	}
+
+	std::unique_ptr<const HTNValue> String = ParseString();
+	if (String)
+	{
+		return String;
+	}
+
+	return nullptr;
+}
+
+std::unique_ptr<const HTNValue> HTNParser::ParseNumber()
 {
 	// NUMBER
+	 
+	const HTNToken* Number = ParseToken(HTNTokenType::NUMBER);
+	return Number ? std::make_unique<HTNValue>(*Number) : nullptr;
+}
 
+std::unique_ptr<const HTNValue> HTNParser::ParseString()
+{
+	// STRING
+
+	const HTNToken* String = ParseToken(HTNTokenType::STRING);
+	return String ? std::make_unique<HTNValue>(*String) : nullptr;
+}
+
+const HTNToken* HTNParser::ParseToken(const HTNTokenType inTokenType)
+{
 	const HTNToken* Token = GetToken();
-	if (IsTokenType(Token, { HTNTokenType::NUMBER }))
+	if (!Token)
 	{
-		AdvancePosition();
-
-		outNode = std::make_unique<HTNLiteralExpression>(*Token);
-		return true;
-	}
-	else if (IsTokenType(Token, { HTNTokenType::LEFT_PAREN }))
-	{
-		AdvancePosition();
-
-		const bool Result = Expression(outNode);
-		if (!Result)
-		{
-			return false;
-		}
-
-		Token = GetToken();
-		if (!IsTokenType(Token, { HTNTokenType::RIGHT_PAREN }))
-		{
-#ifdef HTN_DEBUG
-			if (Token)
-			{
-				LOG_HTN_ERROR(Token->GetLine(), Token->GetColumn(), "Token type is not a right parenthesis");
-			}
-#endif
-			return false;
-		}
-
-		AdvancePosition();
-
-		return true;
+		return nullptr;
 	}
 
-#ifdef HTN_DEBUG
-	if (Token)
+	const HTNTokenType TokenType = Token->GetType();
+	if (inTokenType != TokenType)
 	{
-		LOG_HTN_ERROR(Token->GetLine(), Token->GetColumn(), "Token type is not a number or a left parenthesis");
+		return nullptr;
 	}
-#endif
 
-	return false;
+	AdvancePosition();
+
+	return Token;
 }

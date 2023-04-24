@@ -14,19 +14,22 @@ class HTNLexer
 public:
 	explicit HTNLexer(const std::string& inText);
 
-	[[nodiscard]] bool Lex(std::vector<HTNToken>& outTokens);
+	bool Lex(std::vector<HTNToken>& outTokens);
 
 private:
-	[[nodiscard]] bool LexNumber(const char inCharacter, std::vector<HTNToken>& outTokens);
+	void LexKeywordOrIdentifier(std::vector<HTNToken>& outTokens);
+	void LexNumber(std::vector<HTNToken>& outTokens);
+	bool LexString(std::vector<HTNToken>& outTokens);
+	void LexComment();
 
 	void AddToken(const HTNTokenType inType, const std::string& inLexeme, std::vector<HTNToken>& outTokens, const std::any inValue = std::any()) const;
 
 	char GetCharacter(const unsigned int inLookAhead = 0) const;
-	void AdvancePosition();
+	void AdvancePosition(const bool inIsNewLine = false);
 
 	std::string mText;
 	unsigned int mPosition = 0;
-	unsigned int mLine = 0;
+	unsigned int mRow = 0;
 	unsigned int mColumn = 0;
 };
 
@@ -46,7 +49,7 @@ inline char HTNLexer::GetCharacter(const unsigned int inOffset) const
 	return '\0';
 }
 
-inline void HTNLexer::AdvancePosition()
+inline void HTNLexer::AdvancePosition(const bool inIsNewLine)
 {
 	if (mPosition >= mText.length())
 	{
@@ -54,5 +57,14 @@ inline void HTNLexer::AdvancePosition()
 	}
 
 	++mPosition;
-	++mColumn;
+
+	if (inIsNewLine)
+	{
+		++mRow;
+		mColumn = 0;
+	}
+	else
+	{
+		++mColumn;
+	}
 }

@@ -1,6 +1,14 @@
 #pragma once
 
+#include <memory>
+#include <string>
+#include <vector>
+
 class HTNAtom;
+class HTNPrimitiveTask;
+class HTNWorldState;
+
+using HTNPlan = std::vector<std::shared_ptr<const HTNPrimitiveTask>>;
 
 // Runtime instance of an HTN Planner.
 // 
@@ -22,4 +30,6 @@ public:
 		(void*)inConstantId;
 		return nullptr;
 	}
+
+	HTNPlan MakePlan(const std::string& inDomainPath, const HTNWorldState& inWorldState) const;
 };

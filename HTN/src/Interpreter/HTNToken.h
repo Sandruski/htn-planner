@@ -6,15 +6,22 @@
 
 enum class HTNTokenType : uint8_t
 {
-	PLUS, // Addition
-	MINUS, // Subtraction
-	STAR, // Multiplication
-	SLASH, // Division
+	COLON, // :
+	LEFT_PARENTHESIS, // (
+	RIGHT_PARENTHESIS, // )
+	EXCLAMATION_MARK, // !
+	QUESTION_MARK, // ?
+	HASH, // #
 
-	LEFT_PAREN, // Left parenthesis
-	RIGHT_PAREN, // Right parenthesis
+	// Keywords
+	HTN_DOMAIN, // domain
+	HTN_METHOD, // method
+	AND, // and
+	NOT, // not
 
-	NUMBER, // Double
+	IDENTIFIER,
+	NUMBER,
+	STRING,
 
 	END_OF_FILE
 };
@@ -22,24 +29,24 @@ enum class HTNTokenType : uint8_t
 class HTNToken
 {
 public:
-	explicit HTNToken(const HTNTokenType inType, const std::string& inLexeme, const unsigned int inLine, const unsigned int inColumn, const std::any inValue = std::any());
+	explicit HTNToken(const HTNTokenType inType, const std::string& inLexeme, const unsigned int inRow, const unsigned int inColumn, const std::any inValue = std::any());
 
 	HTNTokenType GetType() const;
 	const std::string& GetLexeme() const;
 	std::any GetValue() const;
-	unsigned int GetLine() const;
+	unsigned int GetRow() const;
 	unsigned int GetColumn() const;
 
 private:
 	HTNTokenType mType;
 	std::string mLexeme;
-	std::optional<std::any> mValue;
-	unsigned int mLine = 0;
+	unsigned int mRow = 0;
 	unsigned int mColumn = 0;
+	std::optional<std::any> mValue;
 };
 
-inline HTNToken::HTNToken(const HTNTokenType inType, const std::string& inLexeme, const unsigned int inLine, const unsigned int inColumn, const std::any inValue)
-	: mType(inType), mLexeme(inLexeme), mLine(inLine), mColumn(inColumn), mValue(inValue)
+inline HTNToken::HTNToken(const HTNTokenType inType, const std::string& inLexeme, const unsigned int inRow, const unsigned int inColumn, const std::any inValue)
+	: mType(inType), mLexeme(inLexeme), mRow(inRow), mColumn(inColumn), mValue(inValue)
 {
 }
 
@@ -58,9 +65,9 @@ inline std::any HTNToken::GetValue() const
 	return mValue.value();
 }
 
-inline unsigned int HTNToken::GetLine() const
+inline unsigned int HTNToken::GetRow() const
 {
-	return mLine;
+	return mRow;
 }
 
 inline unsigned int HTNToken::GetColumn() const

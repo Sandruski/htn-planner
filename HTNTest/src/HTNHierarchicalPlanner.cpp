@@ -1,20 +1,22 @@
+#include "Log.h"
+#include "Interpreter/AST/HTNPrimitiveTask.h"
 #include "Runtime/HTNAtom.h"
 #include "Runtime/HTNWorldState.h"
-#include "Runtime/HTNDecompositionContext.h"
 #include "Runtime/HTNConditionWorldStateQuery.h"
 #include "Runtime/HTNPlannerHook.h"
 
+#include <string>
+
 // Test constants groups parsing
 TEST(HTNHierarchicalPlanner, HTNDomainConstantsParsing)
-{
-	//const char* domain_path = "../Domains/horse_domain_test2.domain";
-	const char* domain_path = "../Domains/calculator.domain";
+{	
+	// TODO salvarez
+	/*
+	const char* domain_path = "../Domains/simple_domain.domain";
 	
 	HTNPlannerHook htn_planner;
 	htn_planner.parseDomain(domain_path);
 
-	// TODO salvarez
-	/*
 	const char* constant_group = "Horse_Constants";
 	const char* constant_idle_wait_time_min = "idle_wait_time_min";
 	const char* constant_idle_wait_time_max = "idle_wait_time_max";
@@ -31,4 +33,21 @@ TEST(HTNHierarchicalPlanner, HTNDomainConstantsParsing)
 // Test methods parsing
 TEST(HTNHierarchicalPlanner, HTNDomainMethodsParsing)
 {
+}
+
+// Test planning
+TEST(HTNHierarchicalPlanner, HTNPlanning)
+{
+	HTNPlannerHook Planner; // Decision making
+	const std::string DomainPath = "../Domains/simple_domain.domain";
+	HTNWorldState WorldState;
+	HTNPlan Plan = Planner.MakePlan(DomainPath, WorldState);
+
+	// Print plan
+	for (std::shared_ptr<const HTNPrimitiveTask> Task : Plan)
+	{
+		LOG("{}", Task ? Task->ToString().c_str() : "Invalid Task");
+	}
+
+	// TODO salvarez HTNPlannerRunner // Action execution
 }

@@ -1,27 +1,31 @@
 #pragma once
 
-#include "Interpreter/Expressions/HTNExpressionVisitorBase.h"
+#include "Interpreter/AST/HTNNodeVisitorBase.h"
 
 #include <memory>
+#include <string>
 
-class HTNExpressionBase;
+class HTNDomain;
+class HTNPrimitiveTask;
+class HTNWorldState;
 
 // Traverses an abstract syntax tree
-class HTNInterpreter final : public HTNExpressionVisitorBase
+class HTNInterpreter final : public HTNNodeVisitorBase
 {
 public:
-	explicit HTNInterpreter(std::unique_ptr<const HTNExpressionBase> inRoot);
+	explicit HTNInterpreter(const std::shared_ptr<const HTNDomain>& inDomain, const std::string& inRootCompoundTaskName);
+	~HTNInterpreter();
 
-	[[nodiscard]] bool Interpret(std::any& outValue) const;
+	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Interpret(const HTNWorldState& inWorldState) const;
 
-	[[nodiscard]] bool Visit(const HTNBinaryExpression& inBinaryExpression, std::any& outValue) const final;
-	[[nodiscard]] bool Visit(const HTNLiteralExpression& inLiteralExpression, std::any& outValue) const final;
+	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Visit(const HTNDomain& inDomain) const final;
+	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Visit(const HTNMethod& inMethod) const final;
+	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Visit(const HTNBranch& inBranch) const final;
+	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Visit(const HTNCondition& inCondition) const final;
+	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Visit(const HTNTask& inTask) const final;
+	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Visit(const HTNValue& inValue) const final;
 
 private:
-	std::unique_ptr<const HTNExpressionBase> mRoot;
+	std::shared_ptr<const HTNDomain> mDomain;
+	std::string mRootCompoundTaskName;
 };
-
-inline HTNInterpreter::HTNInterpreter(std::unique_ptr<const HTNExpressionBase> inRoot)
-	: mRoot(std::move(inRoot))
-{
-}
