@@ -8,6 +8,7 @@
 class HTNCondition;
 class HTNTask;
 class HTNValue;
+struct HTNDecompositionContext;
 
 class HTNBranch final : public HTNNodeBase
 {
@@ -17,6 +18,8 @@ public:
 
 	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
 	std::string ToString() const final;
+
+	bool Check(HTNDecompositionContext& ioDecompositionContext) const;
 
 	std::string GetName() const;
 	const std::vector<std::shared_ptr<const HTNCondition>>& GetConditions() const;

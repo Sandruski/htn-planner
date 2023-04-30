@@ -3,8 +3,6 @@
 #include "Interpreter/AST/HTNCondition.h"
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNTask.h"
-#include "Interpreter/AST/HTNCompoundTask.h"
-#include "Interpreter/AST/HTNPrimitiveTask.h"
 #include "Interpreter/AST/HTNValue.h"
 
 HTNBranch::HTNBranch(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNCondition>>& inConditions, const std::vector<std::shared_ptr<const HTNTask>>& inTasks)
@@ -22,6 +20,12 @@ std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNBranch::Accept(const HTN
 std::string HTNBranch::ToString() const
 {
 	return GetName();
+}
+
+bool HTNBranch::Check(HTNDecompositionContext& ioDecompositionContext) const
+{
+	// TODO Check all conditions
+	return true;
 }
 
 std::string HTNBranch::GetName() const

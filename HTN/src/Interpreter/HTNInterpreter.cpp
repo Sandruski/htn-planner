@@ -19,7 +19,7 @@ HTNInterpreter::HTNInterpreter(const std::shared_ptr<const HTNDomain>& inDomain,
 
 HTNInterpreter::~HTNInterpreter() = default;
 
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Interpret(const HTNWorldState& inWorldState) const
+std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Interpret(const HTNWorldState& inWorldState)
 {
 	if (!mDomain)
 	{
@@ -29,50 +29,52 @@ std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Interpret(c
 
 	HTNDecompositionContext DecompositionContext = HTNDecompositionContext(inWorldState);
 
-	return mDomain->Accept(*this);
-}
-
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Visit(const HTNDomain& inDomain) const
-{
 	// Dummy root compound task
 	const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(EHTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNToken(HTNTokenType::IDENTIFIER, mRootCompoundTaskName, 0, 0, mRootCompoundTaskName)));
+	mCurrentDecomposition.PushTaskToProcess(RootCompoundTask);
 
-	std::vector<std::shared_ptr<const HTNTask>> TasksToProcess;
-	TasksToProcess.emplace_back(RootCompoundTask);
-
-	std::vector<std::shared_ptr<const HTNTask>> Plan;
-
-	while (!TasksToProcess.empty())
+	while (mCurrentDecomposition.HasTasksToProcess())
 	{
-		const std::shared_ptr<const HTNTask> CurrentTask = TasksToProcess.back();
-		TasksToProcess.pop_back();
-		
+		const std::shared_ptr<const HTNTask> CurrentTask = mCurrentDecomposition.PopTaskToProcess();
 		switch (CurrentTask->GetType())
 		{
 		case EHTNTaskType::PRIMITIVE:
 		{
-			Plan.emplace_back(CurrentTask);
+			mCurrentDecomposition.AddTaskToPlan(CurrentTask);
 			break;
 		}
 		case EHTNTaskType::COMPOUND:
 		{
-			std::shared_ptr<const HTNMethod> Method = inDomain.FindMethodByName(Method->GetName());
+			std::shared_ptr<const HTNMethod> Method = mDomain->FindMethodByName(CurrentTask->GetName());
 			if (!Method)
 			{
 				LOG_ERROR("Method {} not found", CurrentTask->GetName());
-				// TODO salvarez
+				// TODO salvarez Rollback
 			}
 
+			unsigned int CurrentBranchIndex = 0;
+
 			const std::vector<std::shared_ptr<const HTNBranch>>& Branches = Method->GetBranches();
-			for (const std::shared_ptr<const HTNBranch>& Branch : Branches)
+			for (unsigned int i = 0; i < Branches.size(); ++i)
 			{
-				//const std::vector<std::shared_ptr<const HTNCondition>>& Conditions = Branch->GetConditions();
-				// TODO salvarez Check conditions
+				const std::shared_ptr<const HTNBranch>& Branch = Branches[i];
+				if (!Branch)
+				{
+					LOG_ERROR("Branch is null");
+					// TODO salvarez Rollback
+				}
+
+				if (!Branch->Check(DecompositionContext))
+				{
+					// TODO salvarez Rollback
+				}
+
+				RecordDecomposition();
 
 				const std::vector<std::shared_ptr<const HTNTask>>& Tasks = Branch->GetTasks();
-				for (const std::shared_ptr<const HTNTask>& Tasks : Tasks)
+				for (const std::shared_ptr<const HTNTask>& Task : Tasks)
 				{
-					TasksToProcess.emplace_back(Tasks);
+					mCurrentDecomposition.PushTaskToProcess(Task);
 				}
 			}
 
@@ -85,30 +87,15 @@ std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Visit(const
 		}
 	}
 
-	return Plan;
+	return mCurrentDecomposition.GetPlan();
 }
 
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Visit([[maybe_unused]] const HTNMethod& inMethod) const
+void HTNInterpreter::RecordDecomposition()
 {
-	return {};
+	//mDecompositionHistory.emplace_back(mCurrentDecomposition.GetTasksToProcess(), const HTNPlan & inPlan, const unsigned int inNextBranchIndex)
 }
 
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Visit([[maybe_unused]] const HTNBranch& inBranch) const
+void HTNInterpreter::RestoreDecomposition()
 {
-	return {};
-}
 
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Visit([[maybe_unused]] const HTNCondition& inCondition) const
-{
-	return {};
-}
-
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Visit([[maybe_unused]] const HTNTask& inTask) const
-{
-	return {};
-}
-
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Visit([[maybe_unused]] const HTNValue& inValue) const
-{
-	return {};
 }
