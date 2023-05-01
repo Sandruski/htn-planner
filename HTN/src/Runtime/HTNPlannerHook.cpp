@@ -64,7 +64,7 @@ bool HTNPlannerHook::parseDomain(const char* inDomainPath)
 	return true;
 }
 
-HTNPlan HTNPlannerHook::MakePlan(const std::string& inDomainPath, const HTNWorldState& inWorldState) const
+std::vector<std::shared_ptr<const HTNTask>> HTNPlannerHook::MakePlan(const std::string& inDomainPath, const HTNWorldState& inWorldState) const
 {
 	std::string Text;
 	const bool ReadFileResult = ReadFile(inDomainPath, Text);
@@ -94,9 +94,9 @@ HTNPlan HTNPlannerHook::MakePlan(const std::string& inDomainPath, const HTNWorld
 	}
 
 	// Interpret
-	const HTNInterpreter Interpreter = HTNInterpreter(Domain, kStartCompoundTaskName);
-	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Tasks = Interpreter.Interpret(inWorldState);
-	if (Tasks.empty())
+	HTNInterpreter Interpreter = HTNInterpreter(Domain, kStartCompoundTaskName);
+	const std::vector<std::shared_ptr<const HTNTask>> Plan = Interpreter.Interpret(inWorldState);
+	if (Plan.empty())
 	{
 		LOG("Interpret failed");
 		return {};
@@ -116,5 +116,5 @@ HTNPlan HTNPlannerHook::MakePlan(const std::string& inDomainPath, const HTNWorld
 	LOG("Text is {}", Text);
 	*/
 
-	return Tasks;
+	return Plan;
 }

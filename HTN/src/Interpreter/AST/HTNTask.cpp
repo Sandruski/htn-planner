@@ -15,7 +15,7 @@ HTNTask::HTNTask(const EHTNTaskType inType, std::unique_ptr<const HTNValue> inNa
 
 HTNTask::~HTNTask() = default;
 
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNTask::Accept(const HTNNodeVisitorBase& inVisitor) const
+std::vector<std::shared_ptr<const HTNTask>> HTNTask::Accept(const HTNNodeVisitorBase& inVisitor) const
 {
 	return inVisitor.Visit(*this);
 }

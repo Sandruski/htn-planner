@@ -12,7 +12,7 @@ HTNBranch::HTNBranch(std::unique_ptr<const HTNValue> inName, const std::vector<s
 
 HTNBranch::~HTNBranch() = default;
 
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNBranch::Accept(const HTNNodeVisitorBase& inVisitor) const
+std::vector<std::shared_ptr<const HTNTask>> HTNBranch::Accept(const HTNNodeVisitorBase& inVisitor) const
 {
 	return inVisitor.Visit(*this);
 }
@@ -24,8 +24,15 @@ std::string HTNBranch::ToString() const
 
 bool HTNBranch::Check(HTNDecompositionContext& ioDecompositionContext) const
 {
-	// TODO Check all conditions
-	return true;
+	bool Result = true;
+
+	// TODO Check all conditions, taking into acount and, not, and or
+	for (const std::shared_ptr<const HTNCondition>& Condition : mConditions)
+	{
+		Result = Result && Condition->Check(ioDecompositionContext);
+	}
+
+	return Result;
 }
 
 std::string HTNBranch::GetName() const

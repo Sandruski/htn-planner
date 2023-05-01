@@ -1,7 +1,7 @@
+#include "Interpreter/AST/HTNCondition.h"
 #include "Runtime/HTNAtom.h"
 #include "Runtime/HTNWorldState.h"
 #include "Runtime/HTNDecompositionContext.h"
-#include "Runtime/HTNConditionWorldStateQuery.h"
 
 TEST(HTNAtom, HTNConditionTest)
 {

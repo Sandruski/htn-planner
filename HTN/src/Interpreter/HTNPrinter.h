@@ -22,7 +22,7 @@ public:
 	bool Visit(const HTNMethod& inMethod, std::any& outValue) const final;
 	bool Visit(const HTNBranch& inBranch, std::any& outValue) const final;
 	bool Visit(const HTNCondition& inCondition, std::any& outValue) const final;
-	bool Visit(const HTNPrimitiveTask& inTask, std::any& outValue) const final;
+	bool Visit(const HTNTask& inTask, std::any& outValue) const final;
 	bool Visit(const HTNValue& inValue, std::any& outValue) const final;
 
 private:

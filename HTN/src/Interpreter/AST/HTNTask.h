@@ -20,7 +20,7 @@ public:
 	explicit HTNTask(const EHTNTaskType inType, std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments);
 	~HTNTask();
 	
-	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
+	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
 	std::string ToString() const final;
 
 	EHTNTaskType GetType() const;

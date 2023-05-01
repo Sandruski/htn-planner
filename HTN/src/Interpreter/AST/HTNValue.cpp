@@ -2,7 +2,7 @@
 
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNValue::Accept(const HTNNodeVisitorBase& inVisitor) const
+std::vector<std::shared_ptr<const HTNTask>> HTNValue::Accept(const HTNNodeVisitorBase& inVisitor) const
 {
 	return inVisitor.Visit(*this);
 }

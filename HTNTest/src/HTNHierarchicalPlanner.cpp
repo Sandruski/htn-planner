@@ -1,8 +1,8 @@
 #include "Log.h"
-#include "Interpreter/AST/HTNPrimitiveTask.h"
+#include "Interpreter/AST/HTNCondition.h"
+#include "Interpreter/AST/HTNTask.h"
 #include "Runtime/HTNAtom.h"
 #include "Runtime/HTNWorldState.h"
-#include "Runtime/HTNConditionWorldStateQuery.h"
 #include "Runtime/HTNPlannerHook.h"
 
 #include <string>
@@ -41,10 +41,12 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 	HTNPlannerHook Planner; // Decision making
 	const std::string DomainPath = "../Domains/simple_domain.domain";
 	HTNWorldState WorldState;
-	HTNPlan Plan = Planner.MakePlan(DomainPath, WorldState);
+	const char* kShouldDecompose = "should_decompose";
+	WorldState.MakeFact(kShouldDecompose);
+	const std::vector<std::shared_ptr<const HTNTask>> Plan = Planner.MakePlan(DomainPath, WorldState);
 
 	// Print plan
-	for (std::shared_ptr<const HTNPrimitiveTask> Task : Plan)
+	for (const std::shared_ptr<const HTNTask>& Task : Plan)
 	{
 		LOG("{}", Task ? Task->ToString().c_str() : "Invalid Task");
 	}

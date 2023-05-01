@@ -16,7 +16,7 @@ public:
 	explicit HTNBranch(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNCondition>>& inConditions, const std::vector<std::shared_ptr<const HTNTask>>& inTasks);
 	~HTNBranch();
 
-	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
+	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
 	std::string ToString() const final;
 
 	bool Check(HTNDecompositionContext& ioDecompositionContext) const;

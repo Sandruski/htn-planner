@@ -5,10 +5,8 @@
 #include <vector>
 
 class HTNAtom;
-class HTNPrimitiveTask;
+class HTNTask;
 class HTNWorldState;
-
-using HTNPlan = std::vector<std::shared_ptr<const HTNPrimitiveTask>>;
 
 // Runtime instance of an HTN Planner.
 // 
@@ -31,5 +29,5 @@ public:
 		return nullptr;
 	}
 
-	HTNPlan MakePlan(const std::string& inDomainPath, const HTNWorldState& inWorldState) const;
+	std::vector<std::shared_ptr<const HTNTask>> MakePlan(const std::string& inDomainPath, const HTNWorldState& inWorldState) const;
 };

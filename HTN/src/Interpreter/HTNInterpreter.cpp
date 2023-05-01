@@ -19,7 +19,7 @@ HTNInterpreter::HTNInterpreter(const std::shared_ptr<const HTNDomain>& inDomain,
 
 HTNInterpreter::~HTNInterpreter() = default;
 
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Interpret(const HTNWorldState& inWorldState)
+std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const HTNWorldState& inWorldState)
 {
 	if (!mDomain)
 	{
@@ -49,33 +49,44 @@ std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Interpret(c
 			if (!Method)
 			{
 				LOG_ERROR("Method {} not found", CurrentTask->GetName());
-				// TODO salvarez Rollback
+				break;
+			}
+			
+			const std::vector<std::shared_ptr<const HTNBranch>>& Branches = Method->GetBranches();
+			if (Branches.empty())
+			{
+				LOG_ERROR("Method does not have branches", CurrentTask->GetName());
+				break;
 			}
 
-			unsigned int CurrentBranchIndex = 0;
-
-			const std::vector<std::shared_ptr<const HTNBranch>>& Branches = Method->GetBranches();
-			for (unsigned int i = 0; i < Branches.size(); ++i)
+			const int NextBranchIndex = mCurrentDecomposition.GetNextBranchIndex();
+			if (NextBranchIndex >= Branches.size())
 			{
-				const std::shared_ptr<const HTNBranch>& Branch = Branches[i];
-				if (!Branch)
-				{
-					LOG_ERROR("Branch is null");
-					// TODO salvarez Rollback
-				}
+				LOG_ERROR("Next branch index {} is out of range", NextBranchIndex);
+				break;
+			}
 
-				if (!Branch->Check(DecompositionContext))
-				{
-					// TODO salvarez Rollback
-				}
+			const std::shared_ptr<const HTNBranch>& Branch = Branches[NextBranchIndex];
+			if (!Branch)
+			{
+				LOG_ERROR("Branch is null");
+				break;
+			}
 
-				RecordDecomposition();
+			if (!Branch->Check(DecompositionContext))
+			{
+				RestoreDecomposition();
+				mCurrentDecomposition.IncrementNextBranchIndex();
+				break;
+			}
 
-				const std::vector<std::shared_ptr<const HTNTask>>& Tasks = Branch->GetTasks();
-				for (const std::shared_ptr<const HTNTask>& Task : Tasks)
-				{
-					mCurrentDecomposition.PushTaskToProcess(Task);
-				}
+			RecordDecomposition();
+			mCurrentDecomposition.ResetNextBranchIndex();
+
+			const std::vector<std::shared_ptr<const HTNTask>>& Tasks = Branch->GetTasks();
+			for (const std::shared_ptr<const HTNTask>& Task : Tasks)
+			{
+				mCurrentDecomposition.PushTaskToProcess(Task);
 			}
 
 			break;
@@ -92,10 +103,14 @@ std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNInterpreter::Interpret(c
 
 void HTNInterpreter::RecordDecomposition()
 {
-	//mDecompositionHistory.emplace_back(mCurrentDecomposition.GetTasksToProcess(), const HTNPlan & inPlan, const unsigned int inNextBranchIndex)
+	mDecompositionHistory.emplace_back(mCurrentDecomposition);
 }
 
 void HTNInterpreter::RestoreDecomposition()
 {
-
+	if (!mDecompositionHistory.empty())
+	{
+		mCurrentDecomposition = mDecompositionHistory.back();
+		mDecompositionHistory.pop_back();
+	}
 }

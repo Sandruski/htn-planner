@@ -173,8 +173,27 @@ std::shared_ptr<const HTNBranch> HTNParser::ParseBranch()
 
 std::shared_ptr<const HTNCondition> HTNParser::ParseCondition()
 {
-	// TODO
+	if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
+	{
+		return nullptr;
+	}
 
+	std::unique_ptr<const HTNValue> Key = ParseIdentifier();
+	if (!Key)
+	{
+		return nullptr;
+	}
+
+	if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
+	{
+		return nullptr;
+	}
+
+	//std::shared_ptr<HTNConditionWorldStateQuery<0>> Condition = std::make_shared<HTNConditionWorldStateQuery<0>>();
+	//Condition->SetKey(Key->GetName().c_str());
+	// TODO salvarez Handle arguments
+
+	//return Condition;
 	return nullptr;
 }
 

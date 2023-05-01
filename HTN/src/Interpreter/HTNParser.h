@@ -7,11 +7,10 @@
 #include <vector>
 
 class HTNBranch;
-class HTNCompoundTask;
 class HTNCondition;
 class HTNDomain;
 class HTNMethod;
-class HTNPrimitiveTask;
+class HTNTask;
 class HTNTask;
 class HTNValue;
 

@@ -1,22 +1,17 @@
 #pragma once
 
-#include "Interpreter/AST/HTNNodeVisitorBase.h"
-
 #include <memory>
 #include <string>
 #include <vector>
 
 class HTNDomain;
-class HTNPrimitiveTask;
+class HTNTask;
 class HTNWorldState;
 class HTNTask;
 
 class HTNDecompositionRecord
 {
 public:
-	HTNDecompositionRecord() = default;
-	explicit HTNDecompositionRecord(const std::vector<std::shared_ptr<const HTNTask>>& inTasksToProcess, const HTNPlan& inPlan, const unsigned int inNextBranchIndex);
-
 	void PushTaskToProcess(const std::shared_ptr<const HTNTask>& inTask);
 	const std::shared_ptr<const HTNTask>& PopTaskToProcess();
 	const std::vector<std::shared_ptr<const HTNTask>>& GetTasksToProcess() const;
@@ -24,6 +19,10 @@ public:
 
 	void AddTaskToPlan(const std::shared_ptr<const HTNTask>& inTask);
 	const std::vector<std::shared_ptr<const HTNTask>>& GetPlan() const;
+
+	void IncrementNextBranchIndex();
+	void ResetNextBranchIndex();
+	unsigned int GetNextBranchIndex() const;
 
 private:
 	std::vector<std::shared_ptr<const HTNTask>> mTasksToProcess;
@@ -33,13 +32,13 @@ private:
 };
 
 // Traverses an abstract syntax tree
-class HTNInterpreter final : public HTNNodeVisitorBase
+class HTNInterpreter
 {
 public:
 	explicit HTNInterpreter(const std::shared_ptr<const HTNDomain>& inDomain, const std::string& inRootCompoundTaskName);
 	~HTNInterpreter();
 
-	std::vector<std::shared_ptr<const HTNPrimitiveTask>> Interpret(const HTNWorldState& inWorldState);
+	std::vector<std::shared_ptr<const HTNTask>> Interpret(const HTNWorldState& inWorldState);
 
 private:
 	void RecordDecomposition();
@@ -49,13 +48,8 @@ private:
 	std::string mRootCompoundTaskName;
 
 	HTNDecompositionRecord mCurrentDecomposition;
-	std::vector<const HTNDecompositionRecord> mDecompositionHistory;
+	std::vector<HTNDecompositionRecord> mDecompositionHistory;
 };
-
-inline HTNDecompositionRecord::HTNDecompositionRecord(const std::vector<std::shared_ptr<const HTNTask>>& inTasksToProcess, const HTNPlan& inPlan, const unsigned int inNextBranchIndex)
-	: mTasksToProcess(inTasksToProcess), mPlan(inPlan), mNextBranchIndex(inNextBranchIndex)
-{
-}
 
 inline void HTNDecompositionRecord::PushTaskToProcess(const std::shared_ptr<const HTNTask>& inTask)
 {
@@ -87,4 +81,19 @@ inline void HTNDecompositionRecord::AddTaskToPlan(const std::shared_ptr<const HT
 inline const std::vector<std::shared_ptr<const HTNTask>>& HTNDecompositionRecord::GetPlan() const
 {
 	return mPlan;
+}
+
+inline void HTNDecompositionRecord::IncrementNextBranchIndex()
+{
+	++mNextBranchIndex;
+}
+
+inline void HTNDecompositionRecord::ResetNextBranchIndex()
+{
+	mNextBranchIndex = 0;
+}
+
+inline unsigned int HTNDecompositionRecord::GetNextBranchIndex() const
+{
+	return mNextBranchIndex;
 }

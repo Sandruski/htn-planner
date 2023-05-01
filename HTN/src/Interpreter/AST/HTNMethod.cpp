@@ -11,7 +11,7 @@ HTNMethod::HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<s
 
 HTNMethod::~HTNMethod() = default;
 
-std::vector<std::shared_ptr<const HTNPrimitiveTask>> HTNMethod::Accept(const HTNNodeVisitorBase& inVisitor) const
+std::vector<std::shared_ptr<const HTNTask>> HTNMethod::Accept(const HTNNodeVisitorBase& inVisitor) const
 {
 	return inVisitor.Visit(*this);
 }

@@ -48,7 +48,7 @@ bool HTNPrinter::Visit([[maybe_unused]] const HTNPrecondition& inPrecondition, [
 	return true;
 }
 
-bool HTNPrinter::Visit([[maybe_unused]] const HTNPrimitiveTask& inTask, [[maybe_unused]] std::any& outValue) const
+bool HTNPrinter::Visit([[maybe_unused]] const HTNTask& inTask, [[maybe_unused]] std::any& outValue) const
 {
 	return true;
 }
