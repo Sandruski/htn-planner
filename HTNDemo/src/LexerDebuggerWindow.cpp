@@ -22,7 +22,7 @@ void LexerDebuggerWindow::Render()
 	{
 		// This is not working ATM, needs fix, and we need to move this code up, the parse button is pressed and then the selected domain gets parsed.
 		std::filesystem::path current_path = std::filesystem::current_path();
-		const std::filesystem::path domains_sub_path{ "../../../Domains" };
+		const std::filesystem::path domains_sub_path{ "../Domains" };
 		
 		const std::filesystem::path domains_path = current_path.append(domains_sub_path.c_str());
 		std::ranges::for_each(std::filesystem::directory_iterator{ domains_path },
