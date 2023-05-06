@@ -189,12 +189,11 @@ std::shared_ptr<const HTNCondition> HTNParser::ParseCondition()
 		return nullptr;
 	}
 
-	//std::shared_ptr<HTNConditionWorldStateQuery<0>> Condition = std::make_shared<HTNConditionWorldStateQuery<0>>();
-	//Condition->SetKey(Key->GetName().c_str());
+	std::shared_ptr<HTNConditionWorldStateQuery<0>> Condition = std::make_shared<HTNConditionWorldStateQuery<0>>();
+	Condition->SetKey(Key->GetName().c_str());
 	// TODO salvarez Handle arguments
 
-	//return Condition;
-	return nullptr;
+	return Condition;
 }
 
 std::shared_ptr<const HTNTask> HTNParser::ParseTask()

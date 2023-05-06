@@ -5,6 +5,7 @@
 #include "Runtime/HTNWorldState.h"
 
 #include <array>
+#include <string>
 #include <type_traits>
 
 class HTNAtom;
@@ -32,19 +33,19 @@ class HTNConditionWorldStateQuery final : public HTNCondition
 public:
 	bool Check(HTNDecompositionContext& ioContext) const final;
 
-	void SetKey(const char* inKey);
+	void SetKey(const std::string& inKey);
 	void SetArgument(const int inIndex, HTNAtom* inAtom);
 
 private:
 	template <std::size_t... Is>
 	bool Check(const HTNWorldState& inWorldState, const int inIndex, std::index_sequence<Is...>) const;
 
-	const char* mKey = nullptr;
+	std::string mKey;
 	std::array<HTNAtom*, NumArgs> mArgs;
 };
 
 template <int NumArgs>
-inline void HTNConditionWorldStateQuery<NumArgs>::SetKey(const char* inKey)
+inline void HTNConditionWorldStateQuery<NumArgs>::SetKey(const std::string& inKey)
 {
 	mKey = inKey;
 }
@@ -78,5 +79,5 @@ template <int NumArgs>
 template <std::size_t... I>
 inline bool HTNConditionWorldStateQuery<NumArgs>::Check(const HTNWorldState& inWorldState, const int inIndex, std::index_sequence<I...>) const
 {
-	return inWorldState.CheckIndex(mKey, inIndex, *mArgs[I]...);
+	return inWorldState.CheckIndex(mKey.c_str(), inIndex, *mArgs[I]...);
 }

@@ -227,16 +227,21 @@ inline int HTNWorldState::Query(const char* inKey, Args&... inArgs) const
 		return 0;
 	}
 
-	const HTNFact& Fact = FactIt->second;
-	static constexpr int TableIndex = ArgsSize - 1;
-	const HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
-	if (!Table)
+	if constexpr (ArgsSize > 0)
 	{
-		// Table not found
-		return 0;
+		const HTNFact& Fact = FactIt->second;
+		static constexpr int TableIndex = ArgsSize - 1;
+		const HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
+		if (!Table)
+		{
+			// Table not found
+			return 0;
+		}
+
+		return Table->GetNumEntries();
 	}
 
-	return Table->GetNumEntries();
+	return 1;
 }
 
 template <typename... Args>
@@ -260,16 +265,21 @@ inline int HTNWorldState::QueryIndex(const char* inKey, const int inIndex, Args&
 		return 0;
 	}
 
-	const HTNFact& Fact = FactIt->second;
-	static constexpr int TableIndex = ArgsSize - 1;
-	const HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
-	if (!Table)
+	if constexpr (ArgsSize > 0)
 	{
-		// Table not found
-		return 0;
+		const HTNFact& Fact = FactIt->second;
+		static constexpr int TableIndex = ArgsSize - 1;
+		const HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
+		if (!Table)
+		{
+			// Table not found
+			return 0;
+		}
+
+		return Table->Query(inIndex, inArgs...);
 	}
 
-	return Table->Query(inIndex, inArgs...);
+	return 1;
 }
 
 template <typename... Args>
@@ -285,16 +295,21 @@ inline bool HTNWorldState::CheckIndex(const char* inKey, const int inIndex, Args
 		return false;
 	}
 
-	const HTNFact& Fact = FactIt->second;
-	static constexpr int TableIndex = ArgsSize - 1;
-	const HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
-	if (!Table)
+	if constexpr (ArgsSize > 0)
 	{
-		// Table not found
-		return false;
+		const HTNFact& Fact = FactIt->second;
+		static constexpr int TableIndex = ArgsSize - 1;
+		const HTNTable<ArgsSize>* Table = static_cast<HTNTable<ArgsSize>*>(Fact[TableIndex]);
+		if (!Table)
+		{
+			// Table not found
+			return false;
+		}
+
+		return Table->Check(inIndex, inArgs...);
 	}
 
-	return Table->Check(inIndex, inArgs...);
+	return true;
 }
 
 inline int HTNWorldState::GetNumFactTables(const char* inKey) const

@@ -77,12 +77,12 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const HTNW
 			{
 				RestoreDecomposition();
 				mCurrentDecomposition.IncrementNextBranchIndex();
+				mCurrentDecomposition.PushTaskToProcess(CurrentTask);
 				break;
 			}
 
 			RecordDecomposition();
 			mCurrentDecomposition.ResetNextBranchIndex();
-
 			const std::vector<std::shared_ptr<const HTNTask>>& Tasks = Branch->GetTasks();
 			for (const std::shared_ptr<const HTNTask>& Task : Tasks)
 			{
