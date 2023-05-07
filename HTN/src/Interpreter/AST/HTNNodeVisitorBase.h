@@ -4,7 +4,7 @@
 #include <vector>
 
 class HTNBranch;
-class HTNCondition;
+class HTNConditionBase;
 class HTNDomain;
 class HTNMethod;
 class HTNTask;
@@ -19,7 +19,7 @@ public:
 	virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNDomain& inDomain) const = 0;
 	virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNMethod& inMethod) const = 0;
 	virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNBranch& inBranch) const = 0;
-	virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNCondition& inCondition) const = 0;
+	virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNConditionBase& inCondition) const = 0;
 	virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNTask& inTask) const = 0;
 	virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNValue& inValue) const = 0;
 };

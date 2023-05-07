@@ -1,12 +1,12 @@
 #include "Interpreter/AST/HTNBranch.h"
 
-#include "Interpreter/AST/HTNCondition.h"
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
+#include "Interpreter/AST/HTNCondition.h"
 #include "Interpreter/AST/HTNTask.h"
 #include "Interpreter/AST/HTNValue.h"
 
-HTNBranch::HTNBranch(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNCondition>>& inConditions, const std::vector<std::shared_ptr<const HTNTask>>& inTasks)
-	: mName(std::move(inName)), mConditions(inConditions), mTasks(inTasks)
+HTNBranch::HTNBranch(std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNConditionBase>& inCondition, const std::vector<std::shared_ptr<const HTNTask>>& inTasks)
+	: mName(std::move(inName)), mCondition(inCondition), mTasks(inTasks)
 {
 }
 
@@ -24,15 +24,12 @@ std::string HTNBranch::ToString() const
 
 bool HTNBranch::Check(HTNDecompositionContext& ioDecompositionContext) const
 {
-	bool Result = true;
-
-	// TODO Check all conditions, taking into acount and, not, and or
-	for (const std::shared_ptr<const HTNCondition>& Condition : mConditions)
+	if (!mCondition)
 	{
-		Result = Result && Condition->Check(ioDecompositionContext);
+		return true;
 	}
 
-	return Result;
+	return mCondition->Check(ioDecompositionContext);
 }
 
 std::string HTNBranch::GetName() const

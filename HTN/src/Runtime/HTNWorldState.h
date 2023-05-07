@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HTNAtom.h"
+#include "HTNDefines.h"
 
 #include <algorithm>
 #include <array>
@@ -161,7 +162,7 @@ public:
 	// It checks if there is an existing entry for the inKey + arguments.
 	// If all the arguments are binded then the result is like a binary operation, that query results in true or false.
 	// If not all the arguments are binded then we need to bind it according to the row that correspond to inIndex, the result will always be 0 or 1.
-	// Return either 0 or 1 because we are pointing to a specific row withing a table.
+	// Return either 0 or 1 because we are pointing to a specific row within a table.
 	template <typename... Args>
 	int QueryIndex(const char* inKey, const int inIndex, Args&... inArgs) const;
 

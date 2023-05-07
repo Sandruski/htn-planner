@@ -7,9 +7,10 @@
 #include <vector>
 
 class HTNBranch;
-class HTNCondition;
+class HTNConditionBase;
 class HTNDomain;
 class HTNMethod;
+class HTNCondition;
 class HTNTask;
 class HTNTask;
 class HTNValue;
@@ -27,7 +28,7 @@ private:
 	std::shared_ptr<const HTNDomain> ParseDomain();
 	std::shared_ptr<const HTNMethod> ParseMethod();
 	std::shared_ptr<const HTNBranch> ParseBranch();
-	std::shared_ptr<const HTNCondition> ParseCondition();
+	std::shared_ptr<const HTNConditionBase> ParseCondition();
 	std::shared_ptr<const HTNTask> ParseTask();
 	std::unique_ptr<const HTNValue> ParseIdentifier();
 	std::unique_ptr<const HTNValue> ParseSymbol();

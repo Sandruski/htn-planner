@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-class HTNCondition;
+class HTNConditionBase;
 class HTNTask;
 class HTNValue;
 struct HTNDecompositionContext;
@@ -13,7 +13,7 @@ struct HTNDecompositionContext;
 class HTNBranch final : public HTNNodeBase
 {
 public:
-	explicit HTNBranch(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNCondition>>& inConditions, const std::vector<std::shared_ptr<const HTNTask>>& inTasks);
+	explicit HTNBranch(std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNConditionBase>& inCondition, const std::vector<std::shared_ptr<const HTNTask>>& inTasks);
 	~HTNBranch();
 
 	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
@@ -22,18 +22,18 @@ public:
 	bool Check(HTNDecompositionContext& ioDecompositionContext) const;
 
 	std::string GetName() const;
-	const std::vector<std::shared_ptr<const HTNCondition>>& GetConditions() const;
+	const std::shared_ptr<const HTNConditionBase>& GetCondition() const;
 	const std::vector<std::shared_ptr<const HTNTask>>& GetTasks() const;
 
 private:
 	std::unique_ptr<const HTNValue> mName;
-	std::vector<std::shared_ptr<const HTNCondition>> mConditions;
+	std::shared_ptr<const HTNConditionBase> mCondition;
 	std::vector<std::shared_ptr<const HTNTask>> mTasks;
 };
 
-inline const std::vector<std::shared_ptr<const HTNCondition>>& HTNBranch::GetConditions() const
+inline const std::shared_ptr<const HTNConditionBase>& HTNBranch::GetCondition() const
 {
-	return mConditions;
+	return mCondition;
 }
 
 inline const std::vector<std::shared_ptr<const HTNTask>>& HTNBranch::GetTasks() const

@@ -41,8 +41,8 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 	HTNPlannerHook Planner; // Decision making
 	const std::string DomainPath = "../Domains/simple_domain.domain";
 	HTNWorldState WorldState;
-	//const char* kShouldDecompose = "should_decompose";
-	//WorldState.MakeFact(kShouldDecompose);
+	const char* kShouldDecompose = "should_decompose";
+	WorldState.MakeFact(kShouldDecompose);
 	const std::vector<std::shared_ptr<const HTNTask>> Plan = Planner.MakePlan(DomainPath, WorldState);
 
 	// Print plan

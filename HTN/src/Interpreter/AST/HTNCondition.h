@@ -11,24 +11,18 @@
 class HTNAtom;
 struct HTNDecompositionContext;
 
-class HTNCondition : public HTNNodeBase
+class HTNConditionBase : public HTNNodeBase
 {
 public:
-	HTNCondition();
-	~HTNCondition();
-
 	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
 	std::string ToString() const final;
 
 	// Check if the condition is true.
 	virtual bool Check(HTNDecompositionContext& ioContext) const = 0;
-
-private:
-	// TODO salvarez
 };
 
 template <int NumArgs>
-class HTNConditionWorldStateQuery final : public HTNCondition
+class HTNConditionWorldStateQuery final : public HTNConditionBase
 {
 public:
 	bool Check(HTNDecompositionContext& ioContext) const final;
@@ -42,6 +36,39 @@ private:
 
 	std::string mKey;
 	std::array<HTNAtom*, NumArgs> mArgs;
+};
+
+class HTNConditionAnd final : public HTNConditionBase
+{
+public:
+	explicit HTNConditionAnd(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions);
+
+	bool Check(HTNDecompositionContext& ioContext) const final;
+
+private:
+	std::vector<std::shared_ptr<const HTNConditionBase>> mConditions;
+};
+
+class HTNConditionOr final : public HTNConditionBase
+{
+public:
+	explicit HTNConditionOr(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions);
+
+	bool Check(HTNDecompositionContext& ioContext) const final;
+
+private:
+	std::vector<std::shared_ptr<const HTNConditionBase>> mConditions;
+};
+
+class HTNConditionNot final : public HTNConditionBase
+{
+public:
+	explicit HTNConditionNot(const std::shared_ptr<const HTNConditionBase>& inCondition);
+
+	bool Check(HTNDecompositionContext& ioContext) const final;
+
+private:
+	std::shared_ptr<const HTNConditionBase> mCondition;
 };
 
 template <int NumArgs>

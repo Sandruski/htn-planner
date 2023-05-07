@@ -43,7 +43,7 @@ bool HTNPrinter::Visit([[maybe_unused]] const HTNBranch& inBranch, [[maybe_unuse
 	return true;
 }
 
-bool HTNPrinter::Visit([[maybe_unused]] const HTNPrecondition& inPrecondition, [[maybe_unused]] std::any& outValue) const
+bool HTNPrinter::Visit([[maybe_unused]] const HTNCondition& inPrecondition, [[maybe_unused]] std::any& outValue) const
 {
 	return true;
 }

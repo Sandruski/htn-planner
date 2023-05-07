@@ -11,6 +11,7 @@ namespace
 	{ "domain", HTNTokenType::HTN_DOMAIN },
 	{ "method", HTNTokenType::HTN_METHOD },
 	{ "and", HTNTokenType::AND },
+	{ "or", HTNTokenType::OR },
 	{ "not", HTNTokenType::NOT }
 	};
 

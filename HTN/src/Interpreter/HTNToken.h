@@ -17,6 +17,7 @@ enum class HTNTokenType : uint8_t
 	HTN_DOMAIN, // domain
 	HTN_METHOD, // method
 	AND, // and
+	OR, // or
 	NOT, // not
 
 	IDENTIFIER,

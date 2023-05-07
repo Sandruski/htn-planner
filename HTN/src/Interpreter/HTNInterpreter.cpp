@@ -59,7 +59,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const HTNW
 				break;
 			}
 
-			const int NextBranchIndex = mCurrentDecomposition.GetNextBranchIndex();
+			const unsigned int NextBranchIndex = mCurrentDecomposition.GetNextBranchIndex();
 			if (NextBranchIndex >= Branches.size())
 			{
 				LOG_ERROR("Next branch index {} is out of range", NextBranchIndex);
