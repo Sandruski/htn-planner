@@ -1,7 +1,6 @@
 #pragma once
 
 #include "HTNAtom.h"
-#include "HTNDefines.h"
 
 #include <algorithm>
 #include <array>
