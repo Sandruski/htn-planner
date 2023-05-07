@@ -144,7 +144,7 @@ std::shared_ptr<const HTNBranch> HTNParser::ParseBranch()
 
 std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()
 {
-	// ((AND | OR | NOT) <condition>) | (LEFT_PARENTHESIS <identifier> RIGHT_PARENTHESIS))
+	// LEFT_PARENTHESIS ((AND | OR | NOT) <condition>) | <identifier>) RIGHT_PARENTHESIS
 
 	if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
 	{
