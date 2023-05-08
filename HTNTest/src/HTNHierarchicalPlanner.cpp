@@ -5,6 +5,11 @@
 #include "Runtime/HTNWorldState.h"
 #include "Runtime/HTNPlannerHook.h"
 
+#include <algorithm>
+#include <iostream>
+#include <thread>
+#include <execution>
+#include <vector>
 #include <string>
 
 // Test constants groups parsing
@@ -43,6 +48,12 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 	HTNWorldState WorldState;
 	const char* kShouldDecompose = "should_decompose";
 	WorldState.MakeFact(kShouldDecompose);
+	
+	// TODO Sandra: MakePlan should receive as parameter the name of the entry point function. This way we will prepare the planner for the future to support delayed decomposition of other methods.
+	// The name of the entry point function should be part of the HtnPlanningUnit instance. There might be more than 1 planning units running at the same time in sequence:
+	// ex: main_body_planning_unit and upper_body_planning_unit. The entry point function MUST be different
+	// ex: main_body_planning_unit	-> entry point function: "behave"
+	// ex: upper_body_planning_unit -> entry point function: "behave_upper_body"
 	const std::vector<std::shared_ptr<const HTNTask>> Plan = Planner.MakePlan(DomainPath, WorldState);
 
 	// Print plan
@@ -50,6 +61,46 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 	{
 		LOG("{}", Task ? Task->ToString().c_str() : "Invalid Task");
 	}
+
+	// TODO salvarez HTNPlannerRunner // Action execution
+}
+
+// Planning unit structure that holds the planner hook and the database
+struct PlanningUnit
+{
+public:
+	// Execute planning unit top level method
+	void				ExecuteTopLevelMethod()
+	{
+		WorldState.MakeFact("should_decompose");
+		const std::string DomainPath = "../Domains/simple_domain.domain";
+		const std::vector<std::shared_ptr<const HTNTask>> Plan = Planner.MakePlan(DomainPath, WorldState);		
+		// Print thread id + plan
+		std::cout << "Thread: " << std::this_thread::get_id() << std::endl;
+		for (const std::shared_ptr<const HTNTask>& Task : Plan)
+		{
+			LOG("{}", Task ? Task->ToString().c_str() : "Invalid Task");
+		}
+	}
+private:
+	HTNPlannerHook Planner;		// Decision making
+	HTNWorldState WorldState;	// World state database
+};
+
+// called per thread to execute the planner top level method
+static void sParallelWork(PlanningUnit& inPlanningUnit)
+{
+	inPlanningUnit.ExecuteTopLevelMethod();
+}
+
+
+TEST(HTNHierarchicalPlanner, MultiThreadingHTNPlanning)
+{
+	std::vector<PlanningUnit> PlanningUnits;
+	PlanningUnits.resize(1000);				/// 10 planning units executed in parallel.
+
+	// parallel for
+	std::for_each(std::execution::par, PlanningUnits.begin(), PlanningUnits.end(), sParallelWork);
 
 	// TODO salvarez HTNPlannerRunner // Action execution
 }
