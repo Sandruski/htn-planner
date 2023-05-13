@@ -98,6 +98,8 @@ std::shared_ptr<const HTNMethod> HTNParser::ParseMethod()
 		return nullptr;
 	}
 
+	// TODO salvarez Support multiple arguments in methods
+
 	return std::make_shared<HTNMethod>(std::move(Name), Branches);
 }
 
@@ -185,7 +187,7 @@ std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()
 			std::shared_ptr<HTNConditionWorldStateQuery<0>> ConditionWorldStateQuery = std::make_shared<HTNConditionWorldStateQuery<0>>();
 			ConditionWorldStateQuery->SetKey(Key->GetValue().GetValue<std::string>());
 			Condition = ConditionWorldStateQuery;
-			// TODO salvarez Support multiple arguments
+			// TODO salvarez Support multiple arguments in conditions
 		}
 	}
 
@@ -224,6 +226,8 @@ std::shared_ptr<const HTNTask> HTNParser::ParseTask()
 	{
 		return nullptr;
 	}
+
+	// TODO salvarez Support multiple arguments in tasks
 
 	return std::make_shared<HTNTask>(Type, std::move(Name), Arguments);
 }
