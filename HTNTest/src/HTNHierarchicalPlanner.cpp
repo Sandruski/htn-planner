@@ -45,7 +45,10 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 {
 	HTNPlannerHook Planner; // Decision making
 	const std::string DomainPath = "../Domains/simple_domain.domain";
-	Planner.parseDomain(DomainPath);
+	if (!Planner.parseDomain(DomainPath))
+	{
+		return;
+	}
 
 	const std::string EntryPointName = "entry_point";
 

@@ -25,7 +25,7 @@ namespace
 		File.open(inPath);
 		if (!File.is_open())
 		{
-			LOG("File {} could not be opened", inPath);
+			LOG_ERROR("File {} could not be opened", inPath);
 			return false;
 		}
 
