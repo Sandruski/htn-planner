@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Interpreter/HTNInterpreter.h"
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -17,7 +19,7 @@ public:
 	// The information needed would be: ConstantsGroups, Methods, Axioms.
 	// Once we got all this information we need to know before hand what is the top_level method. 
 	// The top level method determines the root/parent node of the entire hierarchy.
-	bool parseDomain(const char* inDomainPath);
+	bool parseDomain(const std::string& inDomainPath);
 
 	// Returns an HTNAtom with the information about the constant requested. 
 	// Returns an unbinded atom if the constant wasn't found.
@@ -29,5 +31,8 @@ public:
 		return nullptr;
 	}
 
-	std::vector<std::shared_ptr<const HTNTask>> MakePlan(const std::string& inDomainPath, const HTNWorldState& inWorldState) const;
+	std::vector<std::shared_ptr<const HTNTask>> MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState) const;
+
+private:
+	HTNInterpreter mInterpreter;
 };

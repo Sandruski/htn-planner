@@ -45,6 +45,10 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 {
 	HTNPlannerHook Planner; // Decision making
 	const std::string DomainPath = "../Domains/simple_domain.domain";
+	Planner.parseDomain(DomainPath);
+
+	const std::string EntryPointName = "entry_point";
+
 	HTNWorldState WorldState;
 	const char* kShouldDecompose = "should_decompose";
 	WorldState.MakeFact(kShouldDecompose);
@@ -54,9 +58,7 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 	// ex: main_body_planning_unit and upper_body_planning_unit. The entry point function MUST be different
 	// ex: main_body_planning_unit	-> entry point function: "behave"
 	// ex: upper_body_planning_unit -> entry point function: "behave_upper_body"
-	const std::vector<std::shared_ptr<const HTNTask>> Plan = Planner.MakePlan(DomainPath, WorldState);
-
-	// Print plan
+	const std::vector<std::shared_ptr<const HTNTask>> Plan = Planner.MakePlan(EntryPointName, WorldState);
 	for (const std::shared_ptr<const HTNTask>& Task : Plan)
 	{
 		LOG("{}", Task ? Task->ToString().c_str() : "Invalid Task");

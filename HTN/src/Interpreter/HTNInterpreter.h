@@ -12,12 +12,12 @@ class HTNWorldState;
 class HTNInterpreter
 {
 public:
-	explicit HTNInterpreter(const std::shared_ptr<const HTNDomain>& inDomain, const std::string& inRootCompoundTaskName);
 	~HTNInterpreter();
 
-	std::vector<std::shared_ptr<const HTNTask>> Interpret(const HTNWorldState& inWorldState);
+	bool Init(const std::string& inDomainPath);
+
+	std::vector<std::shared_ptr<const HTNTask>> Interpret(const std::string& inEntryPointName, const HTNWorldState& inWorldState) const;
 
 private:
 	std::shared_ptr<const HTNDomain> mDomain;
-	std::string mRootCompoundTaskName;
 };
