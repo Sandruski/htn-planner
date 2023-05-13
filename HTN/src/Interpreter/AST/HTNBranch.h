@@ -6,9 +6,9 @@
 #include <vector>
 
 class HTNConditionBase;
+class HTNDecompositionContext;
 class HTNTask;
 class HTNValue;
-struct HTNDecompositionContext;
 
 class HTNBranch final : public HTNNodeBase
 {
