@@ -26,7 +26,7 @@ namespace
 		}
 
 		// Read file
-		std::stringstream Buffer;
+		std::ostringstream Buffer;
 		Buffer << File.rdbuf();
 		outText = Buffer.str();
 

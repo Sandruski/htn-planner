@@ -183,7 +183,7 @@ std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()
 		if (std::unique_ptr<const HTNValue> Key = ParseIdentifier())
 		{
 			std::shared_ptr<HTNConditionWorldStateQuery<0>> ConditionWorldStateQuery = std::make_shared<HTNConditionWorldStateQuery<0>>();
-			ConditionWorldStateQuery->SetKey(Key->GetName().c_str());
+			ConditionWorldStateQuery->SetKey(Key->GetValue().GetValue<std::string>());
 			Condition = ConditionWorldStateQuery;
 			// TODO salvarez Support multiple arguments
 		}
@@ -233,7 +233,7 @@ std::unique_ptr<const HTNValue> HTNParser::ParseIdentifier()
 	// IDENTIFIER
 
 	const HTNToken* Identifier = ParseToken(HTNTokenType::IDENTIFIER);
-	return Identifier ? std::make_unique<HTNValue>(*Identifier) : nullptr;
+	return Identifier ? std::make_unique<HTNValue>(Identifier->GetValue()) : nullptr;
 }
 
 std::unique_ptr<const HTNValue> HTNParser::ParseSymbol()
@@ -260,7 +260,7 @@ std::unique_ptr<const HTNValue> HTNParser::ParseNumber()
 	// NUMBER
 	 
 	const HTNToken* Number = ParseToken(HTNTokenType::NUMBER);
-	return Number ? std::make_unique<HTNValue>(*Number) : nullptr;
+	return Number ? std::make_unique<HTNValue>(Number->GetValue()) : nullptr;
 }
 
 std::unique_ptr<const HTNValue> HTNParser::ParseString()
@@ -268,7 +268,7 @@ std::unique_ptr<const HTNValue> HTNParser::ParseString()
 	// STRING
 
 	const HTNToken* String = ParseToken(HTNTokenType::STRING);
-	return String ? std::make_unique<HTNValue>(*String) : nullptr;
+	return String ? std::make_unique<HTNValue>(String->GetValue()) : nullptr;
 }
 
 const HTNToken* HTNParser::ParseToken(const HTNTokenType inTokenType)

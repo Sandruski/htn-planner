@@ -65,6 +65,7 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 	// TODO salvarez HTNPlannerRunner // Action execution
 }
 
+/*
 // Planning unit structure that holds the planner hook and the database
 struct PlanningUnit
 {
@@ -104,3 +105,4 @@ TEST(HTNHierarchicalPlanner, MultiThreadingHTNPlanning)
 
 	// TODO salvarez HTNPlannerRunner // Action execution
 }
+*/

@@ -3,6 +3,7 @@
 #include "HTNToken.h"
 #include "Log.h"
 
+#include <limits>
 #include <unordered_map>
 
 namespace
@@ -55,42 +56,42 @@ bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
 		case ':':
 		{
 			// Colon
-			AddToken(HTNTokenType::COLON, std::string(1, Character), outTokens);
+			AddToken(HTNTokenType::COLON, std::string(1, Character), HTNAtom(), outTokens);
 			AdvancePosition();
 			break;
 		}
 		case '(':
 		{
 			// Left parenthesis
-			AddToken(HTNTokenType::LEFT_PARENTHESIS, std::string(1, Character), outTokens);
+			AddToken(HTNTokenType::LEFT_PARENTHESIS, std::string(1, Character), HTNAtom(), outTokens);
 			AdvancePosition();
 			break;
 		}
 		case ')':
 		{
 			// Right parenthesis
-			AddToken(HTNTokenType::RIGHT_PARENTHESIS, std::string(1, Character), outTokens);
+			AddToken(HTNTokenType::RIGHT_PARENTHESIS, std::string(1, Character), HTNAtom(), outTokens);
 			AdvancePosition();
 			break;
 		}
 		case '!':
 		{
 			// Exclamation mark
-			AddToken(HTNTokenType::EXCLAMATION_MARK, std::string(1, Character), outTokens);
+			AddToken(HTNTokenType::EXCLAMATION_MARK, std::string(1, Character), HTNAtom(), outTokens);
 			AdvancePosition();
 			break;
 		}
 		case '?':
 		{
 			// Question mark
-			AddToken(HTNTokenType::QUESTION_MARK, std::string(1, Character), outTokens);
+			AddToken(HTNTokenType::QUESTION_MARK, std::string(1, Character), HTNAtom(), outTokens);
 			AdvancePosition();
 			break;
 		}
 		case '#':
 		{
 			// Hash
-			AddToken(HTNTokenType::HASH, std::string(1, Character), outTokens);
+			AddToken(HTNTokenType::HASH, std::string(1, Character), HTNAtom(), outTokens);
 			AdvancePosition();
 			break;
 		}
@@ -156,7 +157,7 @@ bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
 		}
 	}
 
-	AddToken(HTNTokenType::END_OF_FILE, "", outTokens);
+	AddToken(HTNTokenType::END_OF_FILE, "", HTNAtom(), outTokens);
 
 	return Result;
 }
@@ -175,7 +176,7 @@ void HTNLexer::LexKeywordOrIdentifier(std::vector<HTNToken>& outTokens)
 	const unsigned int EndPosition = mPosition - StartPosition;
 	const std::string Lexeme = mText.substr(StartPosition, EndPosition);
 	const HTNTokenType TokenType = GetKeywordOrIdentifierTokenType(Lexeme);
-	AddToken(TokenType, Lexeme, outTokens, Lexeme);
+	AddToken(TokenType, Lexeme, HTNAtom(Lexeme), outTokens);
 }
 
 void HTNLexer::LexNumber(std::vector<HTNToken>& outTokens)
@@ -191,25 +192,30 @@ void HTNLexer::LexNumber(std::vector<HTNToken>& outTokens)
 	}
 
 	// Check for fractional part
-	if (GetCharacter() == '.')
+	const char NextCharacter = GetCharacter(1);
+	if (GetCharacter() == '.' && IsDigit(NextCharacter))
 	{
-		const char NextCharacter = GetCharacter(1);
-		if (IsDigit(NextCharacter))
+		AdvancePosition();
+
+		// Check for more digits in fractional part
+		for (char Character = GetCharacter(); IsDigit(Character); Character = GetCharacter())
 		{
 			AdvancePosition();
-
-			// Check for more digits in fractional part
-			for (char Character = GetCharacter(); IsDigit(Character); Character = GetCharacter())
-			{
-				AdvancePosition();
-			}
 		}
-	}
 
-	const unsigned int EndPosition = mPosition - StartPosition;
-	const std::string Lexeme = mText.substr(StartPosition + 1, EndPosition - 1);
-	const double Number = std::stod(Lexeme);
-	AddToken(HTNTokenType::NUMBER, Lexeme, outTokens, Number);
+		const unsigned int EndPosition = mPosition - StartPosition;
+		const std::string Lexeme = mText.substr(StartPosition + 1, EndPosition - 1);
+		const float Number = std::stof(Lexeme);
+		LOG_CERROR(std::stod(Lexeme) >= std::numeric_limits<float>::min() && std::stod(Lexeme) <= std::numeric_limits<float>::max(), "Number out of bounds");
+		AddToken(HTNTokenType::NUMBER, Lexeme, HTNAtom(Number), outTokens);
+	}
+	else
+	{
+		const unsigned int EndPosition = mPosition - StartPosition;
+		const std::string Lexeme = mText.substr(StartPosition + 1, EndPosition - 1);
+		const int Number = std::stoi(Lexeme);
+		AddToken(HTNTokenType::NUMBER, Lexeme, HTNAtom(Number), outTokens);
+	}
 }
 
 bool HTNLexer::LexString(std::vector<HTNToken>& outTokens)
@@ -233,7 +239,7 @@ bool HTNLexer::LexString(std::vector<HTNToken>& outTokens)
 
 	const unsigned int EndPosition = mPosition - StartPosition;
 	const std::string Lexeme = mText.substr(StartPosition, EndPosition);
-	AddToken(HTNTokenType::STRING, Lexeme, outTokens, Lexeme);
+	AddToken(HTNTokenType::STRING, Lexeme, HTNAtom(Lexeme), outTokens);
 
 	return true;
 }
@@ -248,7 +254,7 @@ void HTNLexer::LexComment()
 	AdvancePosition(true);
 }
 
-void HTNLexer::AddToken(const HTNTokenType inType, const std::string& inLexeme, std::vector<HTNToken>& outTokens, const std::any inValue) const
+void HTNLexer::AddToken(const HTNTokenType inType, const std::string& inLexeme, const HTNAtom& inValue, std::vector<HTNToken>& outTokens) const
 {
-	outTokens.emplace_back(inType, inLexeme, mRow, mColumn, inValue);
+	outTokens.emplace_back(inType, inLexeme, inValue, mRow, mColumn);
 }

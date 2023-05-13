@@ -30,7 +30,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const HTNW
 	HTNDecompositionContext DecompositionContext = HTNDecompositionContext(inWorldState);
 
 	// Dummy root compound task
-	const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(EHTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNToken(HTNTokenType::IDENTIFIER, mRootCompoundTaskName, 0, 0, mRootCompoundTaskName)));
+	const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(EHTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNAtom(mRootCompoundTaskName.c_str())));
 	mCurrentDecomposition.PushTaskToProcess(RootCompoundTask);
 
 	while (mCurrentDecomposition.HasTasksToProcess())

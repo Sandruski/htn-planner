@@ -24,8 +24,8 @@ TEST(HTNAtom, HTNArgumentBinding)
 		EXPECT_FALSE(atom_from_unbinded_to_fish.IsSet());
 		EXPECT_EQ(world_state.QueryIndex(sFood, 0, atom_from_unbinded_to_fish), 1);
 		EXPECT_TRUE(atom_from_unbinded_to_fish.IsSet());
-		EXPECT_TRUE(atom_from_unbinded_to_fish.IsType<const char*>());
-		EXPECT_EQ(strcmp(atom_from_unbinded_to_fish.GetValue<const char*>(), "fish"), 0);
+		EXPECT_TRUE(atom_from_unbinded_to_fish.IsType<std::string>());
+		EXPECT_TRUE(atom_from_unbinded_to_fish.GetValue<std::string>() == "fish");
 	}
 
 	// Query Row specific 1
@@ -34,8 +34,8 @@ TEST(HTNAtom, HTNArgumentBinding)
 		EXPECT_FALSE(atom_from_unbinded_to_beef.IsSet());
 		EXPECT_EQ(world_state.QueryIndex(sFood, 1, atom_from_unbinded_to_beef), 1);
 		EXPECT_TRUE(atom_from_unbinded_to_beef.IsSet());
-		EXPECT_TRUE(atom_from_unbinded_to_beef.IsType<const char*>());
-		EXPECT_EQ(strcmp(atom_from_unbinded_to_beef.GetValue<const char*>(), "beef"), 0);
+		EXPECT_TRUE(atom_from_unbinded_to_beef.IsType<std::string>());
+		EXPECT_TRUE(atom_from_unbinded_to_beef.GetValue<std::string>() == "beef");
 	}
 
 	// Query Row specific 2
@@ -44,8 +44,8 @@ TEST(HTNAtom, HTNArgumentBinding)
 		EXPECT_FALSE(atom_from_unbinded_to_meat.IsSet());
 		EXPECT_EQ(world_state.QueryIndex(sFood, 2, atom_from_unbinded_to_meat), 1);
 		EXPECT_TRUE(atom_from_unbinded_to_meat.IsSet());
-		EXPECT_TRUE(atom_from_unbinded_to_meat.IsType<const char*>());
-		EXPECT_EQ(strcmp(atom_from_unbinded_to_meat.GetValue<const char*>(), "meat"), 0);
+		EXPECT_TRUE(atom_from_unbinded_to_meat.IsType<std::string>());
+		EXPECT_TRUE(atom_from_unbinded_to_meat.GetValue<std::string>() == "meat");
 	}
 
 	// Query Row specific 3
@@ -54,8 +54,8 @@ TEST(HTNAtom, HTNArgumentBinding)
 		EXPECT_FALSE(atom_from_unbinded_to_fruit.IsSet());
 		EXPECT_EQ(world_state.QueryIndex(sFood, 3, atom_from_unbinded_to_fruit), 1);
 		EXPECT_TRUE(atom_from_unbinded_to_fruit.IsSet());
-		EXPECT_TRUE(atom_from_unbinded_to_fruit.IsType<const char*>());
-		EXPECT_EQ(strcmp(atom_from_unbinded_to_fruit.GetValue<const char*>(), "fruit"), 0);
+		EXPECT_TRUE(atom_from_unbinded_to_fruit.IsType<std::string>());
+		EXPECT_TRUE(atom_from_unbinded_to_fruit.GetValue<std::string>() == "fruit");
 	}
 
 	// Query Row specific 4 (doesn't exist)

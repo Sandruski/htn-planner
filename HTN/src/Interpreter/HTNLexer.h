@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+class HTNAtom;
 class HTNToken;
 enum class HTNTokenType : uint8_t;
 
@@ -22,7 +23,7 @@ private:
 	bool LexString(std::vector<HTNToken>& outTokens);
 	void LexComment();
 
-	void AddToken(const HTNTokenType inType, const std::string& inLexeme, std::vector<HTNToken>& outTokens, const std::any inValue = std::any()) const;
+	void AddToken(const HTNTokenType inType, const std::string& inLexeme, const HTNAtom& inValue, std::vector<HTNToken>& outTokens) const;
 
 	char GetCharacter(const unsigned int inLookAhead = 0) const;
 	void AdvancePosition(const bool inIsNewLine = false);
