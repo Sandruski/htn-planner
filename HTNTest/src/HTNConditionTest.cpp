@@ -26,28 +26,28 @@ TEST(HTNAtom, HTNConditionTest)
 
 	// Test condition node to ensure certain query with all the arguments binded decompose to true (Jota is a programmer)
 	{
-		HTNConditionWorldStateQuery<1>	condition_world_state_query;
+		HTNConditionWorldStateQuery	condition_world_state_query;
 		condition_world_state_query.SetKey(sProgrammer);
 		EXPECT_TRUE(binded_to_jota.IsSet());
-		condition_world_state_query.SetArgument(0, &binded_to_jota);
+		condition_world_state_query.SetArgument(&binded_to_jota);
 		EXPECT_TRUE(condition_world_state_query.Check(decomposition_context));
 	}
 
 	// Test condition node to ensure certain query with all the arguments binded decompose to false (Jota is not a lead)
 	{
-		HTNConditionWorldStateQuery<1>	condition_world_state_query;
+		HTNConditionWorldStateQuery	condition_world_state_query;
 		condition_world_state_query.SetKey(sLeadProgrammer);
 		EXPECT_TRUE(binded_to_jota.IsSet());
-		condition_world_state_query.SetArgument(0, &binded_to_jota);
+		condition_world_state_query.SetArgument(&binded_to_jota);
 		EXPECT_FALSE(condition_world_state_query.Check(decomposition_context));
 	}
 
 	// Test condition node to ensure certain query with all the arguments unbinded decompose to true
 	{
-		HTNConditionWorldStateQuery<1>	condition_world_state_query;
+		HTNConditionWorldStateQuery	condition_world_state_query;
 		condition_world_state_query.SetKey(sLeadProgrammer);
 		EXPECT_FALSE(unbinded_programmer.IsSet());
-		condition_world_state_query.SetArgument(0, &unbinded_programmer);
+		condition_world_state_query.SetArgument(&unbinded_programmer);
 		// 
 		EXPECT_TRUE(condition_world_state_query.Check(decomposition_context));
 		EXPECT_TRUE(unbinded_programmer.IsSet());
@@ -80,11 +80,11 @@ TEST(HTNAtom, HTNMultiConditionTest)
 	// Calling Check for third time will make index be 2 at the end of the Check function.
 	// etc... etc...
 	{
-		HTNConditionWorldStateQuery<1>	condition_world_state_query;
+		HTNConditionWorldStateQuery	condition_world_state_query;
 		condition_world_state_query.SetKey(sProgrammer);
 
 		HTNAtom unbinded_programmer_multiresult_0;
-		condition_world_state_query.SetArgument(0, &unbinded_programmer_multiresult_0);
+		condition_world_state_query.SetArgument(&unbinded_programmer_multiresult_0);
 
 		// Test first solution (jota)
 		EXPECT_TRUE(condition_world_state_query.Check(multiresult_decomposition_context));

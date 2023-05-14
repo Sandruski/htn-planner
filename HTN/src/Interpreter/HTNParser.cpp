@@ -1,5 +1,6 @@
 #include "Interpreter/HTNParser.h"
 
+#include "HTNAtom.h"
 #include "Interpreter/AST/HTNBranch.h"
 #include "Interpreter/AST/HTNDomain.h"
 #include "Interpreter/AST/HTNMethod.h"
@@ -180,12 +181,20 @@ std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()
 	}
 	else
 	{
+		// TODO salvarez Delete the HTNValue and do news of the HTNAtom that are created when reading the HTN domain
+
 		if (std::unique_ptr<const HTNValue> Key = ParseIdentifier())
 		{
-			std::shared_ptr<HTNConditionWorldStateQuery<0>> ConditionWorldStateQuery = std::make_shared<HTNConditionWorldStateQuery<0>>();
-			ConditionWorldStateQuery->SetKey(Key->GetName().c_str());
+			std::shared_ptr<HTNConditionWorldStateQuery> ConditionWorldStateQuery = std::make_shared<HTNConditionWorldStateQuery>();
+			const char* Value = Key->GetValue().GetValue<const char*>(); // TODO salvarez Use std::string here instead of const char* because it's dangerous
+			ConditionWorldStateQuery->SetKey(Value);
 			Condition = ConditionWorldStateQuery;
-			// TODO salvarez Support multiple arguments
+
+			std::vector<HTNAtom*> SubConditions;
+			while (std::shared_ptr<const HTNConditionBase> SubCondition = ParseCondition())
+			{
+				SubConditions.emplace_back(SubCondition);
+			}
 		}
 	}
 
@@ -215,7 +224,7 @@ std::shared_ptr<const HTNTask> HTNParser::ParseTask()
 	}
 
 	std::vector<std::shared_ptr<const HTNValue>> Arguments;
-	while (std::shared_ptr<const HTNValue> Argument = ParseSymbol())
+	while (std::shared_ptr<const HTNValue> Argument = ParseArgument())
 	{
 		Arguments.emplace_back(Argument);
 	}
@@ -228,26 +237,19 @@ std::shared_ptr<const HTNTask> HTNParser::ParseTask()
 	return std::make_shared<HTNTask>(Type, std::move(Name), Arguments);
 }
 
-std::unique_ptr<const HTNValue> HTNParser::ParseIdentifier()
+std::unique_ptr<const HTNValue> HTNParser::ParseArgument()
 {
-	// IDENTIFIER
+	// QUESTION_MARK <identifier>
 
-	const HTNToken* Identifier = ParseToken(HTNTokenType::IDENTIFIER);
-	return Identifier ? std::make_unique<HTNValue>(*Identifier) : nullptr;
-}
-
-std::unique_ptr<const HTNValue> HTNParser::ParseSymbol()
-{
-	// <number> | <string>
-
-	std::unique_ptr<const HTNValue> Number = ParseNumber();
-	if (Number)
+	if (ParseToken(HTNTokenType::QUESTION_MARK))
+	{
+		return ParseIdentifier();
+	}
+	else if (std::unique_ptr<const HTNValue> Number = ParseNumber())
 	{
 		return Number;
 	}
-
-	std::unique_ptr<const HTNValue> String = ParseString();
-	if (String)
+	else if (std::unique_ptr<const HTNValue> String = ParseString())
 	{
 		return String;
 	}
@@ -255,12 +257,32 @@ std::unique_ptr<const HTNValue> HTNParser::ParseSymbol()
 	return nullptr;
 }
 
+std::unique_ptr<const HTNValue> HTNParser::ParseIdentifier()
+{
+	// IDENTIFIER
+
+	const HTNToken* Identifier = ParseToken(HTNTokenType::IDENTIFIER);
+	if (!Identifier)
+	{
+		return nullptr;
+	}
+
+	const std::string Value = std::any_cast<std::string>(Identifier->GetValue());
+	return std::make_unique<HTNValue>(HTNAtom(Value.c_str()));
+}
+
 std::unique_ptr<const HTNValue> HTNParser::ParseNumber()
 {
 	// NUMBER
 	 
 	const HTNToken* Number = ParseToken(HTNTokenType::NUMBER);
-	return Number ? std::make_unique<HTNValue>(*Number) : nullptr;
+	if (!Number)
+	{
+		return nullptr;
+	}
+
+	const float Value = std::any_cast<float>(Number->GetValue());
+	return std::make_unique<HTNValue>(HTNAtom(Value));
 }
 
 std::unique_ptr<const HTNValue> HTNParser::ParseString()
@@ -268,7 +290,13 @@ std::unique_ptr<const HTNValue> HTNParser::ParseString()
 	// STRING
 
 	const HTNToken* String = ParseToken(HTNTokenType::STRING);
-	return String ? std::make_unique<HTNValue>(*String) : nullptr;
+	if (!String)
+	{
+		return nullptr;
+	}
+
+	const std::string Value = std::any_cast<std::string>(String->GetValue());
+	return std::make_unique<HTNValue>(HTNAtom(Value.c_str()));
 }
 
 const HTNToken* HTNParser::ParseToken(const HTNTokenType inTokenType)

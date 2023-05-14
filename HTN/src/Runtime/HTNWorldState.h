@@ -12,6 +12,8 @@ class HTNTableBase
 {
 public:
 	virtual ~HTNTableBase() = 0;
+
+	virtual bool Check(const int inIndex, const std::vector<HTNAtom*>& inArgs) const = 0;
 };
 
 inline HTNTableBase::~HTNTableBase() {}
@@ -31,6 +33,7 @@ public:
 
 	template <typename... Args>
 	bool Check(const int inIndex, Args&... inArgs) const;
+	bool Check(const int inIndex, const std::vector<HTNAtom*>& inArgs) const final;
 
 	// Returns the number of entries
 	int GetNumEntries() const;
@@ -106,6 +109,38 @@ inline bool HTNTable<NumArgs>::Check(const int inIndex, Args&... inArgs) const
 }
 
 template <int NumArgs>
+inline bool HTNTable<NumArgs>::Check(const int inIndex, const std::vector<HTNAtom*>& inArgs) const
+{
+	assert(NumArgs == inArgs.size());
+
+	if (inIndex < 0 || inIndex >= mEntries.size())
+	{
+		return false;
+	}
+
+	// Check args bound and bind args unbound
+	const HTNEntry& Entry = mEntries[inIndex];
+	for (size_t i = 0; i < Entry.size(); ++i)
+	{
+		HTNAtom* Arg = inArgs[i];
+		const HTNAtom& EntryArg = Entry[i];
+		if (Arg->IsSet())
+		{
+			if (*Arg != EntryArg)
+			{
+				return false;
+			}
+		}
+		else
+		{
+			*Arg = EntryArg;
+		}
+	}
+
+	return true;
+}
+
+template <int NumArgs>
 inline int HTNTable<NumArgs>::GetNumEntries() const
 {
 	return static_cast<int>(mEntries.size());
@@ -167,6 +202,7 @@ public:
 
 	template <typename... Args>
 	bool CheckIndex(const char* inKey, const int inIndex, Args&... inArgs) const;
+	bool CheckIndex(const char* inKey, const int inIndex, const std::vector<HTNAtom*>& inArgs) const;
 
 	// Returns the number of HTNTables registered for the fact inKey.
 	int GetNumFactTables(const char* inKey) const;

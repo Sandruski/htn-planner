@@ -21,21 +21,17 @@ public:
 	virtual bool Check(HTNDecompositionContext& ioContext) const = 0;
 };
 
-template <int NumArgs>
 class HTNConditionWorldStateQuery final : public HTNConditionBase
 {
 public:
 	bool Check(HTNDecompositionContext& ioContext) const final;
 
 	void SetKey(const std::string& inKey);
-	void SetArgument(const int inIndex, HTNAtom* inAtom);
+	void SetArgument(HTNAtom* inAtom);
 
 private:
-	template <std::size_t... Is>
-	bool Check(const HTNWorldState& inWorldState, const int inIndex, std::index_sequence<Is...>) const;
-
 	std::string mKey;
-	std::array<HTNAtom*, NumArgs> mArgs;
+	std::vector<HTNAtom*> mArgs;
 };
 
 class HTNConditionAnd final : public HTNConditionBase
@@ -71,25 +67,17 @@ private:
 	std::shared_ptr<const HTNConditionBase> mCondition;
 };
 
-template <int NumArgs>
-inline void HTNConditionWorldStateQuery<NumArgs>::SetKey(const std::string& inKey)
+inline void HTNConditionWorldStateQuery::SetKey(const std::string& inKey)
 {
 	mKey = inKey;
 }
 
-template <int NumArgs>
-inline void HTNConditionWorldStateQuery<NumArgs>::SetArgument(const int inIndex, HTNAtom* inAtom)
+inline void HTNConditionWorldStateQuery::SetArgument(HTNAtom* inAtom)
 {
-	if (inIndex < 0 || inIndex >= NumArgs)
-	{
-		return;
-	}
-
-	mArgs[inIndex] = inAtom;
+	mArgs.emplace_back(inAtom);
 }
 
-template <int NumArgs>
-inline bool HTNConditionWorldStateQuery<NumArgs>::Check(HTNDecompositionContext& ioContext) const
+inline bool HTNConditionWorldStateQuery::Check(HTNDecompositionContext& ioContext) const
 {
 	const HTNWorldState* WorldState = ioContext.GetWorldState();
 	if (!WorldState)
@@ -98,13 +86,6 @@ inline bool HTNConditionWorldStateQuery<NumArgs>::Check(HTNDecompositionContext&
 	}
 
 	const int Index = ioContext.IncrementIndex(*this);
-
-	return Check(*WorldState, Index, std::make_index_sequence<NumArgs>{});
+	return WorldState->CheckIndex(mKey.c_str(), Index, mArgs);
 }
 
-template <int NumArgs>
-template <std::size_t... I>
-inline bool HTNConditionWorldStateQuery<NumArgs>::Check(const HTNWorldState& inWorldState, const int inIndex, std::index_sequence<I...>) const
-{
-	return inWorldState.CheckIndex(mKey.c_str(), inIndex, *mArgs[I]...);
-}

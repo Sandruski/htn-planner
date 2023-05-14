@@ -30,8 +30,8 @@ private:
 	std::shared_ptr<const HTNBranch> ParseBranch();
 	std::shared_ptr<const HTNConditionBase> ParseCondition();
 	std::shared_ptr<const HTNTask> ParseTask();
+	std::unique_ptr<const HTNValue> ParseArgument();
 	std::unique_ptr<const HTNValue> ParseIdentifier();
-	std::unique_ptr<const HTNValue> ParseSymbol();
 	std::unique_ptr<const HTNValue> ParseNumber();
 	std::unique_ptr<const HTNValue> ParseString();
 	const HTNToken* ParseToken(const HTNTokenType inTokenType);
