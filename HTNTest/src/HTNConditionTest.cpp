@@ -29,7 +29,7 @@ TEST(HTNAtom, HTNConditionTest)
 		HTNConditionWorldStateQuery	condition_world_state_query;
 		condition_world_state_query.SetKey(sProgrammer);
 		EXPECT_TRUE(binded_to_jota.IsSet());
-		condition_world_state_query.SetArgument(&binded_to_jota);
+		condition_world_state_query.AddArgument(binded_to_jota);
 		EXPECT_TRUE(condition_world_state_query.Check(decomposition_context));
 	}
 
@@ -38,7 +38,7 @@ TEST(HTNAtom, HTNConditionTest)
 		HTNConditionWorldStateQuery	condition_world_state_query;
 		condition_world_state_query.SetKey(sLeadProgrammer);
 		EXPECT_TRUE(binded_to_jota.IsSet());
-		condition_world_state_query.SetArgument(&binded_to_jota);
+		condition_world_state_query.AddArgument(binded_to_jota);
 		EXPECT_FALSE(condition_world_state_query.Check(decomposition_context));
 	}
 
@@ -47,7 +47,7 @@ TEST(HTNAtom, HTNConditionTest)
 		HTNConditionWorldStateQuery	condition_world_state_query;
 		condition_world_state_query.SetKey(sLeadProgrammer);
 		EXPECT_FALSE(unbinded_programmer.IsSet());
-		condition_world_state_query.SetArgument(&unbinded_programmer);
+		condition_world_state_query.AddArgument(unbinded_programmer);
 		// 
 		EXPECT_TRUE(condition_world_state_query.Check(decomposition_context));
 		EXPECT_TRUE(unbinded_programmer.IsSet());
@@ -84,7 +84,7 @@ TEST(HTNAtom, HTNMultiConditionTest)
 		condition_world_state_query.SetKey(sProgrammer);
 
 		HTNAtom unbinded_programmer_multiresult_0;
-		condition_world_state_query.SetArgument(&unbinded_programmer_multiresult_0);
+		condition_world_state_query.AddArgument(unbinded_programmer_multiresult_0);
 
 		// Test first solution (jota)
 		EXPECT_TRUE(condition_world_state_query.Check(multiresult_decomposition_context));

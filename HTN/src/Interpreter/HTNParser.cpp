@@ -1,6 +1,5 @@
 #include "Interpreter/HTNParser.h"
 
-#include "HTNAtom.h"
 #include "Interpreter/AST/HTNBranch.h"
 #include "Interpreter/AST/HTNDomain.h"
 #include "Interpreter/AST/HTNMethod.h"
@@ -8,6 +7,7 @@
 #include "Interpreter/AST/HTNTask.h"
 #include "Interpreter/AST/HTNValue.h"
 #include "Log.h"
+#include "Runtime/HTNAtom.h"
 
 std::shared_ptr<const HTNDomain> HTNParser::Parse()
 {
@@ -183,21 +183,17 @@ std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()
 	}
 	else
 	{
-		// TODO salvarez Delete the HTNValue and do news of the HTNAtom that are created when reading the HTN domain
-
 		if (std::unique_ptr<const HTNValue> Key = ParseIdentifier())
 		{
-	std::shared_ptr<HTNConditionWorldStateQuery<0>> ConditionWorldStateQuery = std::make_shared<HTNConditionWorldStateQuery<0>>();
-	ConditionWorldStateQuery->SetKey(Key->GetValue().GetValue<std::string>());
-	Condition = ConditionWorldStateQuery;
-
-	// TODO salvarez Support multiple arguments in conditions
-
-			std::vector<HTNAtom*> SubConditions;
-			while (std::shared_ptr<const HTNConditionBase> SubCondition = ParseCondition())
+			std::vector<HTNAtom*> Args;
+			while (std::unique_ptr<const HTNValue> Arg = ParseArgument())
 			{
-				SubConditions.emplace_back(SubCondition);
+				// TODO salvarez Use smart pointers for HTNAtom
+				HTNAtom* Atom = new HTNAtom(Arg->GetValue());
+				Args.emplace_back(Atom);
 			}
+
+			Condition = std::make_shared<HTNConditionWorldStateQuery>(Key->GetValue().GetValue<std::string>(), Args);
 		}
 	}
 
@@ -248,7 +244,10 @@ std::unique_ptr<const HTNValue> HTNParser::ParseArgument()
 
 	if (ParseToken(HTNTokenType::QUESTION_MARK))
 	{
-		return ParseIdentifier();
+		if (std::unique_ptr<const HTNValue> Identifier = ParseIdentifier())
+		{
+			return std::make_unique<HTNValue>(HTNAtom());
+		}
 	}
 	else if (std::unique_ptr<const HTNValue> Number = ParseNumber())
 	{
@@ -267,13 +266,7 @@ std::unique_ptr<const HTNValue> HTNParser::ParseIdentifier()
 	// IDENTIFIER
 
 	const HTNToken* Identifier = ParseToken(HTNTokenType::IDENTIFIER);
-	if (!Identifier)
-	{
-		return nullptr;
-	}
-
-	const std::string Value = std::any_cast<std::string>(Identifier->GetValue());
-	return std::make_unique<HTNValue>(HTNAtom(Value.c_str()));
+	return Identifier ? std::make_unique<HTNValue>(HTNAtom(Identifier->GetValue())) : nullptr;
 }
 
 std::unique_ptr<const HTNValue> HTNParser::ParseNumber()

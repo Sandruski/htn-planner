@@ -204,15 +204,15 @@ void HTNLexer::LexNumber(std::vector<HTNToken>& outTokens)
 		}
 
 		const unsigned int EndPosition = mPosition - StartPosition;
-		const std::string Lexeme = mText.substr(StartPosition + 1, EndPosition - 1);
+		const std::string Lexeme = mText.substr(StartPosition, EndPosition);
 		const float Number = std::stof(Lexeme);
-		LOG_CERROR(std::stod(Lexeme) >= std::numeric_limits<float>::min() && std::stod(Lexeme) <= std::numeric_limits<float>::max(), "Number out of bounds");
+		LOG_CERROR(std::stod(Lexeme) < std::numeric_limits<float>::min() || std::stod(Lexeme) > std::numeric_limits<float>::max(), "Number out of bounds");
 		AddToken(HTNTokenType::NUMBER, Lexeme, HTNAtom(Number), outTokens);
 	}
 	else
 	{
 		const unsigned int EndPosition = mPosition - StartPosition;
-		const std::string Lexeme = mText.substr(StartPosition + 1, EndPosition - 1);
+		const std::string Lexeme = mText.substr(StartPosition, EndPosition);
 		const int Number = std::stoi(Lexeme);
 		AddToken(HTNTokenType::NUMBER, Lexeme, HTNAtom(Number), outTokens);
 	}
@@ -238,7 +238,7 @@ bool HTNLexer::LexString(std::vector<HTNToken>& outTokens)
 	AdvancePosition();
 
 	const unsigned int EndPosition = mPosition - StartPosition;
-	const std::string Lexeme = mText.substr(StartPosition, EndPosition);
+	const std::string Lexeme = mText.substr(StartPosition + 1, EndPosition - 1);
 	AddToken(HTNTokenType::STRING, Lexeme, HTNAtom(Lexeme), outTokens);
 
 	return true;

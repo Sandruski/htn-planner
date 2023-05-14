@@ -54,7 +54,7 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 
 	HTNWorldState WorldState;
 	const char* kShouldDecompose = "should_decompose";
-	WorldState.MakeFact(kShouldDecompose);
+	WorldState.MakeFact(kShouldDecompose, 2);
 	
 	// TODO Sandra: MakePlan should receive as parameter the name of the entry point function. This way we will prepare the planner for the future to support delayed decomposition of other methods.
 	// The name of the entry point function should be part of the HtnPlanningUnit instance. There might be more than 1 planning units running at the same time in sequence:

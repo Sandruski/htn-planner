@@ -24,12 +24,16 @@ public:
 class HTNConditionWorldStateQuery final : public HTNConditionBase
 {
 public:
+	HTNConditionWorldStateQuery() = default;
+	explicit HTNConditionWorldStateQuery(const std::string& inKey, const std::vector<HTNAtom*>& inArgs);
+
 	bool Check(HTNDecompositionContext& ioContext) const final;
 
 	void SetKey(const std::string& inKey);
-	void SetArgument(HTNAtom* inAtom);
+	void AddArgument(HTNAtom& inAtom);
 
 private:
+	// TODO salvarez Use HTNValue for both key and args?
 	std::string mKey;
 	std::vector<HTNAtom*> mArgs;
 };
@@ -67,14 +71,19 @@ private:
 	std::shared_ptr<const HTNConditionBase> mCondition;
 };
 
+inline HTNConditionWorldStateQuery::HTNConditionWorldStateQuery(const std::string& inKey, const std::vector<HTNAtom*>& inArgs)
+	: mKey(inKey), mArgs(inArgs)
+{
+}
+
 inline void HTNConditionWorldStateQuery::SetKey(const std::string& inKey)
 {
 	mKey = inKey;
 }
 
-inline void HTNConditionWorldStateQuery::SetArgument(HTNAtom* inAtom)
+inline void HTNConditionWorldStateQuery::AddArgument(HTNAtom& inAtom)
 {
-	mArgs.emplace_back(inAtom);
+	mArgs.emplace_back(&inAtom);
 }
 
 inline bool HTNConditionWorldStateQuery::Check(HTNDecompositionContext& ioContext) const
@@ -88,4 +97,3 @@ inline bool HTNConditionWorldStateQuery::Check(HTNDecompositionContext& ioContex
 	const int Index = ioContext.IncrementIndex(*this);
 	return WorldState->CheckIndex(mKey.c_str(), Index, mArgs);
 }
-
