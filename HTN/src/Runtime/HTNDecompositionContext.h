@@ -36,9 +36,9 @@ public:
 
 	const HTNWorldState* GetWorldState() const;
 
-	int GetIndex(const HTNConditionBase& _Condition) const;
+	int GetIndex(const HTNConditionBase& inCondition) const;
 
-	int IncrementIndex(const HTNConditionBase& _Condition);
+	int IncrementIndex(const HTNConditionBase& inCondition);
 
 	void RecordDecomposition();
 	void RestoreDecomposition();
@@ -55,13 +55,6 @@ private:
 inline void HTNDecompositionRecord::PushTaskToProcess(const std::shared_ptr<const HTNTask>& inTask)
 {
 	mTasksToProcess.push_back(inTask);
-}
-
-inline const std::shared_ptr<const HTNTask>& HTNDecompositionRecord::PopTaskToProcess()
-{
-	const std::shared_ptr<const HTNTask>& Task = mTasksToProcess.back();
-	mTasksToProcess.pop_back();
-	return Task;
 }
 
 inline const std::vector<std::shared_ptr<const HTNTask>>& HTNDecompositionRecord::GetTasksToProcess() const
@@ -109,33 +102,6 @@ inline const HTNWorldState* HTNDecompositionContext::GetWorldState() const
 	return mWorldState;
 }
 
-inline int HTNDecompositionContext::GetIndex(const HTNConditionBase& _Condition) const
-{
-	const auto It = mIndices.find(&_Condition);
-	if (It == mIndices.end())
-	{
-		// Index not found
-		return -1;
-	}
-
-	const int Index = It->second;
-	return Index;
-}
-
-inline int HTNDecompositionContext::IncrementIndex(const HTNConditionBase& _Condition)
-{
-	const bool ContainsCondition = mIndices.contains(&_Condition);
-
-	int& Index = mIndices[&_Condition];
-
-	if (ContainsCondition)
-	{
-		++Index;
-	}
-
-	return Index;
-}
-
 inline HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecompositionMutable()
 {
 	return mCurrentDecomposition;
@@ -144,15 +110,4 @@ inline HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecompositionM
 inline void HTNDecompositionContext::RecordDecomposition()
 {
 	mDecompositionHistory.emplace_back(mCurrentDecomposition);
-}
-
-inline void HTNDecompositionContext::RestoreDecomposition()
-{
-	if (mDecompositionHistory.empty())
-	{
-		return;
-	}
-
-	mCurrentDecomposition = mDecompositionHistory.back();
-	mDecompositionHistory.pop_back();
 }

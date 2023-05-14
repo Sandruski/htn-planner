@@ -5,7 +5,7 @@
 #include <optional>
 #include <string>
 
-enum class HTNTokenType : uint8_t
+enum class HTNTokenType : unsigned int
 {
 	COLON, // :
 	LEFT_PARENTHESIS, // (

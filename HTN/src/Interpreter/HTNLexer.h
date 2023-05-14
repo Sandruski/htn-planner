@@ -5,7 +5,7 @@
 
 class HTNAtom;
 class HTNToken;
-enum class HTNTokenType : uint8_t;
+enum class HTNTokenType : unsigned int;
 
 // Breaks a text into a series of tokens
 // Reports all lexical errors of the text

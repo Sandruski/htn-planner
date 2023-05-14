@@ -2,7 +2,6 @@
 
 #include "HTNAtom.h"
 
-#include <algorithm>
 #include <array>
 #include <string>
 #include <unordered_map>
@@ -346,54 +345,6 @@ inline bool HTNWorldState::CheckIndex(const char* inKey, const int inIndex, Args
 	}
 
 	return true;
-}
-
-inline int HTNWorldState::GetNumFactTables(const char* inKey) const
-{
-	const auto FactIt = mFacts.find(inKey);
-	if (FactIt == mFacts.end())
-	{
-		// Fact not found
-		return -1;
-	}
-	
-	int NumFactTables = 0;
-
-	const HTNFact& Fact = FactIt->second;
-	for (const HTNTableBase* Table : Fact)
-	{
-		if (Table)
-		{
-			++NumFactTables;
-		}
-	}
-
-	return NumFactTables;
-}
-
-inline int HTNWorldState::GetNumFactTablesByNumArgs(const char* inKey, const int inNumArgs) const
-{
-	const auto FactIt = mFacts.find(inKey);
-	if (FactIt == mFacts.end())
-	{
-		// Fact not found
-		return -1;
-	}
-
-	if (inNumArgs == 0)
-	{
-		return 0;
-	}
-
-	const HTNFact& Fact = FactIt->second;
-	const int TableIndex = inNumArgs - 1;
-	const HTNTableBase* Table = Fact[TableIndex];
-	if (!Table)
-	{
-		return 0;
-	}
-
-	return 1;
 }
 
 template <typename T>
