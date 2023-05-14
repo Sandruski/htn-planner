@@ -1,6 +1,10 @@
 #pragma once
 
+#include <iomanip>
+#include <ios>
 #include <optional>
+#include <sstream>
+#include <string>
 #include <variant>
 
 class HTNAtom;
@@ -18,17 +22,19 @@ public:
 
 	void Add(const HTNAtom& inData);
 
-	const HTNAtom* Find(const int inIndex) const;
+	const HTNAtom* Find(const unsigned int inIndex) const;
 
-	int GetSize() const
+	unsigned int GetSize() const
 	{
 		return mSize;
 	}
 
+	std::string ToString() const;
+
 private:
 	HTNAtomNode* mHead = nullptr;
 	HTNAtomNode* mTail = nullptr;
-	int mSize = 0;
+	unsigned int mSize = 0;
 };
 
 class HTNAtom
@@ -47,6 +53,11 @@ public:
 	}
 
 	HTNAtom(const char* inValue)
+	{
+		mData = inValue;
+	}
+
+	HTNAtom(const std::string& inValue)
 	{
 		mData = inValue;
 	}
@@ -88,7 +99,7 @@ public:
 	void AddListElement(const HTNAtom& inElement);
 
 	// Return the list element
-	const HTNAtom* FindListElement(const int inElementIdx) const;
+	const HTNAtom* FindListElement(const unsigned int inElementIdx) const;
 
 	int GetListNumItems() const;
 
@@ -96,8 +107,10 @@ public:
 	// multiple times because the backtracking mechanism (we will talk about this later) is making us reevaluate the planner.
 	void UnBind();
 
+	std::string ToString() const;
+
 private:
-	std::optional<std::variant<int, float, const char*, HTNAtomList>> mData;
+	std::optional<std::variant<int, float, std::string, HTNAtomList>> mData;
 };
 
 class HTNAtomNode
@@ -181,23 +194,42 @@ inline void HTNAtomList::Add(const HTNAtom& inData)
 
 	mTail = Node;
 
-	mSize++;
+	++mSize;
 }
 
-inline const HTNAtom* HTNAtomList::Find(const int inIndex) const
+inline const HTNAtom* HTNAtomList::Find(const unsigned int inIndex) const
 {
-	if (inIndex < 0 || inIndex >= mSize)
+	if (inIndex >= mSize)
 	{
 		return nullptr;
 	}
 
 	const HTNAtomNode* Current = mHead;
-	for (int i = 0; i < inIndex; ++i)
+	for (unsigned int i = 0; i < inIndex; ++i)
 	{
 		Current = Current->GetNext();
 	}
 
 	return &Current->GetData();
+}
+
+inline std::string HTNAtomList::ToString() const
+{
+	std::string String;
+
+	for (const HTNAtomNode* Current = mHead; Current; Current = Current->GetNext())
+	{
+		String += Current->GetData().ToString();
+		String += "->";
+	}
+
+	// Erase last "->"
+	if (!String.empty())
+	{
+		String.erase(String.size() - 2);
+	}
+
+	return String;
 }
 
 inline void HTNAtom::AddListElement(const HTNAtom& inElement)
@@ -216,7 +248,7 @@ inline void HTNAtom::AddListElement(const HTNAtom& inElement)
 	List.Add(inElement);
 }
 
-inline const HTNAtom* HTNAtom::FindListElement(const int inElementIdx) const
+inline const HTNAtom* HTNAtom::FindListElement(const unsigned int inElementIdx) const
 {
 	if (!IsSet())
 	{
@@ -251,4 +283,30 @@ inline int HTNAtom::GetListNumItems() const
 inline void HTNAtom::UnBind()
 {
 	mData.reset();
+}
+
+inline std::string HTNAtom::ToString() const
+{
+	if (IsType<int>())
+	{
+		return std::to_string(GetValue<int>());
+	}
+	else if (IsType<float>())
+	{
+		std::ostringstream Buffer;
+		Buffer << std::fixed;
+		Buffer << std::setprecision(2);
+		Buffer << GetValue<float>();
+		return Buffer.str();
+	}
+	else if (IsType<std::string>())
+	{
+		return GetValue<std::string>();
+	}
+	else if (IsType<HTNAtomList>())
+	{
+		return GetValue<HTNAtomList>().ToString();
+	}
+
+	return "";
 }

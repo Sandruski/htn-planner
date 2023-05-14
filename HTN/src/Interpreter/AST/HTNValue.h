@@ -1,23 +1,28 @@
 #pragma once
 
 #include "Interpreter/AST/HTNNodeBase.h"
-#include "Interpreter/HTNToken.h"
+#include "Runtime/HTNAtom.h"
 
 class HTNValue final : public HTNNodeBase
 {
 public:
-	explicit HTNValue(const HTNToken& inValue);
+	explicit HTNValue(const HTNAtom& inValue);
 
 	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
 	std::string ToString() const final;
 
-	std::string GetName() const;
+	const HTNAtom& GetValue() const;
 
 private:
-	HTNToken mValue;
+	HTNAtom mValue;
 };
 
-inline HTNValue::HTNValue(const HTNToken& inValue)
+inline HTNValue::HTNValue(const HTNAtom& inValue)
 	: mValue(inValue)
 {
+}
+
+inline const HTNAtom& HTNValue::GetValue() const
+{
+	return mValue;
 }

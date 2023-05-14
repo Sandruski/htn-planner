@@ -88,40 +88,40 @@ TEST(HTNAtom, HTNMultiConditionTest)
 
 		// Test first solution (jota)
 		EXPECT_TRUE(condition_world_state_query.Check(multiresult_decomposition_context));
-		EXPECT_EQ(strcmp(unbinded_programmer_multiresult_0.GetValue<const char*>(), "jota"), 0);
+		EXPECT_TRUE(unbinded_programmer_multiresult_0.GetValue<std::string>() == "jota");
 		EXPECT_EQ(multiresult_decomposition_context.GetIndex(condition_world_state_query), 0);
 
 
 		// Test second solution (sandra)
 		unbinded_programmer_multiresult_0.UnBind();													// unbind the previously binded HtnAtom because we are gonna reuse it.
 		EXPECT_TRUE(condition_world_state_query.Check(multiresult_decomposition_context));			// second call to Check, if we are in a multi result context this should return true and a different result that the first time we call it.
-		EXPECT_EQ(strcmp(unbinded_programmer_multiresult_0.GetValue<const char*>(), "sandra"), 0);	// second result of the database should return sandra.
+		EXPECT_TRUE(unbinded_programmer_multiresult_0.GetValue<std::string>() == "sandra");	// second result of the database should return sandra.
 		EXPECT_EQ(multiresult_decomposition_context.GetIndex(condition_world_state_query), 1);									// the index after the second call should be 1.
 
 
 		// Test second solution (jose)
 		unbinded_programmer_multiresult_0.UnBind();													// unbind the previously binded HtnAtom because we are gonna reuse it.
 		EXPECT_TRUE(condition_world_state_query.Check(multiresult_decomposition_context));			// third call to Check, if we are in a multi result context this should return true and a different result that the first and second time we call it.
-		EXPECT_EQ(strcmp(unbinded_programmer_multiresult_0.GetValue<const char*>(), "jose"), 0);	// third result of the database should return jose.
+		EXPECT_TRUE(unbinded_programmer_multiresult_0.GetValue<std::string>() == "jose");	// third result of the database should return jose.
 		EXPECT_EQ(multiresult_decomposition_context.GetIndex(condition_world_state_query), 2);									// the index after the second call should be 2.
 
 
 		// unbind and test for mariano
 		unbinded_programmer_multiresult_0.UnBind();
 		EXPECT_TRUE(condition_world_state_query.Check(multiresult_decomposition_context));
-		EXPECT_EQ(strcmp(unbinded_programmer_multiresult_0.GetValue<const char*>(), "mariano"), 0);
+		EXPECT_TRUE(unbinded_programmer_multiresult_0.GetValue<std::string>() == "mariano");
 		EXPECT_EQ(multiresult_decomposition_context.GetIndex(condition_world_state_query), 3);
 
 		// unbind and test for michele
 		unbinded_programmer_multiresult_0.UnBind();
 		EXPECT_TRUE(condition_world_state_query.Check(multiresult_decomposition_context));
-		EXPECT_EQ(strcmp(unbinded_programmer_multiresult_0.GetValue<const char*>(), "michele"), 0);
+		EXPECT_TRUE(unbinded_programmer_multiresult_0.GetValue<std::string>() == "michele");
 		EXPECT_EQ(multiresult_decomposition_context.GetIndex(condition_world_state_query), 4);
 
 		// unbind and test for andres
 		unbinded_programmer_multiresult_0.UnBind();
 		EXPECT_TRUE(condition_world_state_query.Check(multiresult_decomposition_context));
-		EXPECT_EQ(strcmp(unbinded_programmer_multiresult_0.GetValue<const char*>(), "andres"), 0);
+		EXPECT_TRUE(unbinded_programmer_multiresult_0.GetValue<std::string>() == "andres");
 		EXPECT_EQ(multiresult_decomposition_context.GetIndex(condition_world_state_query), 5);
 
 		// unbind and test last time, this should return false because we have inspected all the possible solutions!

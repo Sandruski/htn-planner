@@ -99,6 +99,8 @@ std::shared_ptr<const HTNMethod> HTNParser::ParseMethod()
 		return nullptr;
 	}
 
+	// TODO salvarez Support multiple arguments in methods
+
 	return std::make_shared<HTNMethod>(std::move(Name), Branches);
 }
 
@@ -185,10 +187,11 @@ std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()
 
 		if (std::unique_ptr<const HTNValue> Key = ParseIdentifier())
 		{
-			std::shared_ptr<HTNConditionWorldStateQuery> ConditionWorldStateQuery = std::make_shared<HTNConditionWorldStateQuery>();
-			const char* Value = Key->GetValue().GetValue<const char*>(); // TODO salvarez Use std::string here instead of const char* because it's dangerous
-			ConditionWorldStateQuery->SetKey(Value);
-			Condition = ConditionWorldStateQuery;
+	std::shared_ptr<HTNConditionWorldStateQuery<0>> ConditionWorldStateQuery = std::make_shared<HTNConditionWorldStateQuery<0>>();
+	ConditionWorldStateQuery->SetKey(Key->GetValue().GetValue<std::string>());
+	Condition = ConditionWorldStateQuery;
+
+	// TODO salvarez Support multiple arguments in conditions
 
 			std::vector<HTNAtom*> SubConditions;
 			while (std::shared_ptr<const HTNConditionBase> SubCondition = ParseCondition())
@@ -234,6 +237,8 @@ std::shared_ptr<const HTNTask> HTNParser::ParseTask()
 		return nullptr;
 	}
 
+	// TODO salvarez Support multiple arguments in tasks
+
 	return std::make_shared<HTNTask>(Type, std::move(Name), Arguments);
 }
 
@@ -276,13 +281,7 @@ std::unique_ptr<const HTNValue> HTNParser::ParseNumber()
 	// NUMBER
 	 
 	const HTNToken* Number = ParseToken(HTNTokenType::NUMBER);
-	if (!Number)
-	{
-		return nullptr;
-	}
-
-	const float Value = std::any_cast<float>(Number->GetValue());
-	return std::make_unique<HTNValue>(HTNAtom(Value));
+	return Number ? std::make_unique<HTNValue>(Number->GetValue()) : nullptr;
 }
 
 std::unique_ptr<const HTNValue> HTNParser::ParseString()
@@ -290,13 +289,7 @@ std::unique_ptr<const HTNValue> HTNParser::ParseString()
 	// STRING
 
 	const HTNToken* String = ParseToken(HTNTokenType::STRING);
-	if (!String)
-	{
-		return nullptr;
-	}
-
-	const std::string Value = std::any_cast<std::string>(String->GetValue());
-	return std::make_unique<HTNValue>(HTNAtom(Value.c_str()));
+	return String ? std::make_unique<HTNValue>(String->GetValue()) : nullptr;
 }
 
 const HTNToken* HTNParser::ParseToken(const HTNTokenType inTokenType)

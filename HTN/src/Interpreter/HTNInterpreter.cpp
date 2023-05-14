@@ -5,42 +5,97 @@
 #include "Interpreter/AST/HTNMethod.h"
 #include "Interpreter/AST/HTNTask.h"
 #include "Interpreter/AST/HTNValue.h"
+#include "Interpreter/HTNLexer.h"
+#include "Interpreter/HTNParser.h"
 #include "Interpreter/HTNToken.h"
 #include "Log.h"
 #include "Runtime/HTNDecompositionContext.h"
 
 #include <cassert>
+#include <fstream>
+#include <sstream>
 #include <vector>
 
-HTNInterpreter::HTNInterpreter(const std::shared_ptr<const HTNDomain>& inDomain, const std::string& inRootCompoundTaskName)
-	: mDomain(inDomain), mRootCompoundTaskName(inRootCompoundTaskName)
+namespace
 {
+	bool ReadFile(const std::string& inPath, std::string& outText)
+	{
+		// Open file
+		std::ifstream File;
+		File.open(inPath);
+		if (!File.is_open())
+		{
+			LOG_ERROR("File {} could not be opened", inPath);
+			return false;
+		}
+
+		// Read file
+		std::ostringstream Buffer;
+		Buffer << File.rdbuf();
+		outText = Buffer.str();
+
+		// Close file
+		File.close();
+
+		return true;
+	}
 }
 
 HTNInterpreter::~HTNInterpreter() = default;
 
-std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const HTNWorldState& inWorldState)
+bool HTNInterpreter::Init(const std::string& inDomainPath)
+{
+	std::string Text;
+	if (!ReadFile(inDomainPath, Text))
+	{
+		LOG_ERROR("File {} could not be read", inDomainPath);
+		return false;
+	}
+
+	// Lex
+	HTNLexer Lexer = HTNLexer(Text);
+	std::vector<HTNToken> Tokens;
+	if (!Lexer.Lex(Tokens))
+	{
+		LOG_ERROR("Lex failed");
+		return false;
+	}
+
+	// Parse
+	HTNParser Parser = HTNParser(Tokens);
+	mDomain = Parser.Parse();
+	if (!mDomain)
+	{
+		LOG_ERROR("Parse failed");
+		return false;
+	}
+
+	return true;
+}
+
+std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std::string& inEntryPointName, const HTNWorldState& inWorldState) const
 {
 	if (!mDomain)
 	{
+		LOG_ERROR("Domain is null");
 		return {};
 	}
 
-
 	HTNDecompositionContext DecompositionContext = HTNDecompositionContext(inWorldState);
+	HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
 
 	// Dummy root compound task
-	const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(EHTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNToken(HTNTokenType::IDENTIFIER, mRootCompoundTaskName, 0, 0, mRootCompoundTaskName)));
-	mCurrentDecomposition.PushTaskToProcess(RootCompoundTask);
+	const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(EHTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNAtom(inEntryPointName)));
+	CurrentDecomposition.PushTaskToProcess(RootCompoundTask);
 
-	while (mCurrentDecomposition.HasTasksToProcess())
+	while (CurrentDecomposition.HasTasksToProcess())
 	{
-		const std::shared_ptr<const HTNTask> CurrentTask = mCurrentDecomposition.PopTaskToProcess();
+		const std::shared_ptr<const HTNTask> CurrentTask = CurrentDecomposition.PopTaskToProcess();
 		switch (CurrentTask->GetType())
 		{
 		case EHTNTaskType::PRIMITIVE:
 		{
-			mCurrentDecomposition.AddTaskToPlan(CurrentTask);
+			CurrentDecomposition.AddTaskToPlan(CurrentTask);
 			break;
 		}
 		case EHTNTaskType::COMPOUND:
@@ -59,7 +114,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const HTNW
 				break;
 			}
 
-			const unsigned int NextBranchIndex = mCurrentDecomposition.GetNextBranchIndex();
+			const unsigned int NextBranchIndex = CurrentDecomposition.GetNextBranchIndex();
 			if (NextBranchIndex >= Branches.size())
 			{
 				LOG_ERROR("Next branch index {} is out of range", NextBranchIndex);
@@ -75,18 +130,18 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const HTNW
 
 			if (!Branch->Check(DecompositionContext))
 			{
-				RestoreDecomposition();
-				mCurrentDecomposition.IncrementNextBranchIndex();
-				mCurrentDecomposition.PushTaskToProcess(CurrentTask);
+				DecompositionContext.RestoreDecomposition();
+				CurrentDecomposition.IncrementNextBranchIndex();
+				CurrentDecomposition.PushTaskToProcess(CurrentTask);
 				break;
 			}
 
-			RecordDecomposition();
-			mCurrentDecomposition.ResetNextBranchIndex();
+			DecompositionContext.RecordDecomposition();
+			CurrentDecomposition.ResetNextBranchIndex();
 			const std::vector<std::shared_ptr<const HTNTask>>& Tasks = Branch->GetTasks();
 			for (const std::shared_ptr<const HTNTask>& Task : Tasks)
 			{
-				mCurrentDecomposition.PushTaskToProcess(Task);
+				CurrentDecomposition.PushTaskToProcess(Task);
 			}
 
 			break;
@@ -98,19 +153,5 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const HTNW
 		}
 	}
 
-	return mCurrentDecomposition.GetPlan();
-}
-
-void HTNInterpreter::RecordDecomposition()
-{
-	mDecompositionHistory.emplace_back(mCurrentDecomposition);
-}
-
-void HTNInterpreter::RestoreDecomposition()
-{
-	if (!mDecompositionHistory.empty())
-	{
-		mCurrentDecomposition = mDecompositionHistory.back();
-		mDecompositionHistory.pop_back();
-	}
+	return CurrentDecomposition.GetPlan();
 }

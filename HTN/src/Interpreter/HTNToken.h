@@ -1,6 +1,7 @@
 #pragma once
 
-#include <any>
+#include "Runtime/HTNAtom.h"
+
 #include <optional>
 #include <string>
 
@@ -30,24 +31,24 @@ enum class HTNTokenType : uint8_t
 class HTNToken
 {
 public:
-	explicit HTNToken(const HTNTokenType inType, const std::string& inLexeme, const unsigned int inRow, const unsigned int inColumn, const std::any inValue = std::any());
+	explicit HTNToken(const HTNTokenType inType, const std::string& inLexeme, const HTNAtom& inValue, const unsigned int inRow, const unsigned int inColumn);
 
 	HTNTokenType GetType() const;
 	const std::string& GetLexeme() const;
-	std::any GetValue() const;
+	const HTNAtom& GetValue() const;
 	unsigned int GetRow() const;
 	unsigned int GetColumn() const;
 
 private:
 	HTNTokenType mType;
 	std::string mLexeme;
+	HTNAtom mValue;
 	unsigned int mRow = 0;
 	unsigned int mColumn = 0;
-	std::optional<std::any> mValue;
 };
 
-inline HTNToken::HTNToken(const HTNTokenType inType, const std::string& inLexeme, const unsigned int inRow, const unsigned int inColumn, const std::any inValue)
-	: mType(inType), mLexeme(inLexeme), mRow(inRow), mColumn(inColumn), mValue(inValue)
+inline HTNToken::HTNToken(const HTNTokenType inType, const std::string& inLexeme, const HTNAtom& inValue, const unsigned int inRow, const unsigned int inColumn)
+	: mType(inType), mLexeme(inLexeme), mValue(inValue), mRow(inRow), mColumn(inColumn)
 {
 }
 
@@ -61,9 +62,9 @@ inline const std::string& HTNToken::GetLexeme() const
 	return mLexeme;
 }
 
-inline std::any HTNToken::GetValue() const
+inline const HTNAtom& HTNToken::GetValue() const
 {
-	return mValue.value();
+	return mValue;
 }
 
 inline unsigned int HTNToken::GetRow() const

@@ -9,7 +9,7 @@
 #include <type_traits>
 
 class HTNAtom;
-struct HTNDecompositionContext;
+class HTNDecompositionContext;
 
 class HTNConditionBase : public HTNNodeBase
 {

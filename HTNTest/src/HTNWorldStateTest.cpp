@@ -68,18 +68,18 @@ TEST(HTNAtom, HTNWorldStateComplexFacts)
 	const HTNAtom* first_dish_paella = first_dish_unbinded.FindListElement(0);
 	EXPECT_TRUE(first_dish_paella != nullptr);
 	EXPECT_TRUE(first_dish_paella->IsSet());
-	EXPECT_TRUE(first_dish_paella->IsType<const char*>());
-	EXPECT_EQ(strcmp(first_dish_paella->GetValue<const char*>(), "paella"), 0);
+	EXPECT_TRUE(first_dish_paella->IsType<std::string>());
+	EXPECT_TRUE(first_dish_paella->GetValue<std::string>() == "paella");
 
 	const HTNAtom* first_dish_migas = first_dish_unbinded.FindListElement(1);
 	EXPECT_TRUE(first_dish_migas != nullptr);
 	EXPECT_TRUE(first_dish_migas->IsSet());
-	EXPECT_TRUE(first_dish_migas->IsType<const char*>());
-	EXPECT_EQ(strcmp(first_dish_migas->GetValue<const char*>(), "migas"), 0);
+	EXPECT_TRUE(first_dish_migas->IsType<std::string>());
+	EXPECT_TRUE(first_dish_migas->GetValue<std::string>() == "migas");
 
 	const HTNAtom* first_dish_salmorejo = first_dish_unbinded.FindListElement(2);
 	EXPECT_TRUE(first_dish_salmorejo != nullptr);
 	EXPECT_TRUE(first_dish_salmorejo->IsSet());
-	EXPECT_TRUE(first_dish_salmorejo->IsType<const char*>());
-	EXPECT_EQ(strcmp(first_dish_salmorejo->GetValue<const char*>(), "salmorejo"), 0);
+	EXPECT_TRUE(first_dish_salmorejo->IsType<std::string>());
+	EXPECT_TRUE(first_dish_salmorejo->GetValue<std::string>() == "salmorejo");
 }
