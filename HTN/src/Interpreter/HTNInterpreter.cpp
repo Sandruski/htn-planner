@@ -84,6 +84,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 	HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
 	// Dummy root compound task
+	// TODO salvarez Allow to pass arguments for the root compound task
 	const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(EHTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNAtom(inEntryPointName)));
 	CurrentDecomposition.PushTaskToProcess(RootCompoundTask);
 
@@ -127,6 +128,8 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 				break;
 			}
 
+			// TODO salvarez If a condition fails, increment its index and check it again
+			// Only move to the next branch when the index is out of bounds
 			if (!Branch->Check(ioDecompositionContext))
 			{
 				ioDecompositionContext.RestoreDecomposition();

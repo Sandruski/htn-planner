@@ -4,8 +4,8 @@
 #include "Interpreter/AST/HTNBranch.h"
 #include "Interpreter/AST/HTNValue.h"
 
-HTNMethod::HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNBranch>>& inBranches)
-	: mName(std::move(inName)), mBranches(inBranches)
+HTNMethod::HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments, const std::vector<std::shared_ptr<const HTNBranch>>& inBranches)
+	: mName(std::move(inName)), mArguments(inArguments), mBranches(inBranches)
 {
 }
 

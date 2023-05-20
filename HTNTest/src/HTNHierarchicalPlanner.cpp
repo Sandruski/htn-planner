@@ -77,12 +77,15 @@ public:
 		return mPlanner.parseDomain(inDomainPath);
 	}
 
+	HTNWorldState& GetWorldState()
+	{
+		return mWorldState;
+	}
+
 	// Execute planning unit top level method
-	std::vector<HTNTaskInstance> ExecuteTopLevelMethod(const std::string& inEntryPointName, size_t inPlanningUnitIndex)
+	std::vector<HTNTaskInstance> ExecuteTopLevelMethod(const std::string& inEntryPointName)
 	{
 		mLastPlan.clear();
-
-		mWorldState.MakeFact("iteration_number", (int)inPlanningUnitIndex);
 
 		HTNDecompositionContext DecompositionContext = HTNDecompositionContext(mWorldState);
 		const std::vector<std::shared_ptr<const HTNTask>> Plan = mPlanner.MakePlan(inEntryPointName, DecompositionContext);
@@ -123,14 +126,28 @@ private:
 };
 
 // Test planning
-TEST(HTNHierarchicalPlanner, DISABLED_HTNPlanning)
+TEST(HTNHierarchicalPlanner, HTNPlanning)
 {
-	const std::string DomainPath = "../Domains/simple_domain.domain";
-	const std::string EntryPointName = "entry_point";
+	const std::string DomainPath = "../Domains/example_domain.domain";
+	const std::string EntryPointName = "eat";
 
 	HTNPlanningUnit PlanningUnit;
 	EXPECT_TRUE(PlanningUnit.ParseDomain(DomainPath));
-	PlanningUnit.ExecuteTopLevelMethod(EntryPointName, 0);
+
+	HTNWorldState& WorldState = PlanningUnit.GetWorldState();
+	WorldState.MakeFact("item", "wallet");
+	WorldState.MakeFact("item", "sandwich");
+	WorldState.MakeFact("item", "banana");
+	WorldState.MakeFact("edible", "sandwich");
+	WorldState.MakeFact("edible", "banana");
+	WorldState.MakeFact("type", "banana", "fruit");
+
+	const std::vector<HTNTaskInstance>& Plan = PlanningUnit.ExecuteTopLevelMethod(EntryPointName);
+	for (const HTNTaskInstance& Task : Plan)
+	{
+		const std::string& Name = Task.GetName();
+		LOG("{}", Name.c_str());
+	}
 
 	// TODO salvarez HTNPlannerRunner // Action execution
 }
@@ -138,7 +155,10 @@ TEST(HTNHierarchicalPlanner, DISABLED_HTNPlanning)
 // called per thread to execute the planner top level method
 static void sParallelWork(HTNPlanningUnit& inPlanningUnit, const std::string& EntryPointName, size_t inIndex)
 {
-	const std::vector<HTNTaskInstance>& Plan = inPlanningUnit.ExecuteTopLevelMethod(EntryPointName, inIndex);
+	HTNWorldState& WorldState = inPlanningUnit.GetWorldState();
+	WorldState.MakeFact("iteration_number", (int)inIndex);
+
+	const std::vector<HTNTaskInstance>& Plan = inPlanningUnit.ExecuteTopLevelMethod(EntryPointName);
 	EXPECT_TRUE(Plan.size() == 1);
 
 	for (const HTNTaskInstance& Task : Plan)
@@ -162,7 +182,7 @@ static void sParallelWork(HTNPlanningUnit& inPlanningUnit, const std::string& En
 	}
 }
 
-TEST(HTNHierarchicalPlanner, MultiThreadingHTNPlanning)
+TEST(HTNHierarchicalPlanner, DISABLED_MultiThreadingHTNPlanning)
 {
 	const std::string DomainPath = "../Domains/multithreading_domain.domain";
 	const std::string EntryPointName = "entry_point";

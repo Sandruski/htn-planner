@@ -83,6 +83,12 @@ std::shared_ptr<const HTNMethod> HTNParser::ParseMethod()
 		return nullptr;
 	}
 
+	std::vector<std::shared_ptr<const HTNValue>> Arguments;
+	while (std::shared_ptr<const HTNValue> Argument = ParseArgument())
+	{
+		Arguments.emplace_back(Argument);
+	}
+
 	if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
 	{
 		return nullptr;
@@ -101,7 +107,7 @@ std::shared_ptr<const HTNMethod> HTNParser::ParseMethod()
 
 	// TODO salvarez Support multiple arguments in methods
 
-	return std::make_shared<HTNMethod>(std::move(Name), Branches);
+	return std::make_shared<HTNMethod>(std::move(Name), Arguments, Branches);
 }
 
 std::shared_ptr<const HTNBranch> HTNParser::ParseBranch()

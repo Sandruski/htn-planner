@@ -11,7 +11,7 @@ class HTNValue;
 class HTNMethod final : public HTNNodeBase
 {
 public:
-	explicit HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNBranch>>& inBranches);
+	explicit HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments, const std::vector<std::shared_ptr<const HTNBranch>>& inBranches);
 	~HTNMethod();
 
 	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
@@ -22,6 +22,7 @@ public:
 
 private:
 	std::unique_ptr<const HTNValue> mName;
+	std::vector<std::shared_ptr<const HTNValue>> mArguments;
 	std::vector<std::shared_ptr<const HTNBranch>> mBranches;
 };
 
