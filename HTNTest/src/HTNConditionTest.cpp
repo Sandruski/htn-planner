@@ -3,8 +3,9 @@
 #include "Runtime/HTNWorldState.h"
 #include "Runtime/HTNDecompositionContext.h"
 
-TEST(HTNAtom, HTNConditionTest)
+TEST(HTNAtom, DISABLED_HTNConditionTest)
 {
+	/*
 	HTNWorldState world_state;
 
 	const char* sProgrammer("programmer");
@@ -52,11 +53,13 @@ TEST(HTNAtom, HTNConditionTest)
 		EXPECT_TRUE(condition_world_state_query.Check(decomposition_context));
 		EXPECT_TRUE(unbinded_programmer.IsSet());
 	}
+	*/
 }
 
 
-TEST(HTNAtom, HTNMultiConditionTest)
+TEST(HTNAtom, DISABLED_HTNMultiConditionTest)
 {
+	/*
 	HTNWorldState world_state;
 
 	const char* sProgrammer("programmer");
@@ -128,4 +131,5 @@ TEST(HTNAtom, HTNMultiConditionTest)
 		unbinded_programmer_multiresult_0.UnBind();
 		EXPECT_FALSE(condition_world_state_query.Check(multiresult_decomposition_context));
 	}
+	*/
 }

@@ -73,7 +73,7 @@ bool HTNInterpreter::Init(const std::string& inDomainPath)
 	return true;
 }
 
-std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std::string& inEntryPointName, const HTNWorldState& inWorldState) const
+std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const
 {
 	if (!mDomain)
 	{
@@ -81,8 +81,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 		return {};
 	}
 
-	HTNDecompositionContext DecompositionContext = HTNDecompositionContext(inWorldState);
-	HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
+	HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
 	// Dummy root compound task
 	const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(EHTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNAtom(inEntryPointName)));
@@ -128,15 +127,15 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 				break;
 			}
 
-			if (!Branch->Check(DecompositionContext))
+			if (!Branch->Check(ioDecompositionContext))
 			{
-				DecompositionContext.RestoreDecomposition();
+				ioDecompositionContext.RestoreDecomposition();
 				CurrentDecomposition.IncrementNextBranchIndex();
 				CurrentDecomposition.PushTaskToProcess(CurrentTask);
 				break;
 			}
 
-			DecompositionContext.RecordDecomposition();
+			ioDecompositionContext.RecordDecomposition();
 			CurrentDecomposition.ResetNextBranchIndex();
 			const std::vector<std::shared_ptr<const HTNTask>>& Tasks = Branch->GetTasks();
 			for (const std::shared_ptr<const HTNTask>& Task : Tasks)

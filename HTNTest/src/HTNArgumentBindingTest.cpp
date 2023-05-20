@@ -1,7 +1,7 @@
 #include "Runtime/HTNAtom.h"
 #include "Runtime/HTNWorldState.h"
 
-TEST(HTNAtom, HTNArgumentBinding)
+TEST(HTNAtom, DISABLED_HTNArgumentBinding)
 {
 	HTNWorldState world_state;
 

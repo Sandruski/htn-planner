@@ -185,15 +185,13 @@ std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()
 	{
 		if (std::unique_ptr<const HTNValue> Key = ParseIdentifier())
 		{
-			std::vector<HTNAtom*> Args;
-			while (std::unique_ptr<const HTNValue> Arg = ParseArgument())
+			std::vector<std::shared_ptr<const HTNValue>> Arguments;
+			while (std::shared_ptr<const HTNValue> Argument = ParseArgument())
 			{
-				// TODO salvarez Use smart pointers for HTNAtom
-				HTNAtom* Atom = new HTNAtom(Arg->GetValue());
-				Args.emplace_back(Atom);
+				Arguments.emplace_back(Argument);
 			}
 
-			Condition = std::make_shared<HTNConditionWorldStateQuery>(Key->GetValue().GetValue<std::string>(), Args);
+			Condition = std::make_shared<HTNCondition>(std::move(Key), Arguments);
 		}
 	}
 
@@ -246,7 +244,7 @@ std::unique_ptr<const HTNValue> HTNParser::ParseArgument()
 	{
 		if (std::unique_ptr<const HTNValue> Identifier = ParseIdentifier())
 		{
-			return std::make_unique<HTNValue>(HTNAtom());
+			return Identifier;
 		}
 	}
 	else if (std::unique_ptr<const HTNValue> Number = ParseNumber())

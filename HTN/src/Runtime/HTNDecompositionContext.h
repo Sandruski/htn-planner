@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HTNAtom.h"
+
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -36,9 +38,11 @@ public:
 
 	const HTNWorldState* GetWorldState() const;
 
-	int GetIndex(const HTNConditionBase& inCondition) const;
+	int GetIndex(const std::shared_ptr<const HTNConditionBase>& inCondition) const;
+	int IncrementIndex(const std::shared_ptr<const HTNConditionBase>& inCondition);
 
-	int IncrementIndex(const HTNConditionBase& inCondition);
+	HTNAtom& AddOrGetVariable(const std::string& inName);
+	const HTNAtom* FindVariable(const std::string& inName) const;
 
 	void RecordDecomposition();
 	void RestoreDecomposition();
@@ -47,7 +51,8 @@ public:
 
 private:
 	const HTNWorldState* mWorldState = nullptr; ///< Pointer to world state. All the queries will just not be able to modify the world state at all, this is why it is important this is a const pointer.
-	std::unordered_map<const HTNConditionBase*, int> mIndices; ///< Index used to query the row in the database. It is initialized to -1 and incremented before querying the row in the database, so the first index used is 0
+	std::unordered_map<std::shared_ptr<const HTNConditionBase>, int> mIndices; ///< Index used to query the row in the database. It is initialized to -1 and incremented before querying the row in the database, so the first index used is 0
+	std::unordered_map<std::string, HTNAtom> mVariables;
 	HTNDecompositionRecord mCurrentDecomposition;
 	std::vector<HTNDecompositionRecord> mDecompositionHistory;
 };
@@ -102,12 +107,28 @@ inline const HTNWorldState* HTNDecompositionContext::GetWorldState() const
 	return mWorldState;
 }
 
-inline HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecompositionMutable()
+inline HTNAtom& HTNDecompositionContext::AddOrGetVariable(const std::string& inName)
 {
-	return mCurrentDecomposition;
+	return mVariables[inName];
+}
+
+inline const HTNAtom* HTNDecompositionContext::FindVariable(const std::string& inName) const
+{
+	const auto It = mVariables.find(inName);
+	if (It == mVariables.end())
+	{
+		return nullptr;
+	}
+
+	return &It->second;
 }
 
 inline void HTNDecompositionContext::RecordDecomposition()
 {
 	mDecompositionHistory.emplace_back(mCurrentDecomposition);
+}
+
+inline HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecompositionMutable()
+{
+	return mCurrentDecomposition;
 }

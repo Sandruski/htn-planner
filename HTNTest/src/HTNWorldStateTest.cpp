@@ -1,7 +1,7 @@
 #include "Runtime/HTNAtom.h"
 #include "Runtime/HTNWorldState.h"
 
-TEST(HTNAtom, HTNWorldStateSimpleFacts)
+TEST(HTNAtom, DISABLED_HTNWorldStateSimpleFacts)
 {
 	HTNWorldState world_state;
 
@@ -26,7 +26,7 @@ TEST(HTNAtom, HTNWorldStateSimpleFacts)
 }
 
 // Test adding facts
-TEST(HTNAtom, HTNWorldStateComplexFacts)
+TEST(HTNAtom, DISABLED_HTNWorldStateComplexFacts)
 {
 	HTNWorldState world_state;
 

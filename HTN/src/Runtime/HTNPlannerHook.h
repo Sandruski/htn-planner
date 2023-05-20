@@ -7,8 +7,8 @@
 #include <vector>
 
 class HTNAtom;
+class HTNDecompositionContext;
 class HTNTask;
-class HTNWorldState;
 
 // Runtime instance of an HTN Planner.
 // 
@@ -31,7 +31,7 @@ public:
 		return nullptr;
 	}
 
-	std::vector<std::shared_ptr<const HTNTask>> MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState) const;
+	std::vector<std::shared_ptr<const HTNTask>> MakePlan(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const;
 
 private:
 	HTNInterpreter mInterpreter;

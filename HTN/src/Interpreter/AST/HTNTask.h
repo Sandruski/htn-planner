@@ -25,6 +25,7 @@ public:
 
 	EHTNTaskType GetType() const;
 	std::string GetName() const;
+	const std::vector<std::shared_ptr<const HTNValue>>& GetArguments() const;
 
 private:
 	EHTNTaskType mType;
@@ -35,4 +36,9 @@ private:
 inline EHTNTaskType HTNTask::GetType() const
 {
 	return mType;
+}
+
+inline const std::vector<std::shared_ptr<const HTNValue>>& HTNTask::GetArguments() const
+{
+	return mArguments;
 }

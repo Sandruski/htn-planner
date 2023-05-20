@@ -1,15 +1,51 @@
 #include "Interpreter/AST/HTNCondition.h"
 
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
+#include "Interpreter/AST/HTNValue.h"
+
+bool HTNConditionWorldStateQuery::Check(const HTNWorldState& inWorldState, const int inIndex) const
+{
+	return inWorldState.CheckIndex(mKey.c_str(), inIndex, mArguments);
+}
 
 std::vector<std::shared_ptr<const HTNTask>> HTNConditionBase::Accept(const HTNNodeVisitorBase& inVisitor) const
 {
 	return inVisitor.Visit(*this);
 }
 
-std::string HTNConditionBase::ToString() const
+HTNCondition::HTNCondition(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments)
+	: mName(std::move(inName)), mArguments(inArguments)
 {
-	return "Invalid Condition";
+}
+
+std::string HTNCondition::ToString() const
+{
+	return GetName();
+}
+
+bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext) const
+{
+	const HTNAtom& NameValue = mName->GetValue();
+	const std::string& Key = NameValue.GetValue<std::string>();
+
+	std::vector<HTNAtom*> Arguments;
+	for (const std::shared_ptr<const HTNValue>& Argument : mArguments)
+	{
+		const HTNAtom& ArgumentValue = Argument->GetValue();
+		const std::string& VariableName = ArgumentValue.GetValue<std::string>();
+		HTNAtom& Variable = ioDecompositionContext.AddOrGetVariable(VariableName);
+		Arguments.emplace_back(&Variable);
+	}
+
+	const HTNConditionWorldStateQuery Condition = HTNConditionWorldStateQuery(Key, Arguments);
+	const HTNWorldState* WorldState = ioDecompositionContext.GetWorldState();
+	const int Index = ioDecompositionContext.IncrementIndex(shared_from_this());
+	return Condition.Check(*WorldState, Index);
+}
+
+std::string HTNCondition::GetName() const
+{
+	return mName ? mName->ToString() : "Invalid Condition";
 }
 
 HTNConditionAnd::HTNConditionAnd(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions)
@@ -17,11 +53,17 @@ HTNConditionAnd::HTNConditionAnd(const std::vector<std::shared_ptr<const HTNCond
 {
 }
 
-bool HTNConditionAnd::Check(HTNDecompositionContext& ioContext) const
+std::string HTNConditionAnd::ToString() const
+{
+	// TODO salvarez Print names of conditions AND
+	return "AND Condition";
+}
+
+bool HTNConditionAnd::Check(HTNDecompositionContext& ioDecompositionContext) const
 {
 	for (const std::shared_ptr<const HTNConditionBase>& Condition : mConditions)
 	{
-		if (!Condition->Check(ioContext))
+		if (!Condition->Check(ioDecompositionContext))
 		{
 			return false;
 		}
@@ -35,11 +77,17 @@ HTNConditionOr::HTNConditionOr(const std::vector<std::shared_ptr<const HTNCondit
 {
 }
 
-bool HTNConditionOr::Check(HTNDecompositionContext& ioContext) const
+std::string HTNConditionOr::ToString() const
+{
+	// TODO salvarez Print names of conditions OR
+	return "OR Condition";
+}
+
+bool HTNConditionOr::Check(HTNDecompositionContext& ioDecompositionContext) const
 {
 	for (const std::shared_ptr<const HTNConditionBase>& Condition : mConditions)
 	{
-		if (Condition->Check(ioContext))
+		if (Condition->Check(ioDecompositionContext))
 		{
 			return true;
 		}
@@ -53,7 +101,13 @@ HTNConditionNot::HTNConditionNot(const std::shared_ptr<const HTNConditionBase>& 
 {
 }
 
-bool HTNConditionNot::Check(HTNDecompositionContext& ioContext) const
+std::string HTNConditionNot::ToString() const
 {
-	return !mCondition->Check(ioContext);
+	// TODO salvarez Print names of conditions !
+	return "NOT Condition";
+}
+
+bool HTNConditionNot::Check(HTNDecompositionContext& ioDecompositionContext) const
+{
+	return !mCondition->Check(ioDecompositionContext);
 }

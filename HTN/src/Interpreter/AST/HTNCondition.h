@@ -5,37 +5,52 @@
 #include "Runtime/HTNWorldState.h"
 
 #include <array>
+#include <memory>
 #include <string>
 #include <type_traits>
 
 class HTNAtom;
 class HTNDecompositionContext;
+class HTNValue;
+
+class HTNConditionWorldStateQuery
+{
+public:
+	HTNConditionWorldStateQuery() = default;
+	explicit HTNConditionWorldStateQuery(const std::string& inKey, const std::vector<HTNAtom*>& inArguments);
+
+	bool Check(const HTNWorldState& inWorldState, const int inIndex) const;
+
+	void SetKey(const std::string& inKey);
+	void AddArgument(HTNAtom& inArgument);
+
+private:
+	std::string mKey;
+	std::vector<HTNAtom*> mArguments;
+};
 
 class HTNConditionBase : public HTNNodeBase
 {
 public:
 	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
-	std::string ToString() const final;
 
 	// Check if the condition is true.
-	virtual bool Check(HTNDecompositionContext& ioContext) const = 0;
+	virtual bool Check(HTNDecompositionContext& ioDecompositionContext) const = 0;
 };
 
-class HTNConditionWorldStateQuery final : public HTNConditionBase
+class HTNCondition final : public HTNConditionBase, public std::enable_shared_from_this<HTNCondition>
 {
 public:
-	HTNConditionWorldStateQuery() = default;
-	explicit HTNConditionWorldStateQuery(const std::string& inKey, const std::vector<HTNAtom*>& inArgs);
+	explicit HTNCondition(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments);
 
-	bool Check(HTNDecompositionContext& ioContext) const final;
+	std::string ToString() const final;
+	bool Check(HTNDecompositionContext& ioDecompositionContext) const final;
 
-	void SetKey(const std::string& inKey);
-	void AddArgument(HTNAtom& inAtom);
+	std::string GetName() const;
 
 private:
-	// TODO salvarez Use HTNValue for both key and args?
-	std::string mKey;
-	std::vector<HTNAtom*> mArgs;
+	std::unique_ptr<const HTNValue> mName;
+	std::vector<std::shared_ptr<const HTNValue>> mArguments;
 };
 
 class HTNConditionAnd final : public HTNConditionBase
@@ -43,7 +58,8 @@ class HTNConditionAnd final : public HTNConditionBase
 public:
 	explicit HTNConditionAnd(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions);
 
-	bool Check(HTNDecompositionContext& ioContext) const final;
+	std::string ToString() const final;
+	bool Check(HTNDecompositionContext& ioDecompositionContext) const final;
 
 private:
 	std::vector<std::shared_ptr<const HTNConditionBase>> mConditions;
@@ -54,7 +70,8 @@ class HTNConditionOr final : public HTNConditionBase
 public:
 	explicit HTNConditionOr(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions);
 
-	bool Check(HTNDecompositionContext& ioContext) const final;
+	std::string ToString() const final;
+	bool Check(HTNDecompositionContext& ioDecompositionContext) const final;
 
 private:
 	std::vector<std::shared_ptr<const HTNConditionBase>> mConditions;
@@ -65,14 +82,15 @@ class HTNConditionNot final : public HTNConditionBase
 public:
 	explicit HTNConditionNot(const std::shared_ptr<const HTNConditionBase>& inCondition);
 
-	bool Check(HTNDecompositionContext& ioContext) const final;
+	std::string ToString() const final;
+	bool Check(HTNDecompositionContext& ioDecompositionContext) const final;
 
 private:
 	std::shared_ptr<const HTNConditionBase> mCondition;
 };
 
-inline HTNConditionWorldStateQuery::HTNConditionWorldStateQuery(const std::string& inKey, const std::vector<HTNAtom*>& inArgs)
-	: mKey(inKey), mArgs(inArgs)
+inline HTNConditionWorldStateQuery::HTNConditionWorldStateQuery(const std::string& inKey, const std::vector<HTNAtom*>& inArguments)
+	: mKey(inKey), mArguments(inArguments)
 {
 }
 
@@ -81,19 +99,7 @@ inline void HTNConditionWorldStateQuery::SetKey(const std::string& inKey)
 	mKey = inKey;
 }
 
-inline void HTNConditionWorldStateQuery::AddArgument(HTNAtom& inAtom)
+inline void HTNConditionWorldStateQuery::AddArgument(HTNAtom& inArgument)
 {
-	mArgs.emplace_back(&inAtom);
-}
-
-inline bool HTNConditionWorldStateQuery::Check(HTNDecompositionContext& ioContext) const
-{
-	const HTNWorldState* WorldState = ioContext.GetWorldState();
-	if (!WorldState)
-	{
-		return false;
-	}
-
-	const int Index = ioContext.IncrementIndex(*this);
-	return WorldState->CheckIndex(mKey.c_str(), Index, mArgs);
+	mArguments.emplace_back(&inArgument);
 }

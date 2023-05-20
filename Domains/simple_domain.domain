@@ -7,7 +7,7 @@
 	(:method (entry_point)
 
 		( branch_never_decompose
-			(and (should_decompose ?test_arg)
+			(and (should_decompose)
 			)
 			(    (!log "nunca entrare aqui!")
 			)
