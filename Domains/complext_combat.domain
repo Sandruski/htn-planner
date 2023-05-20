@@ -1,0 +1,51 @@
+// selects the best threat and it will attack it
+(:method (select_and_attack_best_threat ?io_threat ?out_threat_type)
+	
+	(	branch_main_threat
+		(and	(main_threat ?io_threat)						// if ?io_threat is binded it will try to check if this is the main threat. 
+				(= ?out_threat_type main_threat)
+		)
+		(		(attack_threat ?io_threat)
+		)
+	)
+	
+	(	branch_interactive_object
+		(and	(not (threat ?io_threat))
+				(call find_closest_destructible_object)
+				(closest_destructible_object_found ?io_threat)
+				(= ?out_threat_type destructible_object)
+		)
+		(		(attack_object ?io_threat)
+		)
+	)
+)
+
+// selects the best battle cry based on the type of threat we are attacking
+(:method (battlecry ?inp_threat ?inp_threat_type)
+
+	(	branch_threat
+		(and	(call eq ?inp_threat_type main_threat)
+		)
+		(		(!play_speech "I will kill you!")
+		)
+	)
+	
+	(	branch_destructible_object
+		(and	(call eq ?inp_threat_type destructible_object)
+		)
+		(		(!play_speech "I am gonna destroy the object!")
+		)
+	)
+)
+
+
+(:method (entry_point)
+
+	(	branch_attack_and_battle_cry
+		(
+		)
+		(		(select_and_attack_best_threat ?threat ?threat_type)
+				(battlecry ?threat ?threat_type)
+		)
+	)
+)
