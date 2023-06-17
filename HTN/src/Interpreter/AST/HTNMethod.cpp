@@ -3,6 +3,7 @@
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNBranch.h"
 #include "Interpreter/AST/HTNValue.h"
+#include "Runtime/HTNDecompositionContext.h"
 
 HTNMethod::HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments, const std::vector<std::shared_ptr<const HTNBranch>>& inBranches)
 	: mName(std::move(inName)), mArguments(inArguments), mBranches(inBranches)

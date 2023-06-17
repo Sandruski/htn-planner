@@ -1,6 +1,7 @@
 #include "Interpreter/HTNInterpreter.h"
 
 #include "Interpreter/AST/HTNBranch.h"
+#include "Interpreter/AST/HTNCondition.h"
 #include "Interpreter/AST/HTNDomain.h"
 #include "Interpreter/AST/HTNMethod.h"
 #include "Interpreter/AST/HTNTask.h"
@@ -84,13 +85,13 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 	HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
 	// Dummy root compound task
-	// TODO salvarez Allow to pass arguments for the root compound task
 	const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(EHTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNAtom(inEntryPointName)));
 	CurrentDecomposition.PushTaskToProcess(RootCompoundTask);
 
 	while (CurrentDecomposition.HasTasksToProcess())
 	{
 		const std::shared_ptr<const HTNTask> CurrentTask = CurrentDecomposition.PopTaskToProcess();
+		CurrentDecomposition.SetCurrentTask(CurrentTask);
 		switch (CurrentTask->GetType())
 		{
 		case EHTNTaskType::PRIMITIVE:
@@ -100,52 +101,55 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 		}
 		case EHTNTaskType::COMPOUND:
 		{
-			std::shared_ptr<const HTNMethod> Method = mDomain->FindMethodByName(CurrentTask->GetName());
-			if (!Method)
+			std::shared_ptr<const HTNMethod> CurrentMethod = mDomain->FindMethodByName(CurrentTask->GetName());
+			if (!CurrentMethod)
 			{
 				LOG_ERROR("Method {} not found", CurrentTask->GetName());
 				break;
 			}
-			
-			const std::vector<std::shared_ptr<const HTNBranch>>& Branches = Method->GetBranches();
-			if (Branches.empty())
+
+			const unsigned int CurrentBranchIndex = CurrentDecomposition.GetOrAddCurrentBranchIndex(CurrentMethod);
+			const std::vector<std::shared_ptr<const HTNBranch>>& CurrentBranches = CurrentMethod->GetBranches();
+			if (CurrentBranchIndex >= CurrentBranches.size())
 			{
-				LOG_ERROR("Method does not have branches", CurrentTask->GetName());
 				break;
 			}
 
-			const unsigned int NextBranchIndex = CurrentDecomposition.GetNextBranchIndex();
-			if (NextBranchIndex >= Branches.size())
+			const std::shared_ptr<const HTNBranch>& CurrentBranch = CurrentBranches[CurrentBranchIndex];
+			const std::shared_ptr<const HTNConditionBase>& CurrentCondition = CurrentBranch->GetCondition();
+			const std::unordered_map<std::string, HTNAtom> UnboundVariables = ioDecompositionContext.GetCurrentDecompositionMutable().GetVariables();
+			const bool Result = CurrentCondition ? CurrentCondition->Check(ioDecompositionContext) : true;
+			if (Result)
 			{
-				LOG_ERROR("Next branch index {} is out of range", NextBranchIndex);
-				break;
-			}
+				HTNDecompositionRecord CurrentDecompositionUnboundVariables = CurrentDecomposition;
+				CurrentDecompositionUnboundVariables.SetVariables(UnboundVariables);
 
-			const std::shared_ptr<const HTNBranch>& Branch = Branches[NextBranchIndex];
-			if (!Branch)
+				// Record for hierarchical part
+				ioDecompositionContext.RecordDecomposition(CurrentDecompositionUnboundVariables);
+
+				const std::vector<std::shared_ptr<const HTNTask>>& Tasks = CurrentBranch->GetTasks();
+				for (int i = static_cast<int>(Tasks.size()) - 1; i >= 0; --i)
+				{
+					const std::shared_ptr<const HTNTask>& Task = Tasks[i];
+					CurrentDecomposition.PushTaskToProcess(Task);
+				}
+
+				CurrentDecomposition.ResetCurrentBranchIndex(CurrentMethod);
+			}
+			else
 			{
-				LOG_ERROR("Branch is null");
-				break;
+				if (CurrentBranchIndex < CurrentBranches.size() - 1)
+				{
+					CurrentDecomposition.PushTaskToProcess(CurrentTask);
+					CurrentDecomposition.IncrementCurrentBranchIndex(CurrentMethod);
+				}
+				else
+				{
+					// Restore for hierarchical part
+					ioDecompositionContext.RestoreDecomposition();
+					CurrentDecomposition.PushTaskToProcess(CurrentDecomposition.GetCurrentTask());
+				}
 			}
-
-			// TODO salvarez If a condition fails, increment its index and check it again
-			// Only move to the next branch when the index is out of bounds
-			if (!Branch->Check(ioDecompositionContext))
-			{
-				ioDecompositionContext.RestoreDecomposition();
-				CurrentDecomposition.IncrementNextBranchIndex();
-				CurrentDecomposition.PushTaskToProcess(CurrentTask);
-				break;
-			}
-
-			ioDecompositionContext.RecordDecomposition();
-			CurrentDecomposition.ResetNextBranchIndex();
-			const std::vector<std::shared_ptr<const HTNTask>>& Tasks = Branch->GetTasks();
-			for (const std::shared_ptr<const HTNTask>& Task : Tasks)
-			{
-				CurrentDecomposition.PushTaskToProcess(Task);
-			}
-
 			break;
 		}
 		default:

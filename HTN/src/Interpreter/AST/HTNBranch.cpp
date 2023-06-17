@@ -22,16 +22,6 @@ std::string HTNBranch::ToString() const
 	return GetName();
 }
 
-bool HTNBranch::Check(HTNDecompositionContext& ioDecompositionContext) const
-{
-	if (!mCondition)
-	{
-		return true;
-	}
-
-	return mCondition->Check(ioDecompositionContext);
-}
-
 std::string HTNBranch::GetName() const
 {
 	return mName ? mName->ToString() : "Invalid Branch";

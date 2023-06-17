@@ -73,3 +73,22 @@ int HTNWorldState::GetNumFactTablesByNumArgs(const char* inKey, const int inNumA
 
 	return 1;
 }
+
+unsigned int HTNWorldState::GetNumFactEntries(const std::string& inKey, const unsigned int inNumArgs) const
+{
+	const auto FactIt = mFacts.find(inKey);
+	if (FactIt == mFacts.end())
+	{
+		return 0;
+	}
+
+	if (inNumArgs == 0)
+	{
+		return 1;
+	}
+
+	const HTNFact& Fact = FactIt->second;
+	const unsigned int TableIndex = inNumArgs - 1;
+	const HTNTableBase* Table = Fact[TableIndex];
+	return Table->GetNumEntries();
+}

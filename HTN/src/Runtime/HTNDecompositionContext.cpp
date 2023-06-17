@@ -7,33 +7,6 @@ const std::shared_ptr<const HTNTask>& HTNDecompositionRecord::PopTaskToProcess()
 	return Task;
 }
 
-int HTNDecompositionContext::GetIndex(const std::shared_ptr<const HTNConditionBase>& inCondition) const
-{
-	const auto It = mIndices.find(inCondition);
-	if (It == mIndices.end())
-	{
-		// Index not found
-		return -1;
-	}
-
-	const int Index = It->second;
-	return Index;
-}
-
-int HTNDecompositionContext::IncrementIndex(const std::shared_ptr<const HTNConditionBase>& inCondition)
-{
-	const bool ContainsCondition = mIndices.contains(inCondition);
-
-	int& Index = mIndices[inCondition];
-
-	if (ContainsCondition)
-	{
-		++Index;
-	}
-
-	return Index;
-}
-
 void HTNDecompositionContext::RestoreDecomposition()
 {
 	if (mDecompositionHistory.empty())

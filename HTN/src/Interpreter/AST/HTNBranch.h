@@ -19,8 +19,6 @@ public:
 	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
 	std::string ToString() const final;
 
-	bool Check(HTNDecompositionContext& ioDecompositionContext) const;
-
 	std::string GetName() const;
 	const std::shared_ptr<const HTNConditionBase>& GetCondition() const;
 	const std::vector<std::shared_ptr<const HTNTask>>& GetTasks() const;

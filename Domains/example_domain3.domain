@@ -1,0 +1,47 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(:domain test
+
+	(:method (entry_point)
+
+		( branch_first
+			(and	(item ?x)
+			)
+			(	(second ?x)
+			)
+		)
+	)
+	
+	(:method (second ?x)
+
+		( branch_first
+			(and	(edible ?x)
+			)
+			(	(!eat ?x)
+			)
+		)
+
+		( branch_second
+			(and	(loggable ?x)
+			)
+			(	(!log ?x)
+			)
+		)
+	)
+)

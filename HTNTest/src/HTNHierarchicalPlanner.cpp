@@ -88,6 +88,8 @@ public:
 		mLastPlan.clear();
 
 		HTNDecompositionContext DecompositionContext = HTNDecompositionContext(mWorldState);
+		HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
+
 		const std::vector<std::shared_ptr<const HTNTask>> Plan = mPlanner.MakePlan(inEntryPointName, DecompositionContext);
 		for (const std::shared_ptr<const HTNTask>& Task : Plan)
 		{
@@ -98,14 +100,18 @@ public:
 			for (const std::shared_ptr<const HTNValue>& Argument : Arguments)
 			{
 				const HTNAtom& ArgumentValue = Argument->GetValue();
-				const std::string& VariableName = ArgumentValue.GetValue<std::string>();
-				const HTNAtom* Variable = DecompositionContext.FindVariable(VariableName);
-				if (!Variable)
+				if (ArgumentValue.IsType<std::string>())
 				{
-					continue;
+					const std::string& VariableName = ArgumentValue.GetValue<std::string>();
+					const HTNAtom* Variable = CurrentDecomposition.FindVariable(VariableName);
+					if (Variable)
+					{
+						InstanceArguments.emplace_back(*Variable);
+						continue;
+					}
 				}
 
-				InstanceArguments.emplace_back(*Variable);
+				InstanceArguments.emplace_back(ArgumentValue);
 			}
 
 			mLastPlan.emplace_back(Name, InstanceArguments);
@@ -128,25 +134,31 @@ private:
 // Test planning
 TEST(HTNHierarchicalPlanner, HTNPlanning)
 {
-	const std::string DomainPath = "../Domains/example_domain.domain";
-	const std::string EntryPointName = "eat";
+	const std::string DomainPath = "../Domains/example_domain3.domain";
+	const std::string EntryPointName = "entry_point";
 
 	HTNPlanningUnit PlanningUnit;
 	EXPECT_TRUE(PlanningUnit.ParseDomain(DomainPath));
 
 	HTNWorldState& WorldState = PlanningUnit.GetWorldState();
+	WorldState.MakeFact("test", "something");
 	WorldState.MakeFact("item", "wallet");
-	WorldState.MakeFact("item", "sandwich");
-	WorldState.MakeFact("item", "banana");
-	WorldState.MakeFact("edible", "sandwich");
-	WorldState.MakeFact("edible", "banana");
-	WorldState.MakeFact("type", "banana", "fruit");
+	WorldState.MakeFact("item", "phone");
+	WorldState.MakeFact("loggable", "apple");
+	WorldState.MakeFact("loggable", "phone");
 
 	const std::vector<HTNTaskInstance>& Plan = PlanningUnit.ExecuteTopLevelMethod(EntryPointName);
 	for (const HTNTaskInstance& Task : Plan)
 	{
-		const std::string& Name = Task.GetName();
-		LOG("{}", Name.c_str());
+		std::string Message = Task.GetName();
+		const std::vector<HTNAtom>& Arguments = Task.GetArguments();
+		for (const HTNAtom& Argument : Arguments)
+		{
+			Message += " ";
+			Message += Argument.ToString().c_str();
+		}
+
+		LOG("{}", Message.c_str());
 	}
 
 	// TODO salvarez HTNPlannerRunner // Action execution

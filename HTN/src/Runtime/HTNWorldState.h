@@ -13,6 +13,7 @@ public:
 	virtual ~HTNTableBase() = 0;
 
 	virtual bool Check(const int inIndex, const std::vector<HTNAtom*>& inArgs) const = 0;
+	virtual unsigned int GetNumEntries() const = 0;
 };
 
 inline HTNTableBase::~HTNTableBase() {}
@@ -35,7 +36,7 @@ public:
 	bool Check(const int inIndex, const std::vector<HTNAtom*>& inArgs) const final;
 
 	// Returns the number of entries
-	int GetNumEntries() const;
+	unsigned int GetNumEntries() const final;
 
 private:
 	typedef std::array<HTNAtom, NumArgs> HTNEntry;
@@ -117,7 +118,7 @@ inline bool HTNTable<NumArgs>::Check(const int inIndex, const std::vector<HTNAto
 		return false;
 	}
 
-	// Check args bound and bind args unbound
+	// Check args bound
 	const HTNEntry& Entry = mEntries[inIndex];
 	for (size_t i = 0; i < Entry.size(); ++i)
 	{
@@ -130,7 +131,14 @@ inline bool HTNTable<NumArgs>::Check(const int inIndex, const std::vector<HTNAto
 				return false;
 			}
 		}
-		else
+	}
+
+	// Bind args unbound
+	for (size_t i = 0; i < Entry.size(); ++i)
+	{
+		HTNAtom* Arg = inArgs[i];
+		const HTNAtom& EntryArg = Entry[i];
+		if (!Arg->IsSet())
 		{
 			*Arg = EntryArg;
 		}
@@ -140,9 +148,9 @@ inline bool HTNTable<NumArgs>::Check(const int inIndex, const std::vector<HTNAto
 }
 
 template <int NumArgs>
-inline int HTNTable<NumArgs>::GetNumEntries() const
+inline unsigned int HTNTable<NumArgs>::GetNumEntries() const
 {
-	return static_cast<int>(mEntries.size());
+	return static_cast<unsigned int>(mEntries.size());
 }
 
 template <int NumArgs>
@@ -209,6 +217,8 @@ public:
 	// Returns the number of HTNTables registered for the fact inKey and the inNumArgs. This function should only return 0 or 1.
 	// If it does returns something different then this will cause problems later on during decomposition.
 	int GetNumFactTablesByNumArgs(const char* inKey, const int inNumArgs) const;
+
+	unsigned int GetNumFactEntries(const std::string& inKey, const unsigned int inNumArgs) const;
 
 private:
 	// Helper method for fold expression

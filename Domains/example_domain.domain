@@ -5,26 +5,12 @@
 
 		( branch_in_possession
 			(and	(item ?x)
-					(edible ?x)
-					(type ?x ?type)
+					(edible ?x ?y)
+					//(speed ?y)
 			)
 			(	(!take ?x)
-			    (prepare ?x)
+			    (!prepare ?y)
 			    (!eat ?x)
-			)
-		)
-
-		( branch_get_from_house
-			(
-			)
-			(	(!log "Getting from house")
-			)
-		)
-
-		( branch_buy_in_store
-			(
-			)
-			(	(!log "Buying in store")
 			)
 		)
 
@@ -32,16 +18,6 @@
 			(
 			)
 			(	(!log "Fallback")
-			)
-		)
-	)
-
-	(:method (prepare ?food)
-
-		( branch_prepare
-			(
-			)
-			(	(!prepare ?food)
 			)
 		)
 	)

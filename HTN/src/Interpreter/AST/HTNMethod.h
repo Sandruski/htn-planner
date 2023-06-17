@@ -6,6 +6,7 @@
 #include <vector>
 
 class HTNBranch;
+class HTNDecompositionContext;
 class HTNValue;
 
 class HTNMethod final : public HTNNodeBase

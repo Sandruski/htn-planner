@@ -2,6 +2,9 @@
 
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNValue.h"
+#include "Runtime/HTNDecompositionContext.h"
+
+#include <cassert>
 
 bool HTNConditionWorldStateQuery::Check(const HTNWorldState& inWorldState, const int inIndex) const
 {
@@ -25,22 +28,36 @@ std::string HTNCondition::ToString() const
 
 bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext) const
 {
+	HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+	const std::shared_ptr<const HTNCondition> This = shared_from_this();
+	const HTNWorldState* WorldState = ioDecompositionContext.GetWorldState();
+
 	const HTNAtom& NameValue = mName->GetValue();
 	const std::string& Key = NameValue.GetValue<std::string>();
 
+	// Add variables for the new arguments
 	std::vector<HTNAtom*> Arguments;
 	for (const std::shared_ptr<const HTNValue>& Argument : mArguments)
 	{
 		const HTNAtom& ArgumentValue = Argument->GetValue();
 		const std::string& VariableName = ArgumentValue.GetValue<std::string>();
-		HTNAtom& Variable = ioDecompositionContext.AddOrGetVariable(VariableName);
+		HTNAtom& Variable = CurrentDecomposition.GetOrAddVariable(VariableName);
 		Arguments.emplace_back(&Variable);
 	}
 
+	// Try to bind the new variables
 	const HTNConditionWorldStateQuery Condition = HTNConditionWorldStateQuery(Key, Arguments);
-	const HTNWorldState* WorldState = ioDecompositionContext.GetWorldState();
-	const int Index = ioDecompositionContext.IncrementIndex(shared_from_this());
-	return Condition.Check(*WorldState, Index);
+	const unsigned int ArgumentsCount = static_cast<unsigned int>(Arguments.size());
+	const unsigned int FactEntriesCount = WorldState->GetNumFactEntries(Key, ArgumentsCount);
+	for (unsigned int CurrentFactEntryIndex = CurrentDecomposition.AddOrIncrementCurrentFactEntryIndex(This); CurrentFactEntryIndex < FactEntriesCount; CurrentFactEntryIndex = CurrentDecomposition.AddOrIncrementCurrentFactEntryIndex(This))
+	{
+		if (Condition.Check(*WorldState, CurrentFactEntryIndex))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 std::string HTNCondition::GetName() const
@@ -61,15 +78,17 @@ std::string HTNConditionAnd::ToString() const
 
 bool HTNConditionAnd::Check(HTNDecompositionContext& ioDecompositionContext) const
 {
-	for (const std::shared_ptr<const HTNConditionBase>& Condition : mConditions)
+	// TODO salvarez Implement AND condition
+	HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+	const std::shared_ptr<const HTNConditionBase> This = shared_from_this();
+	const unsigned int CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentConditionIndex(This);
+	if (CurrentConditionIndex >= mConditions.size())
 	{
-		if (!Condition->Check(ioDecompositionContext))
-		{
-			return false;
-		}
+		return true;
 	}
 
-	return true;
+	const std::shared_ptr<const HTNConditionBase>& CurrentCondition = mConditions[CurrentConditionIndex];
+	return CurrentCondition->Check(ioDecompositionContext);
 }
 
 HTNConditionOr::HTNConditionOr(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions)
@@ -85,15 +104,17 @@ std::string HTNConditionOr::ToString() const
 
 bool HTNConditionOr::Check(HTNDecompositionContext& ioDecompositionContext) const
 {
-	for (const std::shared_ptr<const HTNConditionBase>& Condition : mConditions)
+	// TODO salvarez Implement OR condition
+	HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+	const std::shared_ptr<const HTNConditionBase> This = shared_from_this();
+	const unsigned int CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentConditionIndex(This);
+	if (CurrentConditionIndex >= mConditions.size())
 	{
-		if (Condition->Check(ioDecompositionContext))
-		{
-			return true;
-		}
+		return true;
 	}
 
-	return false;
+	const std::shared_ptr<const HTNConditionBase>& CurrentCondition = mConditions[CurrentConditionIndex];
+	return CurrentCondition->Check(ioDecompositionContext);
 }
 
 HTNConditionNot::HTNConditionNot(const std::shared_ptr<const HTNConditionBase>& inCondition)

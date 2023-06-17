@@ -18,7 +18,8 @@ class HTNConditionWorldStateQuery
 public:
 	HTNConditionWorldStateQuery() = default;
 	explicit HTNConditionWorldStateQuery(const std::string& inKey, const std::vector<HTNAtom*>& inArguments);
-
+	
+	// Check if the condition is true
 	bool Check(const HTNWorldState& inWorldState, const int inIndex) const;
 
 	void SetKey(const std::string& inKey);
@@ -34,7 +35,6 @@ class HTNConditionBase : public HTNNodeBase
 public:
 	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
 
-	// Check if the condition is true.
 	virtual bool Check(HTNDecompositionContext& ioDecompositionContext) const = 0;
 };
 
@@ -53,7 +53,7 @@ private:
 	std::vector<std::shared_ptr<const HTNValue>> mArguments;
 };
 
-class HTNConditionAnd final : public HTNConditionBase
+class HTNConditionAnd final : public HTNConditionBase, public std::enable_shared_from_this<HTNConditionAnd>
 {
 public:
 	explicit HTNConditionAnd(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions);
@@ -65,7 +65,7 @@ private:
 	std::vector<std::shared_ptr<const HTNConditionBase>> mConditions;
 };
 
-class HTNConditionOr final : public HTNConditionBase
+class HTNConditionOr final : public HTNConditionBase, public std::enable_shared_from_this<HTNConditionOr>
 {
 public:
 	explicit HTNConditionOr(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions);
