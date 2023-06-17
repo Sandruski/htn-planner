@@ -28,14 +28,11 @@ public:
 
 	unsigned int GetOrAddCurrentBranchIndex(const std::shared_ptr<const HTNMethod>& inMethod);
 	unsigned int IncrementCurrentBranchIndex(const std::shared_ptr<const HTNMethod>& inMethod);
-	unsigned int ResetCurrentBranchIndex(const std::shared_ptr<const HTNMethod>& inMethod);
 
 	unsigned int GetOrAddCurrentConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition);
 	unsigned int IncrementCurrentConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition);
-	unsigned int ResetCurrentConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition);
 
 	unsigned int AddOrIncrementCurrentFactEntryIndex(const std::shared_ptr<const HTNCondition>& inCondition);
-	unsigned int ResetCurrentFactEntryIndex(const std::shared_ptr<const HTNCondition>& inCondition);
 
 	void SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables);
 	const std::unordered_map<std::string, HTNAtom>& GetVariables() const;
@@ -61,7 +58,7 @@ public:
 
 	void RecordDecomposition(HTNDecompositionRecord& inDecomposition);
 	void RecordCurrentDecomposition();
-	void RestoreDecomposition();
+	bool RestoreDecomposition();
 
 	HTNDecompositionRecord& GetCurrentDecompositionMutable();
 
@@ -117,11 +114,6 @@ inline unsigned int HTNDecompositionRecord::IncrementCurrentBranchIndex(const st
 	return ++mCurrentBranchIndex[inMethod];
 }
 
-inline unsigned int HTNDecompositionRecord::ResetCurrentBranchIndex(const std::shared_ptr<const HTNMethod>& inMethod)
-{
-	return mCurrentBranchIndex[inMethod] = 0;
-}
-
 inline unsigned int HTNDecompositionRecord::GetOrAddCurrentConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition)
 {
 	return mCurrentConditionIndex[inCondition];
@@ -132,19 +124,9 @@ inline unsigned int HTNDecompositionRecord::IncrementCurrentConditionIndex(const
 	return ++mCurrentConditionIndex[inCondition];
 }
 
-inline unsigned int HTNDecompositionRecord::ResetCurrentConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition)
-{
-	return mCurrentConditionIndex[inCondition] = 0;
-}
-
 inline unsigned int HTNDecompositionRecord::AddOrIncrementCurrentFactEntryIndex(const std::shared_ptr<const HTNCondition>& inCondition)
 {
 	return mCurrentFactEntryIndices.contains(inCondition) ? ++mCurrentFactEntryIndices[inCondition] : mCurrentFactEntryIndices[inCondition];
-}
-
-inline unsigned int HTNDecompositionRecord::ResetCurrentFactEntryIndex(const std::shared_ptr<const HTNCondition>& inCondition)
-{
-	return mCurrentFactEntryIndices[inCondition] = 0;
 }
 
 inline void HTNDecompositionRecord::SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables)

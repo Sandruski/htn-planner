@@ -134,18 +134,20 @@ private:
 // Test planning
 TEST(HTNHierarchicalPlanner, HTNPlanning)
 {
-	const std::string DomainPath = "../Domains/example_domain3.domain";
+	const std::string DomainPath = "../Domains/example_domain4.domain";
 	const std::string EntryPointName = "entry_point";
 
 	HTNPlanningUnit PlanningUnit;
 	EXPECT_TRUE(PlanningUnit.ParseDomain(DomainPath));
 
 	HTNWorldState& WorldState = PlanningUnit.GetWorldState();
-	WorldState.MakeFact("test", "something");
-	WorldState.MakeFact("item", "wallet");
-	WorldState.MakeFact("item", "phone");
-	WorldState.MakeFact("loggable", "apple");
-	WorldState.MakeFact("loggable", "phone");
+	//WorldState.MakeFact("item", "test");
+	//WorldState.MakeFact("item", "wallet");
+	//WorldState.MakeFact("item", "fruit");
+	//WorldState.MakeFact("loggable", "apple");
+	//WorldState.MakeFact("loggable", "phone");
+	WorldState.MakeFact("loggable", "wallet");
+	WorldState.MakeFact("edible", "fruit");
 
 	const std::vector<HTNTaskInstance>& Plan = PlanningUnit.ExecuteTopLevelMethod(EntryPointName);
 	for (const HTNTaskInstance& Task : Plan)

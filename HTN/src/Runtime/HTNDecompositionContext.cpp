@@ -7,13 +7,16 @@ const std::shared_ptr<const HTNTask>& HTNDecompositionRecord::PopTaskToProcess()
 	return Task;
 }
 
-void HTNDecompositionContext::RestoreDecomposition()
+bool HTNDecompositionContext::RestoreDecomposition()
 {
 	if (mDecompositionHistory.empty())
 	{
-		return;
+		mCurrentDecomposition = HTNDecompositionRecord();
+		return false;
 	}
 
 	mCurrentDecomposition = mDecompositionHistory.back();
 	mDecompositionHistory.pop_back();
+
+	return true;
 }

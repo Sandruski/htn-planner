@@ -91,7 +91,13 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 	while (CurrentDecomposition.HasTasksToProcess())
 	{
 		const std::shared_ptr<const HTNTask> CurrentTask = CurrentDecomposition.PopTaskToProcess();
+		if (!CurrentTask)
+		{
+			break;
+		}
+
 		CurrentDecomposition.SetCurrentTask(CurrentTask);
+
 		switch (CurrentTask->GetType())
 		{
 		case EHTNTaskType::PRIMITIVE:
@@ -117,39 +123,29 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 
 			const std::shared_ptr<const HTNBranch>& CurrentBranch = CurrentBranches[CurrentBranchIndex];
 			const std::shared_ptr<const HTNConditionBase>& CurrentCondition = CurrentBranch->GetCondition();
-			const std::unordered_map<std::string, HTNAtom> UnboundVariables = ioDecompositionContext.GetCurrentDecompositionMutable().GetVariables();
-			const bool Result = CurrentCondition ? CurrentCondition->Check(ioDecompositionContext) : true;
+			const bool Result = CurrentCondition ? CurrentCondition->Check(ioDecompositionContext) : true; // TODO salvarez Time-slice condition result
 			if (Result)
 			{
-				HTNDecompositionRecord CurrentDecompositionUnboundVariables = CurrentDecomposition;
-				CurrentDecompositionUnboundVariables.SetVariables(UnboundVariables);
-
-				// Record for hierarchical part
-				ioDecompositionContext.RecordDecomposition(CurrentDecompositionUnboundVariables);
-
 				const std::vector<std::shared_ptr<const HTNTask>>& Tasks = CurrentBranch->GetTasks();
 				for (int i = static_cast<int>(Tasks.size()) - 1; i >= 0; --i)
 				{
 					const std::shared_ptr<const HTNTask>& Task = Tasks[i];
 					CurrentDecomposition.PushTaskToProcess(Task);
 				}
-
-				CurrentDecomposition.ResetCurrentBranchIndex(CurrentMethod);
 			}
 			else
 			{
 				if (CurrentBranchIndex < CurrentBranches.size() - 1)
 				{
 					CurrentDecomposition.PushTaskToProcess(CurrentTask);
+
+					// Continue
 					CurrentDecomposition.IncrementCurrentBranchIndex(CurrentMethod);
 				}
 				else
 				{
-					// Restore for hierarchical part
-					if (!ioDecompositionContext.RestoreDecomposition())
-					{
-						break;
-					}
+					// Restore state: unbound variables but updated indices
+					ioDecompositionContext.RestoreDecomposition();
 
 					CurrentDecomposition.PushTaskToProcess(CurrentDecomposition.GetCurrentTask());
 				}
