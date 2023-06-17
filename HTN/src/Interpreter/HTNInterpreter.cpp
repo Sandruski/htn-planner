@@ -146,7 +146,11 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 				else
 				{
 					// Restore for hierarchical part
-					ioDecompositionContext.RestoreDecomposition();
+					if (!ioDecompositionContext.RestoreDecomposition())
+					{
+						break;
+					}
+
 					CurrentDecomposition.PushTaskToProcess(CurrentDecomposition.GetCurrentTask());
 				}
 			}
