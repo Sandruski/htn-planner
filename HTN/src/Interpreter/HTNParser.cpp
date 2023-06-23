@@ -125,7 +125,7 @@ std::shared_ptr<const HTNBranch> HTNParser::ParseBranch()
 		return nullptr;
 	}
 
-	const std::shared_ptr<const HTNConditionBase> Condition = ParseCondition();
+	const std::shared_ptr<const HTNConditionBase> PreCondition = ParseCondition();
 
 	if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
 	{
@@ -148,7 +148,7 @@ std::shared_ptr<const HTNBranch> HTNParser::ParseBranch()
 		return nullptr;
 	}
 
-	return std::make_shared<HTNBranch>(std::move(Name), Condition, Tasks);
+	return std::make_shared<HTNBranch>(std::move(Name), PreCondition, Tasks);
 }
 
 std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()

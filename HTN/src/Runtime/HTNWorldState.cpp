@@ -90,5 +90,10 @@ unsigned int HTNWorldState::GetNumFactEntries(const std::string& inKey, const un
 	const HTNFact& Fact = FactIt->second;
 	const unsigned int TableIndex = inNumArgs - 1;
 	const HTNTableBase* Table = Fact[TableIndex];
+	if (!Table)
+	{
+		return 0;
+	}
+
 	return Table->GetNumEntries();
 }

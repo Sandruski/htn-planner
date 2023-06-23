@@ -5,8 +5,8 @@
 #include "Interpreter/AST/HTNTask.h"
 #include "Interpreter/AST/HTNValue.h"
 
-HTNBranch::HTNBranch(std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNConditionBase>& inCondition, const std::vector<std::shared_ptr<const HTNTask>>& inTasks)
-	: mName(std::move(inName)), mCondition(inCondition), mTasks(inTasks)
+HTNBranch::HTNBranch(std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNConditionBase>& inPreCondition, const std::vector<std::shared_ptr<const HTNTask>>& inTasks)
+	: mName(std::move(inName)), mPreCondition(inPreCondition), mTasks(inTasks)
 {
 }
 

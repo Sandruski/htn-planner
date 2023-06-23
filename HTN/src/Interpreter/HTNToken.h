@@ -19,6 +19,7 @@ enum class HTNTokenType : unsigned int
 	HTN_METHOD, // method
 	AND, // and
 	OR, // or
+	ALT, // alt
 	NOT, // not
 
 	IDENTIFIER,

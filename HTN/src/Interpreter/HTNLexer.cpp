@@ -13,6 +13,7 @@ namespace
 	{ "method", HTNTokenType::HTN_METHOD },
 	{ "and", HTNTokenType::AND },
 	{ "or", HTNTokenType::OR },
+	{ "alt", HTNTokenType::ALT },
 	{ "not", HTNTokenType::NOT }
 	};
 

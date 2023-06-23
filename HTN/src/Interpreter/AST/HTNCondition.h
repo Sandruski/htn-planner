@@ -35,7 +35,7 @@ class HTNConditionBase : public HTNNodeBase
 public:
 	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
 
-	virtual bool Check(HTNDecompositionContext& ioDecompositionContext) const = 0;
+	virtual bool Check(HTNDecompositionContext& ioDecompositionContext, const bool inIsInverted, const bool inHasBacktracking) const = 0;
 };
 
 class HTNCondition final : public HTNConditionBase, public std::enable_shared_from_this<HTNCondition>
@@ -44,46 +44,64 @@ public:
 	explicit HTNCondition(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments);
 
 	std::string ToString() const final;
-	bool Check(HTNDecompositionContext& ioDecompositionContext) const final;
+	bool Check(HTNDecompositionContext& ioDecompositionContext, const bool inIsInverted, const bool inHasBacktracking) const final;
 
 	std::string GetName() const;
 
 private:
+	bool CheckInternal(HTNDecompositionContext& ioDecompositionContext) const;
+
 	std::unique_ptr<const HTNValue> mName;
 	std::vector<std::shared_ptr<const HTNValue>> mArguments;
 };
 
+// Backtracking
 class HTNConditionAnd final : public HTNConditionBase, public std::enable_shared_from_this<HTNConditionAnd>
 {
 public:
 	explicit HTNConditionAnd(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions);
 
 	std::string ToString() const final;
-	bool Check(HTNDecompositionContext& ioDecompositionContext) const final;
+	bool Check(HTNDecompositionContext& ioDecompositionContext, const bool inIsInverted, const bool inHasBacktracking) const final;
 
 private:
 	std::vector<std::shared_ptr<const HTNConditionBase>> mConditions;
 };
 
+// No backtracking
 class HTNConditionOr final : public HTNConditionBase, public std::enable_shared_from_this<HTNConditionOr>
 {
 public:
 	explicit HTNConditionOr(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions);
 
 	std::string ToString() const final;
-	bool Check(HTNDecompositionContext& ioDecompositionContext) const final;
+	bool Check(HTNDecompositionContext& ioDecompositionContext, const bool inIsInverted, const bool inHasBacktracking) const final;
 
 private:
 	std::vector<std::shared_ptr<const HTNConditionBase>> mConditions;
 };
 
+// Or with backtracking
+class HTNConditionAlt final : public HTNConditionBase, public std::enable_shared_from_this<HTNConditionAlt>
+{
+public:
+    explicit HTNConditionAlt(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions);
+
+    std::string ToString() const final;
+    bool Check(HTNDecompositionContext& ioDecompositionContext, const bool inIsInverted, const bool inHasBacktracking) const final;
+
+private:
+    std::vector<std::shared_ptr<const HTNConditionBase>> mConditions;
+};
+
+// Backtracking
 class HTNConditionNot final : public HTNConditionBase
 {
 public:
 	explicit HTNConditionNot(const std::shared_ptr<const HTNConditionBase>& inCondition);
 
 	std::string ToString() const final;
-	bool Check(HTNDecompositionContext& ioDecompositionContext) const final;
+	bool Check(HTNDecompositionContext& ioDecompositionContext, const bool inIsInverted, const bool inHasBacktracking) const final;
 
 private:
 	std::shared_ptr<const HTNConditionBase> mCondition;

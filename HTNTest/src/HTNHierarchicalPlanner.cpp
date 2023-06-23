@@ -141,13 +141,13 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 	EXPECT_TRUE(PlanningUnit.ParseDomain(DomainPath));
 
 	HTNWorldState& WorldState = PlanningUnit.GetWorldState();
-	//WorldState.MakeFact("item", "test");
-	//WorldState.MakeFact("item", "wallet");
-	//WorldState.MakeFact("item", "fruit");
-	//WorldState.MakeFact("loggable", "apple");
-	//WorldState.MakeFact("loggable", "phone");
+    WorldState.MakeFact("item", "wallet");
+    WorldState.MakeFact("item", "apple");
+    WorldState.MakeFact("item", "fruit");
+    WorldState.MakeFact("item", "tea");
 	WorldState.MakeFact("loggable", "wallet");
-	WorldState.MakeFact("edible", "fruit");
+    WorldState.MakeFact("loggable", "apple");
+	WorldState.MakeFact("edible", "tea");
 
 	const std::vector<HTNTaskInstance>& Plan = PlanningUnit.ExecuteTopLevelMethod(EntryPointName);
 	for (const HTNTaskInstance& Task : Plan)

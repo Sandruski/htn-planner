@@ -1,0 +1,36 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(:domain test
+
+	(:method (entry_point)
+
+		( branch_first
+			(and	(item ?x)
+					(not (loggable ?x ?y))
+					(edible ?x)
+			)
+			(	(!log ?x)
+			)
+		)
+	)
+)
+
+
+
+
