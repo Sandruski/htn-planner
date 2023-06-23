@@ -23,7 +23,7 @@
 		( branch_first
 			(and	(item ?x)
 					(not (loggable ?x ?y))
-					(edible ?x)
+					(edible ?y)
 			)
 			(	(!log ?x)
 			)

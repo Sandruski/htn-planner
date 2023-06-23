@@ -89,7 +89,11 @@ public:
 
 		HTNDecompositionContext DecompositionContext = HTNDecompositionContext(mWorldState);
 		HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
+		
+		// TODO salvarez FindVariable is not gonna work for taks that are not part of the CurrentMethod
+		const std::shared_ptr<const HTNMethod>& CurrentMethod = DecompositionContext.GetCurrentMethod();
 
+		// TODO MakePlan should return a series of task instances instead
 		const std::vector<std::shared_ptr<const HTNTask>> Plan = mPlanner.MakePlan(inEntryPointName, DecompositionContext);
 		for (const std::shared_ptr<const HTNTask>& Task : Plan)
 		{
@@ -103,7 +107,7 @@ public:
 				if (ArgumentValue.IsType<std::string>())
 				{
 					const std::string& VariableName = ArgumentValue.GetValue<std::string>();
-					const HTNAtom* Variable = CurrentDecomposition.FindVariable(VariableName);
+					const HTNAtom* Variable = CurrentDecomposition.FindVariable(CurrentMethod, VariableName);
 					if (Variable)
 					{
 						InstanceArguments.emplace_back(*Variable);

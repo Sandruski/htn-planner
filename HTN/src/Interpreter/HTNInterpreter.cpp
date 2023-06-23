@@ -106,13 +106,16 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 			break;
 		}
 		case EHTNTaskType::COMPOUND:
-		{
+		{			
+			// TODO salvarez When changing method, initialize its variables with the current ones that are passed to it
 			std::shared_ptr<const HTNMethod> CurrentMethod = mDomain->FindMethodByName(CurrentTask->GetName());
 			if (!CurrentMethod)
 			{
 				LOG_ERROR("Method {} not found", CurrentTask->GetName());
 				break;
 			}
+
+			ioDecompositionContext.SetCurrentMethod(CurrentMethod);
 
 			const unsigned int CurrentBranchIndex = CurrentDecomposition.GetOrAddCurrentBranchIndex(CurrentMethod);
 			const std::vector<std::shared_ptr<const HTNBranch>>& CurrentBranches = CurrentMethod->GetBranches();

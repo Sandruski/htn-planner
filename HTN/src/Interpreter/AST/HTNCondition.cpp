@@ -29,14 +29,18 @@ std::string HTNCondition::ToString() const
 bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext, const bool inIsInverted, const bool inHasBacktracking) const
 {
 	HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
-	const std::unordered_map<std::string, HTNAtom> OldVariables = CurrentDecomposition.GetVariables();
+    const std::shared_ptr<const HTNMethod>& CurrentMethod = ioDecompositionContext.GetCurrentMethod();
+	const std::unordered_map<std::string, HTNAtom>* OldVariables = CurrentDecomposition.FindVariables(CurrentMethod);
 
 	const bool Result = inIsInverted ? !CheckInternal(ioDecompositionContext) : CheckInternal(ioDecompositionContext);
 	if (Result && inHasBacktracking)
 	{
         // Record state: unbound variables but updated indices
         HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
-        NewDecomposition.SetVariables(OldVariables);
+        if (OldVariables)
+        {
+            NewDecomposition.SetVariables(CurrentMethod, *OldVariables);
+        }
         ioDecompositionContext.RecordDecomposition(NewDecomposition);
 	}
 
@@ -51,6 +55,7 @@ std::string HTNCondition::GetName() const
 bool HTNCondition::CheckInternal(HTNDecompositionContext& ioDecompositionContext) const
 {
     HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+    const std::shared_ptr<const HTNMethod>& CurrentMethod = ioDecompositionContext.GetCurrentMethod();
     const std::shared_ptr<const HTNCondition> This = shared_from_this();
     const HTNWorldState* WorldState = ioDecompositionContext.GetWorldState();
 
@@ -63,7 +68,7 @@ bool HTNCondition::CheckInternal(HTNDecompositionContext& ioDecompositionContext
     {
         const HTNAtom& ArgumentValue = Argument->GetValue();
         const std::string& VariableName = ArgumentValue.GetValue<std::string>();
-        HTNAtom& Variable = CurrentDecomposition.GetOrAddVariable(VariableName);
+        HTNAtom& Variable = CurrentDecomposition.GetOrAddVariable(CurrentMethod, VariableName);
         Arguments.emplace_back(&Variable);
     }
 

@@ -34,10 +34,10 @@ public:
 
 	unsigned int AddOrIncrementCurrentFactEntryIndex(const std::shared_ptr<const HTNCondition>& inCondition);
 
-	void SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables);
-	const std::unordered_map<std::string, HTNAtom>& GetVariables() const;
-	HTNAtom& GetOrAddVariable(const std::string& inName);
-	const HTNAtom* FindVariable(const std::string& inName) const;
+	void SetVariables(const std::shared_ptr<const HTNMethod>& inMethod, const std::unordered_map<std::string, HTNAtom>& inVariables);
+	const std::unordered_map<std::string, HTNAtom>* FindVariables(const std::shared_ptr<const HTNMethod>& inMethod);
+	HTNAtom& GetOrAddVariable(const std::shared_ptr<const HTNMethod>& inMethod, const std::string& inName);
+	const HTNAtom* FindVariable(const std::shared_ptr<const HTNMethod>& inMethod, const std::string& inName) const;
 
 private:
 	std::shared_ptr<const HTNTask> mCurrentTask;
@@ -45,8 +45,8 @@ private:
 	std::vector<std::shared_ptr<const HTNTask>> mPlan;
 	std::unordered_map<std::shared_ptr<const HTNMethod>, unsigned int> mCurrentBranchIndex; // In a method there can be multiple branches
 	std::unordered_map<std::shared_ptr<const HTNConditionBase>, unsigned int> mCurrentConditionIndex; // In a branch there can be one condition. In a compound condition there can be multiple single ones
-	std::unordered_map<std::shared_ptr<const HTNCondition>, unsigned int> mCurrentFactEntryIndices; // A single condition can be checked against multiple facts. ///< Index used to query the row in the database. It is initialized to -1 and incremented before querying the row in the database, so the first index used is 0
-	std::unordered_map<std::string, HTNAtom> mVariables;
+	std::unordered_map<std::shared_ptr<const HTNCondition>, unsigned int> mCurrentFactEntryIndices; // A single condition can be checked against multiple facts ///< Index used to query the row in the database. It is initialized to -1 and incremented before querying the row in the database, so the first index used is 0
+	std::unordered_map <std::shared_ptr<const HTNMethod>, std::unordered_map<std::string, HTNAtom>> mVariables; // In a method there can be multiple variables. Variables have the scope of a method
 };
 
 class HTNDecompositionContext
@@ -55,6 +55,9 @@ public:
 	HTNDecompositionContext(const HTNWorldState& inWorldState);
 
 	const HTNWorldState* GetWorldState() const;
+
+    void SetCurrentMethod(const std::shared_ptr<const HTNMethod>& inMethod);
+    const std::shared_ptr<const HTNMethod>& GetCurrentMethod() const;
 
 	void RecordDecomposition(HTNDecompositionRecord& inDecomposition);
 	void RecordCurrentDecomposition();
@@ -65,6 +68,8 @@ public:
 private:
 	const HTNWorldState* mWorldState = nullptr; ///< Pointer to world state. All the queries will just not be able to modify the world state at all, this is why it is important this is a const pointer.
 	
+	std::shared_ptr<const HTNMethod> mCurrentMethod;
+
 	HTNDecompositionRecord mCurrentDecomposition;
 	std::vector<HTNDecompositionRecord> mDecompositionHistory;
 };
@@ -129,30 +134,42 @@ inline unsigned int HTNDecompositionRecord::AddOrIncrementCurrentFactEntryIndex(
 	return mCurrentFactEntryIndices.contains(inCondition) ? ++mCurrentFactEntryIndices[inCondition] : mCurrentFactEntryIndices[inCondition];
 }
 
-inline void HTNDecompositionRecord::SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables)
+inline void HTNDecompositionRecord::SetVariables(const std::shared_ptr<const HTNMethod>& inMethod, const std::unordered_map<std::string, HTNAtom>& inVariables)
 {
-	mVariables = inVariables;
+	mVariables[inMethod] = inVariables;
 }
 
-inline const std::unordered_map<std::string, HTNAtom>& HTNDecompositionRecord::GetVariables() const
+inline const std::unordered_map<std::string, HTNAtom>* HTNDecompositionRecord::FindVariables(const std::shared_ptr<const HTNMethod>& inMethod)
 {
-	return mVariables;
+    const auto MethodIt = mVariables.find(inMethod);
+    if (MethodIt == mVariables.end())
+    {
+        return nullptr;
+    }
+
+    return &MethodIt->second;
 }
 
-inline HTNAtom& HTNDecompositionRecord::GetOrAddVariable(const std::string& inName)
+inline HTNAtom& HTNDecompositionRecord::GetOrAddVariable(const std::shared_ptr<const HTNMethod>& inMethod, const std::string& inName)
 {
-	return mVariables[inName];
+	return mVariables[inMethod][inName];
 }
 
-inline const HTNAtom* HTNDecompositionRecord::FindVariable(const std::string& inName) const
+inline const HTNAtom* HTNDecompositionRecord::FindVariable(const std::shared_ptr<const HTNMethod>& inMethod, const std::string& inName) const
 {
-	const auto It = mVariables.find(inName);
-	if (It == mVariables.end())
+	const auto MethodIt = mVariables.find(inMethod);
+    if (MethodIt == mVariables.end())
+    {
+        return nullptr;
+    }
+
+	const auto VariableIt = MethodIt->second.find(inName);
+	if (VariableIt == MethodIt->second.end())
 	{
 		return nullptr;
 	}
 
-	return &It->second;
+	return &VariableIt->second;
 }
 
 inline HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldState)
@@ -163,6 +180,16 @@ inline HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inW
 inline const HTNWorldState* HTNDecompositionContext::GetWorldState() const
 {
 	return mWorldState;
+}
+
+inline void HTNDecompositionContext::SetCurrentMethod(const std::shared_ptr<const HTNMethod>& inMethod)
+{
+	mCurrentMethod = inMethod;
+}
+
+inline const std::shared_ptr<const HTNMethod>& HTNDecompositionContext::GetCurrentMethod() const
+{
+	return mCurrentMethod;
 }
 
 inline void HTNDecompositionContext::RecordDecomposition(HTNDecompositionRecord& inDecomposition)
