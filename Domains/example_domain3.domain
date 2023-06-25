@@ -21,7 +21,8 @@
 	(:method (entry_point)
 
 		( branch_first
-			(and	(item ?x)
+			(or	(item ?x) // is there backtracking here or just in the scope?
+				(and (alternative_item ?x))
 			)
 			(	(second ?x)
 			)
