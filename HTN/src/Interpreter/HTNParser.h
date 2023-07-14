@@ -29,6 +29,7 @@ private:
 	std::shared_ptr<const HTNMethod> ParseMethod();
 	std::shared_ptr<const HTNBranch> ParseBranch();
 	std::shared_ptr<const HTNConditionBase> ParseCondition();
+	std::shared_ptr<const HTNConditionBase> ParseSubCondition();
 	std::shared_ptr<const HTNTask> ParseTask();
 	std::unique_ptr<const HTNValue> ParseArgument();
 	std::unique_ptr<const HTNValue> ParseIdentifier();

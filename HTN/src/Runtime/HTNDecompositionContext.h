@@ -29,13 +29,15 @@ public:
 	unsigned int GetOrAddCurrentBranchIndex(const std::shared_ptr<const HTNMethod>& inMethod);
 	unsigned int IncrementCurrentBranchIndex(const std::shared_ptr<const HTNMethod>& inMethod);
 
-	unsigned int GetOrAddCurrentConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition);
-	unsigned int IncrementCurrentConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition);
+	unsigned int GetOrAddCurrentSubConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition);
+	unsigned int IncrementCurrentSubConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition);
 
 	unsigned int AddOrIncrementCurrentFactEntryIndex(const std::shared_ptr<const HTNCondition>& inCondition);
 
 	void SetVariables(const std::shared_ptr<const HTNMethod>& inMethod, const std::unordered_map<std::string, HTNAtom>& inVariables);
-	const std::unordered_map<std::string, HTNAtom>* FindVariables(const std::shared_ptr<const HTNMethod>& inMethod);
+	const std::unordered_map<std::string, HTNAtom>* FindVariables(const std::shared_ptr<const HTNMethod>& inMethod) const;
+	const std::unordered_map<std::string, HTNAtom>& GetVariables(const std::shared_ptr<const HTNMethod>& inMethod) const;
+	bool HasVariables(const std::shared_ptr<const HTNMethod>& inMethod) const;
 	HTNAtom& GetOrAddVariable(const std::shared_ptr<const HTNMethod>& inMethod, const std::string& inName);
 	const HTNAtom* FindVariable(const std::shared_ptr<const HTNMethod>& inMethod, const std::string& inName) const;
 
@@ -44,7 +46,7 @@ private:
 	std::vector<std::shared_ptr<const HTNTask>> mTasksToProcess;
 	std::vector<std::shared_ptr<const HTNTask>> mPlan;
 	std::unordered_map<std::shared_ptr<const HTNMethod>, unsigned int> mCurrentBranchIndex; // In a method there can be multiple branches
-	std::unordered_map<std::shared_ptr<const HTNConditionBase>, unsigned int> mCurrentConditionIndex; // In a branch there can be one condition. In a compound condition there can be multiple single ones
+	std::unordered_map<std::shared_ptr<const HTNConditionBase>, unsigned int> mCurrentSubConditionIndex; // In a branch there can be only one condition. In a condition there can be one or more sub-conditions
 	std::unordered_map<std::shared_ptr<const HTNCondition>, unsigned int> mCurrentFactEntryIndices; // A single condition can be checked against multiple facts ///< Index used to query the row in the database. It is initialized to -1 and incremented before querying the row in the database, so the first index used is 0
 	std::unordered_map <std::shared_ptr<const HTNMethod>, std::unordered_map<std::string, HTNAtom>> mVariables; // In a method there can be multiple variables. Variables have the scope of a method
 };
@@ -63,6 +65,10 @@ public:
 	void RecordCurrentDecomposition();
 	bool RestoreDecomposition();
 
+	void SetDecompositionHistory(const std::vector<HTNDecompositionRecord>& inDecompositionHistory);
+	const std::vector<HTNDecompositionRecord>& GetDecompositionHistory() const;
+
+	const HTNDecompositionRecord& GetCurrentDecomposition() const;
 	HTNDecompositionRecord& GetCurrentDecompositionMutable();
 
 private:
@@ -119,14 +125,14 @@ inline unsigned int HTNDecompositionRecord::IncrementCurrentBranchIndex(const st
 	return ++mCurrentBranchIndex[inMethod];
 }
 
-inline unsigned int HTNDecompositionRecord::GetOrAddCurrentConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition)
+inline unsigned int HTNDecompositionRecord::GetOrAddCurrentSubConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition)
 {
-	return mCurrentConditionIndex[inCondition];
+	return mCurrentSubConditionIndex[inCondition];
 }
 
-inline unsigned int HTNDecompositionRecord::IncrementCurrentConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition)
+inline unsigned int HTNDecompositionRecord::IncrementCurrentSubConditionIndex(const std::shared_ptr<const HTNConditionBase>& inCondition)
 {
-	return ++mCurrentConditionIndex[inCondition];
+	return ++mCurrentSubConditionIndex[inCondition];
 }
 
 inline unsigned int HTNDecompositionRecord::AddOrIncrementCurrentFactEntryIndex(const std::shared_ptr<const HTNCondition>& inCondition)
@@ -139,7 +145,7 @@ inline void HTNDecompositionRecord::SetVariables(const std::shared_ptr<const HTN
 	mVariables[inMethod] = inVariables;
 }
 
-inline const std::unordered_map<std::string, HTNAtom>* HTNDecompositionRecord::FindVariables(const std::shared_ptr<const HTNMethod>& inMethod)
+inline const std::unordered_map<std::string, HTNAtom>* HTNDecompositionRecord::FindVariables(const std::shared_ptr<const HTNMethod>& inMethod) const
 {
     const auto MethodIt = mVariables.find(inMethod);
     if (MethodIt == mVariables.end())
@@ -148,6 +154,18 @@ inline const std::unordered_map<std::string, HTNAtom>* HTNDecompositionRecord::F
     }
 
     return &MethodIt->second;
+}
+
+inline const std::unordered_map<std::string, HTNAtom>& HTNDecompositionRecord::GetVariables(const std::shared_ptr<const HTNMethod>& inMethod) const
+{
+	const auto MethodIt = mVariables.find(inMethod);
+	return MethodIt->second;
+}
+
+inline bool HTNDecompositionRecord::HasVariables(const std::shared_ptr<const HTNMethod>& inMethod) const
+{
+    const auto MethodIt = mVariables.find(inMethod);
+    return (MethodIt != mVariables.end());
 }
 
 inline HTNAtom& HTNDecompositionRecord::GetOrAddVariable(const std::shared_ptr<const HTNMethod>& inMethod, const std::string& inName)
@@ -200,6 +218,21 @@ inline void HTNDecompositionContext::RecordDecomposition(HTNDecompositionRecord&
 inline void HTNDecompositionContext::RecordCurrentDecomposition()
 {
 	RecordDecomposition(mCurrentDecomposition);
+}
+
+inline void HTNDecompositionContext::SetDecompositionHistory(const std::vector<HTNDecompositionRecord>& inDecompositionHistory)
+{
+	mDecompositionHistory = inDecompositionHistory;
+}
+
+inline const std::vector<HTNDecompositionRecord>& HTNDecompositionContext::GetDecompositionHistory() const
+{
+	return mDecompositionHistory;
+}
+
+inline const HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecomposition() const
+{
+	return mCurrentDecomposition;
 }
 
 inline HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecompositionMutable()

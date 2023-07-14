@@ -153,7 +153,7 @@ std::shared_ptr<const HTNBranch> HTNParser::ParseBranch()
 
 std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()
 {
-	// LEFT_PARENTHESIS ((AND | OR | NOT) <condition>) | <identifier>) RIGHT_PARENTHESIS
+	// LEFT_PARENTHESIS ((AND | OR | NOT) <sub-condition>)* RIGHT_PARENTHESIS
 
 	if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
 	{
@@ -165,9 +165,14 @@ std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()
 	if (ParseToken(HTNTokenType::AND))
 	{
 		std::vector<std::shared_ptr<const HTNConditionBase>> SubConditions;
-		while (std::shared_ptr<const HTNConditionBase> SubCondition = ParseCondition())
+		while (std::shared_ptr<const HTNConditionBase> SubCondition = ParseSubCondition())
 		{
 			SubConditions.emplace_back(SubCondition);
+		}
+
+		if (SubConditions.empty())
+		{
+			return nullptr;
 		}
 
 		Condition = std::make_shared<HTNConditionAnd>(SubConditions);
@@ -175,30 +180,27 @@ std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()
 	else if (ParseToken(HTNTokenType::OR))
 	{
 		std::vector<std::shared_ptr<const HTNConditionBase>> SubConditions;
-		while (std::shared_ptr<const HTNConditionBase> SubCondition = ParseCondition())
+		while (std::shared_ptr<const HTNConditionBase> SubCondition = ParseSubCondition())
 		{
 			SubConditions.emplace_back(SubCondition);
 		}
+
+        if (SubConditions.empty())
+        {
+            return nullptr;
+        }
 
 		Condition = std::make_shared<HTNConditionOr>(SubConditions);
 	}
 	else if (ParseToken(HTNTokenType::NOT))
 	{
-		const std::shared_ptr<const HTNConditionBase> SubCondition = ParseCondition();
-		Condition = std::make_shared<HTNConditionNot>(SubCondition);
-	}
-	else
-	{
-		if (std::unique_ptr<const HTNValue> Key = ParseIdentifier())
+		const std::shared_ptr<const HTNConditionBase> SubCondition = ParseSubCondition();
+		if (!SubCondition)
 		{
-			std::vector<std::shared_ptr<const HTNValue>> Arguments;
-			while (std::shared_ptr<const HTNValue> Argument = ParseArgument())
-			{
-				Arguments.emplace_back(Argument);
-			}
-
-			Condition = std::make_shared<HTNCondition>(std::move(Key), Arguments);
+			return nullptr;
 		}
+
+		Condition = std::make_shared<HTNConditionNot>(SubCondition);
 	}
 
 	if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
@@ -207,6 +209,77 @@ std::shared_ptr<const HTNConditionBase> HTNParser::ParseCondition()
 	}
 
 	return Condition;
+}
+
+std::shared_ptr<const HTNConditionBase> HTNParser::ParseSubCondition()
+{
+    // (<condition> | LEFT_PARENTHESIS <identifier>* RIGHT_PARENTHESIS)
+
+	// TODO salvarez ParseCondition instead of duplicating code here. Only AdvancePosition at the end of each Parse method all at once, so if it fails before we can try to call a different Parse method
+
+    if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
+    {
+        return nullptr;
+    }
+
+    std::shared_ptr<const HTNConditionBase> Condition;
+    if (ParseToken(HTNTokenType::AND))
+    {
+        std::vector<std::shared_ptr<const HTNConditionBase>> SubConditions;
+        while (std::shared_ptr<const HTNConditionBase> SubCondition = ParseSubCondition())
+        {
+            SubConditions.emplace_back(SubCondition);
+        }
+
+        if (SubConditions.empty())
+        {
+            return nullptr;
+        }
+
+        Condition = std::make_shared<HTNConditionAnd>(SubConditions);
+    }
+    else if (ParseToken(HTNTokenType::OR))
+    {
+        std::vector<std::shared_ptr<const HTNConditionBase>> SubConditions;
+        while (std::shared_ptr<const HTNConditionBase> SubCondition = ParseSubCondition())
+        {
+            SubConditions.emplace_back(SubCondition);
+        }
+
+        if (SubConditions.empty())
+        {
+            return nullptr;
+        }
+
+        Condition = std::make_shared<HTNConditionOr>(SubConditions);
+    }
+    else if (ParseToken(HTNTokenType::NOT))
+    {
+        const std::shared_ptr<const HTNConditionBase> SubCondition = ParseSubCondition();
+        if (!SubCondition)
+        {
+            return nullptr;
+        }
+
+        Condition = std::make_shared<HTNConditionNot>(SubCondition);
+    }
+    else if (std::unique_ptr<const HTNValue> Key = ParseIdentifier())
+    {
+        std::vector<std::shared_ptr<const HTNValue>> Arguments;
+        while (std::shared_ptr<const HTNValue> Argument = ParseArgument())
+        {
+            Arguments.emplace_back(Argument);
+        }
+
+        Condition = std::make_shared<HTNCondition>(std::move(Key), Arguments);
+    }
+
+    if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
+    {
+        return nullptr;
+    }
+
+    return Condition;
 }
 
 std::shared_ptr<const HTNTask> HTNParser::ParseTask()

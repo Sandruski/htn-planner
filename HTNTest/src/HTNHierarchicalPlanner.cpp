@@ -138,7 +138,7 @@ private:
 // Test planning
 TEST(HTNHierarchicalPlanner, HTNPlanning)
 {
-	const std::string DomainPath = "../Domains/example_domain4.domain";
+	const std::string DomainPath = "../Domains/example_domain3.domain";
 	const std::string EntryPointName = "entry_point";
 
 	HTNPlanningUnit PlanningUnit;
