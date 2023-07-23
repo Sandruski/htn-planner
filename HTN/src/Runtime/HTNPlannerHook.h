@@ -1,14 +1,26 @@
 #pragma once
 
+#include "Runtime/HTNAtom.h"
 #include "Interpreter/HTNInterpreter.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-class HTNAtom;
 class HTNDecompositionContext;
-class HTNTask;
+
+class HTNTaskInstance
+{
+public:
+	explicit HTNTaskInstance(const std::string& inName, const std::vector<HTNAtom>& inArguments);
+
+	const std::string& GetName() const;
+	const std::vector<HTNAtom>& GetArguments() const;
+
+private:
+	std::string mName;
+	std::vector<HTNAtom> mArguments;
+};
 
 // Runtime instance of an HTN Planner.
 // 
@@ -31,8 +43,23 @@ public:
 		return nullptr;
 	}
 
-	std::vector<std::shared_ptr<const HTNTask>> MakePlan(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const;
+	std::vector<HTNTaskInstance> MakePlan(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const;
 
 private:
 	HTNInterpreter mInterpreter;
 };
+
+inline HTNTaskInstance::HTNTaskInstance(const std::string& inName, const std::vector<HTNAtom>& inArguments)
+	: mName(inName), mArguments(inArguments)
+{
+}
+
+inline const std::string& HTNTaskInstance::GetName() const
+{
+	return mName;
+}
+
+inline const std::vector<HTNAtom>& HTNTaskInstance::GetArguments() const
+{
+	return mArguments;
+}

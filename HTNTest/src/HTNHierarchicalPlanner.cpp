@@ -1,7 +1,4 @@
 #include "Log.h"
-#include "Interpreter/AST/HTNCondition.h"
-#include "Interpreter/AST/HTNTask.h"
-#include "Interpreter/AST/HTNValue.h"
 #include "Runtime/HTNAtom.h"
 #include "Runtime/HTNWorldState.h"
 #include "Runtime/HTNPlannerHook.h"
@@ -44,30 +41,6 @@ TEST(HTNHierarchicalPlanner, DISABLED_HTNDomainMethodsParsing)
 {
 }
 
-// TODO salvarez Make the actual HTNPlannerHook return this
-class HTNTaskInstance
-{
-public:
-	explicit HTNTaskInstance(const std::string& inName, const std::vector<HTNAtom>& inArguments)
-		: mName(inName), mArguments(inArguments)
-	{
-	}
-
-	const std::string& GetName() const
-	{
-		return mName;
-	}
-
-	const std::vector<HTNAtom>& GetArguments() const
-	{
-		return mArguments;
-	}
-
-private:
-	std::string mName;
-	std::vector<HTNAtom> mArguments;
-};
-
 // Planning unit structure that holds the planner hook and the database
 struct HTNPlanningUnit
 {
@@ -85,60 +58,19 @@ public:
 	// Execute planning unit top level method
 	std::vector<HTNTaskInstance> ExecuteTopLevelMethod(const std::string& inEntryPointName)
 	{
-		mLastPlan.clear();
-
 		HTNDecompositionContext DecompositionContext = HTNDecompositionContext(mWorldState);
-		HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
-		
-		// TODO salvarez FindVariable is not gonna work for taks that are not part of the CurrentMethod
-		const std::shared_ptr<const HTNMethod>& CurrentMethod = DecompositionContext.GetCurrentMethod();
-
-		// TODO MakePlan should return a series of task instances instead
-		const std::vector<std::shared_ptr<const HTNTask>> Plan = mPlanner.MakePlan(inEntryPointName, DecompositionContext);
-		for (const std::shared_ptr<const HTNTask>& Task : Plan)
-		{
-			const std::string& Name = Task->GetName();
-
-			std::vector<HTNAtom> InstanceArguments;
-			const std::vector<std::shared_ptr<const HTNValue>>& Arguments = Task->GetArguments();
-			for (const std::shared_ptr<const HTNValue>& Argument : Arguments)
-			{
-				const HTNAtom& ArgumentValue = Argument->GetValue();
-				if (ArgumentValue.IsType<std::string>())
-				{
-					const std::string& VariableName = ArgumentValue.GetValue<std::string>();
-					const HTNAtom* Variable = CurrentDecomposition.FindVariable(CurrentMethod, VariableName);
-					if (Variable)
-					{
-						InstanceArguments.emplace_back(*Variable);
-						continue;
-					}
-				}
-
-				InstanceArguments.emplace_back(ArgumentValue);
-			}
-
-			mLastPlan.emplace_back(Name, InstanceArguments);
-		}
-
-		return mLastPlan;
-	}
-
-	const std::vector<HTNTaskInstance>& GetLastPlan() const
-	{
-		return mLastPlan;
+		return mPlanner.MakePlan(inEntryPointName, DecompositionContext);		
 	}
 
 private:
 	HTNPlannerHook mPlanner;		// Decision making
 	HTNWorldState mWorldState;		// World state database
-	std::vector<HTNTaskInstance> mLastPlan;
 };
 
 // Test planning
 TEST(HTNHierarchicalPlanner, HTNPlanning)
 {
-	const std::string DomainPath = "../Domains/example_domain3.domain";
+	const std::string DomainPath = "../Domains/example_domain4.domain";
 	const std::string EntryPointName = "entry_point";
 
 	HTNPlanningUnit PlanningUnit;
@@ -149,6 +81,7 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
     WorldState.MakeFact("item", "apple");
     WorldState.MakeFact("item", "fruit");
     WorldState.MakeFact("item", "tea");
+    WorldState.MakeFact("item", "wallet", "full");
 	WorldState.MakeFact("loggable", "wallet");
     WorldState.MakeFact("loggable", "apple");
 	WorldState.MakeFact("edible", "tea");

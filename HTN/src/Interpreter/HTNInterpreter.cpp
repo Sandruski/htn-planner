@@ -85,7 +85,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 	HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
 	// Dummy root compound task
-	const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(EHTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNAtom(inEntryPointName)));
+	const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(EHTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNAtom(inEntryPointName)), nullptr);
 	CurrentDecomposition.PushTaskToProcess(RootCompoundTask);
 
 	while (CurrentDecomposition.HasTasksToProcess())
@@ -107,7 +107,6 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 		}
 		case EHTNTaskType::COMPOUND:
 		{			
-			// TODO salvarez When changing method, initialize its variables with the current ones that are passed to it
 			std::shared_ptr<const HTNMethod> CurrentMethod = mDomain->FindMethodByName(CurrentTask->GetName());
 			if (!CurrentMethod)
 			{
@@ -115,7 +114,46 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 				break;
 			}
 
-			ioDecompositionContext.SetCurrentMethod(CurrentMethod);
+			// Initialize new method
+			if (ioDecompositionContext.GetCurrentMethod() != CurrentMethod)
+			{
+				ioDecompositionContext.SetCurrentMethod(CurrentMethod);
+
+				// Copy the values of the arguments of the old method to the new method
+				const std::vector<std::shared_ptr<const HTNValue>>& PreviousArguments = CurrentTask->GetArguments();
+				const std::vector<std::shared_ptr<const HTNValue>>& CurrentArguments = CurrentMethod->GetArguments();
+				const size_t PreviousArgumentSize = PreviousArguments.size();
+				const size_t CurrentArgumentSize = CurrentArguments.size();
+				if (PreviousArgumentSize != CurrentArgumentSize)
+				{
+					LOG_ERROR("Method {} has {} arguments but is being called with {}", CurrentMethod->GetName(), CurrentArgumentSize, PreviousArgumentSize);
+					break;
+				}
+
+				if (CurrentArgumentSize > 0)
+				{
+					const std::shared_ptr<const HTNMethod>& PreviousMethod = CurrentTask->GetMethod();
+
+					for (size_t i = 0; i < CurrentArgumentSize; ++i)
+					{
+						const std::shared_ptr<const HTNValue>& PreviousArgument = PreviousArguments[i];
+						const HTNAtom& PreviousArgumentValue = PreviousArgument->GetValue();
+						const std::string& PreviousVariableName = PreviousArgumentValue.GetValue<std::string>();
+						const HTNAtom* PreviousVariable = CurrentDecomposition.FindVariable(PreviousMethod, PreviousVariableName);
+						if (!PreviousVariable)
+						{
+							LOG_ERROR("Variable {} not found in method {}", PreviousVariableName, PreviousMethod->GetName());
+							break;
+						}
+
+						const std::shared_ptr<const HTNValue>& CurrentArgument = CurrentArguments[i];
+						const HTNAtom& CurrentArgumentValue = CurrentArgument->GetValue();
+						const std::string& CurrentVariableName = CurrentArgumentValue.GetValue<std::string>();
+						HTNAtom& CurrentVariable = CurrentDecomposition.GetOrAddVariable(CurrentMethod, CurrentVariableName);
+						CurrentVariable = *PreviousVariable;
+					}
+				}				
+			}
 
 			const unsigned int CurrentBranchIndex = CurrentDecomposition.GetOrAddCurrentBranchIndex(CurrentMethod);
 			const std::vector<std::shared_ptr<const HTNBranch>>& CurrentBranches = CurrentMethod->GetBranches();

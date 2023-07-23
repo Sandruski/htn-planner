@@ -109,14 +109,13 @@ bool HTNConditionAnd::Check(HTNDecompositionContext& ioDecompositionContext) con
 		}
 		else
 		{
-            // TODO salvarez Return false if we run out of facts to check in the database
             if (CurrentConditionIndex == 0) // First condition
 			{
                 return false;
 			}
 			else
 			{
-                // Restore decomposition
+                // Restore state: unbound variables but updated indices
                 ioDecompositionContext.RestoreDecomposition();
 			}
 		}
@@ -204,10 +203,6 @@ bool HTNConditionAlt::Check(HTNDecompositionContext& ioDecompositionContext) con
         }
         else
         {
-            // TODO salvarez
-            // Restore decomposition
-            ioDecompositionContext.RestoreDecomposition();
-
             // Continue
             CurrentDecomposition.IncrementCurrentSubConditionIndex(This);
         }

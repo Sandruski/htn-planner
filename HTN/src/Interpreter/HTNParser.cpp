@@ -94,23 +94,25 @@ std::shared_ptr<const HTNMethod> HTNParser::ParseMethod()
 		return nullptr;
 	}
 
+	const std::shared_ptr<HTNMethod> Method = std::make_shared<HTNMethod>(std::move(Name), Arguments);
+
 	std::vector<std::shared_ptr<const HTNBranch>> Branches;
-	while (std::shared_ptr<const HTNBranch> Branch = ParseBranch())
+	while (std::shared_ptr<const HTNBranch> Branch = ParseBranch(Method))
 	{
 		Branches.emplace_back(Branch);
 	}
+
+	Method->SetBranches(Branches);
 
 	if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
 	{
 		return nullptr;
 	}
 
-	// TODO salvarez Support multiple arguments in methods
-
-	return std::make_shared<HTNMethod>(std::move(Name), Arguments, Branches);
+	return Method;
 }
 
-std::shared_ptr<const HTNBranch> HTNParser::ParseBranch()
+std::shared_ptr<const HTNBranch> HTNParser::ParseBranch(const std::shared_ptr<const HTNMethod>& inMethod)
 {
 	// LEFT_PARENTHESIS <identifier> LEFT_PARENTHESIS <condition>* RIGHT_PARENTHESIS LEFT_PARENTHESIS <task>* RIGHT_PARENTHESIS RIGHT_PARENTHESIS
 
@@ -133,7 +135,7 @@ std::shared_ptr<const HTNBranch> HTNParser::ParseBranch()
 	}
 
 	std::vector<std::shared_ptr<const HTNTask>> Tasks;
-	while (std::shared_ptr<const HTNTask> Task = ParseTask())
+	while (std::shared_ptr<const HTNTask> Task = ParseTask(inMethod))
 	{
 		Tasks.emplace_back(Task);
 	}
@@ -215,55 +217,19 @@ std::shared_ptr<const HTNConditionBase> HTNParser::ParseSubCondition()
 {
     // (<condition> | LEFT_PARENTHESIS <identifier>* RIGHT_PARENTHESIS)
 
-	// TODO salvarez ParseCondition instead of duplicating code here. Only AdvancePosition at the end of each Parse method all at once, so if it fails before we can try to call a different Parse method
+	const unsigned int InitialPosition = mPosition;	
+	std::shared_ptr<const HTNConditionBase> Condition = ParseCondition();
+	if (!Condition)
+	{
+		mPosition = InitialPosition;
+	}
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
         return nullptr;
     }
 
-    std::shared_ptr<const HTNConditionBase> Condition;
-    if (ParseToken(HTNTokenType::AND))
-    {
-        std::vector<std::shared_ptr<const HTNConditionBase>> SubConditions;
-        while (std::shared_ptr<const HTNConditionBase> SubCondition = ParseSubCondition())
-        {
-            SubConditions.emplace_back(SubCondition);
-        }
-
-        if (SubConditions.empty())
-        {
-            return nullptr;
-        }
-
-        Condition = std::make_shared<HTNConditionAnd>(SubConditions);
-    }
-    else if (ParseToken(HTNTokenType::OR))
-    {
-        std::vector<std::shared_ptr<const HTNConditionBase>> SubConditions;
-        while (std::shared_ptr<const HTNConditionBase> SubCondition = ParseSubCondition())
-        {
-            SubConditions.emplace_back(SubCondition);
-        }
-
-        if (SubConditions.empty())
-        {
-            return nullptr;
-        }
-
-        Condition = std::make_shared<HTNConditionOr>(SubConditions);
-    }
-    else if (ParseToken(HTNTokenType::NOT))
-    {
-        const std::shared_ptr<const HTNConditionBase> SubCondition = ParseSubCondition();
-        if (!SubCondition)
-        {
-            return nullptr;
-        }
-
-        Condition = std::make_shared<HTNConditionNot>(SubCondition);
-    }
-    else if (std::unique_ptr<const HTNValue> Key = ParseIdentifier())
+    if (std::unique_ptr<const HTNValue> Key = ParseIdentifier())
     {
         std::vector<std::shared_ptr<const HTNValue>> Arguments;
         while (std::shared_ptr<const HTNValue> Argument = ParseArgument())
@@ -282,7 +248,7 @@ std::shared_ptr<const HTNConditionBase> HTNParser::ParseSubCondition()
     return Condition;
 }
 
-std::shared_ptr<const HTNTask> HTNParser::ParseTask()
+std::shared_ptr<const HTNTask> HTNParser::ParseTask(const std::shared_ptr<const HTNMethod>& inMethod)
 {
 	// LEFT_PARENTHESIS EXCLAMATION_MARK* <identifier> (<number> | <string>)* RIGHT_PARENTHESIS
 
@@ -310,9 +276,7 @@ std::shared_ptr<const HTNTask> HTNParser::ParseTask()
 		return nullptr;
 	}
 
-	// TODO salvarez Support multiple arguments in tasks
-
-	return std::make_shared<HTNTask>(Type, std::move(Name), Arguments);
+	return std::make_shared<HTNTask>(Type, std::move(Name), inMethod, Arguments);
 }
 
 std::unique_ptr<const HTNValue> HTNParser::ParseArgument()

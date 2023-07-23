@@ -21,24 +21,24 @@
 	(:method (entry_point)
 
 		( branch_first
-			(and (item ?x)
+			(and (item ?x ?y)
 			)
-			(	(!second ?x)
+			(	(second ?x ?y)
 			)
 		)
 	)
 	
-	(:method (second ?x)
+	(:method (second ?y ?x)
 
 		( branch_first
-			(and	(edible ?x)
+			(and	(edible ?y)
 			)
-			(	(!eat ?x)
+			(	(!eat ?y)
 			)
 		)
 
 		( branch_second
-			(and	(loggable ?x)
+			(and	(loggable ?y)
 			)
 			(	(!log ?x)
 			)

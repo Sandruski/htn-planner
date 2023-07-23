@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 
+class HTNMethod;
 class HTNValue;
 
 enum class EHTNTaskType
@@ -16,8 +17,8 @@ enum class EHTNTaskType
 class HTNTask : public HTNNodeBase
 {
 public:
-	explicit HTNTask(const EHTNTaskType inType, std::unique_ptr<const HTNValue> inName);
-	explicit HTNTask(const EHTNTaskType inType, std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments);
+	explicit HTNTask(const EHTNTaskType inType, std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNMethod>& inMethod);
+	explicit HTNTask(const EHTNTaskType inType, std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNMethod>& inMethod, const std::vector<std::shared_ptr<const HTNValue>>& inArguments);
 	~HTNTask();
 	
 	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
@@ -26,11 +27,15 @@ public:
 	EHTNTaskType GetType() const;
 	std::string GetName() const;
 	const std::vector<std::shared_ptr<const HTNValue>>& GetArguments() const;
+	const std::shared_ptr<const HTNMethod>& GetMethod() const;
 
 private:
 	EHTNTaskType mType;
 	std::unique_ptr<const HTNValue> mName;
 	std::vector<std::shared_ptr<const HTNValue>> mArguments;
+
+	// Parent method
+	std::shared_ptr<const HTNMethod> mMethod;
 };
 
 inline EHTNTaskType HTNTask::GetType() const
@@ -41,4 +46,9 @@ inline EHTNTaskType HTNTask::GetType() const
 inline const std::vector<std::shared_ptr<const HTNValue>>& HTNTask::GetArguments() const
 {
 	return mArguments;
+}
+
+inline const std::shared_ptr<const HTNMethod>& HTNTask::GetMethod() const
+{
+	return mMethod;
 }
