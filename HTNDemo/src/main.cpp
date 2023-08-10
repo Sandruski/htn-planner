@@ -37,7 +37,7 @@ int main(int, char**)
 
     // Create window with SDL_Renderer graphics context
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window*     window       = SDL_CreateWindow("Dear ImGui SDL2+SDL_Renderer example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    SDL_Window*     window       = SDL_CreateWindow("HTN Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
     SDL_Renderer*   renderer     = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     if (renderer == NULL)
     {
@@ -86,6 +86,16 @@ int main(int, char**)
     ImVec4 clear_color           = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     HTNPlanningUnit PlanningUnit;
+    PlanningUnit.GetWorldStateMutable().AddFact("Test2");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test3");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "e");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "f", "g");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test", "1");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test", "2");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test", "3");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test", "A", "B", "C");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test", "D", "E", "F");
 
     // Main loop
     bool done = false;

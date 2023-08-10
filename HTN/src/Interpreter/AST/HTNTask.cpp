@@ -4,12 +4,12 @@
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNValue.h"
 
-HTNTask::HTNTask(const EHTNTaskType inType, std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNMethod>& inMethod)
+HTNTask::HTNTask(const HTNTaskType inType, std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNMethod>& inMethod)
 	: mType(inType), mName(std::move(inName)), mMethod(inMethod)
 {
 }
 
-HTNTask::HTNTask(const EHTNTaskType inType, std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNMethod>& inMethod, const std::vector<std::shared_ptr<const HTNValue>>& inArguments)
+HTNTask::HTNTask(const HTNTaskType inType, std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNMethod>& inMethod, const std::vector<std::shared_ptr<const HTNValue>>& inArguments)
 	: mType(inType), mName(std::move(inName)), mMethod(inMethod), mArguments(inArguments)
 {
 }

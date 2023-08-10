@@ -257,7 +257,7 @@ std::shared_ptr<const HTNTask> HTNParser::ParseTask(const std::shared_ptr<const 
 		return nullptr;
 	}
 
-	const EHTNTaskType Type = ParseToken(HTNTokenType::EXCLAMATION_MARK) ? EHTNTaskType::PRIMITIVE : EHTNTaskType::COMPOUND;
+	const HTNTaskType Type = ParseToken(HTNTokenType::EXCLAMATION_MARK) ? HTNTaskType::PRIMITIVE : HTNTaskType::COMPOUND;
 
 	std::unique_ptr<const HTNValue> Name = ParseIdentifier();
 	if (!Name)

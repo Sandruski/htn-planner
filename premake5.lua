@@ -84,7 +84,9 @@ project "HTNDemo"
 				"ThirdParty/imgui-1.89.4/imgui_draw.cpp", 
 				"ThirdParty/imgui-1.89.4/imgui_internal.h", 
 				"ThirdParty/imgui-1.89.4/imgui_tables.cpp", 
-				"ThirdParty/imgui-1.89.4/imgui_widgets.cpp", 
+				"ThirdParty/imgui-1.89.4/imgui_widgets.cpp",
+                "ThirdParty/imgui-1.89.4/misc/cpp/imgui_stdlib.h", 
+                "ThirdParty/imgui-1.89.4/misc/cpp/imgui_stdlib.cpp", 
 				-- imgui backend includes --
 				"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdl2.h", 
 				"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdl2.cpp", 
@@ -92,7 +94,7 @@ project "HTNDemo"
 				"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdlrenderer.cpp" 
 		}
 
-    includedirs { "%{prj.name}/src", "HTN/src", "ThirdParty/SDL2-2.26.4/include", "ThirdParty/imgui-1.89.4", "ThirdParty/imgui-1.89.4/backends" }
+    includedirs { "%{prj.name}/src", "HTN/src", "ThirdParty/SDL2-2.26.4/include", "ThirdParty/imgui-1.89.4", "ThirdParty/imgui-1.89.4/backends", "ThirdParty/imgui-1.89.4/misc/cpp" }
 
 	libdirs { "ThirdParty/SDL2-2.26.4/lib/x64" }
     links { "HTN", "SDL2", "SDL2main" }

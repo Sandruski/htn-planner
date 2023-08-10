@@ -10,6 +10,10 @@ public:
     void Render(bool& _IsOpen);
 
 private:
+    void RenderActivePlan();
+    void RenderDatabase();
+    void RenderDecomposition();
+
     HTNPlanningUnit* mPlanningUnit = nullptr;
 };
 

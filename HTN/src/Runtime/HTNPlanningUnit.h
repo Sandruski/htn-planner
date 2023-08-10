@@ -13,13 +13,11 @@ class HTNPlanningUnit
 public:
     bool ParseDomain(const std::string& inDomainPath);
 
-    HTNWorldState& GetWorldState()
-    {
-        return mWorldState;
-    }
-
     // Execute planning unit top level method
     std::vector<HTNTaskInstance> ExecuteTopLevelMethod(const std::string& inEntryPointName);
+
+    const HTNWorldState& GetWorldState() const;
+    HTNWorldState&       GetWorldStateMutable();
 
 private:
     HTNPlannerHook mPlanner;     // Decision making
@@ -35,4 +33,14 @@ inline std::vector<HTNTaskInstance> HTNPlanningUnit::ExecuteTopLevelMethod(const
 {
     HTNDecompositionContext DecompositionContext = HTNDecompositionContext(mWorldState);
     return mPlanner.MakePlan(inEntryPointName, DecompositionContext);
+}
+
+inline const HTNWorldState& HTNPlanningUnit::GetWorldState() const
+{
+    return mWorldState;
+}
+
+inline HTNWorldState& HTNPlanningUnit::GetWorldStateMutable()
+{
+    return mWorldState;
 }
