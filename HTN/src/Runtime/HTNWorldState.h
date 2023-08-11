@@ -53,12 +53,10 @@ public:
 
 private:
     // Helper method for fold expression
-    template<typename T>
-    static void BindArgsUnbound(const HTNEntry& inEntry, T& inArg, int& ioIndex);
+    static void BindArgsUnbound(const HTNEntry& inEntry, HTNAtom& inArg, int& ioIndex);
 
     // Helper method for fold expression
-    template<typename T>
-    static bool CheckArgsBound(const HTNEntry& inEntry, const T& inArg, int& ioIndex);
+    static bool CheckArgsBound(const HTNEntry& inEntry, const HTNAtom& inArg, int& ioIndex);
 
     std::vector<HTNEntry> mEntries;
 };
@@ -70,18 +68,19 @@ inline void HTNTable<NumArgs>::AddEntry(const Args&... inArgs)
     static constexpr std::size_t ArgsSize = sizeof...(Args);
     static_assert(ArgsSize == NumArgs);
 
-    // TODO salvarez Fix
-    // Check args bound
+    // TODO salvarez Refactor database
     /*
+    // Check args bound
     for (const HTNEntry& Entry : mEntries)
     {
         int Index = 0;
         if ((CheckArgsBound(Entry, inArgs, Index) && ...))
         {
-            return;
+            break;
         }
     }
     */
+
     HTNEntry& Entry = mEntries.emplace_back();
     Entry           = {inArgs...};
 }
@@ -91,7 +90,6 @@ inline void HTNTable<NumArgs>::AddEntry(const std::vector<HTNAtom>& inArgs)
 {
     assert(inArgs.size() == NumArgs);
 
-    // TODO salvarez Put this in a method
     // Check args bound
     for (const HTNEntry& Entry : mEntries)
     {
@@ -189,7 +187,6 @@ inline bool HTNTable<NumArgs>::Check(const int inIndex, const std::vector<HTNAto
         return false;
     }
 
-    // TODO salvarez Put this in a method
     // Check args bound
     const HTNEntry& Entry = mEntries[inIndex];
     for (size_t i = 0; i < Entry.size(); ++i)
@@ -205,7 +202,6 @@ inline bool HTNTable<NumArgs>::Check(const int inIndex, const std::vector<HTNAto
         }
     }
 
-    // TODO salvarez Put this in a method
     // Bind args unbound
     for (size_t i = 0; i < Entry.size(); ++i)
     {
@@ -245,8 +241,7 @@ inline std::vector<std::vector<HTNAtom>> HTNTable<NumArgs>::GetEntries() const
 }
 
 template<int NumArgs>
-template<typename T>
-inline void HTNTable<NumArgs>::BindArgsUnbound(const HTNEntry& inEntry, T& inArg, int& ioIndex)
+inline void HTNTable<NumArgs>::BindArgsUnbound(const HTNEntry& inEntry, HTNAtom& inArg, int& ioIndex)
 {
     if (!inArg.IsSet())
     {
@@ -257,8 +252,7 @@ inline void HTNTable<NumArgs>::BindArgsUnbound(const HTNEntry& inEntry, T& inArg
 }
 
 template<int NumArgs>
-template<typename T>
-inline bool HTNTable<NumArgs>::CheckArgsBound(const HTNEntry& inEntry, const T& inArg, int& ioIndex)
+inline bool HTNTable<NumArgs>::CheckArgsBound(const HTNEntry& inEntry, const HTNAtom& inArg, int& ioIndex)
 {
     bool Result = true;
 

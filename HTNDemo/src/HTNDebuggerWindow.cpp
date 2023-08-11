@@ -12,16 +12,16 @@
 
 namespace
 {
-    const ImGuiWindowFlags     WindowFlags     = ImGuiWindowFlags_NoCollapse;
-    const ImGuiTabBarFlags     TabBarFlags     = ImGuiTabBarFlags_None;
-    const ImGuiComboFlags      ComboFlags      = ImGuiComboFlags_None;
-    const ImGuiSelectableFlags SelectableFlags = ImGuiSelectableFlags_None;
-    const ImGuiTableFlags      TableFlags      = ImGuiTableFlags_Resizable | ImGuiTableFlags_Borders;
-    const ImGuiInputTextFlags  InputTextFlags  = ImGuiInputTextFlags_CharsNoBlank;
+const ImGuiWindowFlags     WindowFlags     = ImGuiWindowFlags_NoCollapse;
+const ImGuiTabBarFlags     TabBarFlags     = ImGuiTabBarFlags_None;
+const ImGuiComboFlags      ComboFlags      = ImGuiComboFlags_None;
+const ImGuiSelectableFlags SelectableFlags = ImGuiSelectableFlags_None;
+const ImGuiTableFlags      TableFlags      = ImGuiTableFlags_Resizable | ImGuiTableFlags_Borders;
+const ImGuiInputTextFlags  InputTextFlags  = ImGuiInputTextFlags_CharsNoBlank;
 
-    const ImVec4 FailColor    = ImVec4(1.f, 0.f, 0.f, 1.f);
-    const ImVec4 SuccessColor = ImVec4(0.f, 1.f, 0.f, 1.f);
-}  // namespace
+const ImVec4 FailColor    = ImVec4(1.f, 0.f, 0.f, 1.f);
+const ImVec4 SuccessColor = ImVec4(0.f, 1.f, 0.f, 1.f);
+} // namespace
 
 void HTNDebuggerWindow::Render(bool& _IsOpen)
 {
@@ -72,7 +72,7 @@ void HTNDebuggerWindow::RenderDatabase()
     ImGui::SameLine();
 
     const char* NewFactPopupName = "New Fact";
-    if (ImGui::Button("+##AddFact"))
+    if (ImGui::Button("+"))
     {
         ImGui::OpenPopup(NewFactPopupName);
     }
@@ -86,14 +86,14 @@ void HTNDebuggerWindow::RenderDatabase()
     if (ImGui::BeginPopupModal(NewFactPopupName, &IsOpen, ImGuiWindowFlags_AlwaysAutoResize))
     {
         static std::string Name;
-        ImGui::InputText("Name##Fact", &Name, InputTextFlags);
+        ImGui::InputText("Name", &Name, InputTextFlags);
 
         static std::vector<HTNAtom> Arguments;
         ImGui::Text(std::format("Arguments ({})", Arguments.size()).c_str());
 
         ImGui::SameLine();
 
-        if (ImGui::Button("+##AddArgument"))
+        if (ImGui::Button("+"))
         {
             Arguments.emplace_back(HTNAtom());
         }
@@ -105,7 +105,7 @@ void HTNDebuggerWindow::RenderDatabase()
 
         ImGui::SameLine();
 
-        if (ImGui::Button("-##RemoveAllArguments"))
+        if (ImGui::Button("-"))
         {
             Arguments.clear();
         }
@@ -125,7 +125,7 @@ void HTNDebuggerWindow::RenderDatabase()
 
             ImGui::SameLine();
 
-            if (ImGui::Button(std::format("-##RemoveArgument{}", i).c_str()))
+            if (ImGui::Button(std::format("-##{}", i).c_str()))
             {
                 Arguments.erase(Arguments.begin() + i);
             }
@@ -174,7 +174,7 @@ void HTNDebuggerWindow::RenderDatabase()
             }
         }
 
-        if (ImGui::Button("OK", ImVec2(120, 0)))
+        if (ImGui::Button("OK", ImVec2(120.f, 0.f)))
         {
             WorldState.AddFact(Name.c_str(), Arguments);
             ImGui::CloseCurrentPopup();
@@ -182,7 +182,7 @@ void HTNDebuggerWindow::RenderDatabase()
 
         ImGui::SameLine();
 
-        if (ImGui::Button("Cancel", ImVec2(120, 0)))
+        if (ImGui::Button("Cancel", ImVec2(120.f, 0.f)))
         {
             ImGui::CloseCurrentPopup();
         }
@@ -192,7 +192,7 @@ void HTNDebuggerWindow::RenderDatabase()
 
     ImGui::SameLine();
 
-    if (ImGui::Button("-##RemoveAllFacts"))
+    if (ImGui::Button("-"))
     {
         WorldState.RemoveAllFacts();
     }
@@ -203,7 +203,7 @@ void HTNDebuggerWindow::RenderDatabase()
     }
 
     static ImGuiTextFilter Filter;
-    Filter.Draw();
+    Filter.Draw("##", 240.f);
 
     const std::unordered_map<std::string, HTNWorldState::HTNFact>& Facts = WorldState.GetFacts();
     for (auto It = Facts.begin(); It != Facts.end(); ++It)
@@ -245,7 +245,7 @@ void HTNDebuggerWindow::RenderDatabase()
 
                 ImGui::SameLine();
 
-                if (ImGui::Button(std::format("-##RemoveFact{}{}", i, j).c_str()))
+                if (ImGui::Button(std::format("-##{}{}{}", Name, i, j).c_str()))
                 {
                     WorldState.RemoveFact(Name.c_str(), static_cast<int>(i), static_cast<int>(j));
                 }
