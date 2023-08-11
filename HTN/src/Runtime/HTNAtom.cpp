@@ -1,5 +1,6 @@
 #include "HTNAtom.h"
 
+#include <format>
 #include <iomanip>
 #include <ios>
 #include <sstream>
@@ -165,7 +166,7 @@ std::string HTNAtom::ToString() const
     }
     else if (IsType<std::string>())
     {
-        return GetValue<std::string>();
+        return std::format("\"{}\"", GetValue<std::string>());
     }
     else if (IsType<HTNAtomList>())
     {
