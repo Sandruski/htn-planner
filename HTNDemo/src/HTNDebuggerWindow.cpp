@@ -63,11 +63,6 @@ std::string RemoveDoubleQuotationMarks(const std::string& inString)
 
 void HTNDebuggerWindow::Render(bool& _IsOpen)
 {
-    if (!mPlanningUnit)
-    {
-        return;
-    }
-
     if (ImGui::Begin("HTN Debugger Window", &_IsOpen, WindowFlags))
     {
         if (ImGui::BeginTabBar("Tab Bar", TabBarFlags))
@@ -99,11 +94,26 @@ void HTNDebuggerWindow::Render(bool& _IsOpen)
 
 void HTNDebuggerWindow::RenderPlan()
 {
+    // TODO salvarez Allow to plan all the planning units at the same time using multithreading. Display them like a map
+    // TODO salvarez Display all of the resulting plans
+
+    if (!mPlanner)
+    {
+        return;
+    }
+
+    static HTNPlanningUnit* SelectedPlanningUnit = nullptr;
+    SelectPlanningUnit(SelectedPlanningUnit);
+
+    if (!SelectedPlanningUnit)
+    {
+        return;
+    }
+
     static std::string SelectedMethodName;
     if (ImGui::BeginCombo("Methods", SelectedMethodName.c_str(), ComboFlags))
     {
-        const HTNPlannerHook& Planner     = mPlanningUnit->GetPlanner();
-        const HTNInterpreter& Interpreter = Planner.GetInterpreter();
+        const HTNInterpreter& Interpreter = mPlanner->GetInterpreter();
         if (const std::shared_ptr<const HTNDomain>& Domain = Interpreter.GetDomain())
         {
             const std::vector<std::shared_ptr<const HTNMethod>>& Methods = Domain->GetMethods();
@@ -131,15 +141,28 @@ void HTNDebuggerWindow::RenderPlan()
         ImGui::EndCombo();
     }
 
-    static OperationResult              LastPlanResult = OperationResult::NONE;
     static std::vector<HTNTaskInstance> LastPlan;
+    static OperationResult              LastPlanResult   = OperationResult::NONE;
+    static HTNPlanningUnit*             LastPlanningUnit = nullptr;
+    static std::string                  LastMethodName;
     if (ImGui::Button("Plan"))
     {
-        LastPlan       = mPlanningUnit->ExecuteTopLevelMethod(SelectedMethodName);
-        LastPlanResult = static_cast<OperationResult>(!LastPlan.empty());
+        LastPlan         = SelectedPlanningUnit->ExecuteTopLevelMethod(SelectedMethodName);
+        LastPlanResult   = static_cast<OperationResult>(!LastPlan.empty());
+        LastPlanningUnit = SelectedPlanningUnit;
+        LastMethodName   = SelectedMethodName;
     }
 
     RenderOperationResult(LastPlanResult);
+
+    if (LastPlanResult != OperationResult::SUCCEEDED)
+    {
+        return;
+    }
+
+    ImGui::Text(LastPlanningUnit->GetName().c_str());
+    ImGui::SameLine();
+    ImGui::Text(LastMethodName.c_str());
 
     for (const HTNTaskInstance& Task : LastPlan)
     {
@@ -158,7 +181,15 @@ void HTNDebuggerWindow::RenderPlan()
 
 void HTNDebuggerWindow::RenderDatabase()
 {
-    HTNWorldState& WorldState = mPlanningUnit->GetWorldStateMutable();
+    static HTNPlanningUnit* SelectedPlanningUnit = nullptr;
+    SelectPlanningUnit(SelectedPlanningUnit);
+
+    if (!SelectedPlanningUnit)
+    {
+        return;
+    }
+
+    HTNWorldState& WorldState = SelectedPlanningUnit->GetWorldStateMutable();
 
     ImGui::Text("Facts");
 
@@ -296,7 +327,7 @@ void HTNDebuggerWindow::RenderDatabase()
     }
 
     static ImGuiTextFilter Filter;
-    Filter.Draw("##", 240.f);
+    Filter.Draw("##");
 
     const std::unordered_map<std::string, HTNWorldState::HTNFact>& Facts = WorldState.GetFacts();
     for (auto It = Facts.begin(); It != Facts.end(); ++It)
@@ -354,6 +385,11 @@ void HTNDebuggerWindow::RenderDatabase()
 
 void HTNDebuggerWindow::RenderDecomposition()
 {
+    if (!mPlanner)
+    {
+        return;
+    }
+
     static const std::filesystem::path CurrentPath        = std::filesystem::current_path();
     static const std::filesystem::path ParentPath         = CurrentPath.parent_path();
     static const std::string           DomainsSubPathName = "\\Domains";
@@ -401,7 +437,39 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     RenderOperationResult(LastParseResult);
 
+    if (LastParseResult != OperationResult::SUCCEEDED)
+    {
+        return;
+    }
+
     // TODO salvarez Draw AST
     // const HTNInterpreter&                   Interpreter = mPlanner->GetInterpreter();
     // const std::shared_ptr<const HTNDomain>& Domain      = Interpreter.GetDomain();
+}
+
+void HTNDebuggerWindow::SelectPlanningUnit(HTNPlanningUnit*& inSelectedPlanningUnit) const
+{
+    if (ImGui::BeginCombo("Planning Unit", inSelectedPlanningUnit ? inSelectedPlanningUnit->GetName().c_str() : "", ComboFlags))
+    {
+        for (HTNPlanningUnit* PlanningUnit : mPlanningUnits)
+        {
+            if (!PlanningUnit)
+            {
+                continue;
+            }
+
+            const bool IsSelected = (inSelectedPlanningUnit == PlanningUnit);
+            if (ImGui::Selectable(PlanningUnit->GetName().c_str(), IsSelected, SelectableFlags))
+            {
+                inSelectedPlanningUnit = PlanningUnit;
+            }
+
+            if (IsSelected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+
+        ImGui::EndCombo();
+    }
 }

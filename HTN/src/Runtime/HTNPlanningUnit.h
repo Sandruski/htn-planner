@@ -12,10 +12,12 @@ class HTNTaskInstance;
 class HTNPlanningUnit
 {
 public:
-    explicit HTNPlanningUnit(const HTNPlannerHook& inPlanner);
+    explicit HTNPlanningUnit(const std::string& inName, const HTNPlannerHook& inPlanner);
 
     // Execute planning unit top level method
     std::vector<HTNTaskInstance> ExecuteTopLevelMethod(const std::string& inEntryPointName);
+
+    const std::string& GetName() const;
 
     const HTNPlannerHook& GetPlanner() const;
 
@@ -23,12 +25,18 @@ public:
     HTNWorldState&       GetWorldStateMutable();
 
 private:
+    std::string           mName;
     const HTNPlannerHook* mPlanner = nullptr; // Decision making
     HTNWorldState         mWorldState;        // World state database
 };
 
-inline HTNPlanningUnit::HTNPlanningUnit(const HTNPlannerHook& inPlanner) : mPlanner(&inPlanner)
+inline HTNPlanningUnit::HTNPlanningUnit(const std::string& inName, const HTNPlannerHook& inPlanner) : mName(inName), mPlanner(&inPlanner)
 {
+}
+
+inline const std::string& HTNPlanningUnit::GetName() const
+{
+    return mName;
 }
 
 inline const HTNPlannerHook& HTNPlanningUnit::GetPlanner() const

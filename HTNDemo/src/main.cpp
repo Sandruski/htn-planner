@@ -16,6 +16,8 @@
 
 #include <SDL.h>
 #include <stdio.h>
+#include <string>
+#include <vector>
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
@@ -89,24 +91,25 @@ int main(int, char**)
     bool   ShowHTNDebuggerWindow = true;
     ImVec4 clear_color           = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    HTNPlannerHook  PlannerHook;
-    // TODO salvarez Allow to have multiple planning units (e.g. upper body + lower body)
-    // They share the same planner hook but plan using different entry points
-    // They plan at the same time using multithreading
-    HTNPlanningUnit PlanningUnit = HTNPlanningUnit(PlannerHook);
-    PlanningUnit.GetWorldStateMutable().AddFact("Test2");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test3");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test4", "1");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test5", "1");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test5", "3");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "e");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "f", "g");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test", "1", 2, 3);
-    PlanningUnit.GetWorldStateMutable().AddFact("Test", "2", 1, 1);
-    PlanningUnit.GetWorldStateMutable().AddFact("Test", "3");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test", "A", "B", "C");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test", "D", "E", "F");
+    HTNPlannerHook PlannerHook;
+
+    HTNPlanningUnit MainPlanningUnit      = HTNPlanningUnit("Main", PlannerHook);
+    HTNPlanningUnit UpperBodyPlanningUnit = HTNPlanningUnit("Upper Body", PlannerHook);
+    MainPlanningUnit.GetWorldStateMutable().AddFact("Test2");
+    MainPlanningUnit.GetWorldStateMutable().AddFact("Test3");
+    MainPlanningUnit.GetWorldStateMutable().AddFact("Test4", "1");
+    MainPlanningUnit.GetWorldStateMutable().AddFact("Test5", "1");
+    MainPlanningUnit.GetWorldStateMutable().AddFact("Test5", "3");
+    MainPlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d");
+    MainPlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "e");
+    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "f", "g");
+    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "1", 2, 3);
+    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "2", 1, 1);
+    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "3");
+    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "A", "B", "C");
+    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "D", "E", "F");
+
+    const std::vector<HTNPlanningUnit*> PlanningUnits = {&MainPlanningUnit, &UpperBodyPlanningUnit};
 
     // Main loop
     bool done = false;
@@ -140,7 +143,7 @@ int main(int, char**)
 
         if (ShowHTNDebuggerWindow)
         {
-            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlannerHook, PlanningUnit);
+            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlannerHook, PlanningUnits);
             sHTNDebuggerWindow.Render(ShowHTNDebuggerWindow);
         }
 
