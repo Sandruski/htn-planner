@@ -1,23 +1,25 @@
 #pragma once
 
+class HTNPlannerHook;
 class HTNPlanningUnit;
 
 class HTNDebuggerWindow
 {
 public:
-    explicit HTNDebuggerWindow(HTNPlanningUnit& inPlanningUnit);
+    explicit HTNDebuggerWindow(HTNPlannerHook& inPlanner, HTNPlanningUnit& inPlanningUnit);
 
     void Render(bool& _IsOpen);
 
 private:
-    void RenderActivePlan();
+    void RenderPlan();
     void RenderDatabase();
     void RenderDecomposition();
 
+    HTNPlannerHook*  mPlanner      = nullptr;
     HTNPlanningUnit* mPlanningUnit = nullptr;
 };
 
-inline HTNDebuggerWindow::HTNDebuggerWindow(HTNPlanningUnit& inPlanningUnit)
-    : mPlanningUnit(&inPlanningUnit)
+inline HTNDebuggerWindow::HTNDebuggerWindow(HTNPlannerHook& inPlanner, HTNPlanningUnit& inPlanningUnit)
+    : mPlanner(&inPlanner), mPlanningUnit(&inPlanningUnit)
 {
 }

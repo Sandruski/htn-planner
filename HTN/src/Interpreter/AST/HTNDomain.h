@@ -11,17 +11,23 @@ class HTNValue;
 class HTNDomain final : public HTNNodeBase
 {
 public:
-	explicit HTNDomain(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNMethod>>& inMethods);
-	~HTNDomain();
+    explicit HTNDomain(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNMethod>>& inMethods);
+    ~HTNDomain();
 
-	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
-	std::string ToString() const final;
+    std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
+    std::string                                 ToString() const final;
 
-	std::shared_ptr<const HTNMethod> FindMethodByName(const std::string& inMethodName) const;
+    std::shared_ptr<const HTNMethod> FindMethodByName(const std::string& inMethodName) const;
 
-	std::string GetName() const;
+    std::string                                          GetName() const;
+    const std::vector<std::shared_ptr<const HTNMethod>>& GetMethods() const;
 
 private:
-	std::unique_ptr<const HTNValue> mName;
-	std::vector<std::shared_ptr<const HTNMethod>> mMethods;
+    std::unique_ptr<const HTNValue>               mName;
+    std::vector<std::shared_ptr<const HTNMethod>> mMethods;
 };
+
+inline const std::vector<std::shared_ptr<const HTNMethod>>& HTNDomain::GetMethods() const
+{
+    return mMethods;
+}

@@ -1,38 +1,39 @@
 #pragma once
 
-#include "Runtime/HTNDecompositionContext.h"
-#include "Runtime/HTNPlannerHook.h"
 #include "Runtime/HTNWorldState.h"
 
 #include <string>
 #include <vector>
 
+class HTNPlannerHook;
+class HTNTaskInstance;
+
 // Planning unit structure that holds the planner hook and the database
 class HTNPlanningUnit
 {
 public:
-    bool ParseDomain(const std::string& inDomainPath);
+    explicit HTNPlanningUnit(const HTNPlannerHook& inPlanner);
 
     // Execute planning unit top level method
     std::vector<HTNTaskInstance> ExecuteTopLevelMethod(const std::string& inEntryPointName);
+
+    const HTNPlannerHook& GetPlanner() const;
 
     const HTNWorldState& GetWorldState() const;
     HTNWorldState&       GetWorldStateMutable();
 
 private:
-    HTNPlannerHook mPlanner;     // Decision making
-    HTNWorldState  mWorldState;  // World state database
+    const HTNPlannerHook* mPlanner = nullptr; // Decision making
+    HTNWorldState         mWorldState;        // World state database
 };
 
-inline bool HTNPlanningUnit::ParseDomain(const std::string& inDomainPath)
+inline HTNPlanningUnit::HTNPlanningUnit(const HTNPlannerHook& inPlanner) : mPlanner(&inPlanner)
 {
-    return mPlanner.parseDomain(inDomainPath);
 }
 
-inline std::vector<HTNTaskInstance> HTNPlanningUnit::ExecuteTopLevelMethod(const std::string& inEntryPointName)
+inline const HTNPlannerHook& HTNPlanningUnit::GetPlanner() const
 {
-    HTNDecompositionContext DecompositionContext = HTNDecompositionContext(mWorldState);
-    return mPlanner.MakePlan(inEntryPointName, DecompositionContext);
+    return *mPlanner;
 }
 
 inline const HTNWorldState& HTNPlanningUnit::GetWorldState() const

@@ -12,12 +12,19 @@ class HTNTask;
 class HTNInterpreter
 {
 public:
-	~HTNInterpreter();
+    ~HTNInterpreter();
 
-	bool Init(const std::string& inDomainPath);
+    bool Init(const std::string& inDomainPath);
 
-	std::vector<std::shared_ptr<const HTNTask>> Interpret(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const;
+    std::vector<std::shared_ptr<const HTNTask>> Interpret(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const;
+
+    const std::shared_ptr<const HTNDomain>& GetDomain() const;
 
 private:
-	std::shared_ptr<const HTNDomain> mDomain;
+    std::shared_ptr<const HTNDomain> mDomain;
 };
+
+inline const std::shared_ptr<const HTNDomain>& HTNInterpreter::GetDomain() const
+{
+    return mDomain;
+}

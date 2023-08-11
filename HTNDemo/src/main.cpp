@@ -8,6 +8,7 @@
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
 #include "HTNDebuggerWindow.h"
+#include "Runtime/HTNPlannerHook.h"
 #include "Runtime/HTNPlanningUnit.h"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
@@ -53,8 +54,8 @@ int main(int, char**)
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -65,10 +66,13 @@ int main(int, char**)
     ImGui_ImplSDLRenderer_Init(renderer);
 
     // Load Fonts
-    // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
+    // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select
+    // them.
     // - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
-    // - If the file cannot be loaded, the function will return NULL. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
-    // - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
+    // - If the file cannot be loaded, the function will return NULL. Please handle those errors in your application (e.g. use an assertion, or
+    // display an error and quit).
+    // - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling
+    // ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
     // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
     // - Read 'docs/FONTS.md' for more instructions and details.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
@@ -85,14 +89,21 @@ int main(int, char**)
     bool   ShowHTNDebuggerWindow = true;
     ImVec4 clear_color           = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    HTNPlanningUnit PlanningUnit;
+    HTNPlannerHook  PlannerHook;
+    // TODO salvarez Allow to have multiple planning units (e.g. upper body + lower body)
+    // They share the same planner hook but plan using different entry points
+    // They plan at the same time using multithreading
+    HTNPlanningUnit PlanningUnit = HTNPlanningUnit(PlannerHook);
     PlanningUnit.GetWorldStateMutable().AddFact("Test2");
     PlanningUnit.GetWorldStateMutable().AddFact("Test3");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test4", "1");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test5", "1");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test5", "3");
     PlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d");
     PlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "e");
     PlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "f", "g");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test", "1");
-    PlanningUnit.GetWorldStateMutable().AddFact("Test", "2");
+    PlanningUnit.GetWorldStateMutable().AddFact("Test", "1", 2, 3);
+    PlanningUnit.GetWorldStateMutable().AddFact("Test", "2", 1, 1);
     PlanningUnit.GetWorldStateMutable().AddFact("Test", "3");
     PlanningUnit.GetWorldStateMutable().AddFact("Test", "A", "B", "C");
     PlanningUnit.GetWorldStateMutable().AddFact("Test", "D", "E", "F");
@@ -103,9 +114,10 @@ int main(int, char**)
     {
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse
+        // data.
+        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the
+        // keyboard data. Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -128,14 +140,15 @@ int main(int, char**)
 
         if (ShowHTNDebuggerWindow)
         {
-            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlanningUnit);
+            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlannerHook, PlanningUnit);
             sHTNDebuggerWindow.Render(ShowHTNDebuggerWindow);
         }
 
         // Rendering
         ImGui::Render();
         SDL_RenderSetScale(renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-        SDL_SetRenderDrawColor(renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
+        SDL_SetRenderDrawColor(renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255),
+                               (Uint8)(clear_color.w * 255));
         SDL_RenderClear(renderer);
         ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
         SDL_RenderPresent(renderer);
