@@ -49,15 +49,15 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
     HTNPlanningUnit PlanningUnit;
     EXPECT_TRUE(PlanningUnit.ParseDomain(DomainPath));
 
-    HTNWorldState& WorldState = PlanningUnit.GetWorldState();
-    WorldState.MakeFact("item", "wallet");
-    WorldState.MakeFact("item", "apple");
-    WorldState.MakeFact("item", "fruit");
-    WorldState.MakeFact("item", "tea");
-    WorldState.MakeFact("item", "wallet", "full");
-    WorldState.MakeFact("loggable", "wallet");
-    WorldState.MakeFact("loggable", "apple");
-    WorldState.MakeFact("edible", "tea");
+    HTNWorldState& WorldState = PlanningUnit.GetWorldStateMutable();
+	WorldState.AddFact("item", "wallet");
+	WorldState.AddFact("item", "apple");
+	WorldState.AddFact("item", "fruit");
+	WorldState.AddFact("item", "tea");
+	WorldState.AddFact("item", "wallet", "full");
+	WorldState.AddFact("loggable", "wallet");
+	WorldState.AddFact("loggable", "apple");
+	WorldState.AddFact("edible", "tea");
 
     const std::vector<HTNTaskInstance>& Plan = PlanningUnit.ExecuteTopLevelMethod(EntryPointName);
     for (const HTNTaskInstance& Task : Plan)
@@ -79,8 +79,8 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 // called per thread to execute the planner top level method
 static void sParallelWork(HTNPlanningUnit& inPlanningUnit, const std::string& EntryPointName, size_t inIndex)
 {
-    HTNWorldState& WorldState = inPlanningUnit.GetWorldState();
-    WorldState.MakeFact("iteration_number", (int)inIndex);
+    HTNWorldState& WorldState = inPlanningUnit.GetWorldStateMutable();
+    WorldState.AddFact("iteration_number", (int)inIndex);
 
     const std::vector<HTNTaskInstance>& Plan = inPlanningUnit.ExecuteTopLevelMethod(EntryPointName);
     EXPECT_TRUE(Plan.size() == 1);

@@ -72,6 +72,7 @@ inline void HTNTable<NumArgs>::AddEntry(const Args&... inArgs)
 
     // TODO salvarez Fix
     // Check args bound
+    /*
     for (const HTNEntry& Entry : mEntries)
     {
         int Index = 0;
@@ -80,7 +81,7 @@ inline void HTNTable<NumArgs>::AddEntry(const Args&... inArgs)
             return;
         }
     }
-
+    */
     HTNEntry& Entry = mEntries.emplace_back();
     Entry           = {inArgs...};
 }

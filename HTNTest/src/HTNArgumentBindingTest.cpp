@@ -7,10 +7,10 @@ TEST(HTNAtom, DISABLED_HTNArgumentBinding)
 
 	const char* sFood("food");
 
-	world_state.MakeFact(sFood, "fish");
-	world_state.MakeFact(sFood, "beef");
-	world_state.MakeFact(sFood, "meat");
-	world_state.MakeFact(sFood, "fruit");
+	world_state.AddFact(sFood, "fish");
+	world_state.AddFact(sFood, "beef");
+	world_state.AddFact(sFood, "meat");
+	world_state.AddFact(sFood, "fruit");
 
 	HTNAtom atom_fish("fish");
 	EXPECT_EQ(world_state.Query(sFood, atom_fish), 1);

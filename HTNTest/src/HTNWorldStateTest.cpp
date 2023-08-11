@@ -9,17 +9,17 @@ TEST(HTNAtom, DISABLED_HTNWorldStateSimpleFacts)
 	EXPECT_EQ(world_state.GetNumFactTables(sFavoriteColor), -1);
 
 	const char* sThreat("threat");
-	world_state.MakeFact(sThreat);
+	world_state.AddFact(sThreat);
 	EXPECT_EQ(world_state.GetNumFactTables(sThreat), 0);
 
 	const char* sDay("day");
-	world_state.MakeFact(sDay, "Monday");
+	world_state.AddFact(sDay, "Monday");
 	EXPECT_EQ(world_state.GetNumFactTables(sDay), 1);
 	EXPECT_EQ(world_state.GetNumFactTablesByNumArgs(sDay, 1), 1);
 
 	const char* sWeather("weather");
-	world_state.MakeFact(sWeather, "Sunny");
-	world_state.MakeFact(sWeather, "Cloudy", 10);
+	world_state.AddFact(sWeather, "Sunny");
+	world_state.AddFact(sWeather, "Cloudy", 10);
 	EXPECT_EQ(world_state.GetNumFactTables(sWeather), 2);
 	EXPECT_EQ(world_state.GetNumFactTablesByNumArgs(sWeather, 1), 1);
 	EXPECT_EQ(world_state.GetNumFactTablesByNumArgs(sWeather, 2), 1);
@@ -50,7 +50,7 @@ TEST(HTNAtom, DISABLED_HTNWorldStateComplexFacts)
 	dessert.AddListElement(HTNAtom("flan"));
 	dessert.AddListElement(HTNAtom("CremaCatalana")); // Careful! We need to convert all the string to snake_case format! so CremaCatalana needs to be "crema_catalana".
 
-	world_state.MakeFact(sMenu, first_dish, second_dish, dessert); // (menu (paella migas salmorejo) (carne pescado tortilla_de_patatas) (yogurt flan crema_catalana))
+	world_state.AddFact(sMenu, first_dish, second_dish, dessert); // (menu (paella migas salmorejo) (carne pescado tortilla_de_patatas) (yogurt flan crema_catalana))
 
 	EXPECT_EQ(world_state.GetNumFactTables(sMenu), 1);
 
