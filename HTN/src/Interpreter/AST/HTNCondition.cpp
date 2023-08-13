@@ -5,52 +5,61 @@
 #include "Runtime/HTNDecompositionContext.h"
 
 #include <cassert>
+#include <format>
 
 bool HTNConditionWorldStateQuery::Check(const HTNWorldState& inWorldState, const int inIndex) const
 {
-	return inWorldState.CheckIndex(mKey.c_str(), inIndex, mArguments);
+    return inWorldState.CheckIndex(mKey.c_str(), inIndex, mArguments);
 }
 
 std::vector<std::shared_ptr<const HTNTask>> HTNConditionBase::Accept(const HTNNodeVisitorBase& inVisitor) const
 {
-	return inVisitor.Visit(*this);
+    return inVisitor.Visit(*this);
 }
 
 HTNCondition::HTNCondition(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments)
-	: mName(std::move(inName)), mArguments(inArguments)
+    : mName(std::move(inName)), mArguments(inArguments)
 {
 }
 
 std::string HTNCondition::ToString() const
 {
-	return GetName();
+    std::string Name = GetName();
+
+    for (const std::shared_ptr<const HTNValue>& Argument : mArguments)
+    {
+        Name.append(std::format(" {}", Argument->ToString()));
+    }
+
+    return Name;
 }
 
 bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext) const
 {
-    HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
-    const std::shared_ptr<const HTNMethod>& CurrentMethod = ioDecompositionContext.GetCurrentMethod();
-    const std::shared_ptr<const HTNCondition> This = shared_from_this();
-    const HTNWorldState* WorldState = ioDecompositionContext.GetWorldState();
+    HTNDecompositionRecord&                   CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+    const std::shared_ptr<const HTNMethod>&   CurrentMethod        = ioDecompositionContext.GetCurrentMethod();
+    const std::shared_ptr<const HTNCondition> This                 = shared_from_this();
+    const HTNWorldState*                      WorldState           = ioDecompositionContext.GetWorldState();
 
-    const HTNAtom& NameValue = mName->GetValue();
-    const std::string& Key = NameValue.GetValue<std::string>();
+    const HTNAtom&     NameValue = mName->GetValue();
+    const std::string& Key       = NameValue.GetValue<std::string>();
 
     // Add variables for the new arguments
     std::vector<HTNAtom*> Arguments;
     for (const std::shared_ptr<const HTNValue>& Argument : mArguments)
     {
-        const HTNAtom& ArgumentValue = Argument->GetValue();
-        const std::string& VariableName = ArgumentValue.GetValue<std::string>();
-        HTNAtom& Variable = CurrentDecomposition.GetOrAddVariable(CurrentMethod, VariableName);
+        const HTNAtom&     ArgumentValue = Argument->GetValue();
+        const std::string& VariableName  = ArgumentValue.GetValue<std::string>();
+        HTNAtom&           Variable      = CurrentDecomposition.GetOrAddVariable(CurrentMethod, VariableName);
         Arguments.emplace_back(&Variable);
     }
 
     // Try to bind the variables
-    const HTNConditionWorldStateQuery Condition = HTNConditionWorldStateQuery(Key, Arguments);
-    const unsigned int ArgumentsCount = static_cast<unsigned int>(Arguments.size());
-    const unsigned int FactEntriesCount = WorldState->GetNumFactEntries(Key, ArgumentsCount);
-    for (unsigned int CurrentFactEntryIndex = CurrentDecomposition.AddOrIncrementCurrentFactEntryIndex(This); CurrentFactEntryIndex < FactEntriesCount; CurrentFactEntryIndex = CurrentDecomposition.AddOrIncrementCurrentFactEntryIndex(This))
+    const HTNConditionWorldStateQuery Condition        = HTNConditionWorldStateQuery(Key, Arguments);
+    const unsigned int                ArgumentsCount   = static_cast<unsigned int>(Arguments.size());
+    const unsigned int                FactEntriesCount = WorldState->GetNumFactEntries(Key, ArgumentsCount);
+    for (unsigned int CurrentFactEntryIndex                              = CurrentDecomposition.AddOrIncrementCurrentFactEntryIndex(This);
+         CurrentFactEntryIndex < FactEntriesCount; CurrentFactEntryIndex = CurrentDecomposition.AddOrIncrementCurrentFactEntryIndex(This))
     {
         if (Condition.Check(*WorldState, CurrentFactEntryIndex))
         {
@@ -66,15 +75,22 @@ std::string HTNCondition::GetName() const
     return mName ? mName->ToString() : "Invalid Condition";
 }
 
-HTNConditionAnd::HTNConditionAnd(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions)
-	: mSubConditions(inSubConditions)
+HTNConditionAnd::HTNConditionAnd(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions) : mSubConditions(inSubConditions)
 {
 }
 
 std::string HTNConditionAnd::ToString() const
 {
-	// TODO salvarez Print names of conditions AND
-	return "AND Condition";
+    std::string Name = "(AND";
+
+    for (const std::shared_ptr<const HTNConditionBase>& SubCondition : mSubConditions)
+    {
+        Name.append(std::format(" ({})", SubCondition->ToString()));
+    }
+
+    Name.append(")");
+
+    return Name;
 }
 
 bool HTNConditionAnd::Check(HTNDecompositionContext& ioDecompositionContext) const
@@ -82,58 +98,70 @@ bool HTNConditionAnd::Check(HTNDecompositionContext& ioDecompositionContext) con
     // YES bindings
     // YES backtracking
 
-	HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
-    const std::shared_ptr<const HTNMethod>& CurrentMethod = ioDecompositionContext.GetCurrentMethod();
-	const std::shared_ptr<const HTNConditionBase> This = shared_from_this();
+    HTNDecompositionRecord&                       CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+    const std::shared_ptr<const HTNMethod>&       CurrentMethod        = ioDecompositionContext.GetCurrentMethod();
+    const std::shared_ptr<const HTNConditionBase> This                 = shared_from_this();
 
-	for (unsigned int CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This); CurrentConditionIndex < mSubConditions.size(); CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This))
-    {   
+    for (unsigned int CurrentConditionIndex                                   = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This);
+         CurrentConditionIndex < mSubConditions.size(); CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This))
+    {
         // Copy variables
-        const std::unordered_map<std::string, HTNAtom> VariablesBefore = CurrentDecomposition.HasVariables(CurrentMethod) ? CurrentDecomposition.GetVariables(CurrentMethod) : std::unordered_map<std::string, HTNAtom>();
+        const std::unordered_map<std::string, HTNAtom> VariablesBefore = CurrentDecomposition.HasVariables(CurrentMethod)
+                                                                             ? CurrentDecomposition.GetVariables(CurrentMethod)
+                                                                             : std::unordered_map<std::string, HTNAtom>();
 
         // Check condition
-		const std::shared_ptr<const HTNConditionBase>& CurrentCondition = mSubConditions[CurrentConditionIndex];
-		if (CurrentCondition->Check(ioDecompositionContext))
-		{
+        const std::shared_ptr<const HTNConditionBase>& CurrentCondition = mSubConditions[CurrentConditionIndex];
+        if (CurrentCondition->Check(ioDecompositionContext))
+        {
             // Continue
             CurrentDecomposition.IncrementCurrentSubConditionIndex(This);
 
             // Record decomposition if it has bound any unbound arguments
-            const std::unordered_map<std::string, HTNAtom> VariablesAfter = CurrentDecomposition.HasVariables(CurrentMethod) ? CurrentDecomposition.GetVariables(CurrentMethod) : std::unordered_map<std::string, HTNAtom>();
+            const std::unordered_map<std::string, HTNAtom> VariablesAfter = CurrentDecomposition.HasVariables(CurrentMethod)
+                                                                                ? CurrentDecomposition.GetVariables(CurrentMethod)
+                                                                                : std::unordered_map<std::string, HTNAtom>();
             if (VariablesAfter.size() > VariablesBefore.size()) // TODO salvarez Make sure that this works
             {
                 HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
                 NewDecomposition.SetVariables(CurrentMethod, VariablesBefore);
                 ioDecompositionContext.RecordDecomposition(NewDecomposition);
             }
-		}
-		else
-		{
+        }
+        else
+        {
             if (CurrentConditionIndex == 0) // First condition
-			{
+            {
                 return false;
-			}
-			else
-			{
+            }
+            else
+            {
                 // Restore state: unbound variables but updated indices
                 ioDecompositionContext.RestoreDecomposition();
-			}
-		}
-	}
+            }
+        }
+    }
 
-	// If empty, it evaluates to true
-	return true;
+    // If empty, it evaluates to true
+    return true;
 }
 
-HTNConditionOr::HTNConditionOr(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions)
-	: mSubConditions(inSubConditions)
+HTNConditionOr::HTNConditionOr(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions) : mSubConditions(inSubConditions)
 {
 }
 
 std::string HTNConditionOr::ToString() const
 {
-	// TODO salvarez Print names of conditions OR
-	return "OR Condition";
+    std::string Name = "(OR";
+
+    for (const std::shared_ptr<const HTNConditionBase>& SubCondition : mSubConditions)
+    {
+        Name.append(std::format(" ({})", SubCondition->ToString()));
+    }
+
+    Name.append(")");
+
+    return Name;
 }
 
 bool HTNConditionOr::Check(HTNDecompositionContext& ioDecompositionContext) const
@@ -141,36 +169,44 @@ bool HTNConditionOr::Check(HTNDecompositionContext& ioDecompositionContext) cons
     // YES bindings
     // NO backtracking
 
-	HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
-	const std::shared_ptr<const HTNConditionBase> This = shared_from_this();
+    HTNDecompositionRecord&                       CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+    const std::shared_ptr<const HTNConditionBase> This                 = shared_from_this();
 
-	for (unsigned int CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This); CurrentConditionIndex < mSubConditions.size(); CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This))
-	{
-		const std::shared_ptr<const HTNConditionBase>& CurrentCondition = mSubConditions[CurrentConditionIndex];
-		if (CurrentCondition->Check(ioDecompositionContext))
-		{
-			return true;
-		}
-		else
-		{
+    for (unsigned int CurrentConditionIndex                                   = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This);
+         CurrentConditionIndex < mSubConditions.size(); CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This))
+    {
+        const std::shared_ptr<const HTNConditionBase>& CurrentCondition = mSubConditions[CurrentConditionIndex];
+        if (CurrentCondition->Check(ioDecompositionContext))
+        {
+            return true;
+        }
+        else
+        {
             // Continue
             CurrentDecomposition.IncrementCurrentSubConditionIndex(This);
-		}
-	}
+        }
+    }
 
-	// If empty, it evaluates to false
-	return false;
+    // If empty, it evaluates to false
+    return false;
 }
 
-HTNConditionAlt::HTNConditionAlt(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions)
-    : mSubConditions(inConditions)
+HTNConditionAlt::HTNConditionAlt(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions) : mSubConditions(inConditions)
 {
 }
 
 std::string HTNConditionAlt::ToString() const
 {
-    // TODO salvarez Print names of conditions ALT
-    return "ALT Condition";
+    std::string Name = "(ALT";
+
+    for (const std::shared_ptr<const HTNConditionBase>& SubCondition : mSubConditions)
+    {
+        Name.append(std::format(" ({})", SubCondition->ToString()));
+    }
+
+    Name.append(")");
+
+    return Name;
 }
 
 bool HTNConditionAlt::Check(HTNDecompositionContext& ioDecompositionContext) const
@@ -178,20 +214,25 @@ bool HTNConditionAlt::Check(HTNDecompositionContext& ioDecompositionContext) con
     // YES bindings
     // YES backtracking
 
-    HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
-    const std::shared_ptr<const HTNMethod>& CurrentMethod = ioDecompositionContext.GetCurrentMethod();
-    const std::shared_ptr<const HTNConditionBase> This = shared_from_this();
+    HTNDecompositionRecord&                       CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+    const std::shared_ptr<const HTNMethod>&       CurrentMethod        = ioDecompositionContext.GetCurrentMethod();
+    const std::shared_ptr<const HTNConditionBase> This                 = shared_from_this();
 
-    for (unsigned int CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This); CurrentConditionIndex < mSubConditions.size(); CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This))
-    {        
+    for (unsigned int CurrentConditionIndex                                   = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This);
+         CurrentConditionIndex < mSubConditions.size(); CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This))
+    {
         // Copy variables
-        const std::unordered_map<std::string, HTNAtom> VariablesBefore = CurrentDecomposition.HasVariables(CurrentMethod) ? CurrentDecomposition.GetVariables(CurrentMethod) : std::unordered_map<std::string, HTNAtom>();
+        const std::unordered_map<std::string, HTNAtom> VariablesBefore = CurrentDecomposition.HasVariables(CurrentMethod)
+                                                                             ? CurrentDecomposition.GetVariables(CurrentMethod)
+                                                                             : std::unordered_map<std::string, HTNAtom>();
 
         const std::shared_ptr<const HTNConditionBase>& CurrentCondition = mSubConditions[CurrentConditionIndex];
         if (CurrentCondition->Check(ioDecompositionContext))
         {
             // Record decomposition if it has bound any unbound arguments
-            const std::unordered_map<std::string, HTNAtom> VariablesAfter = CurrentDecomposition.HasVariables(CurrentMethod) ? CurrentDecomposition.GetVariables(CurrentMethod) : std::unordered_map<std::string, HTNAtom>();
+            const std::unordered_map<std::string, HTNAtom> VariablesAfter = CurrentDecomposition.HasVariables(CurrentMethod)
+                                                                                ? CurrentDecomposition.GetVariables(CurrentMethod)
+                                                                                : std::unordered_map<std::string, HTNAtom>();
             if (VariablesAfter.size() > VariablesBefore.size()) // TODO salvarez Make sure that this works
             {
                 HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
@@ -212,15 +253,13 @@ bool HTNConditionAlt::Check(HTNDecompositionContext& ioDecompositionContext) con
     return false;
 }
 
-HTNConditionNot::HTNConditionNot(const std::shared_ptr<const HTNConditionBase>& inSubCondition)
-	: mSubCondition(inSubCondition)
+HTNConditionNot::HTNConditionNot(const std::shared_ptr<const HTNConditionBase>& inSubCondition) : mSubCondition(inSubCondition)
 {
 }
 
 std::string HTNConditionNot::ToString() const
 {
-	// TODO salvarez Print names of conditions !
-	return "NOT Condition";
+    return std::format("NOT ({})", mSubCondition->ToString());
 }
 
 bool HTNConditionNot::Check(HTNDecompositionContext& ioDecompositionContext) const
@@ -229,15 +268,17 @@ bool HTNConditionNot::Check(HTNDecompositionContext& ioDecompositionContext) con
     // NO backtracking
 
     // Copy variables
-    HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
-    const std::shared_ptr<const HTNMethod>& CurrentMethod = ioDecompositionContext.GetCurrentMethod();
-    const std::unordered_map<std::string, HTNAtom> Variables = CurrentDecomposition.HasVariables(CurrentMethod) ? CurrentDecomposition.GetVariables(CurrentMethod) : std::unordered_map<std::string, HTNAtom>();
+    HTNDecompositionRecord&                        CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+    const std::shared_ptr<const HTNMethod>&        CurrentMethod        = ioDecompositionContext.GetCurrentMethod();
+    const std::unordered_map<std::string, HTNAtom> Variables            = CurrentDecomposition.HasVariables(CurrentMethod)
+                                                                              ? CurrentDecomposition.GetVariables(CurrentMethod)
+                                                                              : std::unordered_map<std::string, HTNAtom>();
 
     // Copy decomposition history
     const std::vector<HTNDecompositionRecord> DecompositionHistory = ioDecompositionContext.GetDecompositionHistory();
 
     // Check condition
-	const bool Result = mSubCondition->Check(ioDecompositionContext);
+    const bool Result = mSubCondition->Check(ioDecompositionContext);
 
     // Reset decomposition history
     ioDecompositionContext.SetDecompositionHistory(DecompositionHistory);

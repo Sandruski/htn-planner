@@ -78,13 +78,13 @@ const HTNAtom* HTNAtomList::Find(const unsigned int inIndex) const
     return &Current->GetData();
 }
 
-std::string HTNAtomList::ToString() const
+std::string HTNAtomList::ToString(const bool inUseQuotationMarks) const
 {
     std::string String;
 
     for (const HTNAtomNode* Current = mHead; Current; Current = Current->GetNext())
     {
-        String += Current->GetData().ToString();
+        String += Current->GetData().ToString(inUseQuotationMarks);
         String += "->";
     }
 
@@ -145,7 +145,7 @@ int HTNAtom::GetListNumItems() const
     return List.GetSize();
 }
 
-std::string HTNAtom::ToString() const
+std::string HTNAtom::ToString(const bool inUseQuotationMarks) const
 {
     if (!IsSet())
     {
@@ -166,11 +166,11 @@ std::string HTNAtom::ToString() const
     }
     else if (IsType<std::string>())
     {
-        return std::format("\"{}\"", GetValue<std::string>());
+        return inUseQuotationMarks ? std::format("\"{}\"", GetValue<std::string>()) : GetValue<std::string>();
     }
     else if (IsType<HTNAtomList>())
     {
-        return GetValue<HTNAtomList>().ToString();
+        return GetValue<HTNAtomList>().ToString(inUseQuotationMarks);
     }
 
     return "";

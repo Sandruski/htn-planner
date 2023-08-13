@@ -6,23 +6,22 @@
 class HTNValue final : public HTNNodeBase
 {
 public:
-	explicit HTNValue(const HTNAtom& inValue);
+    explicit HTNValue(const HTNAtom& inValue);
 
-	std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
-	std::string ToString() const final;
+    std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
+    std::string                                 ToString() const final;
 
-	const HTNAtom& GetValue() const;
+    const HTNAtom& GetValue() const;
 
 private:
-	HTNAtom mValue;
+    HTNAtom mValue;
 };
 
-inline HTNValue::HTNValue(const HTNAtom& inValue)
-	: mValue(inValue)
+inline HTNValue::HTNValue(const HTNAtom& inValue) : mValue(inValue)
 {
 }
 
 inline const HTNAtom& HTNValue::GetValue() const
 {
-	return mValue;
+    return mValue;
 }

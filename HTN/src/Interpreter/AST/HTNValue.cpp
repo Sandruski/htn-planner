@@ -4,10 +4,10 @@
 
 std::vector<std::shared_ptr<const HTNTask>> HTNValue::Accept(const HTNNodeVisitorBase& inVisitor) const
 {
-	return inVisitor.Visit(*this);
+    return inVisitor.Visit(*this);
 }
 
 std::string HTNValue::ToString() const
 {
-	return mValue.ToString();
+    return mValue.ToString(false);
 }

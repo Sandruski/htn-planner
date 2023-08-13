@@ -1,7 +1,10 @@
 #include "HTNDebuggerWindow.h"
 
+#include "Interpreter/AST/HTNBranch.h"
+#include "Interpreter/AST/HTNCondition.h"
 #include "Interpreter/AST/HTNDomain.h"
 #include "Interpreter/AST/HTNMethod.h"
+#include "Interpreter/AST/HTNTask.h"
 #include "Interpreter/HTNInterpreter.h"
 #include "Runtime/HTNAtom.h"
 #include "Runtime/HTNPlannerHook.h"
@@ -10,6 +13,8 @@
 #include "imgui.h"
 #include "imgui_stdlib.h"
 
+#include <algorithm>
+#include <execution>
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -18,8 +23,7 @@ namespace
 {
 enum OperationResult : unsigned int;
 
-void        RenderOperationResult(const OperationResult _OperationResult);
-std::string RemoveDoubleQuotationMarks(const std::string& inString);
+void RenderOperationResult(const OperationResult _OperationResult);
 
 enum OperationResult : unsigned int
 {
@@ -28,7 +32,7 @@ enum OperationResult : unsigned int
     NONE,
 };
 
-const ImGuiWindowFlags     WindowFlags     = ImGuiWindowFlags_NoCollapse;
+const ImGuiWindowFlags     WindowFlags     = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
 const ImGuiTabBarFlags     TabBarFlags     = ImGuiTabBarFlags_None;
 const ImGuiComboFlags      ComboFlags      = ImGuiComboFlags_None;
 const ImGuiSelectableFlags SelectableFlags = ImGuiSelectableFlags_None;
@@ -53,11 +57,6 @@ void RenderOperationResult(const OperationResult _OperationResult)
         ImGui::SameLine();
         ImGui::TextColored(SuccessColor, "SUCCEEDED");
     }
-}
-
-std::string RemoveDoubleQuotationMarks(const std::string& inString)
-{
-    return inString.substr(1, inString.size() - 2);
 }
 } // namespace
 
@@ -94,64 +93,138 @@ void HTNDebuggerWindow::Render(bool& _IsOpen)
 
 void HTNDebuggerWindow::RenderPlan()
 {
-    // TODO salvarez Allow to plan all the planning units at the same time using multithreading. Display them like a map (check how Unreal does it),
-    // not allowing to add an entry with the same key twice
-    // TODO salvarez Display all of the resulting plans
-
     if (!mPlanner)
     {
         return;
     }
 
-    static HTNPlanningUnit* SelectedPlanningUnit = nullptr;
-    SelectPlanningUnit(SelectedPlanningUnit);
-
-    if (!SelectedPlanningUnit)
+    if (!mWorldState)
     {
         return;
     }
 
-    static std::string SelectedMethodName;
-    if (ImGui::BeginCombo("Methods", SelectedMethodName.c_str(), ComboFlags))
+    struct EntryPoint
     {
-        const HTNInterpreter& Interpreter = mPlanner->GetInterpreter();
-        if (const std::shared_ptr<const HTNDomain>& Domain = Interpreter.GetDomain())
+        std::string  Name;
+        unsigned int Amount = 0;
+    };
+
+    static std::vector<EntryPoint> EntryPoints;
+    ImGui::Text("Entry Points");
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("+"))
+    {
+        EntryPoints.emplace_back();
+    }
+
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("Add Entry Point");
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("-"))
+    {
+        EntryPoints.clear();
+    }
+
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("Remove All Entry Points");
+    }
+
+    const HTNInterpreter&                                Interpreter = mPlanner->GetInterpreter();
+    const std::shared_ptr<const HTNDomain>&              Domain      = Interpreter.GetDomain();
+    const std::vector<std::shared_ptr<const HTNMethod>>* Methods     = Domain ? &Domain->GetMethods() : nullptr;
+
+    for (size_t i = 0; i < EntryPoints.size(); ++i)
+    {
+        EntryPoint& EntryPoint = EntryPoints[i];
+
+        if (ImGui::BeginCombo(std::format("##Method{}", i).c_str(), EntryPoint.Name.c_str(), ComboFlags))
         {
-            const std::vector<std::shared_ptr<const HTNMethod>>& Methods = Domain->GetMethods();
-            for (const std::shared_ptr<const HTNMethod>& Method : Methods)
+            if (Methods)
             {
-                if (!Method)
+                for (const std::shared_ptr<const HTNMethod>& Method : *Methods)
+                {
+                    if (!Method)
+                    {
+                        continue;
+                    }
+
+                    const std::string MethodName = Method->GetName();
+                    const bool        IsSelected = (EntryPoint.Name == MethodName);
+                    if (ImGui::Selectable(MethodName.c_str(), IsSelected, SelectableFlags))
+                    {
+                        EntryPoint.Name = MethodName;
+                    }
+
+                    if (IsSelected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+            }
+
+            ImGui::EndCombo();
+        }
+
+        ImGui::SameLine();
+
+        int Amount = EntryPoint.Amount;
+        if (ImGui::InputInt(std::format("##Amount{}", i).c_str(), &Amount, 0, 0, InputTextFlags | ImGuiInputTextFlags_CharsDecimal))
+        {
+            EntryPoint.Amount = std::max(0, Amount);
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Button(std::format("-##{}", i).c_str()))
+        {
+            EntryPoints.erase(EntryPoints.begin() + i);
+        }
+
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("Remove Entry Point");
+        }
+    }
+
+    struct LastPlan
+    {
+        std::string                  EntryPointName;
+        std::vector<HTNTaskInstance> Plan;
+    };
+
+    static std::vector<LastPlan> LastPlans;
+    static OperationResult       LastPlanResult = OperationResult::NONE;
+    if (ImGui::Button("Plan"))
+    {
+        LastPlans.clear();
+
+        std::for_each(std::execution::par, EntryPoints.begin(), EntryPoints.end(), [this](EntryPoint& inEntryPoint) {
+            for (unsigned int i = 0; i < inEntryPoint.Amount; ++i)
+            {
+                const HTNPlanningUnit               PlanningUnit = HTNPlanningUnit(*mPlanner, *mWorldState);
+                const std::vector<HTNTaskInstance>& Plan         = PlanningUnit.ExecuteTopLevelMethod(inEntryPoint.Name);
+                if (Plan.empty())
                 {
                     continue;
                 }
 
-                const std::string MethodName = RemoveDoubleQuotationMarks(Method->GetName());
-                const bool        IsSelected = (SelectedMethodName == MethodName);
-                if (ImGui::Selectable(MethodName.c_str(), IsSelected, SelectableFlags))
-                {
-                    SelectedMethodName = MethodName;
-                }
-
-                if (IsSelected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
+                LastPlans.emplace_back(inEntryPoint.Name, Plan);
             }
-        }
+        });
 
-        ImGui::EndCombo();
+        LastPlanResult = static_cast<OperationResult>(!LastPlans.empty());
     }
 
-    static std::vector<HTNTaskInstance> LastPlan;
-    static OperationResult              LastPlanResult   = OperationResult::NONE;
-    static HTNPlanningUnit*             LastPlanningUnit = nullptr;
-    static std::string                  LastMethodName;
-    if (ImGui::Button("Plan"))
+    if (ImGui::IsItemHovered())
     {
-        LastPlan         = SelectedPlanningUnit->ExecuteTopLevelMethod(SelectedMethodName);
-        LastPlanResult   = static_cast<OperationResult>(!LastPlan.empty());
-        LastPlanningUnit = SelectedPlanningUnit;
-        LastMethodName   = SelectedMethodName;
+        ImGui::SetTooltip("Decompose the selected entry points of the domain using the world state");
     }
 
     RenderOperationResult(LastPlanResult);
@@ -161,36 +234,34 @@ void HTNDebuggerWindow::RenderPlan()
         return;
     }
 
-    ImGui::Text(LastPlanningUnit->GetName().c_str());
-    ImGui::SameLine();
-    ImGui::Text(LastMethodName.c_str());
-
-    for (const HTNTaskInstance& Task : LastPlan)
+    for (const LastPlan& LastPlan : LastPlans)
     {
-        const std::string& TaskName = RemoveDoubleQuotationMarks(Task.GetName());
-        ImGui::Text(TaskName.c_str());
+        ImGui::Text(LastPlan.EntryPointName.c_str());
 
-        const std::vector<HTNAtom>& Arguments = Task.GetArguments();
-        for (const HTNAtom& Argument : Arguments)
+        ImGui::Indent();
+        for (const HTNTaskInstance& Task : LastPlan.Plan)
         {
-            const std::string& ArgumentName = Argument.ToString();
-            ImGui::SameLine();
-            ImGui::Text(ArgumentName.c_str());
+            const std::string& TaskName = Task.GetName();
+            ImGui::Text(TaskName.c_str());
+
+            const std::vector<HTNAtom>& Arguments = Task.GetArguments();
+            for (const HTNAtom& Argument : Arguments)
+            {
+                const std::string& ArgumentName = Argument.ToString(false);
+                ImGui::SameLine();
+                ImGui::Text(ArgumentName.c_str());
+            }
         }
+        ImGui::Unindent();
     }
 }
 
 void HTNDebuggerWindow::RenderDatabase()
 {
-    static HTNPlanningUnit* SelectedPlanningUnit = nullptr;
-    SelectPlanningUnit(SelectedPlanningUnit);
-
-    if (!SelectedPlanningUnit)
+    if (!mWorldState)
     {
         return;
     }
-
-    HTNWorldState& WorldState = SelectedPlanningUnit->GetWorldStateMutable();
 
     ImGui::Text("Facts");
 
@@ -207,8 +278,7 @@ void HTNDebuggerWindow::RenderDatabase()
         ImGui::SetTooltip("Add Fact");
     }
 
-    static bool IsOpen = true;
-    if (ImGui::BeginPopupModal(NewFactPopupName, &IsOpen, ImGuiWindowFlags_AlwaysAutoResize))
+    if (ImGui::BeginPopupModal(NewFactPopupName, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
         static std::string Name;
         ImGui::InputText("Name", &Name, InputTextFlags);
@@ -220,7 +290,7 @@ void HTNDebuggerWindow::RenderDatabase()
 
         if (ImGui::Button("+"))
         {
-            Arguments.emplace_back(HTNAtom());
+            Arguments.emplace_back();
         }
 
         if (ImGui::IsItemHovered())
@@ -299,9 +369,11 @@ void HTNDebuggerWindow::RenderDatabase()
             }
         }
 
+        ImGui::Spacing();
+
         if (ImGui::Button("OK", ImVec2(120.f, 0.f)))
         {
-            WorldState.AddFact(Name.c_str(), Arguments);
+            mWorldState->AddFact(Name.c_str(), Arguments);
             ImGui::CloseCurrentPopup();
         }
 
@@ -319,7 +391,7 @@ void HTNDebuggerWindow::RenderDatabase()
 
     if (ImGui::Button("-"))
     {
-        WorldState.RemoveAllFacts();
+        mWorldState->RemoveAllFacts();
     }
 
     if (ImGui::IsItemHovered())
@@ -330,7 +402,7 @@ void HTNDebuggerWindow::RenderDatabase()
     static ImGuiTextFilter Filter;
     Filter.Draw("##");
 
-    const std::unordered_map<std::string, HTNWorldState::HTNFact>& Facts = WorldState.GetFacts();
+    const std::unordered_map<std::string, HTNWorldState::HTNFact>& Facts = mWorldState->GetFacts();
     for (auto It = Facts.begin(); It != Facts.end(); ++It)
     {
         const std::string&            Name   = It->first;
@@ -351,8 +423,7 @@ void HTNDebuggerWindow::RenderDatabase()
                 std::string NameArguments = Name;
                 for (const HTNAtom& Argument : Entry)
                 {
-                    NameArguments.append(" ");
-                    NameArguments.append(Argument.ToString());
+                    NameArguments.append(std::format(" {}", Argument.ToString(false)));
                 }
 
                 if (!Filter.PassFilter(NameArguments.c_str()))
@@ -365,14 +436,14 @@ void HTNDebuggerWindow::RenderDatabase()
                 for (const HTNAtom& Argument : Entry)
                 {
                     ImGui::SameLine();
-                    ImGui::Text(Argument.ToString().c_str());
+                    ImGui::Text(Argument.ToString(true).c_str());
                 }
 
                 ImGui::SameLine();
 
                 if (ImGui::Button(std::format("-##{}{}{}", Name, i, j).c_str()))
                 {
-                    WorldState.RemoveFact(Name.c_str(), static_cast<int>(i), static_cast<int>(j));
+                    mWorldState->RemoveFact(Name.c_str(), static_cast<int>(i), static_cast<int>(j));
                 }
 
                 if (ImGui::IsItemHovered())
@@ -411,7 +482,7 @@ void HTNDebuggerWindow::RenderDecomposition()
     }
 
     static std::filesystem::path SelectedDomainPath;
-    if (ImGui::BeginCombo("Domains", SelectedDomainPath.filename().stem().string().c_str(), ComboFlags))
+    if (ImGui::BeginCombo("Domain", SelectedDomainPath.filename().stem().string().c_str(), ComboFlags))
     {
         for (const std::filesystem::path& DomainPath : DomainPaths)
         {
@@ -436,6 +507,11 @@ void HTNDebuggerWindow::RenderDecomposition()
         LastParseResult = static_cast<OperationResult>(mPlanner->ParseDomain(SelectedDomainPath.string()));
     }
 
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("Parse the selected domain");
+    }
+
     RenderOperationResult(LastParseResult);
 
     if (LastParseResult != OperationResult::SUCCEEDED)
@@ -443,30 +519,38 @@ void HTNDebuggerWindow::RenderDecomposition()
         return;
     }
 
-    // TODO salvarez Draw AST
-    // const HTNInterpreter&                   Interpreter = mPlanner->GetInterpreter();
-    // const std::shared_ptr<const HTNDomain>& Domain      = Interpreter.GetDomain();
-}
+    const HTNInterpreter& Interpreter = mPlanner->GetInterpreter();
 
-void HTNDebuggerWindow::SelectPlanningUnit(HTNPlanningUnit*& inSelectedPlanningUnit)
-{
-    if (ImGui::BeginCombo("Planning Unit", inSelectedPlanningUnit ? inSelectedPlanningUnit->GetName().c_str() : "", ComboFlags))
+    const std::shared_ptr<const HTNDomain>& Domain = Interpreter.GetDomain();
+    ImGui::Text(Domain->ToString().c_str());
+
+    ImGui::Indent();
+    const std::vector<std::shared_ptr<const HTNMethod>>& Methods = Domain->GetMethods();
+    for (const std::shared_ptr<const HTNMethod>& Method : Methods)
     {
-        for (HTNPlanningUnit& PlanningUnit : mPlanningUnits)
+        ImGui::Text(Method->ToString().c_str());
+
+        ImGui::Indent();
+        const std::vector<std::shared_ptr<const HTNBranch>>& Branches = Method->GetBranches();
+        for (const std::shared_ptr<const HTNBranch>& Branch : Branches)
         {
-            const bool IsSelected = (inSelectedPlanningUnit == &PlanningUnit);
-            if (ImGui::Selectable(PlanningUnit.GetName().c_str(), IsSelected, SelectableFlags))
+            ImGui::Text(Branch->ToString().c_str());
+
+            ImGui::Indent();
+            const std::shared_ptr<const HTNConditionBase>& PreCondition = Branch->GetPreCondition();
+            if (PreCondition)
             {
-                // TODO salvarez This works assuming that the array will never change
-                inSelectedPlanningUnit = &PlanningUnit;
+                ImGui::Text(PreCondition->ToString().c_str());
             }
 
-            if (IsSelected)
+            const std::vector<std::shared_ptr<const HTNTask>>& Tasks = Branch->GetTasks();
+            for (const std::shared_ptr<const HTNTask>& Task : Tasks)
             {
-                ImGui::SetItemDefaultFocus();
+                ImGui::Text(Task->ToString().c_str());
             }
+            ImGui::Unindent();
         }
-
-        ImGui::EndCombo();
+        ImGui::Unindent();
     }
+    ImGui::Unindent();
 }

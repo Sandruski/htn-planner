@@ -9,7 +9,7 @@
 
 #include "HTNDebuggerWindow.h"
 #include "Runtime/HTNPlannerHook.h"
-#include "Runtime/HTNPlanningUnit.h"
+#include "Runtime/HTNWorldState.h"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer.h"
@@ -91,23 +91,21 @@ int main(int, char**)
     bool   ShowHTNDebuggerWindow = true;
     ImVec4 clear_color           = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    HTNPlannerHook               PlannerHook;
-    std::vector<HTNPlanningUnit> PlanningUnits;
-    HTNPlanningUnit&             MainPlanningUnit = PlanningUnits.emplace_back("Main", PlannerHook);
-    MainPlanningUnit.GetWorldStateMutable().AddFact("Test2");
-    MainPlanningUnit.GetWorldStateMutable().AddFact("Test3");
-    MainPlanningUnit.GetWorldStateMutable().AddFact("Test4", "1");
-    MainPlanningUnit.GetWorldStateMutable().AddFact("Test5", "1");
-    MainPlanningUnit.GetWorldStateMutable().AddFact("Test5", "3");
-    MainPlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d");
-    MainPlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "e");
-    HTNPlanningUnit& UpperBodyPlanningUnit = PlanningUnits.emplace_back("Upper Body", PlannerHook);
-    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "f", "g");
-    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "1", 2, 3);
-    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "2", 1, 1);
-    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "3");
-    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "A", "B", "C");
-    UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "D", "E", "F");
+    HTNPlannerHook Planner;
+    HTNWorldState  WorldState;
+    WorldState.AddFact("Test2");
+    WorldState.AddFact("Test3");
+    WorldState.AddFact("Test4", "1");
+    WorldState.AddFact("Test5", "1");
+    WorldState.AddFact("Test5", "3");
+    WorldState.AddFact("Test2", "A", "b", "c", "d");
+    WorldState.AddFact("Test2", "A", "b", "c", "d", "e");
+    WorldState.AddFact("Test2", "A", "b", "c", "d", "f", "g");
+    WorldState.AddFact("Test", "1", 2, 3);
+    WorldState.AddFact("Test", "2", 1, 1);
+    WorldState.AddFact("Test", "3");
+    WorldState.AddFact("Test", "A", "B", "C");
+    WorldState.AddFact("Test", "D", "E", "F");
 
     // Main loop
     bool done = false;
@@ -141,7 +139,7 @@ int main(int, char**)
 
         if (ShowHTNDebuggerWindow)
         {
-            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlannerHook, PlanningUnits);
+            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(Planner, WorldState);
             sHTNDebuggerWindow.Render(ShowHTNDebuggerWindow);
         }
 

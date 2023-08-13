@@ -10,8 +10,8 @@ class HTNTask;
 class HTNNodeBase
 {
 public:
-	virtual ~HTNNodeBase() = default;
+    virtual ~HTNNodeBase() = default;
 
-	virtual std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const = 0;
-	virtual std::string ToString() const = 0;
+    virtual std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const = 0;
+    virtual std::string                                 ToString() const                                  = 0;
 };

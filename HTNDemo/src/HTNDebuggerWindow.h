@@ -1,14 +1,12 @@
 #pragma once
 
-#include <vector>
-
 class HTNPlannerHook;
-class HTNPlanningUnit;
+class HTNWorldState;
 
 class HTNDebuggerWindow
 {
 public:
-    explicit HTNDebuggerWindow(HTNPlannerHook& inPlanner, const std::vector<HTNPlanningUnit>& inPlanningUnits);
+    explicit HTNDebuggerWindow(HTNPlannerHook& inPlanner, HTNWorldState& inWorldState);
 
     void Render(bool& _IsOpen);
 
@@ -17,13 +15,10 @@ private:
     void RenderDatabase();
     void RenderDecomposition();
 
-    void SelectPlanningUnit(HTNPlanningUnit*& inSelectedPlanningUnit);
-
-    HTNPlannerHook*              mPlanner = nullptr;
-    std::vector<HTNPlanningUnit> mPlanningUnits;
+    HTNPlannerHook* mPlanner    = nullptr;
+    HTNWorldState*  mWorldState = nullptr;
 };
 
-inline HTNDebuggerWindow::HTNDebuggerWindow(HTNPlannerHook& inPlanner, const std::vector<HTNPlanningUnit>& inPlanningUnits)
-    : mPlanner(&inPlanner), mPlanningUnits(inPlanningUnits)
+inline HTNDebuggerWindow::HTNDebuggerWindow(HTNPlannerHook& inPlanner, HTNWorldState& inWorldState) : mPlanner(&inPlanner), mWorldState(&inWorldState)
 {
 }
