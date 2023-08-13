@@ -15,7 +15,7 @@ public:
     explicit HTNPlanningUnit(const std::string& inName, const HTNPlannerHook& inPlanner);
 
     // Execute planning unit top level method
-    std::vector<HTNTaskInstance> ExecuteTopLevelMethod(const std::string& inEntryPointName);
+    std::vector<HTNTaskInstance> ExecuteTopLevelMethod(const std::string& inEntryPointName) const;
 
     const std::string& GetName() const;
 

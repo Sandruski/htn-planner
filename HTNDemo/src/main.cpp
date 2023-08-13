@@ -91,10 +91,9 @@ int main(int, char**)
     bool   ShowHTNDebuggerWindow = true;
     ImVec4 clear_color           = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    HTNPlannerHook PlannerHook;
-
-    HTNPlanningUnit MainPlanningUnit      = HTNPlanningUnit("Main", PlannerHook);
-    HTNPlanningUnit UpperBodyPlanningUnit = HTNPlanningUnit("Upper Body", PlannerHook);
+    HTNPlannerHook               PlannerHook;
+    std::vector<HTNPlanningUnit> PlanningUnits;
+    HTNPlanningUnit&             MainPlanningUnit = PlanningUnits.emplace_back("Main", PlannerHook);
     MainPlanningUnit.GetWorldStateMutable().AddFact("Test2");
     MainPlanningUnit.GetWorldStateMutable().AddFact("Test3");
     MainPlanningUnit.GetWorldStateMutable().AddFact("Test4", "1");
@@ -102,14 +101,13 @@ int main(int, char**)
     MainPlanningUnit.GetWorldStateMutable().AddFact("Test5", "3");
     MainPlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d");
     MainPlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "e");
+    HTNPlanningUnit& UpperBodyPlanningUnit = PlanningUnits.emplace_back("Upper Body", PlannerHook);
     UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test2", "A", "b", "c", "d", "f", "g");
     UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "1", 2, 3);
     UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "2", 1, 1);
     UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "3");
     UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "A", "B", "C");
     UpperBodyPlanningUnit.GetWorldStateMutable().AddFact("Test", "D", "E", "F");
-
-    const std::vector<HTNPlanningUnit*> PlanningUnits = {&MainPlanningUnit, &UpperBodyPlanningUnit};
 
     // Main loop
     bool done = false;

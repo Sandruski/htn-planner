@@ -94,7 +94,8 @@ void HTNDebuggerWindow::Render(bool& _IsOpen)
 
 void HTNDebuggerWindow::RenderPlan()
 {
-    // TODO salvarez Allow to plan all the planning units at the same time using multithreading. Display them like a map
+    // TODO salvarez Allow to plan all the planning units at the same time using multithreading. Display them like a map (check how Unreal does it),
+    // not allowing to add an entry with the same key twice
     // TODO salvarez Display all of the resulting plans
 
     if (!mPlanner)
@@ -213,7 +214,7 @@ void HTNDebuggerWindow::RenderDatabase()
         ImGui::InputText("Name", &Name, InputTextFlags);
 
         static std::vector<HTNAtom> Arguments;
-        ImGui::Text(std::format("Arguments ({})", Arguments.size()).c_str());
+        ImGui::Text("Arguments");
 
         ImGui::SameLine();
 
@@ -245,20 +246,6 @@ void HTNDebuggerWindow::RenderDatabase()
         {
             HTNAtom& Argument = Arguments[i];
 
-            ImGui::Text(std::format("Argument {}", i).c_str());
-
-            ImGui::SameLine();
-
-            if (ImGui::Button(std::format("-##{}", i).c_str()))
-            {
-                Arguments.erase(Arguments.begin() + i);
-            }
-
-            if (ImGui::IsItemHovered())
-            {
-                ImGui::SetTooltip("Remove Argument");
-            }
-
             int Type = 0;
             if (Argument.IsSet())
             {
@@ -276,25 +263,39 @@ void HTNDebuggerWindow::RenderDatabase()
                 }
             }
 
-            ImGui::Combo(std::format("Type##{}", i).c_str(), &Type, Types, IM_ARRAYSIZE(Types));
+            ImGui::Combo(std::format("##Type{}", i).c_str(), &Type, Types, IM_ARRAYSIZE(Types));
+
+            ImGui::SameLine();
 
             if (Type == 0)
             {
                 int Value = (Argument.IsSet() && Argument.IsType<int>()) ? Argument.GetValue<int>() : 0;
-                ImGui::InputInt(std::format("Value##{}", i).c_str(), &Value, 1, 100, InputTextFlags | ImGuiInputTextFlags_CharsDecimal);
+                ImGui::InputInt(std::format("##Value{}", i).c_str(), &Value, 0, 0, InputTextFlags | ImGuiInputTextFlags_CharsDecimal);
                 Argument = HTNAtom(Value);
             }
             else if (Type == 1)
             {
                 float Value = (Argument.IsSet() && Argument.IsType<float>()) ? Argument.GetValue<float>() : 0.f;
-                ImGui::InputFloat(std::format("Value##{}", i).c_str(), &Value, 0.f, 0.f, "%.2f", InputTextFlags | ImGuiInputTextFlags_CharsDecimal);
+                ImGui::InputFloat(std::format("##Value{}", i).c_str(), &Value, 0.f, 0.f, "%.2f", InputTextFlags | ImGuiInputTextFlags_CharsDecimal);
                 Argument = HTNAtom(Value);
             }
             else if (Type == 2)
             {
                 std::string Value = (Argument.IsSet() && Argument.IsType<std::string>()) ? Argument.GetValue<std::string>() : "";
-                ImGui::InputText(std::format("Value##{}", i).c_str(), &Value, InputTextFlags);
+                ImGui::InputText(std::format("##Value{}", i).c_str(), &Value, InputTextFlags);
                 Argument = HTNAtom(Value);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button(std::format("-##{}", i).c_str()))
+            {
+                Arguments.erase(Arguments.begin() + i);
+            }
+
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::SetTooltip("Remove Argument");
             }
         }
 
@@ -447,21 +448,17 @@ void HTNDebuggerWindow::RenderDecomposition()
     // const std::shared_ptr<const HTNDomain>& Domain      = Interpreter.GetDomain();
 }
 
-void HTNDebuggerWindow::SelectPlanningUnit(HTNPlanningUnit*& inSelectedPlanningUnit) const
+void HTNDebuggerWindow::SelectPlanningUnit(HTNPlanningUnit*& inSelectedPlanningUnit)
 {
     if (ImGui::BeginCombo("Planning Unit", inSelectedPlanningUnit ? inSelectedPlanningUnit->GetName().c_str() : "", ComboFlags))
     {
-        for (HTNPlanningUnit* PlanningUnit : mPlanningUnits)
+        for (HTNPlanningUnit& PlanningUnit : mPlanningUnits)
         {
-            if (!PlanningUnit)
+            const bool IsSelected = (inSelectedPlanningUnit == &PlanningUnit);
+            if (ImGui::Selectable(PlanningUnit.GetName().c_str(), IsSelected, SelectableFlags))
             {
-                continue;
-            }
-
-            const bool IsSelected = (inSelectedPlanningUnit == PlanningUnit);
-            if (ImGui::Selectable(PlanningUnit->GetName().c_str(), IsSelected, SelectableFlags))
-            {
-                inSelectedPlanningUnit = PlanningUnit;
+                // TODO salvarez This works assuming that the array will never change
+                inSelectedPlanningUnit = &PlanningUnit;
             }
 
             if (IsSelected)

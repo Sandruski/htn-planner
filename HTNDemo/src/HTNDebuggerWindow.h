@@ -8,7 +8,7 @@ class HTNPlanningUnit;
 class HTNDebuggerWindow
 {
 public:
-    explicit HTNDebuggerWindow(HTNPlannerHook& inPlanner, const std::vector<HTNPlanningUnit*>& inPlanningUnits);
+    explicit HTNDebuggerWindow(HTNPlannerHook& inPlanner, const std::vector<HTNPlanningUnit>& inPlanningUnits);
 
     void Render(bool& _IsOpen);
 
@@ -17,13 +17,13 @@ private:
     void RenderDatabase();
     void RenderDecomposition();
 
-    void SelectPlanningUnit(HTNPlanningUnit*& inSelectedPlanningUnit) const;
+    void SelectPlanningUnit(HTNPlanningUnit*& inSelectedPlanningUnit);
 
-    HTNPlannerHook*               mPlanner = nullptr;
-    std::vector<HTNPlanningUnit*> mPlanningUnits;
+    HTNPlannerHook*              mPlanner = nullptr;
+    std::vector<HTNPlanningUnit> mPlanningUnits;
 };
 
-inline HTNDebuggerWindow::HTNDebuggerWindow(HTNPlannerHook& inPlanner, const std::vector<HTNPlanningUnit*>& inPlanningUnits)
+inline HTNDebuggerWindow::HTNDebuggerWindow(HTNPlannerHook& inPlanner, const std::vector<HTNPlanningUnit>& inPlanningUnits)
     : mPlanner(&inPlanner), mPlanningUnits(inPlanningUnits)
 {
 }
