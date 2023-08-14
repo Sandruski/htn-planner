@@ -81,14 +81,12 @@ HTNConditionAnd::HTNConditionAnd(const std::vector<std::shared_ptr<const HTNCond
 
 std::string HTNConditionAnd::ToString() const
 {
-    std::string Name = "(AND";
+    std::string Name = "AND";
 
     for (const std::shared_ptr<const HTNConditionBase>& SubCondition : mSubConditions)
     {
-        Name.append(std::format(" ({})", SubCondition->ToString()));
+        Name.append(std::format(" {}", SubCondition->ToString()));
     }
-
-    Name.append(")");
 
     return Name;
 }
@@ -152,14 +150,12 @@ HTNConditionOr::HTNConditionOr(const std::vector<std::shared_ptr<const HTNCondit
 
 std::string HTNConditionOr::ToString() const
 {
-    std::string Name = "(OR";
+    std::string Name = "OR";
 
     for (const std::shared_ptr<const HTNConditionBase>& SubCondition : mSubConditions)
     {
-        Name.append(std::format(" ({})", SubCondition->ToString()));
+        Name.append(std::format(" {}", SubCondition->ToString()));
     }
-
-    Name.append(")");
 
     return Name;
 }
@@ -197,14 +193,12 @@ HTNConditionAlt::HTNConditionAlt(const std::vector<std::shared_ptr<const HTNCond
 
 std::string HTNConditionAlt::ToString() const
 {
-    std::string Name = "(ALT";
+    std::string Name = "ALT";
 
     for (const std::shared_ptr<const HTNConditionBase>& SubCondition : mSubConditions)
     {
-        Name.append(std::format(" ({})", SubCondition->ToString()));
+        Name.append(std::format(" {}", SubCondition->ToString()));
     }
-
-    Name.append(")");
 
     return Name;
 }
@@ -259,7 +253,7 @@ HTNConditionNot::HTNConditionNot(const std::shared_ptr<const HTNConditionBase>& 
 
 std::string HTNConditionNot::ToString() const
 {
-    return std::format("NOT ({})", mSubCondition->ToString());
+    return std::format("NOT {}", mSubCondition->ToString());
 }
 
 bool HTNConditionNot::Check(HTNDecompositionContext& ioDecompositionContext) const

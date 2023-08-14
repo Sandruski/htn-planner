@@ -1,0 +1,33 @@
+
+//(:domain Movement
+//    (:method (move_to ?inp_destination)
+//        (branch_todo
+//            (
+//            )
+//            (
+//            )
+//        )
+//    )
+//)
+
+(:domain Human top_level_domain
+    //(:include “source:Domains/movement.domain”)
+    (:method (entry_point) top_level_method
+        (branch_behave
+            (
+            )
+            ((!log "Yes")
+            )
+        )
+    )
+
+    (:method (eat ?food)
+        (branch_hungry
+            (
+            )
+            (   (prepare_food ?food)
+                (!eat ?food)
+            )
+        )
+    )
+)

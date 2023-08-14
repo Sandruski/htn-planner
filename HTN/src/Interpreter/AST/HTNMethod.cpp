@@ -7,14 +7,8 @@
 
 #include <format>
 
-HTNMethod::HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments)
-    : mName(std::move(inName)), mArguments(inArguments)
-{
-}
-
-HTNMethod::HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments,
-                     const std::vector<std::shared_ptr<const HTNBranch>>& inBranches)
-    : mName(std::move(inName)), mArguments(inArguments), mBranches(inBranches)
+HTNMethod::HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments, const bool inIsTopLevel)
+    : mName(std::move(inName)), mArguments(inArguments), mIsTopLevel(inIsTopLevel)
 {
 }
 
@@ -32,6 +26,11 @@ std::string HTNMethod::ToString() const
     for (const std::shared_ptr<const HTNValue>& Argument : mArguments)
     {
         Name.append(std::format(" {}", Argument->ToString()));
+    }
+
+    if (mIsTopLevel)
+    {
+        Name.append(" top_level_method");
     }
 
     return Name;

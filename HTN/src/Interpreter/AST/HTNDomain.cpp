@@ -4,8 +4,8 @@
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNValue.h"
 
-HTNDomain::HTNDomain(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNMethod>>& inMethods)
-    : mName(std::move(inName)), mMethods(inMethods)
+HTNDomain::HTNDomain(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNMethod>>& inMethods, const bool inIsTopLevel)
+    : mName(std::move(inName)), mMethods(inMethods), mIsTopLevel(inIsTopLevel)
 {
 }
 
@@ -18,7 +18,14 @@ std::vector<std::shared_ptr<const HTNTask>> HTNDomain::Accept(const HTNNodeVisit
 
 std::string HTNDomain::ToString() const
 {
-    return GetName();
+    std::string Name = GetName();
+
+    if (mIsTopLevel)
+    {
+        Name.append(" top_level_domain");
+    }
+
+    return Name;
 }
 
 std::shared_ptr<const HTNMethod> HTNDomain::FindMethodByName(const std::string& inMethodName) const

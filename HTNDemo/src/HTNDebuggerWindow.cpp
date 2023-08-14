@@ -138,7 +138,14 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     const HTNInterpreter&                                Interpreter = mPlanner->GetInterpreter();
     const std::shared_ptr<const HTNDomain>&              Domain      = Interpreter.GetDomain();
-    const std::vector<std::shared_ptr<const HTNMethod>>* Methods     = Domain ? &Domain->GetMethods() : nullptr;
+    const std::vector<std::shared_ptr<const HTNMethod>>* Methods     = nullptr;
+    if (Domain)
+    {
+        if (Domain->IsTopLevel())
+        {
+            Methods = &Domain->GetMethods();
+        }
+    }
 
     for (size_t i = 0; i < EntryPoints.size(); ++i)
     {
@@ -150,6 +157,11 @@ void HTNDebuggerWindow::RenderDecomposition()
             {
                 const auto Method = std::find_if(Methods->begin(), Methods->end(), [&EntryPoint](const std::shared_ptr<const HTNMethod>& inMethod) {
                     if (!inMethod)
+                    {
+                        return false;
+                    }
+
+                    if (!inMethod->IsTopLevel())
                     {
                         return false;
                     }
@@ -175,6 +187,11 @@ void HTNDebuggerWindow::RenderDecomposition()
                 for (const std::shared_ptr<const HTNMethod>& Method : *Methods)
                 {
                     if (!Method)
+                    {
+                        continue;
+                    }
+
+                    if (!Method->IsTopLevel())
                     {
                         continue;
                     }
@@ -330,7 +347,7 @@ void HTNDebuggerWindow::RenderParsing()
     static OperationResult LastParsingResult = OperationResult::NONE;
     if (ImGui::Button("Parse"))
     {
-        LastDomainPath  = SelectedDomainPath.filename().stem().string();
+        LastDomainPath    = SelectedDomainPath.filename().stem().string();
         LastParsingResult = static_cast<OperationResult>(mPlanner->ParseDomain(SelectedDomainPath.string()));
     }
 

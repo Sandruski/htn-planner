@@ -13,8 +13,7 @@ class HTNMethod final : public HTNNodeBase
 {
 public:
     explicit HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments,
-                       const std::vector<std::shared_ptr<const HTNBranch>>& inBranches);
-    explicit HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments);
+                       const bool inIsTopLevel);
     ~HTNMethod();
 
     std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
@@ -24,11 +23,13 @@ public:
     const std::vector<std::shared_ptr<const HTNValue>>&  GetArguments() const;
     void                                                 SetBranches(const std::vector<std::shared_ptr<const HTNBranch>>& inBranches);
     const std::vector<std::shared_ptr<const HTNBranch>>& GetBranches() const;
+    bool                                                 IsTopLevel() const;
 
 private:
     std::unique_ptr<const HTNValue>               mName;
     std::vector<std::shared_ptr<const HTNValue>>  mArguments;
     std::vector<std::shared_ptr<const HTNBranch>> mBranches;
+    bool                                          mIsTopLevel = false;
 };
 
 inline const std::vector<std::shared_ptr<const HTNValue>>& HTNMethod::GetArguments() const
@@ -44,4 +45,9 @@ inline void HTNMethod::SetBranches(const std::vector<std::shared_ptr<const HTNBr
 inline const std::vector<std::shared_ptr<const HTNBranch>>& HTNMethod::GetBranches() const
 {
     return mBranches;
+}
+
+inline bool HTNMethod::IsTopLevel() const
+{
+    return mIsTopLevel;
 }
