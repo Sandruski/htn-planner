@@ -46,6 +46,8 @@ HTNInterpreter::~HTNInterpreter() = default;
 
 bool HTNInterpreter::Init(const std::string& inDomainPath)
 {
+    mDomain = nullptr;
+
     std::string Text;
     if (!ReadFile(inDomainPath, Text))
     {

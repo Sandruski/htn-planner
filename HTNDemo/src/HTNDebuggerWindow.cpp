@@ -144,6 +144,30 @@ void HTNDebuggerWindow::RenderPlan()
     {
         EntryPoint& EntryPoint = EntryPoints[i];
 
+        if (!EntryPoint.Name.empty())
+        {
+            if (Methods)
+            {
+                const auto Method = std::find_if(Methods->begin(), Methods->end(), [&EntryPoint](const std::shared_ptr<const HTNMethod>& inMethod) {
+                    if (!inMethod)
+                    {
+                        return false;
+                    }
+
+                    return (EntryPoint.Name == inMethod->GetName());
+                });
+
+                if (Method == Methods->end())
+                {
+                    EntryPoint.Name.clear();
+                }
+            }
+            else
+            {
+                EntryPoint.Name.clear();
+            }
+        }
+
         if (ImGui::BeginCombo(std::format("##Method{}", i).c_str(), EntryPoint.Name.c_str(), ComboFlags))
         {
             if (Methods)
@@ -247,7 +271,7 @@ void HTNDebuggerWindow::RenderPlan()
             const std::vector<HTNAtom>& Arguments = Task.GetArguments();
             for (const HTNAtom& Argument : Arguments)
             {
-                const std::string& ArgumentName = Argument.ToString(false);
+                const std::string& ArgumentName = Argument.ToString();
                 ImGui::SameLine();
                 ImGui::Text(ArgumentName.c_str());
             }
@@ -423,7 +447,7 @@ void HTNDebuggerWindow::RenderDatabase()
                 std::string NameArguments = Name;
                 for (const HTNAtom& Argument : Entry)
                 {
-                    NameArguments.append(std::format(" {}", Argument.ToString(false)));
+                    NameArguments.append(std::format(" {}", Argument.ToString()));
                 }
 
                 if (!Filter.PassFilter(NameArguments.c_str()))
@@ -436,7 +460,7 @@ void HTNDebuggerWindow::RenderDatabase()
                 for (const HTNAtom& Argument : Entry)
                 {
                     ImGui::SameLine();
-                    ImGui::Text(Argument.ToString(true).c_str());
+                    ImGui::Text(Argument.ToString().c_str());
                 }
 
                 ImGui::SameLine();
@@ -501,9 +525,11 @@ void HTNDebuggerWindow::RenderDecomposition()
         ImGui::EndCombo();
     }
 
+    static std::string     LastDomainPath;
     static OperationResult LastParseResult = OperationResult::NONE;
     if (ImGui::Button("Parse"))
     {
+        LastDomainPath  = SelectedDomainPath.filename().stem().string();
         LastParseResult = static_cast<OperationResult>(mPlanner->ParseDomain(SelectedDomainPath.string()));
     }
 
@@ -519,9 +545,11 @@ void HTNDebuggerWindow::RenderDecomposition()
         return;
     }
 
-    const HTNInterpreter& Interpreter = mPlanner->GetInterpreter();
+    ImGui::Text(LastDomainPath.c_str());
 
-    const std::shared_ptr<const HTNDomain>& Domain = Interpreter.GetDomain();
+    ImGui::Indent();
+    const HTNInterpreter&                   Interpreter = mPlanner->GetInterpreter();
+    const std::shared_ptr<const HTNDomain>& Domain      = Interpreter.GetDomain();
     ImGui::Text(Domain->ToString().c_str());
 
     ImGui::Indent();
@@ -552,5 +580,6 @@ void HTNDebuggerWindow::RenderDecomposition()
         }
         ImGui::Unindent();
     }
+    ImGui::Unindent();
     ImGui::Unindent();
 }

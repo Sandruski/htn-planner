@@ -23,7 +23,7 @@ public:
 
     unsigned int GetSize() const;
 
-    std::string ToString(const bool inUseQuotationMarks) const;
+    std::string ToString() const;
 
 private:
     HTNAtomNode* mHead = nullptr;
@@ -66,7 +66,7 @@ public:
     // multiple times because the backtracking mechanism (we will talk about this later) is making us reevaluate the planner.
     void UnBind();
 
-    std::string ToString(const bool inUseQuotationMarks) const;
+    std::string ToString() const;
 
 private:
     std::optional<std::variant<int, float, std::string, HTNAtomList>> mData;

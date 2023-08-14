@@ -9,5 +9,5 @@ std::vector<std::shared_ptr<const HTNTask>> HTNValue::Accept(const HTNNodeVisito
 
 std::string HTNValue::ToString() const
 {
-    return mValue.ToString(false);
+    return mValue.ToString();
 }

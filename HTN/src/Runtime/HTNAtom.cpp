@@ -1,6 +1,5 @@
 #include "HTNAtom.h"
 
-#include <format>
 #include <iomanip>
 #include <ios>
 #include <sstream>
@@ -78,13 +77,13 @@ const HTNAtom* HTNAtomList::Find(const unsigned int inIndex) const
     return &Current->GetData();
 }
 
-std::string HTNAtomList::ToString(const bool inUseQuotationMarks) const
+std::string HTNAtomList::ToString() const
 {
     std::string String;
 
     for (const HTNAtomNode* Current = mHead; Current; Current = Current->GetNext())
     {
-        String += Current->GetData().ToString(inUseQuotationMarks);
+        String += Current->GetData().ToString();
         String += "->";
     }
 
@@ -145,7 +144,7 @@ int HTNAtom::GetListNumItems() const
     return List.GetSize();
 }
 
-std::string HTNAtom::ToString(const bool inUseQuotationMarks) const
+std::string HTNAtom::ToString() const
 {
     if (!IsSet())
     {
@@ -166,11 +165,11 @@ std::string HTNAtom::ToString(const bool inUseQuotationMarks) const
     }
     else if (IsType<std::string>())
     {
-        return inUseQuotationMarks ? std::format("\"{}\"", GetValue<std::string>()) : GetValue<std::string>();
+        return GetValue<std::string>();
     }
     else if (IsType<HTNAtomList>())
     {
-        return GetValue<HTNAtomList>().ToString(inUseQuotationMarks);
+        return GetValue<HTNAtomList>().ToString();
     }
 
     return "";
