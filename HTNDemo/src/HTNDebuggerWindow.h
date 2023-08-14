@@ -11,9 +11,9 @@ public:
     void Render(bool& _IsOpen);
 
 private:
-    void RenderPlan();
-    void RenderDatabase();
     void RenderDecomposition();
+    void RenderParsing();
+    void RenderDatabase();
 
     HTNPlannerHook* mPlanner    = nullptr;
     HTNWorldState*  mWorldState = nullptr;
