@@ -66,6 +66,12 @@ void HTNDebuggerWindow::Render(bool& _IsOpen)
     {
         if (ImGui::BeginTabBar("Tab Bar", TabBarFlags))
         {
+            if (ImGui::BeginTabItem("Active Plan"))
+            {
+                RenderActivePlan();
+                ImGui::EndTabItem();
+            }
+
             if (ImGui::BeginTabItem("Decomposition"))
             {
                 RenderDecomposition();
@@ -89,6 +95,11 @@ void HTNDebuggerWindow::Render(bool& _IsOpen)
 
         ImGui::End();
     }
+}
+
+void HTNDebuggerWindow::RenderActivePlan()
+{
+    // TODO salvarez
 }
 
 void HTNDebuggerWindow::RenderDecomposition()

@@ -19,6 +19,7 @@ enum class HTNTokenType : unsigned int
     HTN_TOP_LEVEL_DOMAIN, // top level domain meta
     HTN_METHOD,           // method
     HTN_TOP_LEVEL_METHOD, // top level method meta
+    HTN_AXIOM,            // axiom
     AND,                  // and
     OR,                   // or
     ALT,                  // alt

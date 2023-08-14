@@ -1,13 +1,12 @@
 #include "Interpreter/AST/HTNBranch.h"
 
 #include "Interpreter/AST/HTNCondition.h"
+#include "Interpreter/AST/HTNMethod.h"
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNTask.h"
 #include "Interpreter/AST/HTNValue.h"
 
-HTNBranch::HTNBranch(std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNConditionBase>& inPreCondition,
-                     const std::vector<std::shared_ptr<const HTNTask>>& inTasks)
-    : mName(std::move(inName)), mPreCondition(inPreCondition), mTasks(inTasks)
+HTNBranch::HTNBranch(std::unique_ptr<const HTNValue> inName) : mName(std::move(inName))
 {
 }
 

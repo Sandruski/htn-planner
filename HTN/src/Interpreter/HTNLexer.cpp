@@ -8,11 +8,15 @@
 
 namespace
 {
-std::unordered_map<std::string, HTNTokenType> Keywords = {
-    {"domain", HTNTokenType::HTN_DOMAIN}, {"top_level_domain", HTNTokenType::HTN_TOP_LEVEL_DOMAIN},
-    {"method", HTNTokenType::HTN_METHOD}, {"top_level_method", HTNTokenType::HTN_TOP_LEVEL_METHOD},
-    {"and", HTNTokenType::AND},           {"or", HTNTokenType::OR},
-    {"alt", HTNTokenType::ALT},           {"not", HTNTokenType::NOT}};
+std::unordered_map<std::string, HTNTokenType> Keywords = {{"domain", HTNTokenType::HTN_DOMAIN},
+                                                          {"top_level_domain", HTNTokenType::HTN_TOP_LEVEL_DOMAIN},
+                                                          {"method", HTNTokenType::HTN_METHOD},
+                                                          {"top_level_method", HTNTokenType::HTN_TOP_LEVEL_METHOD},
+                                                          {"axiom", HTNTokenType::HTN_AXIOM},
+                                                          {"and", HTNTokenType::AND},
+                                                          {"or", HTNTokenType::OR},
+                                                          {"alt", HTNTokenType::ALT},
+                                                          {"not", HTNTokenType::NOT}};
 
 bool IsValidCharacter(const char inCharacter)
 {

@@ -11,6 +11,7 @@ public:
     void Render(bool& _IsOpen);
 
 private:
+    void RenderActivePlan();
     void RenderDecomposition();
     void RenderParsing();
     void RenderDatabase();

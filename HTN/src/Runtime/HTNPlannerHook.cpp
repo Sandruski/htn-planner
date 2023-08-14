@@ -1,5 +1,6 @@
 #include "HTNPlannerHook.h"
 
+#include "Interpreter/AST/HTNBranch.h"
 #include "Interpreter/AST/HTNTask.h"
 #include "Interpreter/AST/HTNValue.h"
 #include "Log.h"
@@ -29,7 +30,7 @@ std::vector<HTNTaskInstance> HTNPlannerHook::MakePlan(const std::string& inEntry
         const std::string& Name = Task->GetName();
 
         std::vector<HTNAtom>                                InstanceArguments;
-        const std::shared_ptr<const HTNMethod>&             Method    = Task->GetMethod();
+        const std::shared_ptr<const HTNMethod>&             Method    = Task->GetParent().lock()->GetParent().lock();
         const std::vector<std::shared_ptr<const HTNValue>>& Arguments = Task->GetArguments();
         for (const std::shared_ptr<const HTNValue>& Argument : Arguments)
         {

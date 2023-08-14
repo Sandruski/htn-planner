@@ -11,21 +11,30 @@
 //)
 
 (:domain Human top_level_domain
+
     //(:include “source:Domains/movement.domain”)
+
+    (:axiom (is_spoiled ?inp_food)
+		(or    (has_mold ?inp_food)
+		        (is_old ?inp_food)
+		)
+	)
+
     (:method (entry_point) top_level_method
-        (branch_behave
-            (
+        (branch_eat
+            (and    (?food)
+                    (not (#is_spoiled ?food))
             )
-            ((!log "Yes")
+            (   (eat ?food)
             )
         )
     )
 
-    (:method (eat ?food)
-        (branch_hungry
+    (:method (eat ?inp_food)
+        (branch_eat
             (
             )
-            (   (prepare_food ?food)
+            (   //(prepare_food ?inp_food)
                 (!eat ?food)
             )
         )

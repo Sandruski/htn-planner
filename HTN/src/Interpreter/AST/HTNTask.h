@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-class HTNMethod;
+class HTNBranch;
 class HTNValue;
 
 enum class HTNTaskType
@@ -17,8 +17,7 @@ enum class HTNTaskType
 class HTNTask : public HTNNodeBase
 {
 public:
-    explicit HTNTask(const HTNTaskType inType, std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNMethod>& inMethod);
-    explicit HTNTask(const HTNTaskType inType, std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNMethod>& inMethod,
+    explicit HTNTask(const HTNTaskType inType, std::unique_ptr<const HTNValue> inName,
                      const std::vector<std::shared_ptr<const HTNValue>>& inArguments);
     ~HTNTask();
 
@@ -28,15 +27,14 @@ public:
     HTNTaskType                                         GetType() const;
     std::string                                         GetName() const;
     const std::vector<std::shared_ptr<const HTNValue>>& GetArguments() const;
-    const std::shared_ptr<const HTNMethod>&             GetMethod() const;
+    void                                                SetParent(const std::weak_ptr<const HTNBranch>& inParent);
+    const std::weak_ptr<const HTNBranch>&               GetParent() const;
 
 private:
     HTNTaskType                                  mType;
     std::unique_ptr<const HTNValue>              mName;
     std::vector<std::shared_ptr<const HTNValue>> mArguments;
-
-    // Parent method
-    std::shared_ptr<const HTNMethod> mMethod;
+    std::weak_ptr<const HTNBranch>               mParent;
 };
 
 inline HTNTaskType HTNTask::GetType() const
@@ -49,7 +47,12 @@ inline const std::vector<std::shared_ptr<const HTNValue>>& HTNTask::GetArguments
     return mArguments;
 }
 
-inline const std::shared_ptr<const HTNMethod>& HTNTask::GetMethod() const
+inline void HTNTask::SetParent(const std::weak_ptr<const HTNBranch>& inParent)
 {
-    return mMethod;
+    mParent = inParent;
+}
+
+inline const std::weak_ptr<const HTNBranch>& HTNTask::GetParent() const
+{
+    return mParent;
 }

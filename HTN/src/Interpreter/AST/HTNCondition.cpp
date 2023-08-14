@@ -1,7 +1,12 @@
 #include "Interpreter/AST/HTNCondition.h"
 
+#include "Interpreter/AST/HTNAxiom.h"
+#include "Interpreter/AST/HTNBranch.h"
+#include "Interpreter/AST/HTNDomain.h"
+#include "Interpreter/AST/HTNMethod.h"
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNValue.h"
+#include "Log.h"
 #include "Runtime/HTNDecompositionContext.h"
 
 #include <cassert>
@@ -17,8 +22,9 @@ std::vector<std::shared_ptr<const HTNTask>> HTNConditionBase::Accept(const HTNNo
     return inVisitor.Visit(*this);
 }
 
-HTNCondition::HTNCondition(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments)
-    : mName(std::move(inName)), mArguments(inArguments)
+HTNCondition::HTNCondition(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments,
+                           const bool inIsAxiom)
+    : mName(std::move(inName)), mArguments(inArguments), mIsAxiom(inIsAxiom)
 {
 }
 
@@ -36,10 +42,30 @@ std::string HTNCondition::ToString() const
 
 bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext) const
 {
-    HTNDecompositionRecord&                   CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
-    const std::shared_ptr<const HTNMethod>&   CurrentMethod        = ioDecompositionContext.GetCurrentMethod();
-    const std::shared_ptr<const HTNCondition> This                 = shared_from_this();
-    const HTNWorldState*                      WorldState           = ioDecompositionContext.GetWorldState();
+    HTNDecompositionRecord&                 CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+    const std::shared_ptr<const HTNMethod>& CurrentMethod        = ioDecompositionContext.GetCurrentMethod();
+
+    if (mIsAxiom)
+    {
+        const std::shared_ptr<const HTNDomain>& Domain = CurrentMethod->GetParent().lock();
+        const std::shared_ptr<const HTNAxiom>   Axiom  = Domain->FindAxiomByName(GetName());
+        if (!Axiom)
+        {
+            LOG_ERROR("Axiom {} not found", GetName());
+            return false;
+        }
+
+        const std::shared_ptr<const HTNConditionBase>& Condition = Axiom->GetCondition();
+        if (!Condition)
+        {
+            return true;
+        }
+
+        return Condition->Check(ioDecompositionContext);
+    }
+
+    const std::shared_ptr<const HTNCondition> This       = shared_from_this();
+    const HTNWorldState*                      WorldState = ioDecompositionContext.GetWorldState();
 
     const HTNAtom&     NameValue = mName->GetValue();
     const std::string& Key       = NameValue.GetValue<std::string>();
@@ -73,10 +99,6 @@ bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext) const
 std::string HTNCondition::GetName() const
 {
     return mName ? mName->ToString() : "Invalid Condition";
-}
-
-HTNConditionAnd::HTNConditionAnd(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions) : mSubConditions(inSubConditions)
-{
 }
 
 std::string HTNConditionAnd::ToString() const
@@ -144,10 +166,6 @@ bool HTNConditionAnd::Check(HTNDecompositionContext& ioDecompositionContext) con
     return true;
 }
 
-HTNConditionOr::HTNConditionOr(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions) : mSubConditions(inSubConditions)
-{
-}
-
 std::string HTNConditionOr::ToString() const
 {
     std::string Name = "OR";
@@ -185,10 +203,6 @@ bool HTNConditionOr::Check(HTNDecompositionContext& ioDecompositionContext) cons
 
     // If empty, it evaluates to false
     return false;
-}
-
-HTNConditionAlt::HTNConditionAlt(const std::vector<std::shared_ptr<const HTNConditionBase>>& inConditions) : mSubConditions(inConditions)
-{
 }
 
 std::string HTNConditionAlt::ToString() const
@@ -245,10 +259,6 @@ bool HTNConditionAlt::Check(HTNDecompositionContext& ioDecompositionContext) con
 
     // If empty, it evaluates to false
     return false;
-}
-
-HTNConditionNot::HTNConditionNot(const std::shared_ptr<const HTNConditionBase>& inSubCondition) : mSubCondition(inSubCondition)
-{
 }
 
 std::string HTNConditionNot::ToString() const

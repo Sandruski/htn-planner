@@ -13,6 +13,7 @@ class HTNMethod;
 class HTNCondition;
 class HTNTask;
 class HTNValue;
+class HTNAxiom;
 
 // Builds an abstract syntax tree from a series of tokens
 // Reports the first syntax error of the tokens
@@ -24,17 +25,18 @@ public:
     std::shared_ptr<const HTNDomain> Parse();
 
 private:
-    std::shared_ptr<const HTNDomain>        ParseDomain();
-    std::shared_ptr<const HTNMethod>        ParseMethod();
-    std::shared_ptr<const HTNBranch>        ParseBranch(const std::shared_ptr<const HTNMethod>& inMethod);
-    std::shared_ptr<const HTNConditionBase> ParseCondition();
-    std::shared_ptr<const HTNConditionBase> ParseSubCondition();
-    std::shared_ptr<const HTNTask>          ParseTask(const std::shared_ptr<const HTNMethod>& inMethod);
-    std::unique_ptr<const HTNValue>         ParseArgument();
-    std::unique_ptr<const HTNValue>         ParseIdentifier();
-    std::unique_ptr<const HTNValue>         ParseNumber();
-    std::unique_ptr<const HTNValue>         ParseString();
-    const HTNToken*                         ParseToken(const HTNTokenType inTokenType);
+    std::shared_ptr<HTNDomain>        ParseDomain();
+    std::shared_ptr<HTNAxiom>         ParseAxiom();
+    std::shared_ptr<HTNMethod>        ParseMethod();
+    std::shared_ptr<HTNBranch>        ParseBranch();
+    std::shared_ptr<HTNConditionBase> ParseCondition();
+    std::shared_ptr<HTNConditionBase> ParseSubCondition();
+    std::shared_ptr<HTNTask>          ParseTask();
+    std::unique_ptr<HTNValue>         ParseArgument();
+    std::unique_ptr<HTNValue>         ParseIdentifier();
+    std::unique_ptr<HTNValue>         ParseNumber();
+    std::unique_ptr<HTNValue>         ParseString();
+    const HTNToken*                   ParseToken(const HTNTokenType inTokenType);
 
     const HTNToken* GetToken() const;
     void            AdvancePosition();
