@@ -40,6 +40,7 @@ private:
 
     const HTNToken* GetToken() const;
     void            AdvancePosition();
+    void            SetPosition(const unsigned int inPosition);
 
     std::vector<HTNToken> mTokens;
     unsigned int          mPosition = 0;
@@ -57,4 +58,9 @@ inline const HTNToken* HTNParser::GetToken() const
 inline void HTNParser::AdvancePosition()
 {
     mPosition = std::clamp(static_cast<int>(mPosition) + 1, 0, static_cast<int>(mTokens.size()) - 1);
+}
+
+inline void HTNParser::SetPosition(const unsigned int inPosition)
+{
+    mPosition = std::clamp(static_cast<int>(inPosition), 0, static_cast<int>(mTokens.size()) - 1);
 }

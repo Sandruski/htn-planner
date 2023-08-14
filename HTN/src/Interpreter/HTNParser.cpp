@@ -19,24 +19,30 @@ std::shared_ptr<HTNDomain> HTNParser::ParseDomain()
 {
     // LEFT_PARENTHESIS COLON DOMAIN <identifier> <method>* TOP_LEVEL_DOMAIN* RIGHT_PARENTHESIS
 
+    const unsigned int InitialPosition = mPosition;
+
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
     if (!ParseToken(HTNTokenType::COLON))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
     if (!ParseToken(HTNTokenType::HTN_DOMAIN))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
     std::unique_ptr<const HTNValue> Name = ParseIdentifier();
     if (!Name)
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -64,6 +70,7 @@ std::shared_ptr<HTNDomain> HTNParser::ParseDomain()
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -74,29 +81,36 @@ std::shared_ptr<HTNAxiom> HTNParser::ParseAxiom()
 {
     // LEFT_PARENTHESIS COLON AXIOM LEFT_PARENTHESIS <identifier> <argument>* RIGHT_PARENTHESIS <condition>* RIGHT_PARENTHESIS
 
+    const unsigned int InitialPosition = mPosition;
+
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
     if (!ParseToken(HTNTokenType::COLON))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
     if (!ParseToken(HTNTokenType::HTN_AXIOM))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
     std::unique_ptr<const HTNValue> Name = ParseIdentifier();
     if (!Name)
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -108,6 +122,7 @@ std::shared_ptr<HTNAxiom> HTNParser::ParseAxiom()
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -122,6 +137,7 @@ std::shared_ptr<HTNAxiom> HTNParser::ParseAxiom()
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -132,18 +148,23 @@ std::shared_ptr<HTNMethod> HTNParser::ParseMethod()
 {
     // LEFT_PARENTHESIS COLON METHOD LEFT_PARENTHESIS <identifier> <argument>* TOP_LEVEL_METHOD* RIGHT_PARENTHESIS <branch>* RIGHT_PARENTHESIS
 
+    const unsigned int InitialPosition = mPosition;
+
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
     if (!ParseToken(HTNTokenType::COLON))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
     if (!ParseToken(HTNTokenType::HTN_METHOD))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -155,6 +176,7 @@ std::shared_ptr<HTNMethod> HTNParser::ParseMethod()
     std::unique_ptr<const HTNValue> Name = ParseIdentifier();
     if (!Name)
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -166,6 +188,7 @@ std::shared_ptr<HTNMethod> HTNParser::ParseMethod()
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -184,6 +207,7 @@ std::shared_ptr<HTNMethod> HTNParser::ParseMethod()
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -194,14 +218,18 @@ std::shared_ptr<HTNBranch> HTNParser::ParseBranch()
 {
     // LEFT_PARENTHESIS <identifier> LEFT_PARENTHESIS <condition>* RIGHT_PARENTHESIS LEFT_PARENTHESIS <task>* RIGHT_PARENTHESIS RIGHT_PARENTHESIS
 
+    const unsigned int InitialPosition = mPosition;
+
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
     std::unique_ptr<const HTNValue> Name = ParseIdentifier();
     if (!Name)
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -216,6 +244,7 @@ std::shared_ptr<HTNBranch> HTNParser::ParseBranch()
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -230,11 +259,13 @@ std::shared_ptr<HTNBranch> HTNParser::ParseBranch()
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -245,8 +276,11 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseCondition()
 {
     // LEFT_PARENTHESIS ((AND | OR | ALT) <sub-condition>)* RIGHT_PARENTHESIS
 
+    const unsigned int InitialPosition = mPosition;
+
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -300,6 +334,7 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseCondition()
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -318,10 +353,9 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseSubCondition()
         return Condition;
     }
 
-    mPosition = InitialPosition;
-
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -332,6 +366,7 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseSubCondition()
         const std::shared_ptr<HTNConditionBase> SubCondition = ParseSubCondition();
         if (!SubCondition)
         {
+            SetPosition(InitialPosition);
             return nullptr;
         }
 
@@ -359,6 +394,7 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseSubCondition()
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -369,8 +405,14 @@ std::shared_ptr<HTNTask> HTNParser::ParseTask()
 {
     // LEFT_PARENTHESIS EXCLAMATION_MARK* <identifier> <argument>* RIGHT_PARENTHESIS
 
+    const unsigned int InitialPosition = mPosition;
+
+    // TODO salvarez Change
+    int Index = mPosition;
+
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -379,6 +421,7 @@ std::shared_ptr<HTNTask> HTNParser::ParseTask()
     std::unique_ptr<const HTNValue> Name = ParseIdentifier();
     if (!Name)
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
 
@@ -388,10 +431,13 @@ std::shared_ptr<HTNTask> HTNParser::ParseTask()
         Arguments.emplace_back(Argument);
     }
 
-    if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
+    if (!ParseToken(++Index, HTNTokenType::RIGHT_PARENTHESIS))
     {
+        SetPosition(InitialPosition);
         return nullptr;
     }
+
+    AdvancePosition(Index);
 
     return std::make_shared<HTNTask>(Type, std::move(Name), Arguments);
 }
@@ -399,6 +445,8 @@ std::shared_ptr<HTNTask> HTNParser::ParseTask()
 std::unique_ptr<HTNValue> HTNParser::ParseArgument()
 {
     // (QUESTION_MARK <identifier>) | <number> | <string>
+
+    const unsigned int InitialPosition = mPosition;
 
     if (ParseToken(HTNTokenType::QUESTION_MARK))
     {
@@ -416,6 +464,8 @@ std::unique_ptr<HTNValue> HTNParser::ParseArgument()
         return String;
     }
 
+    SetPosition(InitialPosition);
+
     return nullptr;
 }
 
@@ -423,24 +473,48 @@ std::unique_ptr<HTNValue> HTNParser::ParseIdentifier()
 {
     // IDENTIFIER
 
+    const unsigned int InitialPosition = mPosition;
+
     const HTNToken* Identifier = ParseToken(HTNTokenType::IDENTIFIER);
-    return Identifier ? std::make_unique<HTNValue>(HTNAtom(Identifier->GetValue())) : nullptr;
+    if (!Identifier)
+    {
+        SetPosition(InitialPosition);
+        return nullptr;
+    }
+
+    return std::make_unique<HTNValue>(HTNAtom(Identifier->GetValue()));
 }
 
 std::unique_ptr<HTNValue> HTNParser::ParseNumber()
 {
     // NUMBER
 
+    const unsigned int InitialPosition = mPosition;
+
     const HTNToken* Number = ParseToken(HTNTokenType::NUMBER);
-    return Number ? std::make_unique<HTNValue>(Number->GetValue()) : nullptr;
+    if (!Number)
+    {
+        SetPosition(InitialPosition);
+        return nullptr;
+    }
+
+    return std::make_unique<HTNValue>(Number->GetValue());
 }
 
 std::unique_ptr<HTNValue> HTNParser::ParseString()
 {
     // STRING
 
+    const unsigned int InitialPosition = mPosition;
+
     const HTNToken* String = ParseToken(HTNTokenType::STRING);
-    return String ? std::make_unique<HTNValue>(String->GetValue()) : nullptr;
+    if (!String)
+    {
+        SetPosition(InitialPosition);
+        return nullptr;
+    }
+
+    return std::make_unique<HTNValue>(String->GetValue());
 }
 
 const HTNToken* HTNParser::ParseToken(const HTNTokenType inTokenType)
