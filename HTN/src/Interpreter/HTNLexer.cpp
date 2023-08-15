@@ -8,15 +8,19 @@
 
 namespace
 {
-std::unordered_map<std::string, HTNTokenType> Keywords = {{"domain", HTNTokenType::HTN_DOMAIN},
-                                                          {"top_level_domain", HTNTokenType::HTN_TOP_LEVEL_DOMAIN},
-                                                          {"method", HTNTokenType::HTN_METHOD},
-                                                          {"top_level_method", HTNTokenType::HTN_TOP_LEVEL_METHOD},
-                                                          {"axiom", HTNTokenType::HTN_AXIOM},
-                                                          {"and", HTNTokenType::AND},
-                                                          {"or", HTNTokenType::OR},
-                                                          {"alt", HTNTokenType::ALT},
-                                                          {"not", HTNTokenType::NOT}};
+std::unordered_map<std::string, HTNTokenType> KeywordsToTokenTypes = {{"domain", HTNTokenType::HTN_DOMAIN},
+                                                                      {"top_level_domain", HTNTokenType::HTN_TOP_LEVEL_DOMAIN},
+                                                                      {"method", HTNTokenType::HTN_METHOD},
+                                                                      {"top_level_method", HTNTokenType::HTN_TOP_LEVEL_METHOD},
+                                                                      {"axiom", HTNTokenType::HTN_AXIOM},
+                                                                      {"and", HTNTokenType::AND},
+                                                                      {"or", HTNTokenType::OR},
+                                                                      {"alt", HTNTokenType::ALT},
+                                                                      {"not", HTNTokenType::NOT}};
+
+std::unordered_map<char, std::string> SpecialCharactersToEscapeSequences = {
+    {'\a', "\\a"}, {'\b', "\\b"}, {'\f', "\\f"}, {'\n', "\\n"}, {'\r', "\\r"}, {'\t', "\\t"}, {'\v', "\\v"},
+};
 
 bool IsValidCharacter(const char inCharacter)
 {
@@ -41,9 +45,16 @@ bool IsAlphaNumeric(const char inCharacter)
 
 HTNTokenType GetKeywordOrIdentifierTokenType(const std::string& inLexeme)
 {
-    const auto It = Keywords.find(inLexeme);
-    return (It != Keywords.end() ? It->second : HTNTokenType::IDENTIFIER);
+    const auto It = KeywordsToTokenTypes.find(inLexeme);
+    return (It != KeywordsToTokenTypes.end() ? It->second : HTNTokenType::IDENTIFIER);
 }
+
+std::string GetSpecialCharacterEscapeSequence(const char inCharacter)
+{
+    const auto It = SpecialCharactersToEscapeSequences.find(inCharacter);
+    return (It != SpecialCharactersToEscapeSequences.end() ? It->second : std::string(1, inCharacter));
+}
+
 } // namespace
 
 bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
@@ -114,7 +125,7 @@ bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
                 break;
             }
 
-            LOG_HTN_ERROR(mRow, mColumn, "Expected '/' after '{}' for a comment", Character);
+            LOG_HTN_ERROR(mRow, mColumn, "Expected '/' after [{}] for a comment", Character);
             Result = false;
             AdvancePosition();
             break;
@@ -138,8 +149,7 @@ bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
                 break;
             }
 
-            // TODO jose If the character contains a '\', convert it to a '\\' so it is displayed correctly
-            LOG_HTN_ERROR(mRow, mColumn, "Character '{}' not recognized", Character);
+            LOG_HTN_ERROR(mRow, mColumn, "Character [{}] not recognized", GetSpecialCharacterEscapeSequence(Character));
             Result = false;
             AdvancePosition();
         }

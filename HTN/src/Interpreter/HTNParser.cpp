@@ -129,11 +129,13 @@ std::shared_ptr<HTNAxiom> HTNParser::ParseAxiom()
     const std::shared_ptr<HTNAxiom> Axiom = std::make_shared<HTNAxiom>(std::move(Name));
 
     const std::shared_ptr<HTNConditionBase> Condition = ParseCondition();
+    if (Condition)
+    {
+        // Only set the parent to the root condition
+        Condition->SetParent(Axiom);
 
-    // Only set the parent to the root condition
-    Condition->SetParent(Axiom);
-
-    Axiom->SetCondition(Condition);
+        Axiom->SetCondition(Condition);
+    }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
     {
@@ -236,11 +238,13 @@ std::shared_ptr<HTNBranch> HTNParser::ParseBranch()
     const std::shared_ptr<HTNBranch> Branch = std::make_shared<HTNBranch>(std::move(Name));
 
     const std::shared_ptr<HTNConditionBase> PreCondition = ParseCondition();
+    if (PreCondition)
+    {
+        // Only set the parent to the root pre-condition
+        PreCondition->SetParent(Branch);
 
-    // Only set the parent to the root pre-condition
-    PreCondition->SetParent(Branch);
-
-    Branch->SetPreCondition(PreCondition);
+        Branch->SetPreCondition(PreCondition);
+    }
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
@@ -407,9 +411,6 @@ std::shared_ptr<HTNTask> HTNParser::ParseTask()
 
     const unsigned int InitialPosition = mPosition;
 
-    // TODO salvarez Change
-    int Index = mPosition;
-
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS))
     {
         SetPosition(InitialPosition);
@@ -431,13 +432,13 @@ std::shared_ptr<HTNTask> HTNParser::ParseTask()
         Arguments.emplace_back(Argument);
     }
 
-    if (!ParseToken(++Index, HTNTokenType::RIGHT_PARENTHESIS))
+    if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS))
     {
         SetPosition(InitialPosition);
         return nullptr;
     }
 
-    AdvancePosition(Index);
+    AdvancePosition();
 
     return std::make_shared<HTNTask>(Type, std::move(Name), Arguments);
 }
@@ -522,12 +523,15 @@ const HTNToken* HTNParser::ParseToken(const HTNTokenType inTokenType)
     const HTNToken* Token = GetToken();
     if (!Token)
     {
+        LOG_HTN_ERROR(Token->GetRow(), Token->GetColumn(), "Token is null");
         return nullptr;
     }
 
     const HTNTokenType TokenType = Token->GetType();
     if (inTokenType != TokenType)
     {
+        LOG_HTN_ERROR(Token->GetRow(), Token->GetColumn(), "Token [{}] is of type [{}] instead of [{}]", Token->GetLexeme(),
+                      GetTokenTypeString(Token->GetType()), GetTokenTypeString(inTokenType));
         return nullptr;
     }
 

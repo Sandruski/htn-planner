@@ -26,7 +26,7 @@ bool ReadFile(const std::string& inPath, std::string& outText)
     File.open(inPath);
     if (!File.is_open())
     {
-        LOG_ERROR("File {} could not be opened", inPath);
+        LOG_ERROR("File [{}] could not be opened", inPath);
         return false;
     }
 
@@ -51,7 +51,7 @@ bool HTNInterpreter::Init(const std::string& inDomainPath)
     std::string Text;
     if (!ReadFile(inDomainPath, Text))
     {
-        LOG_ERROR("File {} could not be read", inDomainPath);
+        LOG_ERROR("File [{}] could not be read", inDomainPath);
         return false;
     }
 
@@ -112,7 +112,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
             const std::shared_ptr<const HTNMethod> CurrentMethod = mDomain->FindMethodByName(CurrentTask->GetName());
             if (!CurrentMethod)
             {
-                LOG_ERROR("Method {} not found", CurrentTask->GetName());
+                LOG_ERROR("Method [{}] not found", CurrentTask->GetName());
                 break;
             }
 
@@ -128,7 +128,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
                 const size_t                                        CurrentArgumentSize  = CurrentArguments.size();
                 if (PreviousArgumentSize != CurrentArgumentSize)
                 {
-                    LOG_ERROR("Method {} has {} arguments but is being called with {}", CurrentMethod->GetName(), CurrentArgumentSize,
+                    LOG_ERROR("Method [{}] has [{}] arguments but is being called with [{}]", CurrentMethod->GetName(), CurrentArgumentSize,
                               PreviousArgumentSize);
                     break;
                 }
@@ -145,7 +145,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
                         const HTNAtom* PreviousVariable = CurrentDecomposition.FindVariable(PreviousMethod, PreviousVariableName);
                         if (!PreviousVariable)
                         {
-                            LOG_ERROR("Variable {} not found in method {}", PreviousVariableName, PreviousMethod->GetName());
+                            LOG_ERROR("Variable [{}] not found in method [{}]", PreviousVariableName, PreviousMethod->GetName());
                             break;
                         }
 

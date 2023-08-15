@@ -51,7 +51,7 @@ bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext) const
         const std::shared_ptr<const HTNAxiom>   Axiom  = Domain->FindAxiomByName(GetName());
         if (!Axiom)
         {
-            LOG_ERROR("Axiom {} not found", GetName());
+            LOG_ERROR("Axiom [{}] not found", GetName());
             return false;
         }
 
