@@ -25,42 +25,29 @@ public:
     std::shared_ptr<const HTNDomain> Parse();
 
 private:
-    std::shared_ptr<HTNDomain>        ParseDomain();
-    std::shared_ptr<HTNAxiom>         ParseAxiom();
-    std::shared_ptr<HTNMethod>        ParseMethod();
-    std::shared_ptr<HTNBranch>        ParseBranch();
-    std::shared_ptr<HTNConditionBase> ParseCondition();
-    std::shared_ptr<HTNConditionBase> ParseSubCondition();
-    std::shared_ptr<HTNTask>          ParseTask();
-    std::unique_ptr<HTNValue>         ParseArgument();
-    std::unique_ptr<HTNValue>         ParseIdentifier();
-    std::unique_ptr<HTNValue>         ParseNumber();
-    std::unique_ptr<HTNValue>         ParseString();
-    const HTNToken*                   ParseToken(const HTNTokenType inTokenType);
+    std::shared_ptr<HTNDomain>        ParseDomain(unsigned int& inPosition);
+    std::shared_ptr<HTNAxiom>         ParseAxiom(unsigned int& inPosition);
+    std::shared_ptr<HTNMethod>        ParseMethod(unsigned int& inPosition);
+    std::shared_ptr<HTNBranch>        ParseBranch(unsigned int& inPosition);
+    std::shared_ptr<HTNConditionBase> ParseCondition(unsigned int& inPosition);
+    std::shared_ptr<HTNConditionBase> ParseSubCondition(unsigned int& inPosition);
+    std::shared_ptr<HTNTask>          ParseTask(unsigned int& inPosition);
+    std::unique_ptr<HTNValue>         ParseArgument(unsigned int& inPosition);
+    std::unique_ptr<HTNValue>         ParseIdentifier(unsigned int& inPosition);
+    std::unique_ptr<HTNValue>         ParseNumber(unsigned int& inPosition);
+    std::unique_ptr<HTNValue>         ParseString(unsigned int& inPosition);
+    const HTNToken*                   ParseToken(const unsigned int inPosition, const HTNTokenType inTokenType);
 
-    const HTNToken* GetToken() const;
-    void            AdvancePosition();
-    void            SetPosition(const unsigned int inPosition);
+    const HTNToken* GetToken(const unsigned int inPosition) const;
 
     std::vector<HTNToken> mTokens;
-    unsigned int          mPosition = 0;
 };
 
 inline HTNParser::HTNParser(const std::vector<HTNToken>& inTokens) : mTokens(inTokens)
 {
 }
 
-inline const HTNToken* HTNParser::GetToken() const
+inline const HTNToken* HTNParser::GetToken(const unsigned int inPosition) const
 {
-    return (mPosition < mTokens.size() ? &mTokens[mPosition] : nullptr);
-}
-
-inline void HTNParser::AdvancePosition()
-{
-    mPosition = std::clamp(static_cast<int>(mPosition) + 1, 0, static_cast<int>(mTokens.size()) - 1);
-}
-
-inline void HTNParser::SetPosition(const unsigned int inPosition)
-{
-    mPosition = std::clamp(static_cast<int>(inPosition), 0, static_cast<int>(mTokens.size()) - 1);
+    return (inPosition < mTokens.size() ? &mTokens[inPosition] : nullptr);
 }
