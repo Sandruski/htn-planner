@@ -36,7 +36,7 @@ private:
     std::unique_ptr<HTNValue>         ParseIdentifier(unsigned int& inPosition);
     std::unique_ptr<HTNValue>         ParseNumber(unsigned int& inPosition);
     std::unique_ptr<HTNValue>         ParseString(unsigned int& inPosition);
-    const HTNToken*                   ParseToken(const unsigned int inPosition, const HTNTokenType inTokenType);
+    const HTNToken*                   ParseToken(unsigned int& inPosition, const HTNTokenType inTokenType);
 
     const HTNToken* GetToken(const unsigned int inPosition) const;
 
