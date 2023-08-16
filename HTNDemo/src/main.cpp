@@ -93,9 +93,9 @@ int main(int, char**)
 
     HTNPlannerHook Planner;
     HTNWorldState  WorldState;
-    WorldState.AddFact("banana");
-    WorldState.AddFact("carrot");
-    WorldState.AddFact("bread");
+    WorldState.AddFact("food", "banana");
+    WorldState.AddFact("food", "carrot");
+    WorldState.AddFact("food", "bread");
     WorldState.AddFact("has_mold", "carrot");
     WorldState.AddFact("is_old", "banana");
 

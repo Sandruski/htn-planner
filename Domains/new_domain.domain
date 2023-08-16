@@ -15,15 +15,23 @@
     //(:include “source:Domains/movement.domain”)
 
     (:axiom (is_spoiled ?inp_food)
-		(or    (has_mold ?inp_food)
-		        (is_old ?inp_food)
+		(or (has_mold ?inp_food)
+		    (is_old ?inp_food)
+		)
+	)
+
+    (:axiom (find_best_threat ?inp_threat_type ?out_threat)
+		(and    (is_type ?inp_threat_type ?threat)
+		        (is_threat_seen ?threat)
+		        (is_threat_in_range 2.0 ?threat)
 		)
 	)
 
     (:method (entry_point) top_level_method
         (branch_eat
-            (and    (?food)
+            (and    (food ?food)
                     (not (#is_spoiled ?food))
+                    (#find_best_threat "human" ?threat)
             )
             (   (eat ?food)
             )

@@ -5,7 +5,10 @@
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNValue.h"
 
-HTNAxiom::HTNAxiom(std::unique_ptr<const HTNValue> inName) : mName(std::move(inName))
+#include <format>
+
+HTNAxiom::HTNAxiom(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments)
+    : mName(std::move(inName)), mArguments(inArguments)
 {
 }
 
@@ -18,7 +21,14 @@ std::vector<std::shared_ptr<const HTNTask>> HTNAxiom::Accept(const HTNNodeVisito
 
 std::string HTNAxiom::ToString() const
 {
-    return GetName();
+    std::string Name = GetName();
+
+    for (const std::shared_ptr<const HTNValue>& Argument : mArguments)
+    {
+        Name.append(std::format(" {}", Argument->ToString()));
+    }
+
+    return Name;
 }
 
 std::string HTNAxiom::GetName() const

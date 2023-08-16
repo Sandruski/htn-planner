@@ -118,7 +118,7 @@ std::shared_ptr<HTNAxiom> HTNParser::ParseAxiom(unsigned int& inPosition)
         return nullptr;
     }
 
-    const std::shared_ptr<HTNAxiom> Axiom = std::make_shared<HTNAxiom>(std::move(Name));
+    const std::shared_ptr<HTNAxiom> Axiom = std::make_shared<HTNAxiom>(std::move(Name), Arguments);
 
     const std::shared_ptr<HTNConditionBase> Condition = ParseCondition(CurrentPosition);
     if (Condition)
@@ -511,8 +511,8 @@ const HTNToken* HTNParser::ParseToken(unsigned int& inPosition, const HTNTokenTy
     const HTNTokenType TokenType = Token->GetType();
     if (inTokenType != TokenType)
     {
-        LOG_HTN_ERROR(Token->GetRow(), Token->GetColumn(), "Token [{}] is of type [{}] instead of [{}]", Token->GetLexeme(),
-                      GetTokenTypeString(Token->GetType()), GetTokenTypeString(inTokenType));
+        LOG_HTN(Token->GetRow(), Token->GetColumn(), "Token [{}] is of type [{}] instead of [{}]", Token->GetLexeme(),
+                GetTokenTypeString(Token->GetType()), GetTokenTypeString(inTokenType));
         return nullptr;
     }
 

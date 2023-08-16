@@ -142,7 +142,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
                         const std::shared_ptr<const HTNValue>& PreviousArgument      = PreviousArguments[i];
                         const HTNAtom&                         PreviousArgumentValue = PreviousArgument->GetValue();
                         const std::string&                     PreviousVariableName  = PreviousArgumentValue.GetValue<std::string>();
-                        const HTNAtom* PreviousVariable = CurrentDecomposition.FindVariable(PreviousMethod, PreviousVariableName);
+                        const HTNAtom* PreviousVariable = CurrentDecomposition.FindMethodVariable(PreviousMethod, PreviousVariableName);
                         if (!PreviousVariable)
                         {
                             LOG_ERROR("Variable [{}] not found in method [{}]", PreviousVariableName, PreviousMethod->GetName());
@@ -152,7 +152,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
                         const std::shared_ptr<const HTNValue>& CurrentArgument      = CurrentArguments[i];
                         const HTNAtom&                         CurrentArgumentValue = CurrentArgument->GetValue();
                         const std::string&                     CurrentVariableName  = CurrentArgumentValue.GetValue<std::string>();
-                        HTNAtom& CurrentVariable = CurrentDecomposition.GetOrAddVariable(CurrentMethod, CurrentVariableName);
+                        HTNAtom& CurrentVariable = CurrentDecomposition.GetOrAddMethodVariable(CurrentMethod, CurrentVariableName);
                         CurrentVariable          = *PreviousVariable;
                     }
                 }

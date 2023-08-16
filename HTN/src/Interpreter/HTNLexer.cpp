@@ -205,7 +205,7 @@ void HTNLexer::LexNumber(std::vector<HTNToken>& outTokens)
         const unsigned int EndPosition = mPosition - StartPosition;
         const std::string  Lexeme      = mText.substr(StartPosition, EndPosition);
         const float        Number      = std::stof(Lexeme);
-        LOG_CERROR(std::stod(Lexeme) < std::numeric_limits<float>::min() || std::stod(Lexeme) > std::numeric_limits<float>::max(),
+        CLOG_ERROR(std::stod(Lexeme) < std::numeric_limits<float>::min() || std::stod(Lexeme) > std::numeric_limits<float>::max(),
                    "Number out of bounds");
         AddToken(HTNTokenType::NUMBER, Lexeme, HTNAtom(Number), outTokens);
     }

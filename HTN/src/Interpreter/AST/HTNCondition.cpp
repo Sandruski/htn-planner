@@ -76,7 +76,7 @@ bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext) const
     {
         const HTNAtom&     ArgumentValue = Argument->GetValue();
         const std::string& VariableName  = ArgumentValue.GetValue<std::string>();
-        HTNAtom&           Variable      = CurrentDecomposition.GetOrAddVariable(CurrentMethod, VariableName);
+        HTNAtom&           Variable      = CurrentDecomposition.GetOrAddMethodVariable(CurrentMethod, VariableName);
         Arguments.emplace_back(&Variable);
     }
 
@@ -126,8 +126,8 @@ bool HTNConditionAnd::Check(HTNDecompositionContext& ioDecompositionContext) con
          CurrentConditionIndex < mSubConditions.size(); CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This))
     {
         // Copy variables
-        const std::unordered_map<std::string, HTNAtom> VariablesBefore = CurrentDecomposition.HasVariables(CurrentMethod)
-                                                                             ? CurrentDecomposition.GetVariables(CurrentMethod)
+        const std::unordered_map<std::string, HTNAtom> VariablesBefore = CurrentDecomposition.HasMethodVariables(CurrentMethod)
+                                                                             ? CurrentDecomposition.GetMethodVariables(CurrentMethod)
                                                                              : std::unordered_map<std::string, HTNAtom>();
 
         // Check condition
@@ -138,13 +138,13 @@ bool HTNConditionAnd::Check(HTNDecompositionContext& ioDecompositionContext) con
             CurrentDecomposition.IncrementCurrentSubConditionIndex(This);
 
             // Record decomposition if it has bound any unbound arguments
-            const std::unordered_map<std::string, HTNAtom> VariablesAfter = CurrentDecomposition.HasVariables(CurrentMethod)
-                                                                                ? CurrentDecomposition.GetVariables(CurrentMethod)
+            const std::unordered_map<std::string, HTNAtom> VariablesAfter = CurrentDecomposition.HasMethodVariables(CurrentMethod)
+                                                                                ? CurrentDecomposition.GetMethodVariables(CurrentMethod)
                                                                                 : std::unordered_map<std::string, HTNAtom>();
             if (VariablesAfter.size() > VariablesBefore.size()) // TODO salvarez Make sure that this works
             {
                 HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
-                NewDecomposition.SetVariables(CurrentMethod, VariablesBefore);
+                NewDecomposition.SetMethodVariables(CurrentMethod, VariablesBefore);
                 ioDecompositionContext.RecordDecomposition(NewDecomposition);
             }
         }
@@ -230,21 +230,21 @@ bool HTNConditionAlt::Check(HTNDecompositionContext& ioDecompositionContext) con
          CurrentConditionIndex < mSubConditions.size(); CurrentConditionIndex = CurrentDecomposition.GetOrAddCurrentSubConditionIndex(This))
     {
         // Copy variables
-        const std::unordered_map<std::string, HTNAtom> VariablesBefore = CurrentDecomposition.HasVariables(CurrentMethod)
-                                                                             ? CurrentDecomposition.GetVariables(CurrentMethod)
+        const std::unordered_map<std::string, HTNAtom> VariablesBefore = CurrentDecomposition.HasMethodVariables(CurrentMethod)
+                                                                             ? CurrentDecomposition.GetMethodVariables(CurrentMethod)
                                                                              : std::unordered_map<std::string, HTNAtom>();
 
         const std::shared_ptr<const HTNConditionBase>& CurrentCondition = mSubConditions[CurrentConditionIndex];
         if (CurrentCondition->Check(ioDecompositionContext))
         {
             // Record decomposition if it has bound any unbound arguments
-            const std::unordered_map<std::string, HTNAtom> VariablesAfter = CurrentDecomposition.HasVariables(CurrentMethod)
-                                                                                ? CurrentDecomposition.GetVariables(CurrentMethod)
+            const std::unordered_map<std::string, HTNAtom> VariablesAfter = CurrentDecomposition.HasMethodVariables(CurrentMethod)
+                                                                                ? CurrentDecomposition.GetMethodVariables(CurrentMethod)
                                                                                 : std::unordered_map<std::string, HTNAtom>();
             if (VariablesAfter.size() > VariablesBefore.size()) // TODO salvarez Make sure that this works
             {
                 HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
-                NewDecomposition.SetVariables(CurrentMethod, VariablesBefore);
+                NewDecomposition.SetMethodVariables(CurrentMethod, VariablesBefore);
                 ioDecompositionContext.RecordDecomposition(NewDecomposition);
             }
 
@@ -274,8 +274,8 @@ bool HTNConditionNot::Check(HTNDecompositionContext& ioDecompositionContext) con
     // Copy variables
     HTNDecompositionRecord&                        CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
     const std::shared_ptr<const HTNMethod>&        CurrentMethod        = ioDecompositionContext.GetCurrentMethod();
-    const std::unordered_map<std::string, HTNAtom> Variables            = CurrentDecomposition.HasVariables(CurrentMethod)
-                                                                              ? CurrentDecomposition.GetVariables(CurrentMethod)
+    const std::unordered_map<std::string, HTNAtom> Variables            = CurrentDecomposition.HasMethodVariables(CurrentMethod)
+                                                                              ? CurrentDecomposition.GetMethodVariables(CurrentMethod)
                                                                               : std::unordered_map<std::string, HTNAtom>();
 
     // Copy decomposition history
@@ -288,7 +288,7 @@ bool HTNConditionNot::Check(HTNDecompositionContext& ioDecompositionContext) con
     ioDecompositionContext.SetDecompositionHistory(DecompositionHistory);
 
     // Reset variables
-    CurrentDecomposition.SetVariables(CurrentMethod, Variables);
+    CurrentDecomposition.SetMethodVariables(CurrentMethod, Variables);
 
     // Invert result
     return !Result;

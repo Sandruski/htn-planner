@@ -38,7 +38,7 @@ std::vector<HTNTaskInstance> HTNPlannerHook::MakePlan(const std::string& inEntry
             if (ArgumentValue.IsType<std::string>())
             {
                 const std::string& VariableName = ArgumentValue.GetValue<std::string>();
-                const HTNAtom*     Variable     = CurrentDecomposition.FindVariable(Method, VariableName);
+                const HTNAtom*     Variable     = CurrentDecomposition.FindMethodVariable(Method, VariableName);
                 if (Variable)
                 {
                     InstanceArguments.emplace_back(*Variable);

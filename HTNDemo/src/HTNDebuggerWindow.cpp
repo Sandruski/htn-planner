@@ -1,5 +1,6 @@
 #include "HTNDebuggerWindow.h"
 
+#include "Interpreter/AST/HTNAxiom.h"
 #include "Interpreter/AST/HTNBranch.h"
 #include "Interpreter/AST/HTNCondition.h"
 #include "Interpreter/AST/HTNDomain.h"
@@ -114,6 +115,17 @@ void HTNDebuggerWindow::RenderDecomposition()
         return;
     }
 
+    const HTNInterpreter&                                Interpreter = mPlanner->GetInterpreter();
+    const std::shared_ptr<const HTNDomain>&              Domain      = Interpreter.GetDomain();
+    const std::vector<std::shared_ptr<const HTNMethod>>* Methods     = nullptr;
+    if (Domain)
+    {
+        if (Domain->IsTopLevel())
+        {
+            Methods = &Domain->GetMethods();
+        }
+    }
+
     struct EntryPoint
     {
         std::string  Name;
@@ -127,7 +139,9 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     if (ImGui::Button("+"))
     {
-        EntryPoints.emplace_back();
+        const std::string DefaultEntryPointName = (Methods && !Methods->empty()) ? (*Methods)[0]->GetName() : "";
+        constexpr unsigned int DefaultEntryPointAmount = 1;
+        EntryPoints.emplace_back(DefaultEntryPointName, DefaultEntryPointAmount);
     }
 
     if (ImGui::IsItemHovered())
@@ -145,17 +159,6 @@ void HTNDebuggerWindow::RenderDecomposition()
     if (ImGui::IsItemHovered())
     {
         ImGui::SetTooltip("Remove All Entry Points");
-    }
-
-    const HTNInterpreter&                                Interpreter = mPlanner->GetInterpreter();
-    const std::shared_ptr<const HTNDomain>&              Domain      = Interpreter.GetDomain();
-    const std::vector<std::shared_ptr<const HTNMethod>>* Methods     = nullptr;
-    if (Domain)
-    {
-        if (Domain->IsTopLevel())
-        {
-            Methods = &Domain->GetMethods();
-        }
     }
 
     for (size_t i = 0; i < EntryPoints.size(); ++i)
@@ -382,6 +385,19 @@ void HTNDebuggerWindow::RenderParsing()
     ImGui::Text(Domain->ToString().c_str());
 
     ImGui::Indent();
+    const std::vector<std::shared_ptr<const HTNAxiom>>& Axioms = Domain->GetAxioms();
+    for (const std::shared_ptr<const HTNAxiom>& Axiom : Axioms)
+    {
+        ImGui::Text(Axiom->ToString().c_str());
+
+        ImGui::Indent();
+        if (const std::shared_ptr<const HTNConditionBase>& Condition = Axiom->GetCondition())
+        {
+            ImGui::Text(Condition->ToString().c_str());
+        }
+        ImGui::Unindent();
+    }
+
     const std::vector<std::shared_ptr<const HTNMethod>>& Methods = Domain->GetMethods();
     for (const std::shared_ptr<const HTNMethod>& Method : Methods)
     {
@@ -394,8 +410,7 @@ void HTNDebuggerWindow::RenderParsing()
             ImGui::Text(Branch->ToString().c_str());
 
             ImGui::Indent();
-            const std::shared_ptr<const HTNConditionBase>& PreCondition = Branch->GetPreCondition();
-            if (PreCondition)
+            if (const std::shared_ptr<const HTNConditionBase>& PreCondition = Branch->GetPreCondition())
             {
                 ImGui::Text(PreCondition->ToString().c_str());
             }
