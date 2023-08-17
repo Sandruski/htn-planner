@@ -1,5 +1,6 @@
 #include "Interpreter/HTNInterpreter.h"
 
+#include "HTNHelpers.h"
 #include "Interpreter/AST/HTNBranch.h"
 #include "Interpreter/AST/HTNCondition.h"
 #include "Interpreter/AST/HTNDomain.h"
@@ -85,11 +86,13 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
         return {};
     }
 
+    ioDecompositionContext.SetDomain(mDomain);
+
     HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
     // Dummy root compound task
     const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(
-        HTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNAtom(inEntryPointName)), std::vector<std::shared_ptr<const HTNValue>>());
+        HTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNAtom(inEntryPointName), true), std::vector<std::shared_ptr<const HTNValue>>());
     CurrentDecomposition.PushTaskToProcess(RootCompoundTask);
 
     while (CurrentDecomposition.HasTasksToProcess())
@@ -116,45 +119,19 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
                 break;
             }
 
-            // Initialize new method
             if (ioDecompositionContext.GetCurrentMethod() != CurrentMethod)
             {
                 ioDecompositionContext.SetCurrentMethod(CurrentMethod);
 
-                // Copy the values of the arguments of the old method to the new method
-                const std::vector<std::shared_ptr<const HTNValue>>& PreviousArguments    = CurrentTask->GetArguments();
-                const std::vector<std::shared_ptr<const HTNValue>>& CurrentArguments     = CurrentMethod->GetArguments();
-                const size_t                                        PreviousArgumentSize = PreviousArguments.size();
-                const size_t                                        CurrentArgumentSize  = CurrentArguments.size();
-                if (PreviousArgumentSize != CurrentArgumentSize)
+                // Initialize the input arguments of the method with the arguments of the compound task
+                const std::shared_ptr<const HTNNodeBase>            TaskParent      = CurrentTask->GetParent();
+                const std::vector<std::shared_ptr<const HTNValue>>& TaskArguments   = CurrentTask->GetArguments();
+                const std::vector<std::shared_ptr<const HTNValue>>& MethodArguments = CurrentMethod->GetArguments();
+                if (!HTN::Helpers::CopyArguments(CurrentDecomposition, TaskArguments, MethodArguments, TaskParent, CurrentMethod, {},
+                                                 HTN::Helpers::InputPrefixes))
                 {
-                    LOG_ERROR("Method [{}] has [{}] arguments but is being called with [{}]", CurrentMethod->GetName(), CurrentArgumentSize,
-                              PreviousArgumentSize);
+                    LOG_ERROR("Arguments could not be copied from method to method [{}]", CurrentMethod->GetName());
                     break;
-                }
-
-                if (CurrentArgumentSize > 0)
-                {
-                    const std::shared_ptr<const HTNMethod>& PreviousMethod = CurrentTask->GetParent().lock()->GetParent().lock();
-
-                    for (size_t i = 0; i < CurrentArgumentSize; ++i)
-                    {
-                        const std::shared_ptr<const HTNValue>& PreviousArgument      = PreviousArguments[i];
-                        const HTNAtom&                         PreviousArgumentValue = PreviousArgument->GetValue();
-                        const std::string&                     PreviousVariableName  = PreviousArgumentValue.GetValue<std::string>();
-                        const HTNAtom* PreviousVariable = CurrentDecomposition.FindMethodVariable(PreviousMethod, PreviousVariableName);
-                        if (!PreviousVariable)
-                        {
-                            LOG_ERROR("Variable [{}] not found in method [{}]", PreviousVariableName, PreviousMethod->GetName());
-                            break;
-                        }
-
-                        const std::shared_ptr<const HTNValue>& CurrentArgument      = CurrentArguments[i];
-                        const HTNAtom&                         CurrentArgumentValue = CurrentArgument->GetValue();
-                        const std::string&                     CurrentVariableName  = CurrentArgumentValue.GetValue<std::string>();
-                        HTNAtom& CurrentVariable = CurrentDecomposition.GetOrAddMethodVariable(CurrentMethod, CurrentVariableName);
-                        CurrentVariable          = *PreviousVariable;
-                    }
                 }
             }
 
@@ -167,8 +144,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 
             const std::shared_ptr<const HTNBranch>&        CurrentBranch       = CurrentBranches[CurrentBranchIndex];
             const std::shared_ptr<const HTNConditionBase>& CurrentPreCondition = CurrentBranch->GetPreCondition();
-            const bool                                     Result =
-                CurrentPreCondition ? CurrentPreCondition->Check(ioDecompositionContext) : true; // TODO salvarez Time-slice condition result
+            const bool                                     Result = CurrentPreCondition ? CurrentPreCondition->Check(ioDecompositionContext) : true;
             if (Result)
             {
                 const std::vector<std::shared_ptr<const HTNTask>>& Tasks = CurrentBranch->GetTasks();

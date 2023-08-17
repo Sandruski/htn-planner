@@ -120,7 +120,7 @@ std::shared_ptr<HTNAxiom> HTNParser::ParseAxiom(unsigned int& inPosition)
 
     const std::shared_ptr<HTNAxiom> Axiom = std::make_shared<HTNAxiom>(std::move(Name), Arguments);
 
-    const std::shared_ptr<HTNConditionBase> Condition = ParseCondition(CurrentPosition);
+    const std::shared_ptr<HTNConditionBase> Condition = ParseCondition(CurrentPosition, Axiom);
     if (Condition)
     {
         Condition->SetParent(Axiom);
@@ -185,7 +185,7 @@ std::shared_ptr<HTNMethod> HTNParser::ParseMethod(unsigned int& inPosition)
     const std::shared_ptr<HTNMethod> Method = std::make_shared<HTNMethod>(std::move(Name), Arguments, IsTopLevelMethod);
 
     std::vector<std::shared_ptr<const HTNBranch>> Branches;
-    while (std::shared_ptr<HTNBranch> Branch = ParseBranch(CurrentPosition))
+    while (std::shared_ptr<HTNBranch> Branch = ParseBranch(CurrentPosition, Method))
     {
         Branch->SetParent(Method);
         Branches.emplace_back(Branch);
@@ -203,7 +203,7 @@ std::shared_ptr<HTNMethod> HTNParser::ParseMethod(unsigned int& inPosition)
     return Method;
 }
 
-std::shared_ptr<HTNBranch> HTNParser::ParseBranch(unsigned int& inPosition)
+std::shared_ptr<HTNBranch> HTNParser::ParseBranch(unsigned int& inPosition, const std::shared_ptr<HTNMethod>& inParent)
 {
     // '(' <identifier> '(' <condition>* ')' '(' <task>* ')' ')'
 
@@ -222,10 +222,10 @@ std::shared_ptr<HTNBranch> HTNParser::ParseBranch(unsigned int& inPosition)
 
     const std::shared_ptr<HTNBranch> Branch = std::make_shared<HTNBranch>(std::move(Name));
 
-    const std::shared_ptr<HTNConditionBase> PreCondition = ParseCondition(CurrentPosition);
+    const std::shared_ptr<HTNConditionBase> PreCondition = ParseCondition(CurrentPosition, inParent);
     if (PreCondition)
     {
-        PreCondition->SetParent(Branch);
+        PreCondition->SetParent(inParent);
         Branch->SetPreCondition(PreCondition);
     }
 
@@ -237,7 +237,7 @@ std::shared_ptr<HTNBranch> HTNParser::ParseBranch(unsigned int& inPosition)
     std::vector<std::shared_ptr<const HTNTask>> Tasks;
     while (std::shared_ptr<HTNTask> Task = ParseTask(CurrentPosition))
     {
-        Task->SetParent(Branch);
+        Task->SetParent(inParent);
         Tasks.emplace_back(Task);
     }
 
@@ -258,7 +258,7 @@ std::shared_ptr<HTNBranch> HTNParser::ParseBranch(unsigned int& inPosition)
     return Branch;
 }
 
-std::shared_ptr<HTNConditionBase> HTNParser::ParseCondition(unsigned int& inPosition)
+std::shared_ptr<HTNConditionBase> HTNParser::ParseCondition(unsigned int& inPosition, const std::shared_ptr<HTNNodeBase>& inParent)
 {
     // '(' (('and' | 'or' | 'alt') <sub-condition>)* ')'
 
@@ -277,9 +277,9 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseCondition(unsigned int& inPosi
         Condition                                           = ConditionAnd;
 
         std::vector<std::shared_ptr<const HTNConditionBase>> SubConditions;
-        while (std::shared_ptr<HTNConditionBase> SubCondition = ParseSubCondition(CurrentPosition))
+        while (std::shared_ptr<HTNConditionBase> SubCondition = ParseSubCondition(CurrentPosition, inParent))
         {
-            SubCondition->SetParent(ConditionAnd);
+            SubCondition->SetParent(inParent);
             SubConditions.emplace_back(SubCondition);
         }
 
@@ -291,9 +291,9 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseCondition(unsigned int& inPosi
         Condition                                         = ConditionOr;
 
         std::vector<std::shared_ptr<const HTNConditionBase>> SubConditions;
-        while (std::shared_ptr<HTNConditionBase> SubCondition = ParseSubCondition(CurrentPosition))
+        while (std::shared_ptr<HTNConditionBase> SubCondition = ParseSubCondition(CurrentPosition, inParent))
         {
-            SubCondition->SetParent(ConditionOr);
+            SubCondition->SetParent(inParent);
             SubConditions.emplace_back(SubCondition);
         }
 
@@ -305,9 +305,9 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseCondition(unsigned int& inPosi
         Condition                                           = ConditionAlt;
 
         std::vector<std::shared_ptr<const HTNConditionBase>> SubConditions;
-        while (std::shared_ptr<HTNConditionBase> SubCondition = ParseSubCondition(CurrentPosition))
+        while (std::shared_ptr<HTNConditionBase> SubCondition = ParseSubCondition(CurrentPosition, inParent))
         {
-            SubCondition->SetParent(ConditionAlt);
+            SubCondition->SetParent(inParent);
             SubConditions.emplace_back(SubCondition);
         }
 
@@ -324,13 +324,13 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseCondition(unsigned int& inPosi
     return Condition;
 }
 
-std::shared_ptr<HTNConditionBase> HTNParser::ParseSubCondition(unsigned int& inPosition)
+std::shared_ptr<HTNConditionBase> HTNParser::ParseSubCondition(unsigned int& inPosition, const std::shared_ptr<HTNNodeBase>& inParent)
 {
     // <condition> | ('(' (<identifier> <argument>*)* ')')
 
     unsigned int CurrentPosition = inPosition;
 
-    std::shared_ptr<HTNConditionBase> Condition = ParseCondition(CurrentPosition);
+    std::shared_ptr<HTNConditionBase> Condition = ParseCondition(CurrentPosition, inParent);
     if (!Condition)
     {
         if (!ParseToken(CurrentPosition, HTNTokenType::LEFT_PARENTHESIS))
@@ -343,13 +343,13 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseSubCondition(unsigned int& inP
             std::shared_ptr<HTNConditionNot> ConditionNot = std::make_shared<HTNConditionNot>();
             Condition                                     = ConditionNot;
 
-            const std::shared_ptr<HTNConditionBase> SubCondition = ParseSubCondition(CurrentPosition);
+            const std::shared_ptr<HTNConditionBase> SubCondition = ParseSubCondition(CurrentPosition, inParent);
             if (!SubCondition)
             {
                 return nullptr;
             }
 
-            SubCondition->SetParent(ConditionNot);
+            SubCondition->SetParent(inParent);
             ConditionNot->SetSubCondition(SubCondition);
         }
         else
@@ -462,7 +462,7 @@ std::unique_ptr<HTNValue> HTNParser::ParseIdentifier(unsigned int& inPosition)
 
     inPosition = CurrentPosition;
 
-    return std::make_unique<HTNValue>(HTNAtom(Identifier->GetValue()));
+    return std::make_unique<HTNValue>(Identifier->GetValue(), true);
 }
 
 std::unique_ptr<HTNValue> HTNParser::ParseNumber(unsigned int& inPosition)
@@ -479,7 +479,7 @@ std::unique_ptr<HTNValue> HTNParser::ParseNumber(unsigned int& inPosition)
 
     inPosition = CurrentPosition;
 
-    return std::make_unique<HTNValue>(Number->GetValue());
+    return std::make_unique<HTNValue>(Number->GetValue(), false);
 }
 
 std::unique_ptr<HTNValue> HTNParser::ParseString(unsigned int& inPosition)
@@ -496,7 +496,7 @@ std::unique_ptr<HTNValue> HTNParser::ParseString(unsigned int& inPosition)
 
     inPosition = CurrentPosition;
 
-    return std::make_unique<HTNValue>(String->GetValue());
+    return std::make_unique<HTNValue>(String->GetValue(), false);
 }
 
 const HTNToken* HTNParser::ParseToken(unsigned int& inPosition, const HTNTokenType inTokenType)

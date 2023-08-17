@@ -30,23 +30,26 @@ std::vector<HTNTaskInstance> HTNPlannerHook::MakePlan(const std::string& inEntry
         const std::string& Name = Task->GetName();
 
         std::vector<HTNAtom>                                InstanceArguments;
-        const std::shared_ptr<const HTNMethod>&             Method    = Task->GetParent().lock()->GetParent().lock();
-        const std::vector<std::shared_ptr<const HTNValue>>& Arguments = Task->GetArguments();
+        const std::shared_ptr<const HTNNodeBase>            TaskParent = Task->GetParent();
+        const std::vector<std::shared_ptr<const HTNValue>>& Arguments  = Task->GetArguments();
         for (const std::shared_ptr<const HTNValue>& Argument : Arguments)
         {
             const HTNAtom& ArgumentValue = Argument->GetValue();
-            if (ArgumentValue.IsType<std::string>())
+            if (!Argument->IsIdentifier())
             {
-                const std::string& VariableName = ArgumentValue.GetValue<std::string>();
-                const HTNAtom*     Variable     = CurrentDecomposition.FindMethodVariable(Method, VariableName);
-                if (Variable)
-                {
-                    InstanceArguments.emplace_back(*Variable);
-                    continue;
-                }
+                InstanceArguments.emplace_back(ArgumentValue);
+                continue;
             }
 
-            InstanceArguments.emplace_back(ArgumentValue);
+            const std::string& VariableName = ArgumentValue.GetValue<std::string>();
+            const HTNAtom*     Variable     = CurrentDecomposition.FindVariable(TaskParent, VariableName);
+            if (!Variable)
+            {
+                LOG_ERROR("Variable [{}] not found", VariableName);
+                continue;
+            }
+
+            InstanceArguments.emplace_back(*Variable);
         }
 
         PlanInstance.emplace_back(Name, InstanceArguments);

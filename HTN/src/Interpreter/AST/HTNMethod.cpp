@@ -1,7 +1,6 @@
 #include "Interpreter/AST/HTNMethod.h"
 
 #include "Interpreter/AST/HTNBranch.h"
-#include "Interpreter/AST/HTNDomain.h"
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNValue.h"
 #include "Runtime/HTNDecompositionContext.h"

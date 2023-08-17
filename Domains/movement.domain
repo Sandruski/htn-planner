@@ -1,0 +1,11 @@
+
+(:domain Movement
+    (:method (move_to ?inp_destination)
+        (branch_todo
+            (
+            )
+            (
+            )
+        )
+    )
+)

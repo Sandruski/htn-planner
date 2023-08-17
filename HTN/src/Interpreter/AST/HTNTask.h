@@ -5,7 +5,6 @@
 #include <memory>
 #include <vector>
 
-class HTNBranch;
 class HTNValue;
 
 enum class HTNTaskType
@@ -27,14 +26,11 @@ public:
     HTNTaskType                                         GetType() const;
     std::string                                         GetName() const;
     const std::vector<std::shared_ptr<const HTNValue>>& GetArguments() const;
-    void                                                SetParent(const std::weak_ptr<const HTNBranch>& inParent);
-    const std::weak_ptr<const HTNBranch>&               GetParent() const;
 
 private:
     HTNTaskType                                  mType;
     std::unique_ptr<const HTNValue>              mName;
     std::vector<std::shared_ptr<const HTNValue>> mArguments;
-    std::weak_ptr<const HTNBranch>               mParent;
 };
 
 inline HTNTaskType HTNTask::GetType() const
@@ -45,14 +41,4 @@ inline HTNTaskType HTNTask::GetType() const
 inline const std::vector<std::shared_ptr<const HTNValue>>& HTNTask::GetArguments() const
 {
     return mArguments;
-}
-
-inline void HTNTask::SetParent(const std::weak_ptr<const HTNBranch>& inParent)
-{
-    mParent = inParent;
-}
-
-inline const std::weak_ptr<const HTNBranch>& HTNTask::GetParent() const
-{
-    return mParent;
 }

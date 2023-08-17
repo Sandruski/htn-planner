@@ -1,0 +1,38 @@
+
+(:domain Human top_level_domain
+
+    //(:include “source:Domains/movement.domain”)
+
+    (:axiom (find_food ?inp_food_type ?out_food)
+		(and    (food ?food_type ?food)
+		)
+	)
+
+    (:axiom (is_spoiled ?inp_food)
+		(or (has_mold ?food)
+		    (is_dry ?food)
+		)
+	)
+
+    (:method (entry_point) top_level_method
+        (branch_eat
+            (and    (#find_food "italian" ?food)
+                    (not (#is_spoiled ?food))
+            )
+            //(and    (and (food "italian" ?food))
+            //        (not (or (has_mold ?food) (is_dry ?food)))
+            //)
+            (   (eat ?food)
+            )
+        )
+    )
+
+    (:method (eat ?inp_food)
+        (branch_eat
+            (
+            )
+            (   (!eat ?food)
+            )
+        )
+    )
+)

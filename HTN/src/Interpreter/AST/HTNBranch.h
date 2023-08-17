@@ -9,7 +9,6 @@ class HTNConditionBase;
 class HTNDecompositionContext;
 class HTNTask;
 class HTNValue;
-class HTNMethod;
 
 class HTNBranch final : public HTNNodeBase
 {
@@ -25,14 +24,11 @@ public:
     const std::shared_ptr<const HTNConditionBase>&     GetPreCondition() const;
     void                                               SetTasks(const std::vector<std::shared_ptr<const HTNTask>>& inTasks);
     const std::vector<std::shared_ptr<const HTNTask>>& GetTasks() const;
-    void                                               SetParent(const std::weak_ptr<const HTNMethod>& inParent);
-    const std::weak_ptr<const HTNMethod>&              GetParent() const;
 
 private:
     std::unique_ptr<const HTNValue>             mName;
     std::shared_ptr<const HTNConditionBase>     mPreCondition;
     std::vector<std::shared_ptr<const HTNTask>> mTasks;
-    std::weak_ptr<const HTNMethod>              mParent;
 };
 
 inline void HTNBranch::SetPreCondition(const std::shared_ptr<const HTNConditionBase>& inPreCondition)
@@ -53,14 +49,4 @@ inline void HTNBranch::SetTasks(const std::vector<std::shared_ptr<const HTNTask>
 inline const std::vector<std::shared_ptr<const HTNTask>>& HTNBranch::GetTasks() const
 {
     return mTasks;
-}
-
-inline void HTNBranch::SetParent(const std::weak_ptr<const HTNMethod>& inParent)
-{
-    mParent = inParent;
-}
-
-inline const std::weak_ptr<const HTNMethod>& HTNBranch::GetParent() const
-{
-    return mParent;
 }

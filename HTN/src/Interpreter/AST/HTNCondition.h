@@ -50,13 +50,6 @@ public:
     std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
 
     virtual bool Check(HTNDecompositionContext& ioDecompositionContext) const = 0;
-
-    void                                    SetParent(const std::weak_ptr<const HTNNodeBase>& inParent);
-    const std::weak_ptr<const HTNNodeBase>& GetParent() const;
-
-private:
-    // HTNBranch or HTNAxiom or HTNConditionAnd or HTNConditionOr or HTNConditionAlt or HTNConditionNot
-    std::weak_ptr<const HTNNodeBase> mParent;
 };
 
 /**
@@ -181,16 +174,6 @@ inline void HTNConditionWorldStateQuery::SetKey(const std::string& inKey)
 inline void HTNConditionWorldStateQuery::AddArgument(HTNAtom& inArgument)
 {
     mArguments.emplace_back(&inArgument);
-}
-
-inline void HTNConditionBase::SetParent(const std::weak_ptr<const HTNNodeBase>& inParent)
-{
-    mParent = inParent;
-}
-
-inline const std::weak_ptr<const HTNNodeBase>& HTNConditionBase::GetParent() const
-{
-    return mParent;
 }
 
 inline void HTNConditionAnd::SetSubConditions(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions)
