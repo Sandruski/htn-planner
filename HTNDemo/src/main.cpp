@@ -93,16 +93,16 @@ int main(int, char**)
 
     HTNPlannerHook Planner;
     HTNWorldState  WorldState;
-    WorldState.AddFact("food", "spanish", "paella");
-    WorldState.AddFact("food", "italian", "pasta");
-    WorldState.AddFact("food", "italian", "pizza");
-    WorldState.AddFact("food", "italian", "gelato");
-    WorldState.AddFact("has_mold", "pasta");
-    WorldState.AddFact("is_dry", "pizza");
+    // WorldState.AddFact("food", "spanish", "paella");
+    // WorldState.AddFact("food", "italian", "pasta");
+    // WorldState.AddFact("food", "italian", "pizza");
+    // WorldState.AddFact("food", "italian", "gelato");
+    // WorldState.AddFact("has_mold", "pasta");
+    // WorldState.AddFact("is_dry", "pizza");
 
-    // WorldState.AddFact("food", "pasta");
-    //  WorldState.AddFact("food", "pizza");
-    //  WorldState.AddFact("edible", "pizza");
+    WorldState.AddFact("food", "pasta");
+    WorldState.AddFact("food", "pizza");
+    WorldState.AddFact("edible", "pizza");
 
     // Main loop
     bool done = false;

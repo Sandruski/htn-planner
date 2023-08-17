@@ -1,6 +1,6 @@
 -- HTN
 workspace "HTN"
-    startproject "HTNTest"
+    startproject "HTNDemo"
     architecture "x64"
     configurations { "Debug"--[[, "Release"--]] }
 
