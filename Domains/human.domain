@@ -16,15 +16,15 @@
 
     (:method (entry_point) top_level_method
         (branch_eat
-            //(and    (#find_food "italian" ?food)
-            //        (not (#is_spoiled ?food))
-            //)
+            (and    (#find_food "italian" ?food)
+                    (not (#is_spoiled ?food))
+            )
             //(and    (and (food "italian" ?food))
             //        (not (or (has_mold ?food) (is_dry ?food)))
             //)
-            (and    (and (food ?food))
-                    (edible ?food)
-            )
+            //(and    (and (food ?food))
+            //        (edible ?food)
+            //)
             (   (eat ?food)
             )
         )

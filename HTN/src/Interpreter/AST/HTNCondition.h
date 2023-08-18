@@ -68,6 +68,7 @@ public:
     bool        Check(HTNDecompositionContext& ioDecompositionContext) const final;
 
     std::string GetName() const;
+    bool        IsAxiom() const;
 
 private:
     std::unique_ptr<const HTNValue>              mName;
@@ -174,6 +175,11 @@ inline void HTNConditionWorldStateQuery::SetKey(const std::string& inKey)
 inline void HTNConditionWorldStateQuery::AddArgument(HTNAtom& inArgument)
 {
     mArguments.emplace_back(&inArgument);
+}
+
+inline bool HTNCondition::IsAxiom() const
+{
+    return mIsAxiom;
 }
 
 inline void HTNConditionAnd::SetSubConditions(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions)

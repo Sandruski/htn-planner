@@ -183,13 +183,22 @@ bool HTNConditionAnd::Check(HTNDecompositionContext& ioDecompositionContext) con
         }
 
         // Record decomposition if it has bound any unbound arguments
-        const std::unordered_map<std::string, HTNAtom> VariablesAfter =
-            CurrentDecomposition.HasVariables(Parent) ? CurrentDecomposition.GetVariables(Parent) : std::unordered_map<std::string, HTNAtom>();
-        if (VariablesAfter.size() > VariablesBefore.size()) // TODO salvarez Make sure that this works
+        // The only condition that can bind arguments is an HTNCondition that is not an axiom
+        // TODO salvarez Apply this to the other places where we record the decomposition
+        if (const std::shared_ptr<const HTNCondition>& Condition = std::dynamic_pointer_cast<const HTNCondition>(CurrentCondition))
         {
-            HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
-            NewDecomposition.SetVariables(Parent, VariablesBefore);
-            ioDecompositionContext.RecordDecomposition(NewDecomposition);
+            if (!Condition->IsAxiom())
+            {
+                const std::unordered_map<std::string, HTNAtom> VariablesAfter = CurrentDecomposition.HasVariables(Parent)
+                                                                                    ? CurrentDecomposition.GetVariables(Parent)
+                                                                                    : std::unordered_map<std::string, HTNAtom>();
+                if (VariablesAfter.size() > VariablesBefore.size()) // TODO salvarez Make sure that this works
+                {
+                    HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
+                    NewDecomposition.SetVariables(Parent, VariablesBefore);
+                    ioDecompositionContext.RecordDecomposition(NewDecomposition);
+                }
+            }
         }
 
         // Continue
