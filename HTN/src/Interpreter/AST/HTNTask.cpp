@@ -31,5 +31,5 @@ std::string HTNTask::ToString() const
 
 std::string HTNTask::GetName() const
 {
-    return mName ? mName->ToString() : "Invalid Task";
+    return mName->ToString();
 }

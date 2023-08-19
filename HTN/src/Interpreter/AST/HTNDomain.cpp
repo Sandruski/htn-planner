@@ -1,6 +1,7 @@
 #include "Interpreter/AST/HTNDomain.h"
 
 #include "Interpreter/AST/HTNAxiom.h"
+#include "Interpreter/AST/HTNConstants.h"
 #include "Interpreter/AST/HTNMethod.h"
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNValue.h"
@@ -56,5 +57,5 @@ std::shared_ptr<const HTNMethod> HTNDomain::FindMethodByName(const std::string& 
 
 std::string HTNDomain::GetName() const
 {
-    return mName ? mName->ToString() : "Invalid Domain";
+    return mName->ToString();
 }

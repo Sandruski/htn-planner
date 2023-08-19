@@ -15,6 +15,8 @@ class HTNTask;
 class HTNValue;
 class HTNAxiom;
 class HTNNodeBase;
+class HTNConstant;
+class HTNConstants;
 
 // Builds an abstract syntax tree from a series of tokens
 // Reports the first syntax error of the tokens
@@ -28,6 +30,8 @@ public:
 private:
     std::shared_ptr<HTNDomain>        ParseDomain(unsigned int& inPosition);
     std::shared_ptr<HTNAxiom>         ParseAxiom(unsigned int& inPosition);
+    std::shared_ptr<HTNConstants>     ParseConstants(unsigned int& inPosition);
+    std::shared_ptr<HTNConstant>      ParseConstant(unsigned int& inPosition);
     std::shared_ptr<HTNMethod>        ParseMethod(unsigned int& inPosition);
     std::shared_ptr<HTNBranch>        ParseBranch(unsigned int& inPosition, const std::shared_ptr<HTNMethod>& inScope);
     std::shared_ptr<HTNConditionBase> ParseCondition(unsigned int& inPosition, const std::shared_ptr<HTNNodeBase>& inScope);

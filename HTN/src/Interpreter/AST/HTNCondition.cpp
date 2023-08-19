@@ -98,7 +98,7 @@ bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext, bool& 
 
 std::string HTNCondition::GetName() const
 {
-    return mName ? mName->ToString() : "Invalid Condition";
+    return mName->ToString();
 }
 
 HTNAxiomCondition::HTNAxiomCondition(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments)
@@ -168,7 +168,7 @@ bool HTNAxiomCondition::Check(HTNDecompositionContext& ioDecompositionContext, b
 
 std::string HTNAxiomCondition::GetName() const
 {
-    return mName ? mName->ToString() : "Invalid Axiom Condition";
+    return mName->ToString();
 }
 
 std::string HTNConditionAnd::ToString() const

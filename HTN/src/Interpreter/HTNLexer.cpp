@@ -8,15 +8,12 @@
 
 namespace
 {
-std::unordered_map<std::string, HTNTokenType> KeywordsToTokenTypes = {{"domain", HTNTokenType::HTN_DOMAIN},
-                                                                      {"top_level_domain", HTNTokenType::HTN_TOP_LEVEL_DOMAIN},
-                                                                      {"method", HTNTokenType::HTN_METHOD},
-                                                                      {"top_level_method", HTNTokenType::HTN_TOP_LEVEL_METHOD},
-                                                                      {"axiom", HTNTokenType::HTN_AXIOM},
-                                                                      {"and", HTNTokenType::AND},
-                                                                      {"or", HTNTokenType::OR},
-                                                                      {"alt", HTNTokenType::ALT},
-                                                                      {"not", HTNTokenType::NOT}};
+std::unordered_map<std::string, HTNTokenType> KeywordsToTokenTypes = {
+    {"domain", HTNTokenType::HTN_DOMAIN}, {"top_level_domain", HTNTokenType::HTN_TOP_LEVEL_DOMAIN},
+    {"method", HTNTokenType::HTN_METHOD}, {"top_level_method", HTNTokenType::HTN_TOP_LEVEL_METHOD},
+    {"axiom", HTNTokenType::HTN_AXIOM},   {"constants", HTNTokenType::HTN_CONSTANTS},
+    {"and", HTNTokenType::AND},           {"or", HTNTokenType::OR},
+    {"alt", HTNTokenType::ALT},           {"not", HTNTokenType::NOT}};
 
 std::unordered_map<char, std::string> SpecialCharactersToEscapeSequences = {
     {'\a', "\\a"}, {'\b', "\\b"}, {'\f', "\\f"}, {'\n', "\\n"}, {'\r', "\\r"}, {'\t', "\\t"}, {'\v', "\\v"},
@@ -98,6 +95,12 @@ bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
         case '#': {
             // Hash
             AddToken(HTNTokenType::HASH, std::string(1, Character), HTNAtom(), outTokens);
+            AdvancePosition();
+            break;
+        }
+        case '@': {
+            // At
+            AddToken(HTNTokenType::AT, std::string(1, Character), HTNAtom(), outTokens);
             AdvancePosition();
             break;
         }

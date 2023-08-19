@@ -3,6 +3,8 @@
 #include "Interpreter/AST/HTNAxiom.h"
 #include "Interpreter/AST/HTNBranch.h"
 #include "Interpreter/AST/HTNCondition.h"
+#include "Interpreter/AST/HTNConstant.h"
+#include "Interpreter/AST/HTNConstants.h"
 #include "Interpreter/AST/HTNDomain.h"
 #include "Interpreter/AST/HTNMethod.h"
 #include "Interpreter/AST/HTNTask.h"
@@ -55,6 +57,15 @@ std::shared_ptr<HTNDomain> HTNParser::ParseDomain(unsigned int& inPosition)
     }
 
     Domain->SetAxioms(Axioms);
+
+    std::vector<std::shared_ptr<const HTNConstants>> ConstantsContainer;
+    while (std::shared_ptr<HTNConstants> Constants = ParseConstants(CurrentPosition))
+    {
+        Constants->SetScope(Domain);
+        ConstantsContainer.emplace_back(Constants);
+    }
+
+    Domain->SetConstants(ConstantsContainer);
 
     std::vector<std::shared_ptr<const HTNMethod>> Methods;
     while (std::shared_ptr<HTNMethod> Method = ParseMethod(CurrentPosition))
@@ -135,6 +146,83 @@ std::shared_ptr<HTNAxiom> HTNParser::ParseAxiom(unsigned int& inPosition)
     inPosition = CurrentPosition;
 
     return Axiom;
+}
+
+std::shared_ptr<HTNConstants> HTNParser::ParseConstants(unsigned int& inPosition)
+{
+    // '(' ':' 'constants' <identifier>* <constant>* ')'
+
+    unsigned int CurrentPosition = inPosition;
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::LEFT_PARENTHESIS))
+    {
+        return nullptr;
+    }
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::COLON))
+    {
+        return nullptr;
+    }
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::HTN_CONSTANTS))
+    {
+        return nullptr;
+    }
+
+    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition);
+
+    const std::shared_ptr<HTNConstants> Constants = std::make_shared<HTNConstants>(std::move(Name));
+
+    std::vector<std::shared_ptr<const HTNConstant>> ConstantsContainer;
+    while (std::shared_ptr<HTNConstant> Constant = ParseConstant(CurrentPosition))
+    {
+        Constant->SetScope(Constants);
+        ConstantsContainer.emplace_back(Constant);
+    }
+
+    Constants->SetConstants(ConstantsContainer);
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::RIGHT_PARENTHESIS))
+    {
+        return nullptr;
+    }
+
+    inPosition = CurrentPosition;
+
+    return Constants;
+}
+
+std::shared_ptr<HTNConstant> HTNParser::ParseConstant(unsigned int& inPosition)
+{
+    // '(' <identifier> <argument>* ')'
+
+    unsigned int CurrentPosition = inPosition;
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::LEFT_PARENTHESIS))
+    {
+        return nullptr;
+    }
+
+    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition);
+    if (!Name)
+    {
+        return nullptr;
+    }
+
+    std::vector<std::shared_ptr<const HTNValue>> Arguments;
+    while (std::shared_ptr<const HTNValue> Argument = ParseArgument(CurrentPosition))
+    {
+        Arguments.emplace_back(Argument);
+    }
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::RIGHT_PARENTHESIS))
+    {
+        return nullptr;
+    }
+
+    inPosition = CurrentPosition;
+
+    return std::make_shared<HTNConstant>(std::move(Name), Arguments);
 }
 
 std::shared_ptr<HTNMethod> HTNParser::ParseMethod(unsigned int& inPosition)
@@ -356,7 +444,7 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseSubCondition(unsigned int& inP
         {
             const bool IsAxiom = ParseToken(CurrentPosition, HTNTokenType::HASH);
 
-            if (std::unique_ptr<const HTNValue> Key = ParseIdentifier(CurrentPosition))
+            if (std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition))
             {
                 std::vector<std::shared_ptr<const HTNValue>> Arguments;
                 while (std::shared_ptr<const HTNValue> Argument = ParseArgument(CurrentPosition))
@@ -366,11 +454,11 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseSubCondition(unsigned int& inP
 
                 if (IsAxiom)
                 {
-                    Condition = std::make_shared<HTNAxiomCondition>(std::move(Key), Arguments);
+                    Condition = std::make_shared<HTNAxiomCondition>(std::move(Name), Arguments);
                 }
                 else
                 {
-                    Condition = std::make_shared<HTNCondition>(std::move(Key), Arguments);
+                    Condition = std::make_shared<HTNCondition>(std::move(Name), Arguments);
                 }
             }
         }
@@ -431,6 +519,16 @@ std::unique_ptr<HTNValue> HTNParser::ParseArgument(unsigned int& inPosition)
 
     if (ParseToken(CurrentPosition, HTNTokenType::QUESTION_MARK))
     {
+        Argument = ParseIdentifier(CurrentPosition);
+        if (!Argument)
+        {
+            return nullptr;
+        }
+    }
+    else if (ParseToken(CurrentPosition, HTNTokenType::AT))
+    {
+        // TODO salvarez Store that this is a constant somewhere
+        // TODO salvarez Store flags in HTNValue and HTNCondition classes or create new subclasses (e.g. HTNAxiomCondition)
         Argument = ParseIdentifier(CurrentPosition);
         if (!Argument)
         {

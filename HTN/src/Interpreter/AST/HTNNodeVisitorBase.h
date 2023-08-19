@@ -11,6 +11,8 @@ class HTNTask;
 class HTNTask;
 class HTNValue;
 class HTNAxiom;
+class HTNConstant;
+class HTNConstants;
 
 class HTNNodeVisitorBase
 {
@@ -24,4 +26,6 @@ public:
     virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNTask& inTask) const               = 0;
     virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNValue& inValue) const             = 0;
     virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNAxiom& inValue) const             = 0;
+    virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNConstant& inValue) const          = 0;
+    virtual std::vector<std::shared_ptr<const HTNTask>> Visit(const HTNConstants& inValue) const         = 0;
 };

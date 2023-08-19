@@ -100,11 +100,6 @@ int main(int, char**)
     WorldState.AddFact("has_mold", "pasta");
     WorldState.AddFact("is_dry", "pizza");
 
-    // WorldState.AddFact("food", "pasta");
-    // WorldState.AddFact("food", "pizza");
-    // WorldState.AddFact("food", "gelato");
-    // WorldState.AddFact("edible", "gelato");
-
     // Main loop
     bool done = false;
     while (!done)

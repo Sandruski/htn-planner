@@ -32,5 +32,5 @@ std::string HTNAxiom::ToString() const
 
 std::string HTNAxiom::GetName() const
 {
-    return mName ? mName->ToString() : "Invalid Axiom";
+    return mName->ToString();
 }

@@ -23,5 +23,5 @@ std::string HTNBranch::ToString() const
 
 std::string HTNBranch::GetName() const
 {
-    return mName ? mName->ToString() : "Invalid Branch";
+    return mName->ToString();
 }

@@ -38,5 +38,5 @@ std::string HTNMethod::ToString() const
 
 std::string HTNMethod::GetName() const
 {
-    return mName ? mName->ToString() : "Invalid Method";
+    return mName->ToString();
 }
