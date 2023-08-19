@@ -49,31 +49,46 @@ class HTNConditionBase : public HTNNodeBase
 public:
     std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
 
-    virtual bool Check(HTNDecompositionContext& ioDecompositionContext) const = 0;
+    virtual bool Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const = 0;
 };
 
 /**
  * Condition
  * - Queries the arguments in the database
  * - Binds unbound arguments
- * // TODO salvarez Force to have an AND at least, we cannot have this condition alone
  */
 class HTNCondition final : public HTNConditionBase, public std::enable_shared_from_this<HTNCondition>
 {
 public:
-    explicit HTNCondition(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments,
-                          const bool inIsAxiom);
+    explicit HTNCondition(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments);
 
     std::string ToString() const final;
-    bool        Check(HTNDecompositionContext& ioDecompositionContext) const final;
+    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
 
     std::string GetName() const;
-    bool        IsAxiom() const;
 
 private:
     std::unique_ptr<const HTNValue>              mName;
     std::vector<std::shared_ptr<const HTNValue>> mArguments;
-    bool                                         mIsAxiom = false;
+};
+
+/**
+ * Axiom condition
+ * - Checks the condition of an axiom
+ */
+class HTNAxiomCondition final : public HTNConditionBase, public std::enable_shared_from_this<HTNAxiomCondition>
+{
+public:
+    explicit HTNAxiomCondition(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments);
+
+    std::string ToString() const final;
+    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
+
+    std::string GetName() const;
+
+private:
+    std::unique_ptr<const HTNValue>              mName;
+    std::vector<std::shared_ptr<const HTNValue>> mArguments;
 };
 
 /**
@@ -88,7 +103,7 @@ class HTNConditionAnd final : public HTNConditionBase, public std::enable_shared
 {
 public:
     std::string ToString() const final;
-    bool        Check(HTNDecompositionContext& ioDecompositionContext) const final;
+    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
 
     void SetSubConditions(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions);
     const std::vector<std::shared_ptr<const HTNConditionBase>>& GetSubConditions() const;
@@ -110,7 +125,7 @@ class HTNConditionOr final : public HTNConditionBase, public std::enable_shared_
 {
 public:
     std::string ToString() const final;
-    bool        Check(HTNDecompositionContext& ioDecompositionContext) const final;
+    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
 
     void SetSubConditions(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions);
     const std::vector<std::shared_ptr<const HTNConditionBase>>& GetSubConditions() const;
@@ -132,7 +147,7 @@ class HTNConditionAlt final : public HTNConditionBase, public std::enable_shared
 {
 public:
     std::string ToString() const final;
-    bool        Check(HTNDecompositionContext& ioDecompositionContext) const final;
+    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
 
     void SetSubConditions(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions);
     const std::vector<std::shared_ptr<const HTNConditionBase>>& GetSubConditions() const;
@@ -153,7 +168,7 @@ class HTNConditionNot final : public HTNConditionBase
 {
 public:
     std::string ToString() const final;
-    bool        Check(HTNDecompositionContext& ioDecompositionContext) const final;
+    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
 
     void                                           SetSubCondition(const std::shared_ptr<const HTNConditionBase>& inSubCondition);
     const std::shared_ptr<const HTNConditionBase>& GetSubCondition() const;
@@ -175,11 +190,6 @@ inline void HTNConditionWorldStateQuery::SetKey(const std::string& inKey)
 inline void HTNConditionWorldStateQuery::AddArgument(HTNAtom& inArgument)
 {
     mArguments.emplace_back(&inArgument);
-}
-
-inline bool HTNCondition::IsAxiom() const
-{
-    return mIsAxiom;
 }
 
 inline void HTNConditionAnd::SetSubConditions(const std::vector<std::shared_ptr<const HTNConditionBase>>& inSubConditions)

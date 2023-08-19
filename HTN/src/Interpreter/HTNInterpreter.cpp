@@ -124,10 +124,10 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
                 ioDecompositionContext.SetCurrentMethod(CurrentMethod);
 
                 // Initialize the input arguments of the method with the arguments of the compound task
-                const std::shared_ptr<const HTNNodeBase>            TaskParent      = CurrentTask->GetParent();
+                const std::shared_ptr<const HTNNodeBase>            Scope           = CurrentTask->GetScope();
                 const std::vector<std::shared_ptr<const HTNValue>>& TaskArguments   = CurrentTask->GetArguments();
                 const std::vector<std::shared_ptr<const HTNValue>>& MethodArguments = CurrentMethod->GetArguments();
-                if (!HTN::Helpers::CopyArguments(CurrentDecomposition, TaskArguments, MethodArguments, TaskParent, CurrentMethod, {},
+                if (!HTN::Helpers::CopyArguments(CurrentDecomposition, TaskArguments, MethodArguments, Scope, CurrentMethod, {},
                                                  HTN::Helpers::InputPrefixes))
                 {
                     LOG_ERROR("Arguments could not be copied from method to method [{}]", CurrentMethod->GetName());
@@ -144,7 +144,8 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
 
             const std::shared_ptr<const HTNBranch>&        CurrentBranch       = CurrentBranches[CurrentBranchIndex];
             const std::shared_ptr<const HTNConditionBase>& CurrentPreCondition = CurrentBranch->GetPreCondition();
-            const bool                                     Result = CurrentPreCondition ? CurrentPreCondition->Check(ioDecompositionContext) : true;
+            bool                                           HasBoundVariables   = false;
+            const bool Result = CurrentPreCondition ? CurrentPreCondition->Check(ioDecompositionContext, HasBoundVariables) : true;
             if (Result)
             {
                 const std::vector<std::shared_ptr<const HTNTask>>& Tasks = CurrentBranch->GetTasks();

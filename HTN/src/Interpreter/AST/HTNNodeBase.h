@@ -15,19 +15,19 @@ public:
     virtual std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const = 0;
     virtual std::string                                 ToString() const                                  = 0;
 
-    void                                     SetParent(const std::shared_ptr<const HTNNodeBase>& inParent);
-    const std::shared_ptr<const HTNNodeBase> GetParent() const;
+    void                                     SetScope(const std::shared_ptr<const HTNNodeBase>& inScope);
+    const std::shared_ptr<const HTNNodeBase> GetScope() const;
 
 private:
-    std::weak_ptr<const HTNNodeBase> mParent;
+    std::weak_ptr<const HTNNodeBase> mScope;
 };
 
-inline void HTNNodeBase::SetParent(const std::shared_ptr<const HTNNodeBase>& inParent)
+inline void HTNNodeBase::SetScope(const std::shared_ptr<const HTNNodeBase>& inScope)
 {
-    mParent = inParent;
+    mScope = inScope;
 }
 
-inline const std::shared_ptr<const HTNNodeBase> HTNNodeBase::GetParent() const
+inline const std::shared_ptr<const HTNNodeBase> HTNNodeBase::GetScope() const
 {
-    return mParent.lock();
+    return mScope.lock();
 }

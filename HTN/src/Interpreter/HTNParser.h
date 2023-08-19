@@ -29,9 +29,9 @@ private:
     std::shared_ptr<HTNDomain>        ParseDomain(unsigned int& inPosition);
     std::shared_ptr<HTNAxiom>         ParseAxiom(unsigned int& inPosition);
     std::shared_ptr<HTNMethod>        ParseMethod(unsigned int& inPosition);
-    std::shared_ptr<HTNBranch>        ParseBranch(unsigned int& inPosition, const std::shared_ptr<HTNMethod>& inParent);
-    std::shared_ptr<HTNConditionBase> ParseCondition(unsigned int& inPosition, const std::shared_ptr<HTNNodeBase>& inParent);
-    std::shared_ptr<HTNConditionBase> ParseSubCondition(unsigned int& inPosition, const std::shared_ptr<HTNNodeBase>& inParent);
+    std::shared_ptr<HTNBranch>        ParseBranch(unsigned int& inPosition, const std::shared_ptr<HTNMethod>& inScope);
+    std::shared_ptr<HTNConditionBase> ParseCondition(unsigned int& inPosition, const std::shared_ptr<HTNNodeBase>& inScope);
+    std::shared_ptr<HTNConditionBase> ParseSubCondition(unsigned int& inPosition, const std::shared_ptr<HTNNodeBase>& inScope);
     std::shared_ptr<HTNTask>          ParseTask(unsigned int& inPosition);
     std::unique_ptr<HTNValue>         ParseArgument(unsigned int& inPosition);
     std::unique_ptr<HTNValue>         ParseIdentifier(unsigned int& inPosition);

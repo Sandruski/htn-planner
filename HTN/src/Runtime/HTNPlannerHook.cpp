@@ -30,8 +30,8 @@ std::vector<HTNTaskInstance> HTNPlannerHook::MakePlan(const std::string& inEntry
         const std::string& Name = Task->GetName();
 
         std::vector<HTNAtom>                                InstanceArguments;
-        const std::shared_ptr<const HTNNodeBase>            TaskParent = Task->GetParent();
-        const std::vector<std::shared_ptr<const HTNValue>>& Arguments  = Task->GetArguments();
+        const std::shared_ptr<const HTNNodeBase>            Scope     = Task->GetScope();
+        const std::vector<std::shared_ptr<const HTNValue>>& Arguments = Task->GetArguments();
         for (const std::shared_ptr<const HTNValue>& Argument : Arguments)
         {
             const HTNAtom& ArgumentValue = Argument->GetValue();
@@ -42,7 +42,7 @@ std::vector<HTNTaskInstance> HTNPlannerHook::MakePlan(const std::string& inEntry
             }
 
             const std::string& VariableName = ArgumentValue.GetValue<std::string>();
-            const HTNAtom*     Variable     = CurrentDecomposition.FindVariable(TaskParent, VariableName);
+            const HTNAtom*     Variable     = CurrentDecomposition.FindVariable(Scope, VariableName);
             if (!Variable)
             {
                 LOG_ERROR("Variable [{}] not found", VariableName);
