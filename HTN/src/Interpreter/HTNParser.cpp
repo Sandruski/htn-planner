@@ -209,11 +209,7 @@ std::shared_ptr<HTNConstant> HTNParser::ParseConstant(unsigned int& inPosition)
         return nullptr;
     }
 
-    std::vector<std::shared_ptr<const HTNValue>> Arguments;
-    while (std::shared_ptr<const HTNValue> Argument = ParseArgument(CurrentPosition))
-    {
-        Arguments.emplace_back(Argument);
-    }
+    std::shared_ptr<const HTNValue> Argument = ParseArgument(CurrentPosition);
 
     if (!ParseToken(CurrentPosition, HTNTokenType::RIGHT_PARENTHESIS))
     {
@@ -222,7 +218,7 @@ std::shared_ptr<HTNConstant> HTNParser::ParseConstant(unsigned int& inPosition)
 
     inPosition = CurrentPosition;
 
-    return std::make_shared<HTNConstant>(std::move(Name), Arguments);
+    return std::make_shared<HTNConstant>(std::move(Name), Argument);
 }
 
 std::shared_ptr<HTNMethod> HTNParser::ParseMethod(unsigned int& inPosition)

@@ -8,6 +8,7 @@
 class HTNMethod;
 class HTNValue;
 class HTNAxiom;
+class HTNConstants;
 
 class HTNDomain final : public HTNNodeBase
 {
