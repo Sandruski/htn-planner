@@ -1,6 +1,7 @@
 #include "Interpreter/HTNInterpreter.h"
 
 #include "HTNHelpers.h"
+#include "HTNLog.h"
 #include "Interpreter/AST/HTNBranch.h"
 #include "Interpreter/AST/HTNCondition.h"
 #include "Interpreter/AST/HTNDomain.h"
@@ -10,7 +11,6 @@
 #include "Interpreter/HTNLexer.h"
 #include "Interpreter/HTNParser.h"
 #include "Interpreter/HTNToken.h"
-#include "Log.h"
 #include "Runtime/HTNDecompositionContext.h"
 
 #include <cassert>

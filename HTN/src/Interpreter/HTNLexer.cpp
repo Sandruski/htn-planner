@@ -1,7 +1,7 @@
 #include "Interpreter/HTNLexer.h"
 
+#include "HTNLog.h"
 #include "HTNToken.h"
-#include "Log.h"
 
 #include <limits>
 #include <unordered_map>
@@ -15,9 +15,7 @@ std::unordered_map<std::string, HTNTokenType> KeywordsToTokenTypes = {
     {"and", HTNTokenType::AND},           {"or", HTNTokenType::OR},
     {"alt", HTNTokenType::ALT},           {"not", HTNTokenType::NOT}};
 
-std::unordered_map<char, std::string> SpecialCharactersToEscapeSequences = {
-    {'\a', "\\a"}, {'\b', "\\b"}, {'\f', "\\f"}, {'\n', "\\n"}, {'\r', "\\r"}, {'\t', "\\t"}, {'\v', "\\v"},
-};
+std::unordered_map<char, std::string> SpecialCharactersToEscapeSequences = {{'\t', "\\t"}, {'\n', "\\n"}};
 
 bool IsValidCharacter(const char inCharacter)
 {
@@ -135,7 +133,7 @@ bool HTNLexer::Lex(std::vector<HTNToken>& outTokens)
         }
         case '"': {
             // String
-            Result = Result && LexString(outTokens);
+            Result = LexString(outTokens) && Result;
             break;
         }
         default: {
@@ -185,6 +183,11 @@ void HTNLexer::LexNumber(std::vector<HTNToken>& outTokens)
 {
     const unsigned int StartPosition = mPosition;
 
+#ifdef HTN_DEBUG
+    const unsigned int StartRow    = mRow;
+    const unsigned int StartColumn = mColumn;
+#endif
+
     AdvancePosition();
 
     // Check for more digits
@@ -208,8 +211,8 @@ void HTNLexer::LexNumber(std::vector<HTNToken>& outTokens)
         const unsigned int EndPosition = mPosition - StartPosition;
         const std::string  Lexeme      = mText.substr(StartPosition, EndPosition);
         const float        Number      = std::stof(Lexeme);
-        CLOG_ERROR(std::stod(Lexeme) < std::numeric_limits<float>::min() || std::stod(Lexeme) > std::numeric_limits<float>::max(),
-                   "Number out of bounds");
+        CLOG_HTN_ERROR(std::stod(Lexeme) < std::numeric_limits<float>::min() || std::stod(Lexeme) > std::numeric_limits<float>::max(), StartRow,
+                       StartColumn, "Number out of bounds");
         AddToken(HTNTokenType::NUMBER, Lexeme, HTNAtom(Number), outTokens);
     }
     else

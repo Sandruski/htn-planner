@@ -1,5 +1,6 @@
 #include "Interpreter/HTNParser.h"
 
+#include "HTNLog.h"
 #include "Interpreter/AST/HTNAxiom.h"
 #include "Interpreter/AST/HTNBranch.h"
 #include "Interpreter/AST/HTNCondition.h"
@@ -9,13 +10,14 @@
 #include "Interpreter/AST/HTNMethod.h"
 #include "Interpreter/AST/HTNTask.h"
 #include "Interpreter/AST/HTNValue.h"
-#include "Log.h"
 #include "Runtime/HTNAtom.h"
 
 std::shared_ptr<const HTNDomain> HTNParser::Parse()
 {
-    unsigned int InitialPosition = 0;
-    return ParseDomain(InitialPosition);
+    unsigned int                           InitialPosition = 0;
+    const std::shared_ptr<const HTNDomain> Domain          = ParseDomain(InitialPosition);
+    CLOG_HTN_ERROR(!Domain, mLastErrorRow, mLastErrorColumn, "{}", mLastErrorMessage);
+    return Domain;
 }
 
 std::shared_ptr<HTNDomain> HTNParser::ParseDomain(unsigned int& inPosition)
@@ -86,67 +88,7 @@ std::shared_ptr<HTNDomain> HTNParser::ParseDomain(unsigned int& inPosition)
     return Domain;
 }
 
-std::shared_ptr<HTNAxiom> HTNParser::ParseAxiom(unsigned int& inPosition)
-{
-    // '(' ':' 'axiom' '(' <identifier> <argument>* ')' <condition>* ')'
 
-    unsigned int CurrentPosition = inPosition;
-
-    if (!ParseToken(CurrentPosition, HTNTokenType::LEFT_PARENTHESIS))
-    {
-        return nullptr;
-    }
-
-    if (!ParseToken(CurrentPosition, HTNTokenType::COLON))
-    {
-        return nullptr;
-    }
-
-    if (!ParseToken(CurrentPosition, HTNTokenType::HTN_AXIOM))
-    {
-        return nullptr;
-    }
-
-    if (!ParseToken(CurrentPosition, HTNTokenType::LEFT_PARENTHESIS))
-    {
-        return nullptr;
-    }
-
-    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition);
-    if (!Name)
-    {
-        return nullptr;
-    }
-
-    std::vector<std::shared_ptr<const HTNValue>> Arguments;
-    while (std::shared_ptr<const HTNValue> Argument = ParseArgument(CurrentPosition))
-    {
-        Arguments.emplace_back(Argument);
-    }
-
-    if (!ParseToken(CurrentPosition, HTNTokenType::RIGHT_PARENTHESIS))
-    {
-        return nullptr;
-    }
-
-    const std::shared_ptr<HTNAxiom> Axiom = std::make_shared<HTNAxiom>(std::move(Name), Arguments);
-
-    const std::shared_ptr<HTNConditionBase> Condition = ParseCondition(CurrentPosition, Axiom);
-    if (Condition)
-    {
-        Condition->SetScope(Axiom);
-        Axiom->SetCondition(Condition);
-    }
-
-    if (!ParseToken(CurrentPosition, HTNTokenType::RIGHT_PARENTHESIS))
-    {
-        return nullptr;
-    }
-
-    inPosition = CurrentPosition;
-
-    return Axiom;
-}
 
 std::shared_ptr<HTNConstants> HTNParser::ParseConstants(unsigned int& inPosition)
 {
@@ -219,6 +161,68 @@ std::shared_ptr<HTNConstant> HTNParser::ParseConstant(unsigned int& inPosition)
     inPosition = CurrentPosition;
 
     return std::make_shared<HTNConstant>(std::move(Name), Argument);
+}
+
+std::shared_ptr<HTNAxiom> HTNParser::ParseAxiom(unsigned int& inPosition)
+{
+    // '(' ':' 'axiom' '(' <identifier> <argument>* ')' <condition>* ')'
+
+    unsigned int CurrentPosition = inPosition;
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::LEFT_PARENTHESIS))
+    {
+        return nullptr;
+    }
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::COLON))
+    {
+        return nullptr;
+    }
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::HTN_AXIOM))
+    {
+        return nullptr;
+    }
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::LEFT_PARENTHESIS))
+    {
+        return nullptr;
+    }
+
+    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition);
+    if (!Name)
+    {
+        return nullptr;
+    }
+
+    std::vector<std::shared_ptr<const HTNValue>> Arguments;
+    while (std::shared_ptr<const HTNValue> Argument = ParseArgument(CurrentPosition))
+    {
+        Arguments.emplace_back(Argument);
+    }
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::RIGHT_PARENTHESIS))
+    {
+        return nullptr;
+    }
+
+    const std::shared_ptr<HTNAxiom> Axiom = std::make_shared<HTNAxiom>(std::move(Name), Arguments);
+
+    const std::shared_ptr<HTNConditionBase> Condition = ParseCondition(CurrentPosition, Axiom);
+    if (Condition)
+    {
+        Condition->SetScope(Axiom);
+        Axiom->SetCondition(Condition);
+    }
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::RIGHT_PARENTHESIS))
+    {
+        return nullptr;
+    }
+
+    inPosition = CurrentPosition;
+
+    return Axiom;
 }
 
 std::shared_ptr<HTNMethod> HTNParser::ParseMethod(unsigned int& inPosition)
@@ -605,15 +609,22 @@ const HTNToken* HTNParser::ParseToken(unsigned int& inPosition, const HTNTokenTy
     const HTNToken* Token = GetToken(inPosition);
     if (!Token)
     {
-        LOG_ERROR("Token at [{}] is out of bounds [{}]", inPosition, mTokens.size());
+#if HTN_DEBUG
+        mLastErrorMessage = std::format("Token at [{}] is out of bounds [{}]", inPosition, mTokens.size());
+        mLastErrorRow     = mLastErrorColumn - 1;
+#endif
         return nullptr;
     }
 
     const HTNTokenType TokenType = Token->GetType();
     if (inTokenType != TokenType)
     {
-        LOG_HTN(Token->GetRow(), Token->GetColumn(), "Token [{}] is of type [{}] instead of [{}]", Token->GetLexeme(),
-                GetTokenTypeString(Token->GetType()), GetTokenTypeString(inTokenType));
+#if HTN_DEBUG
+        mLastErrorMessage = std::format("Token [{}] is of type [{}] instead of [{}]", Token->GetLexeme(), GetTokenTypeString(Token->GetType()),
+                                        GetTokenTypeString(inTokenType));
+        mLastErrorRow     = Token->GetRow();
+        mLastErrorColumn  = Token->GetColumn();
+#endif
         return nullptr;
     }
 

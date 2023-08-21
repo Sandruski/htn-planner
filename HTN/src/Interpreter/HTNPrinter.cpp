@@ -2,7 +2,7 @@
 
 /*
 #include "Interpreter/AST/HTNDomain.h"
-#include "Log.h"
+#include "HTNLog.h"
 
 HTNPrinter::HTNPrinter(std::unique_ptr<const HTNDomain> inDomain)
 	: mDomain(std::move(inDomain))

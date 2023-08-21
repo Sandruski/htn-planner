@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <string>
 #include <vector>
 
 class HTNBranch;
@@ -29,9 +30,9 @@ public:
 
 private:
     std::shared_ptr<HTNDomain>        ParseDomain(unsigned int& inPosition);
-    std::shared_ptr<HTNAxiom>         ParseAxiom(unsigned int& inPosition);
     std::shared_ptr<HTNConstants>     ParseConstants(unsigned int& inPosition);
     std::shared_ptr<HTNConstant>      ParseConstant(unsigned int& inPosition);
+    std::shared_ptr<HTNAxiom>         ParseAxiom(unsigned int& inPosition);
     std::shared_ptr<HTNMethod>        ParseMethod(unsigned int& inPosition);
     std::shared_ptr<HTNBranch>        ParseBranch(unsigned int& inPosition, const std::shared_ptr<HTNMethod>& inScope);
     std::shared_ptr<HTNConditionBase> ParseCondition(unsigned int& inPosition, const std::shared_ptr<HTNNodeBase>& inScope);
@@ -46,6 +47,13 @@ private:
     const HTNToken* GetToken(const unsigned int inPosition) const;
 
     std::vector<HTNToken> mTokens;
+
+#if HTN_DEBUG
+private:
+    std::string mLastErrorMessage;
+    int         mLastErrorRow    = -1;
+    int         mLastErrorColumn = -1;
+#endif
 };
 
 inline HTNParser::HTNParser(const std::vector<HTNToken>& inTokens) : mTokens(inTokens)

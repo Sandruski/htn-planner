@@ -1,7 +1,7 @@
 #include "HTNHelpers.h"
 
+#include "HTNLog.h"
 #include "Interpreter/AST/HTNValue.h"
-#include "Log.h"
 #include "Runtime/HTNAtom.h"
 #include "Runtime/HTNDecompositionContext.h"
 

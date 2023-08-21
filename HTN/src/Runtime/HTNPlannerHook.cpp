@@ -1,9 +1,9 @@
 #include "HTNPlannerHook.h"
 
+#include "HTNLog.h"
 #include "Interpreter/AST/HTNBranch.h"
 #include "Interpreter/AST/HTNTask.h"
 #include "Interpreter/AST/HTNValue.h"
-#include "Log.h"
 #include "Runtime/HTNDecompositionContext.h"
 
 bool HTNPlannerHook::ParseDomain(const std::string& inDomainPath)

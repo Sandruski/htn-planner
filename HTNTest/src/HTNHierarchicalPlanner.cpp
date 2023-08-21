@@ -1,16 +1,16 @@
-#include "Log.h"
+#include "HTNLog.h"
 #include "Runtime/HTNAtom.h"
 #include "Runtime/HTNPlanningUnit.h"
 #include "Runtime/HTNWorldState.h"
 
 #include <algorithm>
-#include <iostream>
-#include <thread>
 #include <execution>
+#include <iostream>
 #include <iterator>
-#include <vector>
 #include <sstream>
 #include <string>
+#include <thread>
+#include <vector>
 
 // Test constants groups parsing
 TEST(HTNHierarchicalPlanner, DISABLED_HTNDomainConstantsParsing)
@@ -43,26 +43,26 @@ TEST(HTNHierarchicalPlanner, DISABLED_HTNDomainMethodsParsing)
 // Test planning
 TEST(HTNHierarchicalPlanner, HTNPlanning)
 {
-    const std::string DomainPath = "../Domains/example_domain3.domain";
+    const std::string DomainPath     = "../Domains/example_domain3.domain";
     const std::string EntryPointName = "entry_point";
 
     HTNPlanningUnit PlanningUnit;
     EXPECT_TRUE(PlanningUnit.ParseDomain(DomainPath));
 
     HTNWorldState& WorldState = PlanningUnit.GetWorldStateMutable();
-	WorldState.AddFact("item", "wallet");
-	WorldState.AddFact("item", "apple");
-	WorldState.AddFact("item", "fruit");
-	WorldState.AddFact("item", "tea");
-	WorldState.AddFact("item", "wallet", "full");
-	WorldState.AddFact("loggable", "wallet");
-	WorldState.AddFact("loggable", "apple");
-	WorldState.AddFact("edible", "tea");
+    WorldState.AddFact("item", "wallet");
+    WorldState.AddFact("item", "apple");
+    WorldState.AddFact("item", "fruit");
+    WorldState.AddFact("item", "tea");
+    WorldState.AddFact("item", "wallet", "full");
+    WorldState.AddFact("loggable", "wallet");
+    WorldState.AddFact("loggable", "apple");
+    WorldState.AddFact("edible", "tea");
 
     const std::vector<HTNTaskInstance>& Plan = PlanningUnit.ExecuteTopLevelMethod(EntryPointName);
     for (const HTNTaskInstance& Task : Plan)
     {
-        std::string Message = Task.GetName();
+        std::string                 Message   = Task.GetName();
         const std::vector<HTNAtom>& Arguments = Task.GetArguments();
         for (const HTNAtom& Argument : Arguments)
         {
@@ -108,14 +108,14 @@ static void sParallelWork(HTNPlanningUnit& inPlanningUnit, const std::string& En
 
 TEST(HTNHierarchicalPlanner, DISABLED_MultiThreadingHTNPlanning)
 {
-    const std::string DomainPath = "../Domains/multithreading_domain.domain";
+    const std::string DomainPath     = "../Domains/multithreading_domain.domain";
     const std::string EntryPointName = "entry_point";
 
     std::vector<HTNPlanningUnit> PlanningUnits;
-    PlanningUnits.resize(1000);				/// 10 planning units executed in parallel.
+    PlanningUnits.resize(1000); /// 10 planning units executed in parallel.
 
     // Parse domain
-    // TODO salvarez Parse the domain only once because it is the same for all the planning units 
+    // TODO salvarez Parse the domain only once because it is the same for all the planning units
     for (HTNPlanningUnit& PlanningUnit : PlanningUnits)
     {
         EXPECT_TRUE(PlanningUnit.ParseDomain(DomainPath));
@@ -124,11 +124,10 @@ TEST(HTNHierarchicalPlanner, DISABLED_MultiThreadingHTNPlanning)
     // Make plan
     // parallel for
     std::for_each(std::execution::par, PlanningUnits.begin(), PlanningUnits.end(),
-        [&PlanningUnits, &EntryPointName](HTNPlanningUnit& inPlanningUnit)
-        {
-            size_t idx = &inPlanningUnit - &PlanningUnits[0];
-    sParallelWork(inPlanningUnit, EntryPointName, idx);
-        });
+                  [&PlanningUnits, &EntryPointName](HTNPlanningUnit& inPlanningUnit) {
+                      size_t idx = &inPlanningUnit - &PlanningUnits[0];
+                      sParallelWork(inPlanningUnit, EntryPointName, idx);
+                  });
 
     // TODO salvarez HTNPlannerRunner // Action execution
 }
