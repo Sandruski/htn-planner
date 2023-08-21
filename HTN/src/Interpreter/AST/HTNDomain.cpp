@@ -29,11 +29,11 @@ std::string HTNDomain::ToString() const
     return Name;
 }
 
-std::shared_ptr<const HTNAxiom> HTNDomain::FindAxiomByName(const std::string& inAxiomName) const
+std::shared_ptr<const HTNAxiom> HTNDomain::FindAxiomByName(const std::string& inName) const
 {
     for (const std::shared_ptr<const HTNAxiom>& Axiom : mAxioms)
     {
-        if (inAxiomName == Axiom->GetName())
+        if (inName == Axiom->GetName())
         {
             return Axiom;
         }
@@ -42,11 +42,11 @@ std::shared_ptr<const HTNAxiom> HTNDomain::FindAxiomByName(const std::string& in
     return nullptr;
 }
 
-std::shared_ptr<const HTNMethod> HTNDomain::FindMethodByName(const std::string& inMethodName) const
+std::shared_ptr<const HTNMethod> HTNDomain::FindMethodByName(const std::string& inName) const
 {
     for (const std::shared_ptr<const HTNMethod>& Method : mMethods)
     {
-        if (inMethodName == Method->GetName())
+        if (inName == Method->GetName())
         {
             return Method;
         }

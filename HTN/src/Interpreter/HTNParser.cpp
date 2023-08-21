@@ -49,15 +49,6 @@ std::shared_ptr<HTNDomain> HTNParser::ParseDomain(unsigned int& inPosition)
 
     const std::shared_ptr<HTNDomain> Domain = std::make_shared<HTNDomain>(std::move(Name), IsTopLevelDomain);
 
-    std::vector<std::shared_ptr<const HTNAxiom>> Axioms;
-    while (std::shared_ptr<HTNAxiom> Axiom = ParseAxiom(CurrentPosition))
-    {
-        Axiom->SetScope(Domain);
-        Axioms.emplace_back(Axiom);
-    }
-
-    Domain->SetAxioms(Axioms);
-
     std::vector<std::shared_ptr<const HTNConstants>> ConstantsContainer;
     while (std::shared_ptr<HTNConstants> Constants = ParseConstants(CurrentPosition))
     {
@@ -66,6 +57,15 @@ std::shared_ptr<HTNDomain> HTNParser::ParseDomain(unsigned int& inPosition)
     }
 
     Domain->SetConstants(ConstantsContainer);
+
+    std::vector<std::shared_ptr<const HTNAxiom>> Axioms;
+    while (std::shared_ptr<HTNAxiom> Axiom = ParseAxiom(CurrentPosition))
+    {
+        Axiom->SetScope(Domain);
+        Axioms.emplace_back(Axiom);
+    }
+
+    Domain->SetAxioms(Axioms);
 
     std::vector<std::shared_ptr<const HTNMethod>> Methods;
     while (std::shared_ptr<HTNMethod> Method = ParseMethod(CurrentPosition))
