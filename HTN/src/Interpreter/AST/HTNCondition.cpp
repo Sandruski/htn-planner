@@ -59,10 +59,11 @@ bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext, bool& 
         const HTNAtom* ArgumentValue        = &Argument->GetValue();
         HTNAtom*       ArgumentValueMutable = nullptr;
 
+        // TODO salvarez
         // Arguments can be identifiers or literals
-        if (Argument->IsIdentifier())
+        if (Argument->GetType() == HTNValueType::VARIABLE)
         {
-            // If argument is an identifier, get or add a variable for it in its scope
+            // If argument is a variable, get or add a variable for it in its scope
             std::string ArgumentValueString = ArgumentValue->GetValue<std::string>();
             ArgumentValueMutable            = &CurrentDecomposition.GetOrAddVariable(Scope, ArgumentValueString);
             ShouldBindArguments             = ShouldBindArguments || !ArgumentValueMutable->IsSet();

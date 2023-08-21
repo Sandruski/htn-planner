@@ -22,10 +22,11 @@ bool CopyArguments(HTNDecompositionRecord& inDecomposition, const std::vector<st
 
     for (size_t i = 0; i < SourceArgumentsSize; ++i)
     {
-        // Source argument can be an identifier
+        // TODO salvarez
+        // Source argument can be a variable
         const std::shared_ptr<const HTNValue>& SourceArgument      = inSourceArguments[i];
         const HTNAtom*                         SourceArgumentValue = &SourceArgument->GetValue();
-        if (SourceArgument->IsIdentifier())
+        if (SourceArgument->GetType() == HTNValueType::VARIABLE)
         {
             // Source argument can be prefixed
             std::string SourceArgumentValueString = SourceArgumentValue->GetValue<std::string>();
@@ -44,10 +45,10 @@ bool CopyArguments(HTNDecompositionRecord& inDecomposition, const std::vector<st
             SourceArgumentValue = &inDecomposition.GetOrAddVariable(inSourceScope, SourceArgumentValueString);
         }
 
-        // Destination argument must be an identifier
+        // Destination argument must be a variable
         const std::shared_ptr<const HTNValue>& DestinationArgument      = inDestinationArguments[i];
         const HTNAtom&                         DestinationArgumentValue = DestinationArgument->GetValue();
-        if (!DestinationArgument->IsIdentifier())
+        if (DestinationArgument->GetType() != HTNValueType::VARIABLE)
         {
             continue;
         }

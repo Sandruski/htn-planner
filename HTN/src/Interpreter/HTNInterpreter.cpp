@@ -91,8 +91,9 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
     HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
     // Dummy root compound task
-    const std::shared_ptr<const HTNTask> RootCompoundTask = std::make_shared<HTNTask>(
-        HTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNAtom(inEntryPointName), true), std::vector<std::shared_ptr<const HTNValue>>());
+    const std::shared_ptr<const HTNTask> RootCompoundTask =
+        std::make_shared<HTNTask>(HTNTaskType::COMPOUND, std::make_unique<HTNValue>(HTNAtom(inEntryPointName), HTNValueType::LITERAL),
+                                  std::vector<std::shared_ptr<const HTNValue>>());
     CurrentDecomposition.PushTaskToProcess(RootCompoundTask);
 
     while (CurrentDecomposition.HasTasksToProcess())

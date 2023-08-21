@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Interpreter/AST/HTNValue.h"
 #include "Interpreter/HTNToken.h"
 
 #include <algorithm>
@@ -39,7 +40,7 @@ private:
     std::shared_ptr<HTNConditionBase> ParseSubCondition(unsigned int& inPosition, const std::shared_ptr<HTNNodeBase>& inScope);
     std::shared_ptr<HTNTask>          ParseTask(unsigned int& inPosition);
     std::unique_ptr<HTNValue>         ParseArgument(unsigned int& inPosition);
-    std::unique_ptr<HTNValue>         ParseIdentifier(unsigned int& inPosition);
+    std::unique_ptr<HTNValue>         ParseIdentifier(unsigned int& inPosition, const HTNValueType inValueType);
     std::unique_ptr<HTNValue>         ParseNumber(unsigned int& inPosition);
     std::unique_ptr<HTNValue>         ParseString(unsigned int& inPosition);
     const HTNToken*                   ParseToken(unsigned int& inPosition, const HTNTokenType inTokenType);

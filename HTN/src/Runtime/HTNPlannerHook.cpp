@@ -34,8 +34,9 @@ std::vector<HTNTaskInstance> HTNPlannerHook::MakePlan(const std::string& inEntry
         const std::vector<std::shared_ptr<const HTNValue>>& Arguments = Task->GetArguments();
         for (const std::shared_ptr<const HTNValue>& Argument : Arguments)
         {
+            // TODO salvarez
             const HTNAtom& ArgumentValue = Argument->GetValue();
-            if (!Argument->IsIdentifier())
+            if (Argument->GetType() != HTNValueType::VARIABLE)
             {
                 InstanceArguments.emplace_back(ArgumentValue);
                 continue;

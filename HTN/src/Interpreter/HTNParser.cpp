@@ -41,7 +41,7 @@ std::shared_ptr<HTNDomain> HTNParser::ParseDomain(unsigned int& inPosition)
         return nullptr;
     }
 
-    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition);
+    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
     if (!Name)
     {
         return nullptr;
@@ -88,8 +88,6 @@ std::shared_ptr<HTNDomain> HTNParser::ParseDomain(unsigned int& inPosition)
     return Domain;
 }
 
-
-
 std::shared_ptr<HTNConstants> HTNParser::ParseConstants(unsigned int& inPosition)
 {
     // '(' ':' 'constants' <identifier>* <constant>* ')'
@@ -111,7 +109,7 @@ std::shared_ptr<HTNConstants> HTNParser::ParseConstants(unsigned int& inPosition
         return nullptr;
     }
 
-    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition);
+    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
 
     const std::shared_ptr<HTNConstants> Constants = std::make_shared<HTNConstants>(std::move(Name));
 
@@ -145,7 +143,7 @@ std::shared_ptr<HTNConstant> HTNParser::ParseConstant(unsigned int& inPosition)
         return nullptr;
     }
 
-    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition);
+    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
     if (!Name)
     {
         return nullptr;
@@ -189,7 +187,7 @@ std::shared_ptr<HTNAxiom> HTNParser::ParseAxiom(unsigned int& inPosition)
         return nullptr;
     }
 
-    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition);
+    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
     if (!Name)
     {
         return nullptr;
@@ -251,7 +249,7 @@ std::shared_ptr<HTNMethod> HTNParser::ParseMethod(unsigned int& inPosition)
         return nullptr;
     }
 
-    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition);
+    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
     if (!Name)
     {
         return nullptr;
@@ -302,7 +300,7 @@ std::shared_ptr<HTNBranch> HTNParser::ParseBranch(unsigned int& inPosition, cons
         return nullptr;
     }
 
-    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition);
+    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
     if (!Name)
     {
         return nullptr;
@@ -444,7 +442,7 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseSubCondition(unsigned int& inP
         {
             const bool IsAxiom = ParseToken(CurrentPosition, HTNTokenType::HASH);
 
-            if (std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition))
+            if (std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL))
             {
                 std::vector<std::shared_ptr<const HTNValue>> Arguments;
                 while (std::shared_ptr<const HTNValue> Argument = ParseArgument(CurrentPosition))
@@ -487,7 +485,7 @@ std::shared_ptr<HTNTask> HTNParser::ParseTask(unsigned int& inPosition)
 
     const HTNTaskType Type = ParseToken(CurrentPosition, HTNTokenType::EXCLAMATION_MARK) ? HTNTaskType::PRIMITIVE : HTNTaskType::COMPOUND;
 
-    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition);
+    std::unique_ptr<const HTNValue> Name = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
     if (!Name)
     {
         return nullptr;
@@ -519,7 +517,7 @@ std::unique_ptr<HTNValue> HTNParser::ParseArgument(unsigned int& inPosition)
 
     if (ParseToken(CurrentPosition, HTNTokenType::QUESTION_MARK))
     {
-        Argument = ParseIdentifier(CurrentPosition);
+        Argument = ParseIdentifier(CurrentPosition, HTNValueType::VARIABLE);
         if (!Argument)
         {
             return nullptr;
@@ -527,9 +525,7 @@ std::unique_ptr<HTNValue> HTNParser::ParseArgument(unsigned int& inPosition)
     }
     else if (ParseToken(CurrentPosition, HTNTokenType::AT))
     {
-        // TODO salvarez Store that this is a constant somewhere
-        // TODO salvarez Store flags in HTNValue and HTNCondition classes or create new subclasses (e.g. HTNAxiomCondition)
-        Argument = ParseIdentifier(CurrentPosition);
+        Argument = ParseIdentifier(CurrentPosition, HTNValueType::CONSTANT);
         if (!Argument)
         {
             return nullptr;
@@ -553,7 +549,7 @@ std::unique_ptr<HTNValue> HTNParser::ParseArgument(unsigned int& inPosition)
     return Argument;
 }
 
-std::unique_ptr<HTNValue> HTNParser::ParseIdentifier(unsigned int& inPosition)
+std::unique_ptr<HTNValue> HTNParser::ParseIdentifier(unsigned int& inPosition, const HTNValueType inValueType)
 {
     // IDENTIFIER
 
@@ -567,7 +563,7 @@ std::unique_ptr<HTNValue> HTNParser::ParseIdentifier(unsigned int& inPosition)
 
     inPosition = CurrentPosition;
 
-    return std::make_unique<HTNValue>(Identifier->GetValue(), true);
+    return std::make_unique<HTNValue>(Identifier->GetValue(), inValueType);
 }
 
 std::unique_ptr<HTNValue> HTNParser::ParseNumber(unsigned int& inPosition)
@@ -584,7 +580,7 @@ std::unique_ptr<HTNValue> HTNParser::ParseNumber(unsigned int& inPosition)
 
     inPosition = CurrentPosition;
 
-    return std::make_unique<HTNValue>(Number->GetValue(), false);
+    return std::make_unique<HTNValue>(Number->GetValue(), HTNValueType::LITERAL);
 }
 
 std::unique_ptr<HTNValue> HTNParser::ParseString(unsigned int& inPosition)
@@ -601,7 +597,7 @@ std::unique_ptr<HTNValue> HTNParser::ParseString(unsigned int& inPosition)
 
     inPosition = CurrentPosition;
 
-    return std::make_unique<HTNValue>(String->GetValue(), false);
+    return std::make_unique<HTNValue>(String->GetValue(), HTNValueType::LITERAL);
 }
 
 const HTNToken* HTNParser::ParseToken(unsigned int& inPosition, const HTNTokenType inTokenType)
