@@ -5,8 +5,7 @@
 
 #include <format>
 
-HTNTask::HTNTask(const HTNTaskType inType, std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments)
-    : mType(inType), mName(std::move(inName)), mArguments(inArguments)
+HTNTask::HTNTask(const std::vector<std::shared_ptr<const HTNValue>>& inArguments, const HTNTaskType inType) : mArguments(inArguments), mType(inType)
 {
 }
 
@@ -17,19 +16,26 @@ std::vector<std::shared_ptr<const HTNTask>> HTNTask::Accept(const HTNNodeVisitor
     return inVisitor.Visit(*this);
 }
 
+std::string HTNTask::GetID() const
+{
+    return GetIDArgument()->ToString();
+}
+
 std::string HTNTask::ToString() const
 {
-    std::string Name = GetName();
+    std::string Description;
 
     for (const std::shared_ptr<const HTNValue>& Argument : mArguments)
     {
-        Name.append(std::format(" {}", Argument->ToString()));
+        Description.append(std::format("{} ", Argument->ToString()));
     }
 
-    return Name;
-}
+    // Remove last " "
+    const size_t Position = Description.find_last_of(" ");
+    if (Position != std::string::npos)
+    {
+        Description.erase(Position);
+    }
 
-std::string HTNTask::GetName() const
-{
-    return mName->ToString();
+    return Description;
 }

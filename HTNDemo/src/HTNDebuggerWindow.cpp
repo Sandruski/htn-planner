@@ -128,7 +128,7 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     struct EntryPoint
     {
-        std::string  Name;
+        std::string  ID;
         unsigned int Amount = 0;
     };
 
@@ -139,9 +139,9 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     if (ImGui::Button("+"))
     {
-        const std::string DefaultEntryPointName = (Methods && !Methods->empty()) ? (*Methods)[0]->GetName() : "";
+        const std::string      DefaultEntryPointID     = (Methods && !Methods->empty()) ? (*Methods)[0]->GetID() : "";
         constexpr unsigned int DefaultEntryPointAmount = 1;
-        EntryPoints.emplace_back(DefaultEntryPointName, DefaultEntryPointAmount);
+        EntryPoints.emplace_back(DefaultEntryPointID, DefaultEntryPointAmount);
     }
 
     if (ImGui::IsItemHovered())
@@ -165,7 +165,7 @@ void HTNDebuggerWindow::RenderDecomposition()
     {
         EntryPoint& EntryPoint = EntryPoints[i];
 
-        if (!EntryPoint.Name.empty())
+        if (!EntryPoint.ID.empty())
         {
             if (Methods)
             {
@@ -180,21 +180,21 @@ void HTNDebuggerWindow::RenderDecomposition()
                         return false;
                     }
 
-                    return (EntryPoint.Name == inMethod->GetName());
+                    return (EntryPoint.ID == inMethod->GetID());
                 });
 
                 if (Method == Methods->end())
                 {
-                    EntryPoint.Name.clear();
+                    EntryPoint.ID.clear();
                 }
             }
             else
             {
-                EntryPoint.Name.clear();
+                EntryPoint.ID.clear();
             }
         }
 
-        if (ImGui::BeginCombo(std::format("##Method{}", i).c_str(), EntryPoint.Name.c_str(), ComboFlags))
+        if (ImGui::BeginCombo(std::format("##Method{}", i).c_str(), EntryPoint.ID.c_str(), ComboFlags))
         {
             if (Methods)
             {
@@ -210,11 +210,11 @@ void HTNDebuggerWindow::RenderDecomposition()
                         continue;
                     }
 
-                    const std::string MethodName = Method->GetName();
-                    const bool        IsSelected = (EntryPoint.Name == MethodName);
-                    if (ImGui::Selectable(MethodName.c_str(), IsSelected, SelectableFlags))
+                    const std::string MethodID   = Method->GetID();
+                    const bool        IsSelected = (EntryPoint.ID == MethodID);
+                    if (ImGui::Selectable(MethodID.c_str(), IsSelected, SelectableFlags))
                     {
-                        EntryPoint.Name = MethodName;
+                        EntryPoint.ID = MethodID;
                     }
 
                     if (IsSelected)
@@ -250,7 +250,7 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     struct LastPlan
     {
-        std::string                  EntryPointName;
+        std::string                  EntryPointID;
         std::vector<HTNTaskInstance> Plan;
     };
 
@@ -264,13 +264,13 @@ void HTNDebuggerWindow::RenderDecomposition()
             for (unsigned int i = 0; i < inEntryPoint.Amount; ++i)
             {
                 const HTNPlanningUnit               PlanningUnit = HTNPlanningUnit(*mPlanner, *mWorldState);
-                const std::vector<HTNTaskInstance>& Plan         = PlanningUnit.ExecuteTopLevelMethod(inEntryPoint.Name);
+                const std::vector<HTNTaskInstance>& Plan         = PlanningUnit.ExecuteTopLevelMethod(inEntryPoint.ID);
                 if (Plan.empty())
                 {
                     continue;
                 }
 
-                LastPlans.emplace_back(inEntryPoint.Name, Plan);
+                LastPlans.emplace_back(inEntryPoint.ID, Plan);
             }
         });
 
@@ -291,20 +291,18 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     for (const LastPlan& LastPlan : LastPlans)
     {
-        ImGui::Text(LastPlan.EntryPointName.c_str());
+        ImGui::Text(LastPlan.EntryPointID.c_str());
 
         ImGui::Indent();
         for (const HTNTaskInstance& Task : LastPlan.Plan)
         {
-            const std::string& TaskName = Task.GetName();
-            ImGui::Text(TaskName.c_str());
+            ImGui::Text(Task.GetName().c_str());
 
             const std::vector<HTNAtom>& Arguments = Task.GetArguments();
             for (const HTNAtom& Argument : Arguments)
             {
-                const std::string& ArgumentName = Argument.ToString();
                 ImGui::SameLine();
-                ImGui::Text(ArgumentName.c_str());
+                ImGui::Text(Argument.ToString().c_str());
             }
         }
         ImGui::Unindent();

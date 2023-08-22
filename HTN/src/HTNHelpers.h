@@ -6,14 +6,13 @@
 
 class HTNValue;
 class HTNDecompositionRecord;
-class HTNNodeBase;
 
 namespace HTN::Helpers
 {
 bool CopyArguments(HTNDecompositionRecord& inDecomposition, const std::vector<std::shared_ptr<const HTNValue>>& inSourceArguments,
-                   const std::vector<std::shared_ptr<const HTNValue>>& inDestinationArguments,
-                   const std::shared_ptr<const HTNNodeBase>& inSourceScope, const std::shared_ptr<const HTNNodeBase>& inDestinationScope,
-                   const std::vector<std::string>& inSourcePrefixes, const std::vector<std::string>& inDestinationPrefixes);
+                   const std::vector<std::shared_ptr<const HTNValue>>& inDestinationArguments, const std::string& inSourceScopeID,
+                   const std::string& inDestinationScopeID, const std::vector<std::string>& inSourcePrefixes,
+                   const std::vector<std::string>& inDestinationPrefixes);
 
 bool RemovePrefix(const std::string& inPrefix, std::string& inString);
 

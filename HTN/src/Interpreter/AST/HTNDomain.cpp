@@ -6,7 +6,10 @@
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNValue.h"
 
-HTNDomain::HTNDomain(std::unique_ptr<const HTNValue> inName, const bool inIsTopLevel) : mName(std::move(inName)), mIsTopLevel(inIsTopLevel)
+HTNDomain::HTNDomain(const std::shared_ptr<const HTNValue>& inIDArgument, const std::vector<std::shared_ptr<const HTNConstants>>& inConstants,
+                     const std::vector<std::shared_ptr<const HTNAxiom>>& inAxioms, const std::vector<std::shared_ptr<const HTNMethod>>& inMethods,
+                     const bool inIsTopLevel)
+    : mIDArgument(inIDArgument), mConstants(inConstants), mAxioms(inAxioms), mMethods(inMethods), mIsTopLevel(inIsTopLevel)
 {
 }
 
@@ -17,23 +20,28 @@ std::vector<std::shared_ptr<const HTNTask>> HTNDomain::Accept(const HTNNodeVisit
     return inVisitor.Visit(*this);
 }
 
+std::string HTNDomain::GetID() const
+{
+    return GetIDArgument()->ToString();
+}
+
 std::string HTNDomain::ToString() const
 {
-    std::string Name = GetName();
+    std::string Description = GetID();
 
     if (mIsTopLevel)
     {
-        Name.append(" top_level_domain");
+        Description.append(" top_level_domain");
     }
 
-    return Name;
+    return Description;
 }
 
-std::shared_ptr<const HTNAxiom> HTNDomain::FindAxiomByName(const std::string& inName) const
+std::shared_ptr<const HTNAxiom> HTNDomain::FindAxiomByID(const std::string& inID) const
 {
     for (const std::shared_ptr<const HTNAxiom>& Axiom : mAxioms)
     {
-        if (inName == Axiom->GetName())
+        if (inID == Axiom->GetID())
         {
             return Axiom;
         }
@@ -42,20 +50,15 @@ std::shared_ptr<const HTNAxiom> HTNDomain::FindAxiomByName(const std::string& in
     return nullptr;
 }
 
-std::shared_ptr<const HTNMethod> HTNDomain::FindMethodByName(const std::string& inName) const
+std::shared_ptr<const HTNMethod> HTNDomain::FindMethodByID(const std::string& inID) const
 {
     for (const std::shared_ptr<const HTNMethod>& Method : mMethods)
     {
-        if (inName == Method->GetName())
+        if (inID == Method->GetID())
         {
             return Method;
         }
     }
 
     return nullptr;
-}
-
-std::string HTNDomain::GetName() const
-{
-    return mName->ToString();
 }

@@ -4,7 +4,8 @@
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
 #include "Interpreter/AST/HTNValue.h"
 
-HTNConstants::HTNConstants(std::unique_ptr<const HTNValue> inName) : mName(std::move(inName))
+HTNConstants::HTNConstants(const std::shared_ptr<const HTNValue>& inIDArgument, const std::vector<std::shared_ptr<const HTNConstant>>& inConstants)
+    : mIDArgument(inIDArgument), mConstants(inConstants)
 {
 }
 
@@ -15,12 +16,12 @@ std::vector<std::shared_ptr<const HTNTask>> HTNConstants::Accept(const HTNNodeVi
     return inVisitor.Visit(*this);
 }
 
-std::string HTNConstants::ToString() const
+std::string HTNConstants::GetID() const
 {
-    return GetName();
+    return GetIDArgument()->ToString();
 }
 
-std::string HTNConstants::GetName() const
+std::string HTNConstants::ToString() const
 {
-    return mName ? mName->ToString() : "";
+    return GetID();
 }

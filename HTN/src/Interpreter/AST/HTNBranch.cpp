@@ -5,7 +5,11 @@
 #include "Interpreter/AST/HTNTask.h"
 #include "Interpreter/AST/HTNValue.h"
 
-HTNBranch::HTNBranch(std::unique_ptr<const HTNValue> inName) : mName(std::move(inName))
+#include <format>
+
+HTNBranch::HTNBranch(const std::shared_ptr<const HTNValue>& inIDArgument, const std::shared_ptr<const HTNConditionBase>& inPreCondition,
+                     const std::vector<std::shared_ptr<const HTNTask>>& inTasks)
+    : mIDArgument(inIDArgument), mPreCondition(inPreCondition), mTasks(inTasks)
 {
 }
 
@@ -16,12 +20,12 @@ std::vector<std::shared_ptr<const HTNTask>> HTNBranch::Accept(const HTNNodeVisit
     return inVisitor.Visit(*this);
 }
 
-std::string HTNBranch::ToString() const
+std::string HTNBranch::GetID() const
 {
-    return GetName();
+    return mIDArgument->ToString();
 }
 
-std::string HTNBranch::GetName() const
+std::string HTNBranch::ToString() const
 {
-    return mName->ToString();
+    return GetID();
 }

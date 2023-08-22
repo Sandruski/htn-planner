@@ -14,6 +14,7 @@ class HTNAxiom;
 class HTNConstant;
 class HTNConstants;
 
+// TODO salvarez Revisit this class and implement planning and printing the AST tree through it
 class HTNNodeVisitorBase
 {
 public:

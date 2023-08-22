@@ -20,17 +20,18 @@ std::vector<HTNTaskInstance> HTNPlannerHook::MakePlan(const std::string& inEntry
         return {};
     }
 
-    HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+    // HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
     std::vector<HTNTaskInstance> PlanInstance;
     PlanInstance.reserve(Plan.size());
 
+    // TODO salvarez Do this on the interpreter side to be able to access the scope
+    /*
     for (const std::shared_ptr<const HTNTask>& Task : Plan)
     {
         const std::string& Name = Task->GetName();
 
         std::vector<HTNAtom>                                InstanceArguments;
-        const std::shared_ptr<const HTNNodeBase>            Scope     = Task->GetScope();
         const std::vector<std::shared_ptr<const HTNValue>>& Arguments = Task->GetArguments();
         for (const std::shared_ptr<const HTNValue>& Argument : Arguments)
         {
@@ -55,6 +56,7 @@ std::vector<HTNTaskInstance> HTNPlannerHook::MakePlan(const std::string& inEntry
 
         PlanInstance.emplace_back(Name, InstanceArguments);
     }
+    */
 
     return PlanInstance;
 }

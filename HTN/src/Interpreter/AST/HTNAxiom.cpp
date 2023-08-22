@@ -6,8 +6,8 @@
 
 #include <format>
 
-HTNAxiom::HTNAxiom(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments)
-    : mName(std::move(inName)), mArguments(inArguments)
+HTNAxiom::HTNAxiom(const std::vector<std::shared_ptr<const HTNValue>>& inArguments, const std::shared_ptr<const HTNConditionBase>& inCondition)
+    : mArguments(inArguments), mCondition(inCondition)
 {
 }
 
@@ -18,19 +18,26 @@ std::vector<std::shared_ptr<const HTNTask>> HTNAxiom::Accept(const HTNNodeVisito
     return inVisitor.Visit(*this);
 }
 
+std::string HTNAxiom::GetID() const
+{
+    return GetIDArgument()->ToString();
+}
+
 std::string HTNAxiom::ToString() const
 {
-    std::string Name = GetName();
+    std::string Description;
 
     for (const std::shared_ptr<const HTNValue>& Argument : mArguments)
     {
-        Name.append(std::format(" {}", Argument->ToString()));
+        Description.append(std::format("{} ", Argument->ToString()));
     }
 
-    return Name;
-}
+    // Remove last " "
+    const size_t Position = Description.find_last_of(" ");
+    if (Position != std::string::npos)
+    {
+        Description.erase(Position);
+    }
 
-std::string HTNAxiom::GetName() const
-{
-    return mName->ToString();
+    return Description;
 }

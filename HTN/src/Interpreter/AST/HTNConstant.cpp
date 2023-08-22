@@ -5,8 +5,7 @@
 
 #include <format>
 
-HTNConstant::HTNConstant(std::unique_ptr<const HTNValue> inName, const std::shared_ptr<const HTNValue>& inValue)
-    : mName(std::move(inName)), mValue(inValue)
+HTNConstant::HTNConstant(const std::vector<std::shared_ptr<const HTNValue>>& inArguments) : mArguments(inArguments)
 {
 }
 
@@ -17,12 +16,12 @@ std::vector<std::shared_ptr<const HTNTask>> HTNConstant::Accept(const HTNNodeVis
     return inVisitor.Visit(*this);
 }
 
-std::string HTNConstant::ToString() const
+std::string HTNConstant::GetID() const
 {
-    return std::format("{} {}", GetName(), mValue->ToString());
+    return GetIDArgument()->ToString();
 }
 
-std::string HTNConstant::GetName() const
+std::string HTNConstant::ToString() const
 {
-    return mName->ToString();
+    return std::format("{} {}", GetID(), GetValueArgument()->ToString());
 }

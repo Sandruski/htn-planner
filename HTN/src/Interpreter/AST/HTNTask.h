@@ -11,34 +11,45 @@ enum class HTNTaskType
 {
     PRIMITIVE,
     COMPOUND,
+
+    INVALID
 };
 
 class HTNTask : public HTNNodeBase
 {
 public:
-    explicit HTNTask(const HTNTaskType inType, std::unique_ptr<const HTNValue> inName,
-                     const std::vector<std::shared_ptr<const HTNValue>>& inArguments);
+    explicit HTNTask(const std::vector<std::shared_ptr<const HTNValue>>& inArguments, const HTNTaskType inType);
     ~HTNTask();
 
     std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
+    std::string                                 GetID() const final;
     std::string                                 ToString() const final;
 
-    HTNTaskType                                         GetType() const;
-    std::string                                         GetName() const;
     const std::vector<std::shared_ptr<const HTNValue>>& GetArguments() const;
+    const std::shared_ptr<const HTNValue>&              GetIDArgument() const;
+    HTNTaskType                                         GetType() const;
 
 private:
-    HTNTaskType                                  mType;
-    std::unique_ptr<const HTNValue>              mName;
+    // Arguments of the task
+    // - 1: ID of the task
     std::vector<std::shared_ptr<const HTNValue>> mArguments;
-};
 
-inline HTNTaskType HTNTask::GetType() const
-{
-    return mType;
-}
+    // Type of the task
+    // - Primitive or compound
+    HTNTaskType mType = HTNTaskType::INVALID;
+};
 
 inline const std::vector<std::shared_ptr<const HTNValue>>& HTNTask::GetArguments() const
 {
     return mArguments;
+}
+
+inline const std::shared_ptr<const HTNValue>& HTNTask::GetIDArgument() const
+{
+    return mArguments[0];
+}
+
+inline HTNTaskType HTNTask::GetType() const
+{
+    return mType;
 }

@@ -7,8 +7,9 @@
 
 #include <format>
 
-HTNMethod::HTNMethod(std::unique_ptr<const HTNValue> inName, const std::vector<std::shared_ptr<const HTNValue>>& inArguments, const bool inIsTopLevel)
-    : mName(std::move(inName)), mArguments(inArguments), mIsTopLevel(inIsTopLevel)
+HTNMethod::HTNMethod(const std::vector<std::shared_ptr<const HTNValue>>& inArguments, const std::vector<std::shared_ptr<const HTNBranch>>& inBranches,
+                     const bool inIsTopLevel)
+    : mArguments(inArguments), mBranches(inBranches), mIsTopLevel(inIsTopLevel)
 {
 }
 
@@ -19,24 +20,24 @@ std::vector<std::shared_ptr<const HTNTask>> HTNMethod::Accept(const HTNNodeVisit
     return inVisitor.Visit(*this);
 }
 
+std::string HTNMethod::GetID() const
+{
+    return GetIDArgument()->ToString();
+}
+
 std::string HTNMethod::ToString() const
 {
-    std::string Name = GetName();
+    std::string Description;
 
     for (const std::shared_ptr<const HTNValue>& Argument : mArguments)
     {
-        Name.append(std::format(" {}", Argument->ToString()));
+        Description.append(std::format("{} ", Argument->ToString()));
     }
 
     if (mIsTopLevel)
     {
-        Name.append(" top_level_method");
+        Description.append("top_level_method");
     }
 
-    return Name;
-}
-
-std::string HTNMethod::GetName() const
-{
-    return mName->ToString();
+    return Description;
 }

@@ -7,6 +7,11 @@ std::vector<std::shared_ptr<const HTNTask>> HTNValue::Accept(const HTNNodeVisito
     return inVisitor.Visit(*this);
 }
 
+std::string HTNValue::GetID() const
+{
+    return "";
+}
+
 std::string HTNValue::ToString() const
 {
     return mValue.ToString();

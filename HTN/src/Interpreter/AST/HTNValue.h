@@ -19,13 +19,18 @@ public:
     explicit HTNValue(const HTNAtom& inValue, const HTNValueType inType);
 
     std::vector<std::shared_ptr<const HTNTask>> Accept(const HTNNodeVisitorBase& inVisitor) const final;
+    std::string                                 GetID() const final;
     std::string                                 ToString() const final;
 
     const HTNAtom& GetValue() const;
     HTNValueType   GetType() const;
 
 private:
-    HTNAtom      mValue;
+    // Value
+    HTNAtom mValue;
+
+    // Type of the value
+    // - Variable, constant, axiom, or literal
     HTNValueType mType = HTNValueType::INVALID;
 };
 

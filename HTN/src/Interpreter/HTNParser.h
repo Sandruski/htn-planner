@@ -35,14 +35,14 @@ private:
     std::shared_ptr<HTNConstant>      ParseConstant(unsigned int& inPosition);
     std::shared_ptr<HTNAxiom>         ParseAxiom(unsigned int& inPosition);
     std::shared_ptr<HTNMethod>        ParseMethod(unsigned int& inPosition);
-    std::shared_ptr<HTNBranch>        ParseBranch(unsigned int& inPosition, const std::shared_ptr<HTNMethod>& inScope);
-    std::shared_ptr<HTNConditionBase> ParseCondition(unsigned int& inPosition, const std::shared_ptr<HTNNodeBase>& inScope);
-    std::shared_ptr<HTNConditionBase> ParseSubCondition(unsigned int& inPosition, const std::shared_ptr<HTNNodeBase>& inScope);
+    std::shared_ptr<HTNBranch>        ParseBranch(unsigned int& inPosition);
+    std::shared_ptr<HTNConditionBase> ParseCondition(unsigned int& inPosition);
+    std::shared_ptr<HTNConditionBase> ParseSubCondition(unsigned int& inPosition);
     std::shared_ptr<HTNTask>          ParseTask(unsigned int& inPosition);
-    std::unique_ptr<HTNValue>         ParseArgument(unsigned int& inPosition);
-    std::unique_ptr<HTNValue>         ParseIdentifier(unsigned int& inPosition, const HTNValueType inValueType);
-    std::unique_ptr<HTNValue>         ParseNumber(unsigned int& inPosition);
-    std::unique_ptr<HTNValue>         ParseString(unsigned int& inPosition);
+    std::shared_ptr<HTNValue>         ParseArgument(unsigned int& inPosition);
+    std::shared_ptr<HTNValue>         ParseIdentifier(unsigned int& inPosition, const HTNValueType inValueType);
+    std::shared_ptr<HTNValue>         ParseNumber(unsigned int& inPosition);
+    std::shared_ptr<HTNValue>         ParseString(unsigned int& inPosition);
     const HTNToken*                   ParseToken(unsigned int& inPosition, const HTNTokenType inTokenType);
 
     const HTNToken* GetToken(const unsigned int inPosition) const;

@@ -8,9 +8,9 @@
 namespace HTN::Helpers
 {
 bool CopyArguments(HTNDecompositionRecord& inDecomposition, const std::vector<std::shared_ptr<const HTNValue>>& inSourceArguments,
-                   const std::vector<std::shared_ptr<const HTNValue>>& inDestinationArguments,
-                   const std::shared_ptr<const HTNNodeBase>& inSourceScope, const std::shared_ptr<const HTNNodeBase>& inDestinationScope,
-                   const std::vector<std::string>& inSourcePrefixes, const std::vector<std::string>& inDestinationPrefixes)
+                   const std::vector<std::shared_ptr<const HTNValue>>& inDestinationArguments, const std::string& inSourceScopeID,
+                   const std::string& inDestinationScopeID, const std::vector<std::string>& inSourcePrefixes,
+                   const std::vector<std::string>& inDestinationPrefixes)
 {
     const size_t SourceArgumentsSize      = inSourceArguments.size();
     const size_t DestinationArgumentsSize = inDestinationArguments.size();
@@ -42,7 +42,7 @@ bool CopyArguments(HTNDecompositionRecord& inDecomposition, const std::vector<st
             }
 
             // Get or add variable for source argument in source scope
-            SourceArgumentValue = &inDecomposition.GetOrAddVariable(inSourceScope, SourceArgumentValueString);
+            SourceArgumentValue = &inDecomposition.GetOrAddVariable(inSourceScopeID, SourceArgumentValueString);
         }
 
         // Destination argument must be a variable
@@ -67,7 +67,7 @@ bool CopyArguments(HTNDecompositionRecord& inDecomposition, const std::vector<st
         }
 
         // Get or add variable for destination argument in destination scope
-        HTNAtom& DestinationVariable = inDecomposition.GetOrAddVariable(inDestinationScope, DestinationArgumentValueString);
+        HTNAtom& DestinationVariable = inDecomposition.GetOrAddVariable(inDestinationScopeID, DestinationArgumentValueString);
 
         // Copy the source argument to the destination variable
         DestinationVariable = *SourceArgumentValue;
