@@ -142,6 +142,7 @@ bool HTNConditionAxiom::Check(HTNDecompositionContext& ioDecompositionContext, b
         return false;
     }
 
+    // TODO salvarez RELATED Finish this
     const std::string CurrentScopeID = ioDecompositionContext.MakeCurrentScopeID();
 
     HTNDecompositionScope CurrentAxiomScope   = HTNDecompositionScope(ioDecompositionContext, CurrentAxiom);

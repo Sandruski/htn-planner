@@ -48,6 +48,7 @@ private:
     std::shared_ptr<const HTNTask> mCurrentTask;
 
     // Tasks pending to be processed
+    // TODO salvarez RELATED Include scope here somehow
     std::vector<std::shared_ptr<const HTNTask>> mTasksToProcess;
 
     // Scope ID to index
@@ -60,6 +61,7 @@ private:
     std::unordered_map<std::string, std::unordered_map<std::string, HTNAtom>> mVariables;
 
     // Final plan of tasks
+    // TODO salvarez RELATED Include scope/variables here somehow
     std::vector<std::shared_ptr<const HTNTask>> mPlan;
 };
 

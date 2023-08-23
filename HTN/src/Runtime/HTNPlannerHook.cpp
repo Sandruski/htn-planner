@@ -25,7 +25,7 @@ std::vector<HTNTaskInstance> HTNPlannerHook::MakePlan(const std::string& inEntry
     std::vector<HTNTaskInstance> PlanInstance;
     PlanInstance.reserve(Plan.size());
 
-    // TODO salvarez Do this on the interpreter side to be able to access the scope
+    // TODO salvarez RELATED Include scope here somehow
     /*
     for (const std::shared_ptr<const HTNTask>& Task : Plan)
     {

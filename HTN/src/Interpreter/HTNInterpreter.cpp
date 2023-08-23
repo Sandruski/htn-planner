@@ -112,6 +112,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
             break;
         }
         case HTNTaskType::COMPOUND: {
+            // The ID of a compound task should match the ID of a method
             const std::string                      CurrentTaskID = CurrentTask->GetID();
             const std::shared_ptr<const HTNMethod> CurrentMethod = mDomain->FindMethodByID(CurrentTaskID);
             if (!CurrentMethod)
@@ -123,22 +124,17 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
             const HTNDecompositionScope CurrentMethodScope = HTNDecompositionScope(ioDecompositionContext, CurrentMethod);
             const std::string           CurrentScopeID     = ioDecompositionContext.MakeCurrentScopeID();
 
-            // TODO salvarez Fix
-            /*
-            if (ioDecompositionContext.GetCurrentMethod() != CurrentMethod)
+            // Initialize the input arguments of the method with the arguments of the compound task
+            // TODO salvarez RELATED Include scope here somehow
+            const std::shared_ptr<const HTNNodeBase>            Scope           = CurrentTask->GetScope();
+            const std::vector<std::shared_ptr<const HTNValue>>& TaskArguments   = CurrentTask->GetArguments();
+            const std::vector<std::shared_ptr<const HTNValue>>& MethodArguments = CurrentMethod->GetArguments();
+            if (!HTN::Helpers::CopyArguments(CurrentDecomposition, TaskArguments, MethodArguments, Scope, CurrentScopeID, {},
+                                             HTN::Helpers::InputPrefixes))
             {
-                // Initialize the input arguments of the method with the arguments of the compound task
-                const std::shared_ptr<const HTNNodeBase>            Scope           = CurrentTask->GetScope();
-                const std::vector<std::shared_ptr<const HTNValue>>& TaskArguments   = CurrentTask->GetArguments();
-                const std::vector<std::shared_ptr<const HTNValue>>& MethodArguments = CurrentMethod->GetArguments();
-                if (!HTN::Helpers::CopyArguments(CurrentDecomposition, TaskArguments, MethodArguments, Scope, CurrentMethod, {},
-                                                 HTN::Helpers::InputPrefixes))
-                {
-                    LOG_ERROR("Arguments could not be copied from method to method [{}]", CurrentMethod->GetName());
-                    break;
-                }
+                LOG_ERROR("Arguments could not be copied from compound task to method [{}]", CurrentMethod->GetName());
+                break;
             }
-            */
 
             const unsigned int                                   CurrentBranchIndex = CurrentDecomposition.GetOrAddIndex(CurrentScopeID);
             const std::vector<std::shared_ptr<const HTNBranch>>& CurrentBranches    = CurrentMethod->GetBranches();
