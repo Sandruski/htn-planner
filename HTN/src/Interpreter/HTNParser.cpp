@@ -497,6 +497,7 @@ std::shared_ptr<HTNValue> HTNParser::ParseArgument(unsigned int& inPosition)
     return Argument;
 }
 
+// TODO salvarez Revisit this. It shouldn't be allowed to pass any value type
 std::shared_ptr<HTNValue> HTNParser::ParseIdentifier(unsigned int& inPosition, const HTNValueType inValueType)
 {
     // IDENTIFIER
