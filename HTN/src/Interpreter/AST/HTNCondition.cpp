@@ -65,7 +65,7 @@ bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext, bool& 
     std::vector<HTNAtom>  Literals;
     bool                  ShouldBindArguments = false;
 
-    // We skip the first argument because it is an identifier
+    // We skip the first argument because it is a symbol
     for (size_t i = 1; i < mArguments.size(); ++i)
     {
         const std::shared_ptr<const HTNValue>& Argument             = mArguments[i];
@@ -100,7 +100,7 @@ bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext, bool& 
             ArgumentValueMutable = &Literals.emplace_back(*ArgumentValue);
             break;
         }
-        case HTNValueType::IDENTIFIER:
+        case HTNValueType::SYMBOL:
         case HTNValueType::AXIOM:
         default:
             assert(false);

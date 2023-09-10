@@ -26,7 +26,7 @@ bool CopyArguments(HTNDecompositionContext& ioDecompositionContext, const std::v
 
     HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
-    // We skip the first arguments because they are an axiom and an identifier, respectively
+    // We skip the first arguments because they are axioms and symbols, respectively
     for (size_t i = 1; i < SourceArgumentsSize; ++i)
     {
         // TODO salvarez Merge with HTNCondition somehow
@@ -68,7 +68,7 @@ bool CopyArguments(HTNDecompositionContext& ioDecompositionContext, const std::v
         case HTNValueType::LITERAL: {
             break;
         }
-        case HTNValueType::IDENTIFIER:
+        case HTNValueType::SYMBOL:
         case HTNValueType::AXIOM:
         default:
             assert(false);
