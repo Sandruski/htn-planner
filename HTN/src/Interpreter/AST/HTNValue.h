@@ -5,10 +5,11 @@
 
 enum class HTNValueType : unsigned int
 {
+    IDENTIFIER,
+    AXIOM,
     VARIABLE,
     CONSTANT,
-    AXIOM,
-    LITERAL,
+    LITERAL, // NUMBER OR STRING
 
     INVALID
 };
@@ -30,7 +31,7 @@ private:
     HTNAtom mValue;
 
     // Type of the value
-    // - Variable, constant, axiom, or literal
+    // - Identifier, variable, constant, axiom, or literal (number or string)
     HTNValueType mType = HTNValueType::INVALID;
 };
 

@@ -4,6 +4,7 @@
 #include "HTNLog.h"
 #include "Interpreter/AST/HTNAxiom.h"
 #include "Interpreter/AST/HTNBranch.h"
+#include "Interpreter/AST/HTNConstant.h"
 #include "Interpreter/AST/HTNDomain.h"
 #include "Interpreter/AST/HTNMethod.h"
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
@@ -63,24 +64,46 @@ bool HTNCondition::Check(HTNDecompositionContext& ioDecompositionContext, bool& 
     std::vector<HTNAtom*> Arguments;
     std::vector<HTNAtom>  Literals;
     bool                  ShouldBindArguments = false;
-    for (const std::shared_ptr<const HTNValue>& Argument : mArguments)
-    {
-        const HTNAtom* ArgumentValue        = &Argument->GetValue();
-        HTNAtom*       ArgumentValueMutable = nullptr;
 
-        // TODO salvarez
-        // Arguments can be identifiers or literals
-        if (Argument->GetType() == HTNValueType::VARIABLE)
+    // We skip the first argument because it is an identifier
+    for (size_t i = 1; i < mArguments.size(); ++i)
+    {
+        const std::shared_ptr<const HTNValue>& Argument             = mArguments[i];
+        const HTNAtom*                         ArgumentValue        = &Argument->GetValue();
+        HTNAtom*                               ArgumentValueMutable = nullptr;
+
+        // TODO salvarez Merge with HTN::Helpers::CopyArguments somehow
+        // Arguments can be variables, constants, or literals
+        switch (Argument->GetType())
         {
+        case HTNValueType::VARIABLE: {
             // If argument is a variable, get or add a variable for it in its scope
             std::string ArgumentValueString = ArgumentValue->GetValue<std::string>();
             ArgumentValueMutable            = &CurrentDecomposition.GetOrAddVariable(CurrentScopeID, ArgumentValueString);
             ShouldBindArguments             = ShouldBindArguments || !ArgumentValueMutable->IsSet();
+            break;
         }
-        else
-        {
-            // If argument is a literal, create a temporary copy for it
+        case HTNValueType::CONSTANT: {
+            const std::shared_ptr<const HTNDomain>& CurrentDomain       = ioDecompositionContext.GetCurrentDomain();
+            std::string                             ArgumentValueString = ArgumentValue->GetValue<std::string>();
+            std::shared_ptr<const HTNConstant>      Constant            = CurrentDomain->FindConstantByID(ArgumentValueString);
+            if (!Constant)
+            {
+                LOG_ERROR("Constant [{}] not found", ArgumentValueString);
+                return false;
+            }
+
+            ArgumentValue = &Constant->GetValueArgument()->GetValue();
+        }
+        case HTNValueType::LITERAL: {
+            // If argument is a literal or a constant, create a temporary copy for it
             ArgumentValueMutable = &Literals.emplace_back(*ArgumentValue);
+            break;
+        }
+        case HTNValueType::IDENTIFIER:
+        case HTNValueType::AXIOM:
+        default:
+            assert(false);
         }
 
         Arguments.emplace_back(ArgumentValueMutable);
@@ -142,17 +165,14 @@ bool HTNConditionAxiom::Check(HTNDecompositionContext& ioDecompositionContext, b
         return false;
     }
 
-    // TODO salvarez RELATED Finish this
     const std::string CurrentScopeID = ioDecompositionContext.MakeCurrentScopeID();
 
     HTNDecompositionScope CurrentAxiomScope   = HTNDecompositionScope(ioDecompositionContext, CurrentAxiom);
     const std::string     CurrentAxiomScopeID = ioDecompositionContext.MakeCurrentScopeID();
 
-    HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
-
     // Initialize the input arguments of the axiom with the arguments of the condition
     const std::vector<std::shared_ptr<const HTNValue>>& CurrentAxiomArguments = CurrentAxiom->GetArguments();
-    if (!HTN::Helpers::CopyArguments(CurrentDecomposition, mArguments, CurrentAxiomArguments, CurrentScopeID, CurrentAxiomScopeID, {},
+    if (!HTN::Helpers::CopyArguments(ioDecompositionContext, mArguments, CurrentAxiomArguments, CurrentScopeID, CurrentAxiomScopeID, {},
                                      HTN::Helpers::InputPrefixes))
     {
         LOG_ERROR("Arguments could not be copied from condition to axiom [{}]", AxiomID);
@@ -174,7 +194,7 @@ bool HTNConditionAxiom::Check(HTNDecompositionContext& ioDecompositionContext, b
     }
 
     // Copy back the output arguments of the axiom
-    if (!HTN::Helpers::CopyArguments(CurrentDecomposition, CurrentAxiomArguments, mArguments, CurrentAxiomScopeID, CurrentScopeID,
+    if (!HTN::Helpers::CopyArguments(ioDecompositionContext, CurrentAxiomArguments, mArguments, CurrentAxiomScopeID, CurrentScopeID,
                                      HTN::Helpers::OutputPrefixes, {}))
     {
         LOG_ERROR("Arguments could not be copied from axiom to condition [{}]", AxiomID);

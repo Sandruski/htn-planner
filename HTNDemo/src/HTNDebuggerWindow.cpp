@@ -10,6 +10,7 @@
 #include "Runtime/HTNAtom.h"
 #include "Runtime/HTNPlannerHook.h"
 #include "Runtime/HTNPlanningUnit.h"
+#include "Runtime/HTNTaskResult.h"
 #include "Runtime/HTNWorldState.h"
 #include "imgui.h"
 #include "imgui_stdlib.h"
@@ -250,8 +251,8 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     struct LastPlan
     {
-        std::string                  EntryPointID;
-        std::vector<HTNTaskInstance> Plan;
+        std::string                EntryPointID;
+        std::vector<HTNTaskResult> Plan;
     };
 
     static std::vector<LastPlan> LastPlans;
@@ -264,7 +265,7 @@ void HTNDebuggerWindow::RenderDecomposition()
             for (unsigned int i = 0; i < inEntryPoint.Amount; ++i)
             {
                 const HTNPlanningUnit               PlanningUnit = HTNPlanningUnit(*mPlanner, *mWorldState);
-                const std::vector<HTNTaskInstance>& Plan         = PlanningUnit.ExecuteTopLevelMethod(inEntryPoint.ID);
+                const std::vector<HTNTaskResult>& Plan         = PlanningUnit.ExecuteTopLevelMethod(inEntryPoint.ID);
                 if (Plan.empty())
                 {
                     continue;
@@ -294,7 +295,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         ImGui::Text(LastPlan.EntryPointID.c_str());
 
         ImGui::Indent();
-        for (const HTNTaskInstance& Task : LastPlan.Plan)
+        for (const HTNTaskResult& Task : LastPlan.Plan)
         {
             ImGui::Text(Task.GetName().c_str());
 

@@ -5,7 +5,7 @@
 #include <vector>
 
 class HTNPlannerHook;
-class HTNTaskInstance;
+class HTNTaskResult;
 
 // Planning unit structure that holds the planner hook and the database
 class HTNPlanningUnit
@@ -14,7 +14,7 @@ public:
     explicit HTNPlanningUnit(const HTNPlannerHook& inPlanner, const HTNWorldState& inWorldState);
 
     // Execute planning unit top level method
-    std::vector<HTNTaskInstance> ExecuteTopLevelMethod(const std::string& inEntryPointName) const;
+    std::vector<HTNTaskResult> ExecuteTopLevelMethod(const std::string& inEntryPointName) const;
 
     const HTNPlannerHook& GetPlanner() const;
 

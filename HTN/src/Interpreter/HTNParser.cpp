@@ -41,7 +41,7 @@ std::shared_ptr<HTNDomain> HTNParser::ParseDomain(unsigned int& inPosition)
         return nullptr;
     }
 
-    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
+    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::IDENTIFIER);
     if (!IDArgument)
     {
         return nullptr;
@@ -98,7 +98,7 @@ std::shared_ptr<HTNConstants> HTNParser::ParseConstants(unsigned int& inPosition
         return nullptr;
     }
 
-    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
+    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::IDENTIFIER);
 
     std::vector<std::shared_ptr<const HTNConstant>> Constants;
     while (const std::shared_ptr<const HTNConstant> Constant = ParseConstant(CurrentPosition))
@@ -127,7 +127,7 @@ std::shared_ptr<HTNConstant> HTNParser::ParseConstant(unsigned int& inPosition)
         return nullptr;
     }
 
-    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
+    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::IDENTIFIER);
     if (!IDArgument)
     {
         return nullptr;
@@ -177,7 +177,7 @@ std::shared_ptr<HTNAxiom> HTNParser::ParseAxiom(unsigned int& inPosition)
         return nullptr;
     }
 
-    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
+    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::IDENTIFIER);
     if (!IDArgument)
     {
         return nullptr;
@@ -232,7 +232,7 @@ std::shared_ptr<HTNMethod> HTNParser::ParseMethod(unsigned int& inPosition)
         return nullptr;
     }
 
-    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
+    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::IDENTIFIER);
     if (!IDArgument)
     {
         return nullptr;
@@ -278,7 +278,7 @@ std::shared_ptr<HTNBranch> HTNParser::ParseBranch(unsigned int& inPosition)
         return nullptr;
     }
 
-    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
+    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::IDENTIFIER);
     if (!IDArgument)
     {
         return nullptr;
@@ -389,7 +389,7 @@ std::shared_ptr<HTNConditionBase> HTNParser::ParseSubCondition(unsigned int& inP
         {
             const bool IsAxiom = ParseToken(CurrentPosition, HTNTokenType::HASH);
 
-            if (const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL))
+            if (const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, IsAxiom ? HTNValueType::AXIOM : HTNValueType::IDENTIFIER))
             {
                 std::vector<std::shared_ptr<const HTNValue>> Arguments = {IDArgument};
                 while (const std::shared_ptr<const HTNValue> Argument = ParseArgument(CurrentPosition))
@@ -432,7 +432,7 @@ std::shared_ptr<HTNTask> HTNParser::ParseTask(unsigned int& inPosition)
 
     const HTNTaskType Type = ParseToken(CurrentPosition, HTNTokenType::EXCLAMATION_MARK) ? HTNTaskType::PRIMITIVE : HTNTaskType::COMPOUND;
 
-    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::LITERAL);
+    const std::shared_ptr<const HTNValue> IDArgument = ParseIdentifier(CurrentPosition, HTNValueType::IDENTIFIER);
     if (!IDArgument)
     {
         return nullptr;

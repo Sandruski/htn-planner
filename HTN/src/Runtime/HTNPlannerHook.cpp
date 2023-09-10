@@ -5,31 +5,33 @@
 #include "Interpreter/AST/HTNTask.h"
 #include "Interpreter/AST/HTNValue.h"
 #include "Runtime/HTNDecompositionContext.h"
+#include "Runtime/HTNTaskInstance.h"
+#include "Runtime/HTNTaskResult.h"
 
 bool HTNPlannerHook::ParseDomain(const std::string& inDomainPath)
 {
     return mInterpreter.Init(inDomainPath);
 }
 
-std::vector<HTNTaskInstance> HTNPlannerHook::MakePlan(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const
+std::vector<HTNTaskResult> HTNPlannerHook::MakePlan(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const
 {
-    const std::vector<std::shared_ptr<const HTNTask>> Plan = mInterpreter.Interpret(inEntryPointName, ioDecompositionContext);
+    const std::vector<HTNTaskInstance> Plan = mInterpreter.Interpret(inEntryPointName, ioDecompositionContext);
     if (Plan.empty())
     {
         LOG_ERROR("Interpret failed");
         return {};
     }
 
-    // HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
-
-    std::vector<HTNTaskInstance> PlanInstance;
+    std::vector<HTNTaskResult> PlanInstance;
     PlanInstance.reserve(Plan.size());
 
-    // TODO salvarez RELATED Include scope here somehow
     /*
-    for (const std::shared_ptr<const HTNTask>& Task : Plan)
+    HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+
+    for (const HTNTaskScoped& TaskScoped : Plan)
     {
-        const std::string& Name = Task->GetName();
+        const std::shared_ptr<const HTNTask>& Task = TaskScoped.GetTask();
+        const std::string&                    Name = Task->GetIDArgument().;
 
         std::vector<HTNAtom>                                InstanceArguments;
         const std::vector<std::shared_ptr<const HTNValue>>& Arguments = Task->GetArguments();

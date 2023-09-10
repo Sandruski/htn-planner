@@ -4,12 +4,12 @@
 #include <string>
 #include <vector>
 
+class HTNDecompositionContext;
 class HTNValue;
-class HTNDecompositionRecord;
 
 namespace HTN::Helpers
 {
-bool CopyArguments(HTNDecompositionRecord& inDecomposition, const std::vector<std::shared_ptr<const HTNValue>>& inSourceArguments,
+bool CopyArguments(HTNDecompositionContext& ioDecompositionContext, const std::vector<std::shared_ptr<const HTNValue>>& inSourceArguments,
                    const std::vector<std::shared_ptr<const HTNValue>>& inDestinationArguments, const std::string& inSourceScopeID,
                    const std::string& inDestinationScopeID, const std::vector<std::string>& inSourcePrefixes,
                    const std::vector<std::string>& inDestinationPrefixes);

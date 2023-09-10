@@ -1,8 +1,9 @@
 #pragma once
 
-#include "HTNAtom.h"
+#include "Runtime/HTNAtom.h"
+#include "Runtime/HTNDecompositionScope.h"
+#include "Runtime/HTNTaskInstance.h"
 
-#include <cassert>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -20,9 +21,9 @@ public:
     void                                  SetCurrentTask(const std::shared_ptr<const HTNTask>& inTask);
     const std::shared_ptr<const HTNTask>& GetCurrentTask() const;
 
-    void                                  PushTaskToProcess(const std::shared_ptr<const HTNTask>& inTask);
-    const std::shared_ptr<const HTNTask>& PopTaskToProcess();
-    bool                                  HasTasksToProcess() const;
+    void                   PushTaskToProcess(const HTNTaskInstance& inTaskInstance);
+    const HTNTaskInstance& PopTaskToProcess();
+    bool                   HasTasksToProcess() const;
 
     // Returns an existing index or adds a new index
     unsigned int GetOrAddIndex(const std::string& inScopeID);
@@ -40,16 +41,15 @@ public:
     HTNAtom&                                        GetOrAddVariable(const std::string& inScopeID, const std::string& inVariableName);
     const HTNAtom*                                  FindVariable(const std::string& inScopeID, const std::string& inVariableName) const;
 
-    void                                               AddTaskToPlan(const std::shared_ptr<const HTNTask>& inTask);
-    const std::vector<std::shared_ptr<const HTNTask>>& GetPlan() const;
+    void                                AddTaskToPlan(const HTNTaskInstance& inTaskInstance);
+    const std::vector<HTNTaskInstance>& GetPlan() const;
 
 private:
     // Current task being processed
     std::shared_ptr<const HTNTask> mCurrentTask;
 
     // Tasks pending to be processed
-    // TODO salvarez RELATED Include scope here somehow
-    std::vector<std::shared_ptr<const HTNTask>> mTasksToProcess;
+    std::vector<HTNTaskInstance> mTasksToProcess;
 
     // Scope ID to index
     // - Method scope ID to branch index
@@ -61,8 +61,7 @@ private:
     std::unordered_map<std::string, std::unordered_map<std::string, HTNAtom>> mVariables;
 
     // Final plan of tasks
-    // TODO salvarez RELATED Include scope/variables here somehow
-    std::vector<std::shared_ptr<const HTNTask>> mPlan;
+    std::vector<HTNTaskInstance> mPlan;
 };
 
 class HTNDecompositionContext
@@ -92,25 +91,11 @@ private:
     const HTNWorldState* mWorldState = nullptr; ///< Pointer to world state. All the queries will just not be able to modify the world state at
                                                 ///< all, this is why it is important this is a const pointer.
 
+    // TODO salvarez Can it be a string?
     std::vector<std::shared_ptr<const HTNNodeBase>> mCurrentScope;
 
     HTNDecompositionRecord              mCurrentDecomposition;
     std::vector<HTNDecompositionRecord> mDecompositionHistory;
-};
-
-/**
- * Helper class that uses RAII (Resource Acquisition Is Initialization) to automatically push/pop a node to/from the current scope of a decomposition
- * context
- */
-class HTNDecompositionScope
-{
-public:
-    HTNDecompositionScope(HTNDecompositionContext& inDecompositionContext, const std::shared_ptr<const HTNNodeBase>& inNode);
-    ~HTNDecompositionScope();
-
-private:
-    HTNDecompositionContext&           mDecompositionContext;
-    std::shared_ptr<const HTNNodeBase> mNode;
 };
 
 inline void HTNDecompositionRecord::SetCurrentTask(const std::shared_ptr<const HTNTask>& inTask)
@@ -123,16 +108,16 @@ inline const std::shared_ptr<const HTNTask>& HTNDecompositionRecord::GetCurrentT
     return mCurrentTask;
 }
 
-inline void HTNDecompositionRecord::PushTaskToProcess(const std::shared_ptr<const HTNTask>& inTask)
+inline void HTNDecompositionRecord::PushTaskToProcess(const HTNTaskInstance& inTaskInstance)
 {
-    mTasksToProcess.emplace_back(inTask);
+    mTasksToProcess.emplace_back(inTaskInstance);
 }
 
-inline const std::shared_ptr<const HTNTask>& HTNDecompositionRecord::PopTaskToProcess()
+inline const HTNTaskInstance& HTNDecompositionRecord::PopTaskToProcess()
 {
-    const std::shared_ptr<const HTNTask>& Task = mTasksToProcess.back();
+    const HTNTaskInstance& TaskInstance = mTasksToProcess.back();
     mTasksToProcess.pop_back();
-    return Task;
+    return TaskInstance;
 }
 
 inline bool HTNDecompositionRecord::HasTasksToProcess() const
@@ -211,12 +196,12 @@ inline const HTNAtom* HTNDecompositionRecord::FindVariable(const std::string& in
     return &VariableIt->second;
 }
 
-inline void HTNDecompositionRecord::AddTaskToPlan(const std::shared_ptr<const HTNTask>& inTask)
+inline void HTNDecompositionRecord::AddTaskToPlan(const HTNTaskInstance& inTaskInstance)
 {
-    mPlan.emplace_back(inTask);
+    mPlan.emplace_back(inTaskInstance);
 }
 
-inline const std::vector<std::shared_ptr<const HTNTask>>& HTNDecompositionRecord::GetPlan() const
+inline const std::vector<HTNTaskInstance>& HTNDecompositionRecord::GetPlan() const
 {
     return mPlan;
 }
@@ -270,16 +255,4 @@ inline const HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecompos
 inline HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecompositionMutable()
 {
     return mCurrentDecomposition;
-}
-
-inline HTNDecompositionScope::HTNDecompositionScope(HTNDecompositionContext& inDecompositionContext, const std::shared_ptr<const HTNNodeBase>& inNode)
-    : mDecompositionContext(inDecompositionContext), mNode(inNode)
-{
-    mDecompositionContext.PushNodeToCurrentScope(mNode);
-}
-
-inline HTNDecompositionScope::~HTNDecompositionScope()
-{
-    const std::shared_ptr<const HTNNodeBase>& Node = mDecompositionContext.PopNodeFromCurrentScope();
-    assert(mNode == Node);
 }

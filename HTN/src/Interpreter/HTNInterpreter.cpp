@@ -12,6 +12,7 @@
 #include "Interpreter/HTNParser.h"
 #include "Interpreter/HTNToken.h"
 #include "Runtime/HTNDecompositionContext.h"
+#include "Runtime/HTNTaskInstance.h"
 
 #include <cassert>
 #include <fstream>
@@ -77,8 +78,7 @@ bool HTNInterpreter::Init(const std::string& inDomainPath)
     return true;
 }
 
-std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std::string&       inEntryPointName,
-                                                                      HTNDecompositionContext& ioDecompositionContext) const
+std::vector<HTNTaskInstance> HTNInterpreter::Interpret(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const
 {
     if (!mDomain)
     {
@@ -93,11 +93,12 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
     std::vector<std::shared_ptr<const HTNValue>> RootTaskArguments = {
         std::make_shared<const HTNValue>(HTNAtom(inEntryPointName), HTNValueType::LITERAL)};
     const std::shared_ptr<const HTNTask> RootTask = std::make_shared<HTNTask>(RootTaskArguments, HTNTaskType::COMPOUND);
-    CurrentDecomposition.PushTaskToProcess(RootTask);
+    CurrentDecomposition.PushTaskToProcess(HTNTaskInstance(RootTask, ioDecompositionContext.MakeCurrentScopeID()));
 
     while (CurrentDecomposition.HasTasksToProcess())
     {
-        const std::shared_ptr<const HTNTask> CurrentTask = CurrentDecomposition.PopTaskToProcess();
+        const HTNTaskInstance&                CurrentTaskInstance = CurrentDecomposition.PopTaskToProcess();
+        const std::shared_ptr<const HTNTask>& CurrentTask         = CurrentTaskInstance.GetTask();
         if (!CurrentTask)
         {
             break;
@@ -108,7 +109,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
         switch (CurrentTask->GetType())
         {
         case HTNTaskType::PRIMITIVE: {
-            CurrentDecomposition.AddTaskToPlan(CurrentTask);
+            CurrentDecomposition.AddTaskToPlan(CurrentTaskInstance);
             break;
         }
         case HTNTaskType::COMPOUND: {
@@ -125,14 +126,13 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
             const std::string           CurrentScopeID     = ioDecompositionContext.MakeCurrentScopeID();
 
             // Initialize the input arguments of the method with the arguments of the compound task
-            // TODO salvarez RELATED Include scope here somehow
-            const std::shared_ptr<const HTNNodeBase>            Scope           = CurrentTask->GetScope();
-            const std::vector<std::shared_ptr<const HTNValue>>& TaskArguments   = CurrentTask->GetArguments();
-            const std::vector<std::shared_ptr<const HTNValue>>& MethodArguments = CurrentMethod->GetArguments();
-            if (!HTN::Helpers::CopyArguments(CurrentDecomposition, TaskArguments, MethodArguments, Scope, CurrentScopeID, {},
-                                             HTN::Helpers::InputPrefixes))
+            const std::string&                                  CurentTaskScopeID     = CurrentTaskInstance.GetScopeID();
+            const std::vector<std::shared_ptr<const HTNValue>>& CurentTaskArguments   = CurrentTask->GetArguments();
+            const std::vector<std::shared_ptr<const HTNValue>>& CurentMethodArguments = CurrentMethod->GetArguments();
+            if (!HTN::Helpers::CopyArguments(ioDecompositionContext, CurentTaskArguments, CurentMethodArguments, CurentTaskScopeID, CurrentScopeID,
+                                             {}, HTN::Helpers::InputPrefixes))
             {
-                LOG_ERROR("Arguments could not be copied from compound task to method [{}]", CurrentMethod->GetName());
+                LOG_ERROR("Arguments could not be copied from compound task to method [{}]", CurrentMethod->ToString());
                 break;
             }
 
@@ -153,14 +153,14 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
                 for (int i = static_cast<int>(Tasks.size()) - 1; i >= 0; --i)
                 {
                     const std::shared_ptr<const HTNTask>& Task = Tasks[i];
-                    CurrentDecomposition.PushTaskToProcess(Task);
+                    CurrentDecomposition.PushTaskToProcess(HTNTaskInstance(Task, CurrentScopeID));
                 }
             }
             else
             {
                 if (CurrentBranchIndex < CurrentBranches.size() - 1)
                 {
-                    CurrentDecomposition.PushTaskToProcess(CurrentTask);
+                    CurrentDecomposition.PushTaskToProcess(CurrentTaskInstance);
 
                     // Continue
                     CurrentDecomposition.IncrementIndex(CurrentScopeID);
@@ -170,7 +170,7 @@ std::vector<std::shared_ptr<const HTNTask>> HTNInterpreter::Interpret(const std:
                     // Restore state: unbound variables but updated indices
                     ioDecompositionContext.RestoreDecomposition();
 
-                    CurrentDecomposition.PushTaskToProcess(CurrentDecomposition.GetCurrentTask());
+                    CurrentDecomposition.PushTaskToProcess(HTNTaskInstance(CurrentDecomposition.GetCurrentTask(), CurrentScopeID));
                 }
             }
             break;

@@ -1,6 +1,7 @@
 #include "Interpreter/AST/HTNDomain.h"
 
 #include "Interpreter/AST/HTNAxiom.h"
+#include "Interpreter/AST/HTNConstant.h"
 #include "Interpreter/AST/HTNConstants.h"
 #include "Interpreter/AST/HTNMethod.h"
 #include "Interpreter/AST/HTNNodeVisitorBase.h"
@@ -35,6 +36,23 @@ std::string HTNDomain::ToString() const
     }
 
     return Description;
+}
+
+std::shared_ptr<const HTNConstant> HTNDomain::FindConstantByID(const std::string& inID) const
+{
+    for (const std::shared_ptr<const HTNConstants>& Constants : mConstants)
+    {
+        const std::vector<std::shared_ptr<const HTNConstant>>& ConstantsContainer = Constants->GetConstants();
+        for (const std::shared_ptr<const HTNConstant>& Constant : ConstantsContainer)
+        {
+            if (inID == Constant->GetID())
+            {
+                return Constant;
+            }
+        }
+    }
+
+    return nullptr;
 }
 
 std::shared_ptr<const HTNAxiom> HTNDomain::FindAxiomByID(const std::string& inID) const

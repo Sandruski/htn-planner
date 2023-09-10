@@ -1,13 +1,17 @@
 #include "HTNHelpers.h"
 
 #include "HTNLog.h"
+#include "Interpreter/AST/HTNConstant.h"
+#include "Interpreter/AST/HTNDomain.h"
 #include "Interpreter/AST/HTNValue.h"
 #include "Runtime/HTNAtom.h"
 #include "Runtime/HTNDecompositionContext.h"
 
+#include <cassert>
+
 namespace HTN::Helpers
 {
-bool CopyArguments(HTNDecompositionRecord& inDecomposition, const std::vector<std::shared_ptr<const HTNValue>>& inSourceArguments,
+bool CopyArguments(HTNDecompositionContext& ioDecompositionContext, const std::vector<std::shared_ptr<const HTNValue>>& inSourceArguments,
                    const std::vector<std::shared_ptr<const HTNValue>>& inDestinationArguments, const std::string& inSourceScopeID,
                    const std::string& inDestinationScopeID, const std::vector<std::string>& inSourcePrefixes,
                    const std::vector<std::string>& inDestinationPrefixes)
@@ -20,14 +24,18 @@ bool CopyArguments(HTNDecompositionRecord& inDecomposition, const std::vector<st
         return false;
     }
 
-    for (size_t i = 0; i < SourceArgumentsSize; ++i)
+    HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+
+    // We skip the first arguments because they are an axiom and an identifier, respectively
+    for (size_t i = 1; i < SourceArgumentsSize; ++i)
     {
-        // TODO salvarez
-        // Source argument can be a variable
+        // TODO salvarez Merge with HTNCondition somehow
+        // Source argument can be a variable, a constant, or a literal
         const std::shared_ptr<const HTNValue>& SourceArgument      = inSourceArguments[i];
         const HTNAtom*                         SourceArgumentValue = &SourceArgument->GetValue();
-        if (SourceArgument->GetType() == HTNValueType::VARIABLE)
+        switch (SourceArgument->GetType())
         {
+        case HTNValueType::VARIABLE: {
             // Source argument can be prefixed
             std::string SourceArgumentValueString = SourceArgumentValue->GetValue<std::string>();
             bool        IsSourcePrefixRemoved     = inSourcePrefixes.empty();
@@ -42,7 +50,28 @@ bool CopyArguments(HTNDecompositionRecord& inDecomposition, const std::vector<st
             }
 
             // Get or add variable for source argument in source scope
-            SourceArgumentValue = &inDecomposition.GetOrAddVariable(inSourceScopeID, SourceArgumentValueString);
+            SourceArgumentValue = &CurrentDecomposition.GetOrAddVariable(inSourceScopeID, SourceArgumentValueString);
+            break;
+        }
+        case HTNValueType::CONSTANT: {
+            const std::shared_ptr<const HTNDomain>& CurrentDomain             = ioDecompositionContext.GetCurrentDomain();
+            std::string                             SourceArgumentValueString = SourceArgumentValue->GetValue<std::string>();
+            std::shared_ptr<const HTNConstant>      Constant                  = CurrentDomain->FindConstantByID(SourceArgumentValueString);
+            if (!Constant)
+            {
+                LOG_ERROR("Constant [{}] not found", SourceArgumentValueString);
+                return false;
+            }
+
+            SourceArgumentValue = &Constant->GetValueArgument()->GetValue();
+        }
+        case HTNValueType::LITERAL: {
+            break;
+        }
+        case HTNValueType::IDENTIFIER:
+        case HTNValueType::AXIOM:
+        default:
+            assert(false);
         }
 
         // Destination argument must be a variable
@@ -67,7 +96,7 @@ bool CopyArguments(HTNDecompositionRecord& inDecomposition, const std::vector<st
         }
 
         // Get or add variable for destination argument in destination scope
-        HTNAtom& DestinationVariable = inDecomposition.GetOrAddVariable(inDestinationScopeID, DestinationArgumentValueString);
+        HTNAtom& DestinationVariable = CurrentDecomposition.GetOrAddVariable(inDestinationScopeID, DestinationArgumentValueString);
 
         // Copy the source argument to the destination variable
         DestinationVariable = *SourceArgumentValue;

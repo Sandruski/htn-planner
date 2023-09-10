@@ -8,6 +8,7 @@
 class HTNMethod;
 class HTNValue;
 class HTNAxiom;
+class HTNConstant;
 class HTNConstants;
 
 class HTNDomain final : public HTNNodeBase
@@ -22,8 +23,9 @@ public:
     std::string                                 GetID() const final;
     std::string                                 ToString() const final;
 
-    std::shared_ptr<const HTNAxiom>  FindAxiomByID(const std::string& inID) const;
-    std::shared_ptr<const HTNMethod> FindMethodByID(const std::string& inID) const;
+    std::shared_ptr<const HTNConstant> FindConstantByID(const std::string& inID) const;
+    std::shared_ptr<const HTNAxiom>    FindAxiomByID(const std::string& inID) const;
+    std::shared_ptr<const HTNMethod>   FindMethodByID(const std::string& inID) const;
 
     const std::shared_ptr<const HTNValue>&                  GetIDArgument() const;
     const std::vector<std::shared_ptr<const HTNConstants>>& GetConstants() const;
