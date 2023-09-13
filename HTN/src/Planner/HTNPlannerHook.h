@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Interpreter/HTNInterpreter.h"
-
 #include <memory>
 #include <string>
 #include <vector>
 
 class HTNAtom;
 class HTNDecompositionContext;
+class HTNDomainNode;
 class HTNTaskResult;
 
 // Runtime instance of an HTN Planner.
@@ -15,6 +14,8 @@ class HTNTaskResult;
 class HTNPlannerHook
 {
 public:
+    ~HTNPlannerHook();
+
     // Parse a domain file and extract the information needed to create the hierarchical structure.
     // The information needed would be: ConstantsGroups, Methods, Axioms.
     // Once we got all this information we need to know before hand what is the top_level method.
@@ -33,13 +34,13 @@ public:
 
     std::vector<HTNTaskResult> MakePlan(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const;
 
-    const HTNInterpreter& GetInterpreter() const;
+    const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 
 private:
-    HTNInterpreter mInterpreter;
+    std::shared_ptr<const HTNDomainNode> mDomainNode;
 };
 
-inline const HTNInterpreter& HTNPlannerHook::GetInterpreter() const
+inline const std::shared_ptr<const HTNDomainNode>& HTNPlannerHook::GetDomainNode() const
 {
-    return mInterpreter;
+    return mDomainNode;
 }

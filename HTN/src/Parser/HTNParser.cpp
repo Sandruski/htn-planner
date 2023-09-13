@@ -31,9 +31,20 @@ Backus Naur Form (BNF):
 
 std::shared_ptr<const HTNDomainNode> HTNParser::Parse()
 {
-    unsigned int                               InitialPosition = 0;
-    const std::shared_ptr<const HTNDomainNode> DomainNode      = ParseDomainNode(InitialPosition);
-    CLOG_HTN_ERROR(!DomainNode, mLastErrorRow, mLastErrorColumn, "{}", mLastErrorMessage);
+    unsigned int                               CurrentPosition = 0;
+    const std::shared_ptr<const HTNDomainNode> DomainNode      = ParseDomainNode(CurrentPosition);
+    if (!DomainNode)
+    {
+        LOG_HTN_ERROR(mLastErrorRow, mLastErrorColumn, "{}", mLastErrorMessage);
+        return nullptr;
+    }
+
+    if (!ParseToken(CurrentPosition, HTNTokenType::END_OF_FILE))
+    {
+        LOG_HTN_ERROR(mLastErrorRow, mLastErrorColumn, "{}", mLastErrorMessage);
+        return nullptr;
+    }
+
     return DomainNode;
 }
 

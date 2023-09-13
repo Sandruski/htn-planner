@@ -117,8 +117,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         return;
     }
 
-    const HTNInterpreter&                                    Interpreter = mPlanner->GetInterpreter();
-    const std::shared_ptr<const HTNDomainNode>&              DomainNode  = Interpreter.GetDomainNode();
+    const std::shared_ptr<const HTNDomainNode>&              DomainNode  = mPlanner->GetDomainNode();
     const std::vector<std::shared_ptr<const HTNMethodNode>>* MethodNodes = nullptr;
     if (DomainNode)
     {
@@ -382,8 +381,7 @@ void HTNDebuggerWindow::RenderParsing()
 
     // TODO salvarez Do this in the Printer class
     ImGui::Indent();
-    const HTNInterpreter&                       Interpreter = mPlanner->GetInterpreter();
-    const std::shared_ptr<const HTNDomainNode>& DomainNode  = Interpreter.GetDomainNode();
+    const std::shared_ptr<const HTNDomainNode>& DomainNode = mPlanner->GetDomainNode();
     ImGui::Text(DomainNode->ToString().c_str());
 
     ImGui::Indent();

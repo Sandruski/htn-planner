@@ -10,73 +10,15 @@
 #include "Parser/AST/HTNMethodNode.h"
 #include "Parser/AST/HTNTaskNode.h"
 #include "Parser/AST/HTNValueNode.h"
-#include "Parser/HTNLexer.h"
-#include "Parser/HTNParser.h"
 #include "Parser/HTNToken.h"
 
 #include <cassert>
-#include <fstream>
-#include <sstream>
-#include <vector>
 
-namespace
+HTNInterpreter::HTNInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode) : mDomainNode(inDomainNode)
 {
-bool ReadFile(const std::string& inPath, std::string& outText)
-{
-    // Open file
-    std::ifstream File;
-    File.open(inPath);
-    if (!File.is_open())
-    {
-        LOG_ERROR("File [{}] could not be opened", inPath);
-        return false;
-    }
-
-    // Read file
-    std::ostringstream Buffer;
-    Buffer << File.rdbuf();
-    outText = Buffer.str();
-
-    // Close file
-    File.close();
-
-    return true;
 }
-} // namespace
 
 HTNInterpreter::~HTNInterpreter() = default;
-
-bool HTNInterpreter::Init(const std::string& inDomainPath)
-{
-    mDomainNode = nullptr;
-
-    std::string Text;
-    if (!ReadFile(inDomainPath, Text))
-    {
-        LOG_ERROR("File [{}] could not be read", inDomainPath);
-        return false;
-    }
-
-    // Lex
-    HTNLexer              Lexer = HTNLexer(Text);
-    std::vector<HTNToken> Tokens;
-    if (!Lexer.Lex(Tokens))
-    {
-        LOG_ERROR("Lex failed");
-        return false;
-    }
-
-    // Parse
-    HTNParser Parser = HTNParser(Tokens);
-    mDomainNode      = Parser.Parse();
-    if (!mDomainNode)
-    {
-        LOG_ERROR("Parse failed");
-        return false;
-    }
-
-    return true;
-}
 
 std::vector<HTNTaskInstance> HTNInterpreter::Interpret(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const
 {

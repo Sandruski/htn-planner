@@ -2,20 +2,81 @@
 
 #include "HTNLog.h"
 #include "Interpreter/HTNDecompositionContext.h"
+#include "Interpreter/HTNInterpreter.h"
 #include "Interpreter/HTNTaskInstance.h"
 #include "Parser/AST/HTNBranchNode.h"
+#include "Parser/AST/HTNDomainNode.h"
 #include "Parser/AST/HTNTaskNode.h"
 #include "Parser/AST/HTNValueNode.h"
+#include "Parser/HTNLexer.h"
+#include "Parser/HTNParser.h"
 #include "Planner/HTNTaskResult.h"
+
+#include <fstream>
+#include <sstream>
+
+namespace
+{
+bool ReadFile(const std::string& inPath, std::string& outText)
+{
+    // Open file
+    std::ifstream File;
+    File.open(inPath);
+    if (!File.is_open())
+    {
+        LOG_ERROR("File [{}] could not be opened", inPath);
+        return false;
+    }
+
+    // Read file
+    std::ostringstream Buffer;
+    Buffer << File.rdbuf();
+    outText = Buffer.str();
+
+    // Close file
+    File.close();
+
+    return true;
+}
+} // namespace
+
+HTNPlannerHook::~HTNPlannerHook() = default;
 
 bool HTNPlannerHook::ParseDomain(const std::string& inDomainPath)
 {
-    return mInterpreter.Init(inDomainPath);
+    std::string Text;
+    if (!ReadFile(inDomainPath, Text))
+    {
+        LOG_ERROR("File [{}] could not be read", inDomainPath);
+        return false;
+    }
+
+    // Lex
+    HTNLexer              Lexer = HTNLexer(Text);
+    std::vector<HTNToken> Tokens;
+    if (!Lexer.Lex(Tokens))
+    {
+        LOG_ERROR("Lex failed");
+        return false;
+    }
+
+    // Parse
+    HTNParser Parser = HTNParser(Tokens);
+    mDomainNode      = Parser.Parse();
+    if (!mDomainNode)
+    {
+        LOG_ERROR("Parse failed");
+        return false;
+    }
+
+    return true;
 }
 
 std::vector<HTNTaskResult> HTNPlannerHook::MakePlan(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const
 {
-    const std::vector<HTNTaskInstance> Plan = mInterpreter.Interpret(inEntryPointName, ioDecompositionContext);
+    // Interpret
+    HTNInterpreter                     Interpreter = HTNInterpreter(mDomainNode);
+    const std::vector<HTNTaskInstance> Plan        = Interpreter.Interpret(inEntryPointName, ioDecompositionContext);
     if (Plan.empty())
     {
         LOG_ERROR("Interpret failed");
@@ -60,5 +121,5 @@ std::vector<HTNTaskResult> HTNPlannerHook::MakePlan(const std::string& inEntryPo
     }
     */
 
-    return PlanInstance;
+    return PlanResult;
 }
