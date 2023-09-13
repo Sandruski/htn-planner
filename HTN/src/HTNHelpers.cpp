@@ -1,39 +1,39 @@
 #include "HTNHelpers.h"
 
+// TODO salvarez Split helpers in two files (parser and interpreter)
+#include "HTNAtom.h"
 #include "HTNLog.h"
-#include "Interpreter/AST/HTNConstant.h"
-#include "Interpreter/AST/HTNDomain.h"
-#include "Interpreter/AST/HTNValue.h"
-#include "Runtime/HTNAtom.h"
-#include "Runtime/HTNDecompositionContext.h"
+#include "Interpreter/HTNDecompositionContext.h"
+#include "Parser/AST/HTNConstantNode.h"
+#include "Parser/AST/HTNDomainNode.h"
+#include "Parser/AST/HTNValueNode.h"
 
 #include <cassert>
 
 namespace HTN::Helpers
 {
-bool CopyArguments(HTNDecompositionContext& ioDecompositionContext, const std::vector<std::shared_ptr<const HTNValue>>& inSourceArguments,
-                   const std::vector<std::shared_ptr<const HTNValue>>& inDestinationArguments, const std::string& inSourceScopeID,
+bool CopyArguments(HTNDecompositionContext& ioDecompositionContext, const std::vector<std::shared_ptr<const HTNValueNode>>& inSourceArgumentNodes,
+                   const std::vector<std::shared_ptr<const HTNValueNode>>& inDestinationArgumentNodes, const std::string& inSourceScopeID,
                    const std::string& inDestinationScopeID, const std::vector<std::string>& inSourcePrefixes,
                    const std::vector<std::string>& inDestinationPrefixes)
 {
-    const size_t SourceArgumentsSize      = inSourceArguments.size();
-    const size_t DestinationArgumentsSize = inDestinationArguments.size();
-    if (SourceArgumentsSize != DestinationArgumentsSize)
+    const size_t SourceArgumentNodesSize      = inSourceArgumentNodes.size();
+    const size_t DestinationArgumentNodesSize = inDestinationArgumentNodes.size();
+    if (SourceArgumentNodesSize != DestinationArgumentNodesSize)
     {
-        LOG_ERROR("Trying to copy [{}] arguments to [{}] arguments", SourceArgumentsSize, DestinationArgumentsSize);
+        LOG_ERROR("Trying to copy [{}] arguments to [{}] arguments", SourceArgumentNodesSize, DestinationArgumentNodesSize);
         return false;
     }
 
     HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
-    // We skip the first arguments because they are axioms and symbols, respectively
-    for (size_t i = 1; i < SourceArgumentsSize; ++i)
+    for (size_t i = 0; i < SourceArgumentNodesSize; ++i)
     {
         // TODO salvarez Merge with HTNCondition somehow
         // Source argument can be a variable, a constant, or a literal
-        const std::shared_ptr<const HTNValue>& SourceArgument      = inSourceArguments[i];
-        const HTNAtom*                         SourceArgumentValue = &SourceArgument->GetValue();
-        switch (SourceArgument->GetType())
+        const std::shared_ptr<const HTNValueNode>& SourceArgumentNode  = inSourceArgumentNodes[i];
+        const HTNAtom*                             SourceArgumentValue = &SourceArgumentNode->GetValue();
+        switch (SourceArgumentNode->GetType())
         {
         case HTNValueType::VARIABLE: {
             // Source argument can be prefixed
@@ -54,16 +54,16 @@ bool CopyArguments(HTNDecompositionContext& ioDecompositionContext, const std::v
             break;
         }
         case HTNValueType::CONSTANT: {
-            const std::shared_ptr<const HTNDomain>& CurrentDomain             = ioDecompositionContext.GetCurrentDomain();
-            std::string                             SourceArgumentValueString = SourceArgumentValue->GetValue<std::string>();
-            std::shared_ptr<const HTNConstant>      Constant                  = CurrentDomain->FindConstantByID(SourceArgumentValueString);
-            if (!Constant)
+            const std::shared_ptr<const HTNDomainNode>& CurrentDomainNode         = ioDecompositionContext.GetCurrentDomainNode();
+            std::string                                 SourceArgumentValueString = SourceArgumentValue->GetValue<std::string>();
+            std::shared_ptr<const HTNConstantNode>      ConstantNode = CurrentDomainNode->FindConstantNodeByID(SourceArgumentValueString);
+            if (!ConstantNode)
             {
-                LOG_ERROR("Constant [{}] not found", SourceArgumentValueString);
+                LOG_ERROR("Constant node [{}] not found", SourceArgumentValueString);
                 return false;
             }
 
-            SourceArgumentValue = &Constant->GetValueArgument()->GetValue();
+            SourceArgumentValue = &ConstantNode->GetValueNode()->GetValue();
         }
         case HTNValueType::LITERAL: {
             break;
@@ -75,9 +75,9 @@ bool CopyArguments(HTNDecompositionContext& ioDecompositionContext, const std::v
         }
 
         // Destination argument must be a variable
-        const std::shared_ptr<const HTNValue>& DestinationArgument      = inDestinationArguments[i];
-        const HTNAtom&                         DestinationArgumentValue = DestinationArgument->GetValue();
-        if (DestinationArgument->GetType() != HTNValueType::VARIABLE)
+        const std::shared_ptr<const HTNValueNode>& DestinationArgumentNode  = inDestinationArgumentNodes[i];
+        const HTNAtom&                             DestinationArgumentValue = DestinationArgumentNode->GetValue();
+        if (DestinationArgumentNode->GetType() != HTNValueType::VARIABLE)
         {
             continue;
         }

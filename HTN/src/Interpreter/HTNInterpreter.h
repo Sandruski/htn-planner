@@ -5,7 +5,7 @@
 #include <vector>
 
 class HTNDecompositionContext;
-class HTNDomain;
+class HTNDomainNode;
 class HTNTaskInstance;
 
 // Traverses an abstract syntax tree
@@ -18,13 +18,13 @@ public:
 
     std::vector<HTNTaskInstance> Interpret(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const;
 
-    const std::shared_ptr<const HTNDomain>& GetDomain() const;
+    const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 
 private:
-    std::shared_ptr<const HTNDomain> mDomain;
+    std::shared_ptr<const HTNDomainNode> mDomainNode;
 };
 
-inline const std::shared_ptr<const HTNDomain>& HTNInterpreter::GetDomain() const
+inline const std::shared_ptr<const HTNDomainNode>& HTNInterpreter::GetDomainNode() const
 {
-    return mDomain;
+    return mDomainNode;
 }

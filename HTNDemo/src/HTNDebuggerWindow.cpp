@@ -1,17 +1,18 @@
 #include "HTNDebuggerWindow.h"
 
-#include "Interpreter/AST/HTNAxiom.h"
-#include "Interpreter/AST/HTNBranch.h"
-#include "Interpreter/AST/HTNCondition.h"
-#include "Interpreter/AST/HTNDomain.h"
-#include "Interpreter/AST/HTNMethod.h"
-#include "Interpreter/AST/HTNTask.h"
+#include "Database/HTNWorldState.h"
+#include "HTNAtom.h"
+#include "HTNPlanningUnit.h"
 #include "Interpreter/HTNInterpreter.h"
-#include "Runtime/HTNAtom.h"
-#include "Runtime/HTNPlannerHook.h"
-#include "Runtime/HTNPlanningUnit.h"
-#include "Runtime/HTNTaskResult.h"
-#include "Runtime/HTNWorldState.h"
+#include "Parser/AST/HTNAxiomNode.h"
+#include "Parser/AST/HTNBranchNode.h"
+#include "Parser/AST/HTNConditionNode.h"
+#include "Parser/AST/HTNDomainNode.h"
+#include "Parser/AST/HTNMethodNode.h"
+#include "Parser/AST/HTNTaskNode.h"
+#include "Planner/HTNPlannerHook.h"
+#include "Planner/HTNTaskResult.h"
+
 #include "imgui.h"
 #include "imgui_stdlib.h"
 
@@ -116,14 +117,14 @@ void HTNDebuggerWindow::RenderDecomposition()
         return;
     }
 
-    const HTNInterpreter&                                Interpreter = mPlanner->GetInterpreter();
-    const std::shared_ptr<const HTNDomain>&              Domain      = Interpreter.GetDomain();
-    const std::vector<std::shared_ptr<const HTNMethod>>* Methods     = nullptr;
-    if (Domain)
+    const HTNInterpreter&                                    Interpreter = mPlanner->GetInterpreter();
+    const std::shared_ptr<const HTNDomainNode>&              DomainNode  = Interpreter.GetDomainNode();
+    const std::vector<std::shared_ptr<const HTNMethodNode>>* MethodNodes = nullptr;
+    if (DomainNode)
     {
-        if (Domain->IsTopLevel())
+        if (DomainNode->IsTopLevel())
         {
-            Methods = &Domain->GetMethods();
+            MethodNodes = &DomainNode->GetMethodNodes();
         }
     }
 
@@ -140,7 +141,7 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     if (ImGui::Button("+"))
     {
-        const std::string      DefaultEntryPointID     = (Methods && !Methods->empty()) ? (*Methods)[0]->GetID() : "";
+        const std::string      DefaultEntryPointID     = (MethodNodes && !MethodNodes->empty()) ? (*MethodNodes)[0]->GetID() : "";
         constexpr unsigned int DefaultEntryPointAmount = 1;
         EntryPoints.emplace_back(DefaultEntryPointID, DefaultEntryPointAmount);
     }
@@ -168,23 +169,24 @@ void HTNDebuggerWindow::RenderDecomposition()
 
         if (!EntryPoint.ID.empty())
         {
-            if (Methods)
+            if (MethodNodes)
             {
-                const auto Method = std::find_if(Methods->begin(), Methods->end(), [&EntryPoint](const std::shared_ptr<const HTNMethod>& inMethod) {
-                    if (!inMethod)
-                    {
-                        return false;
-                    }
+                const auto MethodNode =
+                    std::find_if(MethodNodes->begin(), MethodNodes->end(), [&EntryPoint](const std::shared_ptr<const HTNMethodNode>& inMethodNode) {
+                        if (!inMethodNode)
+                        {
+                            return false;
+                        }
 
-                    if (!inMethod->IsTopLevel())
-                    {
-                        return false;
-                    }
+                        if (!inMethodNode->IsTopLevel())
+                        {
+                            return false;
+                        }
 
-                    return (EntryPoint.ID == inMethod->GetID());
-                });
+                        return (EntryPoint.ID == inMethodNode->GetID());
+                    });
 
-                if (Method == Methods->end())
+                if (MethodNode == MethodNodes->end())
                 {
                     EntryPoint.ID.clear();
                 }
@@ -197,25 +199,25 @@ void HTNDebuggerWindow::RenderDecomposition()
 
         if (ImGui::BeginCombo(std::format("##Method{}", i).c_str(), EntryPoint.ID.c_str(), ComboFlags))
         {
-            if (Methods)
+            if (MethodNodes)
             {
-                for (const std::shared_ptr<const HTNMethod>& Method : *Methods)
+                for (const std::shared_ptr<const HTNMethodNode>& MethodNode : *MethodNodes)
                 {
-                    if (!Method)
+                    if (!MethodNode)
                     {
                         continue;
                     }
 
-                    if (!Method->IsTopLevel())
+                    if (!MethodNode->IsTopLevel())
                     {
                         continue;
                     }
 
-                    const std::string MethodID   = Method->GetID();
-                    const bool        IsSelected = (EntryPoint.ID == MethodID);
-                    if (ImGui::Selectable(MethodID.c_str(), IsSelected, SelectableFlags))
+                    const std::string MethodNodeID = MethodNode->GetID();
+                    const bool        IsSelected   = (EntryPoint.ID == MethodNodeID);
+                    if (ImGui::Selectable(MethodNodeID.c_str(), IsSelected, SelectableFlags))
                     {
-                        EntryPoint.ID = MethodID;
+                        EntryPoint.ID = MethodNodeID;
                     }
 
                     if (IsSelected)
@@ -264,7 +266,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         std::for_each(std::execution::par, EntryPoints.begin(), EntryPoints.end(), [this](EntryPoint& inEntryPoint) {
             for (unsigned int i = 0; i < inEntryPoint.Amount; ++i)
             {
-                const HTNPlanningUnit               PlanningUnit = HTNPlanningUnit(*mPlanner, *mWorldState);
+                const HTNPlanningUnit             PlanningUnit = HTNPlanningUnit(*mPlanner, *mWorldState);
                 const std::vector<HTNTaskResult>& Plan         = PlanningUnit.ExecuteTopLevelMethod(inEntryPoint.ID);
                 if (Plan.empty())
                 {
@@ -378,46 +380,47 @@ void HTNDebuggerWindow::RenderParsing()
 
     ImGui::Text(LastDomainPath.c_str());
 
+    // TODO salvarez Do this in the Printer class
     ImGui::Indent();
-    const HTNInterpreter&                   Interpreter = mPlanner->GetInterpreter();
-    const std::shared_ptr<const HTNDomain>& Domain      = Interpreter.GetDomain();
-    ImGui::Text(Domain->ToString().c_str());
+    const HTNInterpreter&                       Interpreter = mPlanner->GetInterpreter();
+    const std::shared_ptr<const HTNDomainNode>& DomainNode  = Interpreter.GetDomainNode();
+    ImGui::Text(DomainNode->ToString().c_str());
 
     ImGui::Indent();
-    const std::vector<std::shared_ptr<const HTNAxiom>>& Axioms = Domain->GetAxioms();
-    for (const std::shared_ptr<const HTNAxiom>& Axiom : Axioms)
+    const std::vector<std::shared_ptr<const HTNAxiomNode>>& AxiomNodes = DomainNode->GetAxiomNodes();
+    for (const std::shared_ptr<const HTNAxiomNode>& AxiomNode : AxiomNodes)
     {
-        ImGui::Text(Axiom->ToString().c_str());
+        ImGui::Text(AxiomNode->ToString().c_str());
 
         ImGui::Indent();
-        if (const std::shared_ptr<const HTNConditionBase>& Condition = Axiom->GetCondition())
+        if (const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode = AxiomNode->GetConditionNode())
         {
-            ImGui::Text(Condition->ToString().c_str());
+            ImGui::Text(ConditionNode->ToString().c_str());
         }
         ImGui::Unindent();
     }
 
-    const std::vector<std::shared_ptr<const HTNMethod>>& Methods = Domain->GetMethods();
-    for (const std::shared_ptr<const HTNMethod>& Method : Methods)
+    const std::vector<std::shared_ptr<const HTNMethodNode>>& MethodNodes = DomainNode->GetMethodNodes();
+    for (const std::shared_ptr<const HTNMethodNode>& MethodNode : MethodNodes)
     {
-        ImGui::Text(Method->ToString().c_str());
+        ImGui::Text(MethodNode->ToString().c_str());
 
         ImGui::Indent();
-        const std::vector<std::shared_ptr<const HTNBranch>>& Branches = Method->GetBranches();
-        for (const std::shared_ptr<const HTNBranch>& Branch : Branches)
+        const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes = MethodNode->GetBranchNodes();
+        for (const std::shared_ptr<const HTNBranchNode>& BranchNode : BranchNodes)
         {
-            ImGui::Text(Branch->ToString().c_str());
+            ImGui::Text(BranchNode->ToString().c_str());
 
             ImGui::Indent();
-            if (const std::shared_ptr<const HTNConditionBase>& PreCondition = Branch->GetPreCondition())
+            if (const std::shared_ptr<const HTNConditionNodeBase>& PreConditionNode = BranchNode->GetPreConditionNode())
             {
-                ImGui::Text(PreCondition->ToString().c_str());
+                ImGui::Text(PreConditionNode->ToString().c_str());
             }
 
-            const std::vector<std::shared_ptr<const HTNTask>>& Tasks = Branch->GetTasks();
-            for (const std::shared_ptr<const HTNTask>& Task : Tasks)
+            const std::vector<std::shared_ptr<const HTNTaskNode>>& TaskNodes = BranchNode->GetTaskNodes();
+            for (const std::shared_ptr<const HTNTaskNode>& TaskNode : TaskNodes)
             {
-                ImGui::Text(Task->ToString().c_str());
+                ImGui::Text(TaskNode->ToString().c_str());
             }
             ImGui::Unindent();
         }

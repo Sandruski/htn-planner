@@ -7,9 +7,9 @@
 // because it provides a rather limited API to the end-user. We provide this backend for the sake of completeness.
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
+#include "Database/HTNWorldState.h"
 #include "HTNDebuggerWindow.h"
-#include "Runtime/HTNPlannerHook.h"
-#include "Runtime/HTNWorldState.h"
+#include "Planner/HTNPlannerHook.h"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer.h"
