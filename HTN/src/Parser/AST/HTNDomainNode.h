@@ -23,9 +23,9 @@ public:
                            const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel);
     ~HTNDomainNode();
 
-    std::vector<std::shared_ptr<const HTNTaskNode>> Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
-    std::string                                     GetID() const final;
-    std::string                                     ToString() const final;
+    std::vector<HTNTaskInstance> Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
+    std::string                  GetID() const final;
+    std::string                  ToString() const final;
 
     std::shared_ptr<const HTNConstantNode> FindConstantNodeByID(const std::string& inID) const;
     std::shared_ptr<const HTNAxiomNode>    FindAxiomNodeByID(const std::string& inID) const;

@@ -16,7 +16,6 @@ class HTNConstantsNode;
 class HTNDomainNode;
 class HTNMethodNode;
 class HTNTaskNode;
-class HTNTaskNode;
 class HTNValueNode;
 
 // Recursive descent parser

@@ -125,3 +125,48 @@ std::vector<HTNTaskInstance> HTNInterpreter::Interpret(const std::string& inEntr
 
     return CurrentDecomposition.GetPlan();
 }
+
+std::vector<HTNTaskInstance> HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode) const
+{
+    return std::vector<HTNTaskInstance>();
+}
+
+std::vector<HTNTaskInstance> HTNInterpreter::Visit([[maybe_unused]] const HTNConstantsNode& inConstantsNode) const
+{
+    return std::vector<HTNTaskInstance>();
+}
+
+std::vector<HTNTaskInstance> HTNInterpreter::Visit([[maybe_unused]] const HTNConstantNode& inConstantNode) const
+{
+    return std::vector<HTNTaskInstance>();
+}
+
+std::vector<HTNTaskInstance> HTNInterpreter::Visit([[maybe_unused]] const HTNAxiomNode& inAxiomNode) const
+{
+    return std::vector<HTNTaskInstance>();
+}
+
+std::vector<HTNTaskInstance> HTNInterpreter::Visit([[maybe_unused]] const HTNMethodNode& inMethodNode) const
+{
+    return std::vector<HTNTaskInstance>();
+}
+
+std::vector<HTNTaskInstance> HTNInterpreter::Visit([[maybe_unused]] const HTNBranchNode& inBranchNode) const
+{
+    return std::vector<HTNTaskInstance>();
+}
+
+std::vector<HTNTaskInstance> HTNInterpreter::Visit([[maybe_unused]] const HTNConditionNodeBase& inConditionNode) const
+{
+    return std::vector<HTNTaskInstance>();
+}
+
+std::vector<HTNTaskInstance> HTNInterpreter::Visit([[maybe_unused]] const HTNTaskNode& inTaskNode) const
+{
+    return std::vector<HTNTaskInstance>();
+}
+
+std::vector<HTNTaskInstance> HTNInterpreter::Visit([[maybe_unused]] const HTNValueNode& inValueNode) const
+{
+    return std::vector<HTNTaskInstance>();
+}

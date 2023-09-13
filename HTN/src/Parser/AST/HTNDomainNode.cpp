@@ -17,7 +17,7 @@ HTNDomainNode::HTNDomainNode(const std::shared_ptr<const HTNValueNode>&         
 
 HTNDomainNode::~HTNDomainNode() = default;
 
-std::vector<std::shared_ptr<const HTNTaskNode>> HTNDomainNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
+std::vector<HTNTaskInstance> HTNDomainNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }

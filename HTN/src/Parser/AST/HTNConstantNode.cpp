@@ -12,7 +12,7 @@ HTNConstantNode::HTNConstantNode(const std::shared_ptr<const HTNValueNode>& inID
 
 HTNConstantNode::~HTNConstantNode() = default;
 
-std::vector<std::shared_ptr<const HTNTaskNode>> HTNConstantNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
+std::vector<HTNTaskInstance> HTNConstantNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }

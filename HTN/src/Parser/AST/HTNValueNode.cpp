@@ -2,7 +2,7 @@
 
 #include "Parser/AST/HTNNodeVisitorBase.h"
 
-std::vector<std::shared_ptr<const HTNTaskNode>> HTNValueNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
+std::vector<HTNTaskInstance> HTNValueNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }

@@ -15,7 +15,7 @@ HTNAxiomNode::HTNAxiomNode(const std::shared_ptr<const HTNValueNode>&           
 
 HTNAxiomNode::~HTNAxiomNode() = default;
 
-std::vector<std::shared_ptr<const HTNTaskNode>> HTNAxiomNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
+std::vector<HTNTaskInstance> HTNAxiomNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }

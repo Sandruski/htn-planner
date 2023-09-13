@@ -22,9 +22,9 @@ class HTNValueNode final : public HTNNodeBase
 public:
     explicit HTNValueNode(const HTNAtom& inValue, const HTNValueType inType);
 
-    std::vector<std::shared_ptr<const HTNTaskNode>> Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
-    std::string                                     GetID() const final;
-    std::string                                     ToString() const final;
+    std::vector<HTNTaskInstance> Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
+    std::string                  GetID() const final;
+    std::string                  ToString() const final;
 
     const HTNAtom& GetValue() const;
     HTNValueType   GetType() const;

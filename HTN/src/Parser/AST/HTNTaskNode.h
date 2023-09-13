@@ -25,9 +25,9 @@ public:
                          const HTNTaskType inType);
     ~HTNTaskNode();
 
-    std::vector<std::shared_ptr<const HTNTaskNode>> Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
-    std::string                                     GetID() const final;
-    std::string                                     ToString() const final;
+    std::vector<HTNTaskInstance> Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
+    std::string                  GetID() const final;
+    std::string                  ToString() const final;
 
     const std::shared_ptr<const HTNValueNode>&              GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNValueNode>>& GetArgumentNodes() const;
