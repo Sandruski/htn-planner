@@ -16,7 +16,7 @@
 #include <cassert>
 #include <format>
 
-std::vector<HTNTaskInstance> HTNConditionNodeBase::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
+void HTNConditionNodeBase::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }

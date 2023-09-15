@@ -15,7 +15,7 @@ HTNMethodNode::HTNMethodNode(const std::shared_ptr<const HTNValueNode>&         
 
 HTNMethodNode::~HTNMethodNode() = default;
 
-std::vector<HTNTaskInstance> HTNMethodNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
+void HTNMethodNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }

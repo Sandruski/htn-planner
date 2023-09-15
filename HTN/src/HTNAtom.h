@@ -37,7 +37,6 @@ public:
     HTNAtom() = default;
     HTNAtom(const int inValue);
     HTNAtom(const float inValue);
-    HTNAtom(const char* inValue);
     HTNAtom(const std::string& inValue);
     HTNAtom(const HTNAtomList& inValue);
 

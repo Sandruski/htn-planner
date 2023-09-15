@@ -19,9 +19,9 @@ public:
                            const std::vector<std::shared_ptr<const HTNBranchNode>>& inBranchNodes, const bool inIsTopLevel);
     ~HTNMethodNode();
 
-    std::vector<HTNTaskInstance> Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
-    std::string                  GetID() const final;
-    std::string                  ToString() const final;
+    void        Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
+    std::string GetID() const final;
+    std::string ToString() const final;
 
     const std::shared_ptr<const HTNValueNode>&               GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNValueNode>>&  GetArgumentNodes() const;
