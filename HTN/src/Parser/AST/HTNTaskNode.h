@@ -25,7 +25,7 @@ public:
                          const HTNTaskType inType);
     ~HTNTaskNode();
 
-    void        Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
+    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string GetID() const final;
     std::string ToString() const final;
 

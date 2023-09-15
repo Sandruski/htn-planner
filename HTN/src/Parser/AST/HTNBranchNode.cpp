@@ -14,7 +14,7 @@ HTNBranchNode::HTNBranchNode(const std::shared_ptr<const HTNValueNode>&         
 
 HTNBranchNode::~HTNBranchNode() = default;
 
-void HTNBranchNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
+HTNAtom HTNBranchNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }

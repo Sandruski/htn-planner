@@ -17,7 +17,7 @@ class HTNConditionNodeBase : public HTNNodeBase
 public:
     HTNConditionNodeBase();
 
-    void        Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
+    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string GetID() const final;
 
     virtual bool Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const = 0;

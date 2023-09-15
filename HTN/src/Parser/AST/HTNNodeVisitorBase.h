@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HTNAtom.h"
+
 #include <memory>
 #include <vector>
 
@@ -19,13 +21,13 @@ class HTNNodeVisitorBase
 public:
     virtual ~HTNNodeVisitorBase() = default;
 
-    virtual void Visit(const HTNDomainNode& inDomainNode) const           = 0;
-    virtual void Visit(const HTNConstantsNode& inConstantsNode) const     = 0;
-    virtual void Visit(const HTNConstantNode& inConstantNode) const       = 0;
-    virtual void Visit(const HTNAxiomNode& inAxiomNode) const             = 0;
-    virtual void Visit(const HTNMethodNode& inMethodNode) const           = 0;
-    virtual void Visit(const HTNBranchNode& inBranchNode) const           = 0;
-    virtual void Visit(const HTNConditionNodeBase& inConditionNode) const = 0;
-    virtual void Visit(const HTNTaskNode& inTaskNode) const               = 0;
-    virtual void Visit(const HTNValueNode& inValueNode) const             = 0;
+    virtual HTNAtom Visit(const HTNDomainNode& inDomainNode)           = 0;
+    virtual HTNAtom Visit(const HTNConstantsNode& inConstantsNode)     = 0;
+    virtual HTNAtom Visit(const HTNConstantNode& inConstantNode)       = 0;
+    virtual HTNAtom Visit(const HTNAxiomNode& inAxiomNode)             = 0;
+    virtual HTNAtom Visit(const HTNMethodNode& inMethodNode)           = 0;
+    virtual HTNAtom Visit(const HTNBranchNode& inBranchNode)           = 0;
+    virtual HTNAtom Visit(const HTNConditionNodeBase& inConditionNode) = 0;
+    virtual HTNAtom Visit(const HTNTaskNode& inTaskNode)               = 0;
+    virtual HTNAtom Visit(const HTNValueNode& inValueNode)             = 0;
 };

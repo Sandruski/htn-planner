@@ -15,7 +15,7 @@ HTNMethodNode::HTNMethodNode(const std::shared_ptr<const HTNValueNode>&         
 
 HTNMethodNode::~HTNMethodNode() = default;
 
-void HTNMethodNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
+HTNAtom HTNMethodNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }

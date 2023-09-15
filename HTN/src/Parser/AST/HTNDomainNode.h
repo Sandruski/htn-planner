@@ -23,7 +23,7 @@ public:
                            const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel);
     ~HTNDomainNode();
 
-    void        Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
+    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string GetID() const final;
     std::string ToString() const final;
 

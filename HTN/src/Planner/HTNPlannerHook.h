@@ -5,9 +5,9 @@
 #include <vector>
 
 class HTNAtom;
-class HTNDecompositionContext;
 class HTNDomainNode;
 class HTNTaskResult;
+class HTNWorldState;
 
 // Runtime instance of an HTN Planner.
 //
@@ -32,7 +32,7 @@ public:
         return nullptr;
     }
 
-    std::vector<HTNTaskResult> MakePlan(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const;
+    std::vector<HTNTaskResult> MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState) const;
 
     const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 

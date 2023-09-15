@@ -15,7 +15,7 @@ HTNAxiomNode::HTNAxiomNode(const std::shared_ptr<const HTNValueNode>&           
 
 HTNAxiomNode::~HTNAxiomNode() = default;
 
-void HTNAxiomNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
+HTNAtom HTNAxiomNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }

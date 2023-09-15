@@ -35,8 +35,10 @@ class HTNAtom
 {
 public:
     HTNAtom() = default;
+    HTNAtom(const bool inValue);
     HTNAtom(const int inValue);
     HTNAtom(const float inValue);
+    HTNAtom(const char* inValue);
     HTNAtom(const std::string& inValue);
     HTNAtom(const HTNAtomList& inValue);
 
@@ -68,7 +70,7 @@ public:
     std::string ToString() const;
 
 private:
-    std::optional<std::variant<int, float, std::string, HTNAtomList>> mData;
+    std::optional<std::variant<bool, int, float, std::string, HTNAtomList>> mData;
 };
 
 class HTNAtomNode
@@ -90,6 +92,10 @@ private:
 inline unsigned int HTNAtomList::GetSize() const
 {
     return mSize;
+}
+
+inline HTNAtom::HTNAtom(const bool inValue) : mData(inValue)
+{
 }
 
 inline HTNAtom::HTNAtom(const int inValue) : mData(inValue)

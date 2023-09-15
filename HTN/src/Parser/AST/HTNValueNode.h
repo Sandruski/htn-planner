@@ -22,7 +22,7 @@ class HTNValueNode final : public HTNNodeBase
 public:
     explicit HTNValueNode(const HTNAtom& inValue, const HTNValueType inType);
 
-    void        Accept(const HTNNodeVisitorBase& inNodeVisitor) const final;
+    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string GetID() const final;
     std::string ToString() const final;
 

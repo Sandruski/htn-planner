@@ -1,7 +1,6 @@
 #include "Planner/HTNPlannerHook.h"
 
 #include "HTNLog.h"
-#include "Interpreter/HTNDecompositionContext.h"
 #include "Interpreter/HTNInterpreter.h"
 #include "Interpreter/HTNTaskInstance.h"
 #include "Parser/AST/HTNBranchNode.h"
@@ -72,17 +71,18 @@ bool HTNPlannerHook::ParseDomain(const std::string& inDomainPath)
     return true;
 }
 
-std::vector<HTNTaskResult> HTNPlannerHook::MakePlan(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const
+std::vector<HTNTaskResult> HTNPlannerHook::MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState) const
 {
     // Interpret
-    HTNInterpreter                     Interpreter = HTNInterpreter(mDomainNode);
-    const std::vector<HTNTaskInstance> Plan        = Interpreter.Interpret(inEntryPointName, ioDecompositionContext);
-    if (Plan.empty())
+    HTNInterpreter               Interpreter = HTNInterpreter(mDomainNode, inEntryPointName, inWorldState);
+    std::vector<HTNTaskInstance> Plan;
+    if (!Interpreter.Interpret(Plan))
     {
         LOG_ERROR("Interpret failed");
         return {};
     }
 
+    // TODO salvarez Delete this
     std::vector<HTNTaskResult> PlanResult;
     PlanResult.reserve(Plan.size());
 

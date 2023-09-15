@@ -2,7 +2,7 @@
 
 #include "Parser/AST/HTNNodeVisitorBase.h"
 
-void HTNValueNode::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
+HTNAtom HTNValueNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }

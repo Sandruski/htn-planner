@@ -16,7 +16,7 @@
 #include <cassert>
 #include <format>
 
-void HTNConditionNodeBase::Accept(const HTNNodeVisitorBase& inNodeVisitor) const
+HTNAtom HTNConditionNodeBase::Accept(HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }
