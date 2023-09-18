@@ -5,14 +5,22 @@
 #include <vector>
 
 class HTNDecompositionContext;
+class HTNEnvironment;
 class HTNValueNode;
 
 namespace HTN::Helpers
 {
-bool CopyArguments(HTNDecompositionContext& ioDecompositionContext, const std::vector<std::shared_ptr<const HTNValueNode>>& inSourceArgumentNodes,
-                   const std::vector<std::shared_ptr<const HTNValueNode>>& inDestinationArgumentNodes, const std::string& inSourceScopeID,
-                   const std::string& inDestinationScopeID, const std::vector<std::string>& inSourcePrefixes,
-                   const std::vector<std::string>& inDestinationPrefixes);
+bool CopyArgumentsNoConst(const HTNDecompositionContext&                          inDecompositionContext,
+                          const std::vector<std::shared_ptr<const HTNValueNode>>& inSourceArgumentNodes,
+                          const std::vector<std::shared_ptr<const HTNValueNode>>& inDestinationArgumentNodes, HTNEnvironment& inSourceEnvironment,
+                          HTNEnvironment& inDestinationEnvironment, const std::vector<std::string>& inSourcePrefixes,
+                          const std::vector<std::string>& inDestinationPrefixes);
+
+bool CopyArgumentsConst(const HTNDecompositionContext&                          inDecompositionContext,
+                        const std::vector<std::shared_ptr<const HTNValueNode>>& inSourceArgumentNodes,
+                        const std::vector<std::shared_ptr<const HTNValueNode>>& inDestinationArgumentNodes, const HTNEnvironment& inSourceEnvironment,
+                        HTNEnvironment& inDestinationEnvironment, const std::vector<std::string>& inSourcePrefixes,
+                        const std::vector<std::string>& inDestinationPrefixes);
 
 bool RemovePrefix(const std::string& inPrefix, std::string& inString);
 

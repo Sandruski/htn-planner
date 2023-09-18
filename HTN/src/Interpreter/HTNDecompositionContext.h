@@ -1,64 +1,46 @@
 #pragma once
 
 #include "HTNAtom.h"
-#include "Interpreter/HTNDecompositionScope.h"
+#include "Interpreter/HTNEnvironment.h"
 #include "Interpreter/HTNTaskInstance.h"
 
 #include <memory>
-#include <string>
-#include <unordered_map>
 #include <vector>
 
+class HTNCompoundTaskNode;
 class HTNDomainNode;
 class HTNMethodNode;
-class HTNTaskNode;
+class HTNTaskNodeBase;
 class HTNWorldState;
 class HTNNodeBase;
 
 class HTNDecompositionRecord
 {
 public:
-    void                                      SetCurrentTaskNode(const std::shared_ptr<const HTNTaskNode>& inTaskNode);
-    const std::shared_ptr<const HTNTaskNode>& GetCurrentTaskNode() const;
+    void SetCurrentCompoundTaskNode(const std::shared_ptr<const HTNCompoundTaskNode>& inCompoundTaskNode);
+    const std::shared_ptr<const HTNCompoundTaskNode>& GetCurrentCompoundTaskNode() const;
 
-    void                   PushTaskInstanceToProcess(const HTNTaskInstance& inTaskInstance);
-    const HTNTaskInstance& PopTaskInstanceToProcess();
-    bool                   HasTaskInstancesToProcess() const;
+    void            PushEnvironment();
+    void            PopEnvironment();
+    HTNEnvironment& GetCurrentEnvironment();
+    HTNEnvironment& GetPreviousEnvironment();
 
-    // Returns an existing index or adds a new index
-    unsigned int GetOrAddIndex(const std::string& inScopeID);
-
-    // Increments an existing index or adds a new index and increments it
-    unsigned int IncrementIndex(const std::string& inScopeID);
-
-    // Adds a new index or increments an existing index
-    unsigned int AddOrIncrementIndex(const std::string& inScopeID);
-
-    void SetVariables(const std::string& inScopeID, const std::unordered_map<std::string, HTNAtom>& inVariables);
-    const std::unordered_map<std::string, HTNAtom>* FindVariables(const std::string& inScopeID) const;
-    const std::unordered_map<std::string, HTNAtom>& GetVariables(const std::string& inScopeID) const;
-    bool                                            HasVariables(const std::string& inScopeID) const;
-    HTNAtom&                                        GetOrAddVariable(const std::string& inScopeID, const std::string& inVariableName);
-    const HTNAtom*                                  FindVariable(const std::string& inScopeID, const std::string& inVariableName) const;
+    void            PushTaskInstanceToProcess(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode);
+    HTNTaskInstance PopTaskInstanceToProcess();
+    bool            HasTaskInstancesToProcess() const;
 
     void                                AddTaskToPlan(const HTNTaskInstance& inTaskInstance);
     const std::vector<HTNTaskInstance>& GetPlan() const;
 
 private:
-    // Current task being processed
-    std::shared_ptr<const HTNTaskNode> mCurrentTaskNode;
+    // TODO salvarez Make the current compound task node a HTNTaskInstance and add the std::vector<HTNEnvironment> there?
+    // Current compound task being processed
+    std::shared_ptr<const HTNCompoundTaskNode> mCurrentCompoundTaskNode;
+
+    std::vector<HTNEnvironment> mEnvironments;
 
     // Tasks pending to be processed
     std::vector<HTNTaskInstance> mTaskInstancesToProcess;
-
-    // Scope ID to index
-    // - Method scope ID to branch index
-    // - HTNConditionAnd, HTNConditionOr, and HTNConditionAlt scope ID to sub-condition index
-    // - HTNCondition scope ID to fact entry index
-    std::unordered_map<std::string, unsigned int> mIndices;
-
-    // Scope ID to variable (name and value)
-    std::unordered_map<std::string, std::unordered_map<std::string, HTNAtom>> mVariables;
 
     // Final plan of tasks
     std::vector<HTNTaskInstance> mPlan;
@@ -67,54 +49,82 @@ private:
 class HTNDecompositionContext
 {
 public:
+    void                                        SetCurrentDomainNode(const std::shared_ptr<const HTNDomainNode>& inCurrentDomainNode);
+    const std::shared_ptr<const HTNDomainNode>& GetCurrentDomainNode() const;
+
     HTNDecompositionContext(const HTNWorldState& inWorldState);
 
     const HTNWorldState* GetWorldState() const;
-
-    void                                       PushNodeToCurrentScope(const std::shared_ptr<const HTNNodeBase>& inNode);
-    const std::shared_ptr<const HTNNodeBase>&  PopNodeFromCurrentScope();
-    const std::shared_ptr<const HTNDomainNode> GetCurrentDomainNode() const;
-    std::string                                MakeCurrentScopeID() const;
 
     void RecordDecomposition(HTNDecompositionRecord& inDecomposition);
     void RecordCurrentDecomposition();
     bool RestoreDecomposition();
 
-    void                                       SetDecompositionHistory(const std::vector<HTNDecompositionRecord>& inDecompositionHistory);
-    const std::vector<HTNDecompositionRecord>& GetDecompositionHistory() const;
-
     const HTNDecompositionRecord& GetCurrentDecomposition() const;
     HTNDecompositionRecord&       GetCurrentDecompositionMutable();
 
+    void                                       SetDecompositionHistory(const std::vector<HTNDecompositionRecord>& inDecompositionHistory);
+    const std::vector<HTNDecompositionRecord>& GetDecompositionHistory() const;
+
 private:
+    std::shared_ptr<const HTNDomainNode> mCurrentDomainNode;
+
+    // TODO salvarez Maybe move the world state to the interpreter too
     const HTNWorldState* mWorldState = nullptr; ///< Pointer to world state. All the queries will just not be able to modify the world state at
                                                 ///< all, this is why it is important this is a const pointer.
-
-    // TODO salvarez Can it be a string?
-    std::vector<std::shared_ptr<const HTNNodeBase>> mCurrentScope;
 
     HTNDecompositionRecord              mCurrentDecomposition;
     std::vector<HTNDecompositionRecord> mDecompositionHistory;
 };
 
-inline void HTNDecompositionRecord::SetCurrentTaskNode(const std::shared_ptr<const HTNTaskNode>& inTaskNode)
+inline void HTNDecompositionContext::SetCurrentDomainNode(const std::shared_ptr<const HTNDomainNode>& inCurrentDomainNode)
 {
-    mCurrentTaskNode = inTaskNode;
+    mCurrentDomainNode = inCurrentDomainNode;
 }
 
-inline const std::shared_ptr<const HTNTaskNode>& HTNDecompositionRecord::GetCurrentTaskNode() const
+inline const std::shared_ptr<const HTNDomainNode>& HTNDecompositionContext::GetCurrentDomainNode() const
 {
-    return mCurrentTaskNode;
+    return mCurrentDomainNode;
 }
 
-inline void HTNDecompositionRecord::PushTaskInstanceToProcess(const HTNTaskInstance& inTaskInstance)
+inline void HTNDecompositionRecord::PushEnvironment()
 {
-    mTaskInstancesToProcess.emplace_back(inTaskInstance);
+    mEnvironments.emplace_back();
 }
 
-inline const HTNTaskInstance& HTNDecompositionRecord::PopTaskInstanceToProcess()
+inline void HTNDecompositionRecord::PopEnvironment()
 {
-    const HTNTaskInstance& TaskInstance = mTaskInstancesToProcess.back();
+    mEnvironments.pop_back();
+}
+
+inline HTNEnvironment& HTNDecompositionRecord::GetCurrentEnvironment()
+{
+    return mEnvironments.back();
+}
+
+inline HTNEnvironment& HTNDecompositionRecord::GetPreviousEnvironment()
+{
+    return mEnvironments[mEnvironments.size() - 2];
+}
+
+inline void HTNDecompositionRecord::SetCurrentCompoundTaskNode(const std::shared_ptr<const HTNCompoundTaskNode>& inCompoundTaskNode)
+{
+    mCurrentCompoundTaskNode = inCompoundTaskNode;
+}
+
+inline const std::shared_ptr<const HTNCompoundTaskNode>& HTNDecompositionRecord::GetCurrentCompoundTaskNode() const
+{
+    return mCurrentCompoundTaskNode;
+}
+
+inline void HTNDecompositionRecord::PushTaskInstanceToProcess(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode)
+{
+    mTaskInstancesToProcess.emplace_back(inTaskNode, GetCurrentEnvironment());
+}
+
+inline HTNTaskInstance HTNDecompositionRecord::PopTaskInstanceToProcess()
+{
+    const HTNTaskInstance TaskInstance = mTaskInstancesToProcess.back();
     mTaskInstancesToProcess.pop_back();
     return TaskInstance;
 }
@@ -122,77 +132,6 @@ inline const HTNTaskInstance& HTNDecompositionRecord::PopTaskInstanceToProcess()
 inline bool HTNDecompositionRecord::HasTaskInstancesToProcess() const
 {
     return !mTaskInstancesToProcess.empty();
-}
-
-inline unsigned int HTNDecompositionRecord::GetOrAddIndex(const std::string& inScopeID)
-{
-    return mIndices[inScopeID];
-}
-
-inline unsigned int HTNDecompositionRecord::IncrementIndex(const std::string& inScopeID)
-{
-    return ++mIndices[inScopeID];
-}
-
-inline unsigned int HTNDecompositionRecord::AddOrIncrementIndex(const std::string& inScopeID)
-{
-    auto ScopeIt = mIndices.find(inScopeID);
-    if (ScopeIt == mIndices.end())
-    {
-        return mIndices[inScopeID];
-    }
-
-    return ++ScopeIt->second;
-}
-
-inline void HTNDecompositionRecord::SetVariables(const std::string& inScopeID, const std::unordered_map<std::string, HTNAtom>& inVariables)
-{
-    mVariables[inScopeID] = inVariables;
-}
-
-inline const std::unordered_map<std::string, HTNAtom>* HTNDecompositionRecord::FindVariables(const std::string& inScopeID) const
-{
-    const auto ScopeIt = mVariables.find(inScopeID);
-    if (ScopeIt == mVariables.end())
-    {
-        return nullptr;
-    }
-
-    return &ScopeIt->second;
-}
-
-inline const std::unordered_map<std::string, HTNAtom>& HTNDecompositionRecord::GetVariables(const std::string& inScopeID) const
-{
-    const auto ScopeIt = mVariables.find(inScopeID);
-    return ScopeIt->second;
-}
-
-inline bool HTNDecompositionRecord::HasVariables(const std::string& inScopeID) const
-{
-    const auto ScopeIt = mVariables.find(inScopeID);
-    return (ScopeIt != mVariables.end());
-}
-
-inline HTNAtom& HTNDecompositionRecord::GetOrAddVariable(const std::string& inScopeID, const std::string& inVariableName)
-{
-    return mVariables[inScopeID][inVariableName];
-}
-
-inline const HTNAtom* HTNDecompositionRecord::FindVariable(const std::string& inScopeID, const std::string& inVariableName) const
-{
-    const auto ScopeIt = mVariables.find(inScopeID);
-    if (ScopeIt == mVariables.end())
-    {
-        return nullptr;
-    }
-
-    const auto VariableIt = ScopeIt->second.find(inVariableName);
-    if (VariableIt == ScopeIt->second.end())
-    {
-        return nullptr;
-    }
-
-    return &VariableIt->second;
 }
 
 inline void HTNDecompositionRecord::AddTaskToPlan(const HTNTaskInstance& inTaskInstance)
@@ -212,18 +151,6 @@ inline HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inW
 inline const HTNWorldState* HTNDecompositionContext::GetWorldState() const
 {
     return mWorldState;
-}
-
-inline void HTNDecompositionContext::PushNodeToCurrentScope(const std::shared_ptr<const HTNNodeBase>& inNode)
-{
-    mCurrentScope.emplace_back(inNode);
-}
-
-inline const std::shared_ptr<const HTNNodeBase>& HTNDecompositionContext::PopNodeFromCurrentScope()
-{
-    const std::shared_ptr<const HTNNodeBase>& Node = mCurrentScope.back();
-    mCurrentScope.pop_back();
-    return Node;
 }
 
 inline void HTNDecompositionContext::RecordDecomposition(HTNDecompositionRecord& inDecomposition)

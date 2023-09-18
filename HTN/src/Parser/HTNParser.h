@@ -15,7 +15,7 @@ class HTNConstantNode;
 class HTNConstantsNode;
 class HTNDomainNode;
 class HTNMethodNode;
-class HTNTaskNode;
+class HTNTaskNodeBase;
 class HTNValueNode;
 
 // Recursive descent parser
@@ -37,7 +37,7 @@ private:
     std::shared_ptr<HTNBranchNode>        ParseBranchNode(unsigned int& inPosition);
     std::shared_ptr<HTNConditionNodeBase> ParseConditionNode(unsigned int& inPosition);
     std::shared_ptr<HTNConditionNodeBase> ParseSubConditionNode(unsigned int& inPosition);
-    std::shared_ptr<HTNTaskNode>          ParseTaskNode(unsigned int& inPosition);
+    std::shared_ptr<HTNTaskNodeBase>          ParseTaskNode(unsigned int& inPosition);
     std::shared_ptr<HTNValueNode>         ParseArgumentNode(unsigned int& inPosition);
     std::shared_ptr<HTNValueNode>         ParseIdentifierNode(unsigned int& inPosition, const HTNValueType inValueType);
     std::shared_ptr<HTNValueNode>         ParseNumberNode(unsigned int& inPosition);

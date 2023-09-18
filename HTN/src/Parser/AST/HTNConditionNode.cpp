@@ -5,6 +5,7 @@
 #include "HTNLog.h"
 #include "Interpreter/HTNConditionQuery.h"
 #include "Interpreter/HTNDecompositionContext.h"
+#include "Interpreter/HTNDecompositionScope.h"
 #include "Parser/AST/HTNAxiomNode.h"
 #include "Parser/AST/HTNBranchNode.h"
 #include "Parser/AST/HTNConstantNode.h"
@@ -55,7 +56,6 @@ bool HTNConditionNode::Check(HTNDecompositionContext& ioDecompositionContext, bo
 {
     const std::string       ID                   = GetID();
     const std::string       FactID               = GetIDNode()->ToString();
-    const std::string       CurrentScopeID       = ioDecompositionContext.MakeCurrentScopeID();
     HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
     const HTNWorldState*    WorldState           = ioDecompositionContext.GetWorldState();
 
@@ -76,7 +76,7 @@ bool HTNConditionNode::Check(HTNDecompositionContext& ioDecompositionContext, bo
         case HTNValueType::VARIABLE: {
             // If argument is a variable, get or add a variable for it in its scope
             std::string ArgumentValueString = ArgumentValue->GetValue<std::string>();
-            ArgumentValueMutable            = &CurrentDecomposition.GetOrAddVariable(CurrentScopeID, ArgumentValueString);
+            ArgumentValueMutable            = &CurrentDecomposition.GetCurrentEnvironment().GetOrAddVariable(ArgumentValueString);
             ShouldBindArguments             = ShouldBindArguments || !ArgumentValueMutable->IsSet();
             break;
         }
@@ -110,8 +110,8 @@ bool HTNConditionNode::Check(HTNDecompositionContext& ioDecompositionContext, bo
     const HTNConditionQueryWorldState Condition        = HTNConditionQueryWorldState(FactID, Arguments);
     const unsigned int                ArgumentsCount   = static_cast<unsigned int>(Arguments.size());
     const unsigned int                FactEntriesCount = WorldState->GetNumFactEntries(FactID, ArgumentsCount);
-    for (unsigned int CurrentFactEntryIndex = CurrentDecomposition.AddOrIncrementIndex(ID); CurrentFactEntryIndex < FactEntriesCount;
-         CurrentFactEntryIndex              = CurrentDecomposition.AddOrIncrementIndex(ID))
+    for (unsigned int CurrentFactEntryIndex                              = CurrentDecomposition.GetCurrentEnvironment().AddOrIncrementIndex(ID);
+         CurrentFactEntryIndex < FactEntriesCount; CurrentFactEntryIndex = CurrentDecomposition.GetCurrentEnvironment().AddOrIncrementIndex(ID))
     {
         if (Condition.Check(*WorldState, CurrentFactEntryIndex))
         {
@@ -164,15 +164,14 @@ bool HTNConditionAxiomNode::Check(HTNDecompositionContext& ioDecompositionContex
         return false;
     }
 
-    const std::string CurrentScopeID = ioDecompositionContext.MakeCurrentScopeID();
-
-    HTNDecompositionScope CurrentAxiomScope   = HTNDecompositionScope(ioDecompositionContext, CurrentAxiomNode);
-    const std::string     CurrentAxiomScopeID = ioDecompositionContext.MakeCurrentScopeID();
+    HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
+    HTNDecompositionScope   CurrentAxiomScope    = HTNDecompositionScope(ioDecompositionContext);
 
     // Initialize the input arguments of the axiom with the arguments of the condition
     const std::vector<std::shared_ptr<const HTNValueNode>>& CurrentAxiomArgumentNodes = CurrentAxiomNode->GetArgumentNodes();
-    if (!HTN::Helpers::CopyArguments(ioDecompositionContext, mArgumentNodes, CurrentAxiomArgumentNodes, CurrentScopeID, CurrentAxiomScopeID, {},
-                                     HTN::Helpers::InputPrefixes))
+    if (!HTN::Helpers::CopyArgumentsNoConst(ioDecompositionContext, mArgumentNodes, CurrentAxiomArgumentNodes,
+                                            CurrentDecomposition.GetPreviousEnvironment(), CurrentDecomposition.GetCurrentEnvironment(), {},
+                                            HTN::Helpers::InputPrefixes))
     {
         LOG_ERROR("Arguments could not be copied from condition to axiom [{}]", AxiomID);
         return false;
@@ -193,8 +192,9 @@ bool HTNConditionAxiomNode::Check(HTNDecompositionContext& ioDecompositionContex
     }
 
     // Copy back the output arguments of the axiom
-    if (!HTN::Helpers::CopyArguments(ioDecompositionContext, CurrentAxiomArgumentNodes, mArgumentNodes, CurrentAxiomScopeID, CurrentScopeID,
-                                     HTN::Helpers::OutputPrefixes, {}))
+    if (!HTN::Helpers::CopyArgumentsConst(ioDecompositionContext, CurrentAxiomArgumentNodes, mArgumentNodes,
+                                          CurrentDecomposition.GetCurrentEnvironment(), CurrentDecomposition.GetPreviousEnvironment(),
+                                          HTN::Helpers::OutputPrefixes, {}))
     {
         LOG_ERROR("Arguments could not be copied from axiom to condition [{}]", AxiomID);
         return false;
@@ -228,16 +228,13 @@ bool HTNConditionAndNode::Check(HTNDecompositionContext& ioDecompositionContext,
     outHasBoundArguments = false;
 
     const std::string       ID                   = GetID();
-    const std::string       CurrentScopeID       = ioDecompositionContext.MakeCurrentScopeID();
     HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
-    for (unsigned int CurrentConditionIndex = CurrentDecomposition.GetOrAddIndex(ID); CurrentConditionIndex < mConditionNodes.size();
-         CurrentConditionIndex              = CurrentDecomposition.GetOrAddIndex(ID))
+    for (unsigned int CurrentConditionIndex                                    = CurrentDecomposition.GetCurrentEnvironment().GetOrAddIndex(ID);
+         CurrentConditionIndex < mConditionNodes.size(); CurrentConditionIndex = CurrentDecomposition.GetCurrentEnvironment().GetOrAddIndex(ID))
     {
         // Copy variables
-        const std::unordered_map<std::string, HTNAtom> CurrentVariables = CurrentDecomposition.HasVariables(CurrentScopeID)
-                                                                              ? CurrentDecomposition.GetVariables(CurrentScopeID)
-                                                                              : std::unordered_map<std::string, HTNAtom>();
+        const std::unordered_map<std::string, HTNAtom> CurrentVariables = CurrentDecomposition.GetCurrentEnvironment().GetVariables();
 
         // Check condition
         const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode = mConditionNodes[CurrentConditionIndex];
@@ -260,12 +257,13 @@ bool HTNConditionAndNode::Check(HTNDecompositionContext& ioDecompositionContext,
         if (HasBoundArguments)
         {
             HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
-            NewDecomposition.SetVariables(CurrentScopeID, CurrentVariables);
+            HTNEnvironment&        NewEnvironment   = NewDecomposition.GetCurrentEnvironment();
+            NewEnvironment.SetVariables(CurrentVariables);
             ioDecompositionContext.RecordDecomposition(NewDecomposition);
         }
 
         // Continue
-        CurrentDecomposition.IncrementIndex(ID);
+        CurrentDecomposition.GetCurrentEnvironment().IncrementIndex(ID);
     }
 
     // If empty, it evaluates to true
@@ -299,8 +297,8 @@ bool HTNConditionOrNode::Check(HTNDecompositionContext& ioDecompositionContext, 
     const std::string       ID                   = GetID();
     HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
-    for (unsigned int CurrentConditionIndex = CurrentDecomposition.GetOrAddIndex(ID); CurrentConditionIndex < mConditionNodes.size();
-         CurrentConditionIndex              = CurrentDecomposition.GetOrAddIndex(ID))
+    for (unsigned int CurrentConditionIndex                                    = CurrentDecomposition.GetCurrentEnvironment().GetOrAddIndex(ID);
+         CurrentConditionIndex < mConditionNodes.size(); CurrentConditionIndex = CurrentDecomposition.GetCurrentEnvironment().GetOrAddIndex(ID))
     {
         const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode = mConditionNodes[CurrentConditionIndex];
         bool                                               HasBoundArguments    = false;
@@ -310,7 +308,7 @@ bool HTNConditionOrNode::Check(HTNDecompositionContext& ioDecompositionContext, 
         }
 
         // Continue
-        CurrentDecomposition.IncrementIndex(ID);
+        CurrentDecomposition.GetCurrentEnvironment().IncrementIndex(ID);
     }
 
     // If empty, it evaluates to false
@@ -342,16 +340,13 @@ bool HTNConditionAltNode::Check(HTNDecompositionContext& ioDecompositionContext,
     outHasBoundArguments = false;
 
     const std::string       ID                   = GetID();
-    const std::string       CurrentScopeID       = ioDecompositionContext.MakeCurrentScopeID();
     HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
-    for (unsigned int CurrentConditionIndex = CurrentDecomposition.GetOrAddIndex(ID); CurrentConditionIndex < mConditionNodes.size();
-         CurrentConditionIndex              = CurrentDecomposition.GetOrAddIndex(ID))
+    for (unsigned int CurrentConditionIndex                                    = CurrentDecomposition.GetCurrentEnvironment().GetOrAddIndex(ID);
+         CurrentConditionIndex < mConditionNodes.size(); CurrentConditionIndex = CurrentDecomposition.GetCurrentEnvironment().GetOrAddIndex(ID))
     {
         // Copy variables
-        const std::unordered_map<std::string, HTNAtom> CurrentVariables = CurrentDecomposition.HasVariables(CurrentScopeID)
-                                                                              ? CurrentDecomposition.GetVariables(CurrentScopeID)
-                                                                              : std::unordered_map<std::string, HTNAtom>();
+        const std::unordered_map<std::string, HTNAtom> CurrentVariables = CurrentDecomposition.GetCurrentEnvironment().GetVariables();
 
         const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode = mConditionNodes[CurrentConditionIndex];
         bool                                               HasBoundArguments    = false;
@@ -361,7 +356,8 @@ bool HTNConditionAltNode::Check(HTNDecompositionContext& ioDecompositionContext,
             if (HasBoundArguments)
             {
                 HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
-                NewDecomposition.SetVariables(CurrentScopeID, CurrentVariables);
+                HTNEnvironment&        NewEnvironment   = NewDecomposition.GetCurrentEnvironment();
+                NewEnvironment.SetVariables(CurrentVariables);
                 ioDecompositionContext.RecordDecomposition(NewDecomposition);
             }
 
@@ -369,7 +365,7 @@ bool HTNConditionAltNode::Check(HTNDecompositionContext& ioDecompositionContext,
         }
 
         // Continue
-        CurrentDecomposition.IncrementIndex(ID);
+        CurrentDecomposition.GetCurrentEnvironment().IncrementIndex(ID);
     }
 
     // If empty, it evaluates to false
@@ -393,12 +389,9 @@ bool HTNConditionNotNode::Check(HTNDecompositionContext& ioDecompositionContext,
     outHasBoundArguments = false;
 
     // Copy variables
-    const std::string       CurrentScopeID       = ioDecompositionContext.MakeCurrentScopeID();
     HTNDecompositionRecord& CurrentDecomposition = ioDecompositionContext.GetCurrentDecompositionMutable();
 
-    const std::unordered_map<std::string, HTNAtom> CurrentVariables = CurrentDecomposition.HasVariables(CurrentScopeID)
-                                                                          ? CurrentDecomposition.GetVariables(CurrentScopeID)
-                                                                          : std::unordered_map<std::string, HTNAtom>();
+    const std::unordered_map<std::string, HTNAtom> CurrentVariables = CurrentDecomposition.GetCurrentEnvironment().GetVariables();
 
     // Copy decomposition history
     const std::vector<HTNDecompositionRecord> DecompositionHistory = ioDecompositionContext.GetDecompositionHistory();
@@ -411,7 +404,7 @@ bool HTNConditionNotNode::Check(HTNDecompositionContext& ioDecompositionContext,
     ioDecompositionContext.SetDecompositionHistory(DecompositionHistory);
 
     // Reset variables
-    CurrentDecomposition.SetVariables(CurrentScopeID, CurrentVariables);
+    CurrentDecomposition.GetCurrentEnvironment().SetVariables(CurrentVariables);
 
     // Invert result
     return !Result;

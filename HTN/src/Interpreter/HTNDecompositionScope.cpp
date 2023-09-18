@@ -2,16 +2,14 @@
 
 #include "Interpreter/HTNDecompositionContext.h"
 
-#include <cassert>
-
-HTNDecompositionScope::HTNDecompositionScope(HTNDecompositionContext& inDecompositionContext, const std::shared_ptr<const HTNNodeBase>& inNode)
-    : mDecompositionContext(inDecompositionContext), mNode(inNode)
+HTNDecompositionScope::HTNDecompositionScope(HTNDecompositionContext& ioDecompositionContext) : mDecompositionContext(ioDecompositionContext)
 {
-    mDecompositionContext.PushNodeToCurrentScope(mNode);
+    HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
+    CurrentDecomposition.PushEnvironment();
 }
 
 HTNDecompositionScope::~HTNDecompositionScope()
 {
-    const std::shared_ptr<const HTNNodeBase>& Node = mDecompositionContext.PopNodeFromCurrentScope();
-    assert(mNode == Node);
+    HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
+    CurrentDecomposition.PopEnvironment();
 }

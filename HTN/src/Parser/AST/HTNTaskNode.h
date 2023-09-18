@@ -7,31 +7,21 @@
 
 class HTNValueNode;
 
-enum class HTNTaskType
-{
-    PRIMITIVE,
-    COMPOUND,
-
-    INVALID
-};
-
 /**
  * Node representing a task
  */
-class HTNTaskNode : public HTNNodeBase
+class HTNTaskNodeBase : public HTNNodeBase
 {
 public:
-    explicit HTNTaskNode(const std::shared_ptr<const HTNValueNode>& inIDNode, const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes,
-                         const HTNTaskType inType);
-    ~HTNTaskNode();
+    explicit HTNTaskNodeBase(const std::shared_ptr<const HTNValueNode>&              inIDNode,
+                             const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes);
+    ~HTNTaskNodeBase();
 
-    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string GetID() const final;
     std::string ToString() const final;
 
     const std::shared_ptr<const HTNValueNode>&              GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNValueNode>>& GetArgumentNodes() const;
-    HTNTaskType                                             GetType() const;
 
 private:
     // Node representing the ID of the task
@@ -40,23 +30,38 @@ private:
 
     // Nodes representing the arguments of the task
     std::vector<std::shared_ptr<const HTNValueNode>> mArgumentNodes;
-
-    // Type of the task
-    // - Primitive or compound
-    HTNTaskType mType = HTNTaskType::INVALID;
 };
 
-inline const std::shared_ptr<const HTNValueNode>& HTNTaskNode::GetIDNode() const
+/**
+ * Node representing a compound task
+ */
+class HTNCompoundTaskNode final : public HTNTaskNodeBase
+{
+public:
+    explicit HTNCompoundTaskNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
+                                 const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes);
+
+    HTNAtom Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+};
+
+/**
+ * Node representing a primitive task
+ */
+class HTNPrimitiveTaskNode final : public HTNTaskNodeBase
+{
+public:
+    explicit HTNPrimitiveTaskNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
+                                  const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes);
+
+    HTNAtom Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+};
+
+inline const std::shared_ptr<const HTNValueNode>& HTNTaskNodeBase::GetIDNode() const
 {
     return mIDNode;
 }
 
-inline const std::vector<std::shared_ptr<const HTNValueNode>>& HTNTaskNode::GetArgumentNodes() const
+inline const std::vector<std::shared_ptr<const HTNValueNode>>& HTNTaskNodeBase::GetArgumentNodes() const
 {
     return mArgumentNodes;
-}
-
-inline HTNTaskType HTNTaskNode::GetType() const
-{
-    return mType;
 }

@@ -30,7 +30,8 @@ public:
     HTNAtom Visit(const HTNMethodNode& inMethodNode) final;
     HTNAtom Visit(const HTNBranchNode& inBranchNode) final;
     HTNAtom Visit(const HTNConditionNodeBase& inConditionNode) final;
-    HTNAtom Visit(const HTNTaskNode& inTaskNode) final;
+    HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode) final;
+    HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode) final;
     HTNAtom Visit(const HTNValueNode& inValueNode) final;
 
 private:
@@ -39,7 +40,8 @@ private:
 
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointName;
-    HTNDecompositionContext              mDecompositionContext;
+
+    HTNDecompositionContext mDecompositionContext;
 };
 
 template<typename T>

@@ -5,25 +5,20 @@
 
 #include <format>
 
-HTNTaskNode::HTNTaskNode(const std::shared_ptr<const HTNValueNode>& inIDNode, const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes,
-                         const HTNTaskType inType)
-    : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mType(inType)
+HTNTaskNodeBase::HTNTaskNodeBase(const std::shared_ptr<const HTNValueNode>&              inIDNode,
+                                 const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes)
+    : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes)
 {
 }
 
-HTNTaskNode::~HTNTaskNode() = default;
+HTNTaskNodeBase::~HTNTaskNodeBase() = default;
 
-HTNAtom HTNTaskNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
-{
-    return inNodeVisitor.Visit(*this);
-}
-
-std::string HTNTaskNode::GetID() const
+std::string HTNTaskNodeBase::GetID() const
 {
     return mIDNode->ToString();
 }
 
-std::string HTNTaskNode::ToString() const
+std::string HTNTaskNodeBase::ToString() const
 {
     std::string Description = GetID();
 
@@ -40,4 +35,26 @@ std::string HTNTaskNode::ToString() const
     }
 
     return Description;
+}
+
+HTNCompoundTaskNode::HTNCompoundTaskNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
+                                         const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes)
+    : HTNTaskNodeBase(inIDNode, inArgumentNodes)
+{
+}
+
+HTNAtom HTNCompoundTaskNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
+{
+    return inNodeVisitor.Visit(*this);
+}
+
+HTNPrimitiveTaskNode::HTNPrimitiveTaskNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
+                                         const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes)
+    : HTNTaskNodeBase(inIDNode, inArgumentNodes)
+{
+}
+
+HTNAtom HTNPrimitiveTaskNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
+{
+    return inNodeVisitor.Visit(*this);
 }

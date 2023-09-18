@@ -305,8 +305,8 @@ std::shared_ptr<HTNBranchNode> HTNParser::ParseBranchNode(unsigned int& inPositi
         return nullptr;
     }
 
-    std::vector<std::shared_ptr<const HTNTaskNode>> TaskNodes;
-    while (const std::shared_ptr<const HTNTaskNode> TaskNode = ParseTaskNode(CurrentPosition))
+    std::vector<std::shared_ptr<const HTNTaskNodeBase>> TaskNodes;
+    while (const std::shared_ptr<const HTNTaskNodeBase> TaskNode = ParseTaskNode(CurrentPosition))
     {
         TaskNodes.emplace_back(TaskNode);
     }
@@ -430,7 +430,7 @@ std::shared_ptr<HTNConditionNodeBase> HTNParser::ParseSubConditionNode(unsigned 
     return ConditionNode;
 }
 
-std::shared_ptr<HTNTaskNode> HTNParser::ParseTaskNode(unsigned int& inPosition)
+std::shared_ptr<HTNTaskNodeBase> HTNParser::ParseTaskNode(unsigned int& inPosition)
 {
     unsigned int CurrentPosition = inPosition;
 
@@ -439,7 +439,7 @@ std::shared_ptr<HTNTaskNode> HTNParser::ParseTaskNode(unsigned int& inPosition)
         return nullptr;
     }
 
-    const HTNTaskType Type = ParseToken(CurrentPosition, HTNTokenType::EXCLAMATION_MARK) ? HTNTaskType::PRIMITIVE : HTNTaskType::COMPOUND;
+    const bool IsPrimitiveTask = ParseToken(CurrentPosition, HTNTokenType::EXCLAMATION_MARK);
 
     const std::shared_ptr<const HTNValueNode> IDNode = ParseIdentifierNode(CurrentPosition, HTNValueType::SYMBOL);
     if (!IDNode)
@@ -460,7 +460,12 @@ std::shared_ptr<HTNTaskNode> HTNParser::ParseTaskNode(unsigned int& inPosition)
 
     inPosition = CurrentPosition;
 
-    return std::make_shared<HTNTaskNode>(IDNode, ArgumentNodes, Type);
+    if (IsPrimitiveTask)
+    {
+        return std::make_shared<HTNPrimitiveTaskNode>(IDNode, ArgumentNodes);
+    }
+
+    return std::make_shared<HTNCompoundTaskNode>(IDNode, ArgumentNodes);
 }
 
 std::shared_ptr<HTNValueNode> HTNParser::ParseArgumentNode(unsigned int& inPosition)

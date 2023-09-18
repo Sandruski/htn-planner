@@ -415,8 +415,8 @@ void HTNDebuggerWindow::RenderParsing()
                 ImGui::Text(PreConditionNode->ToString().c_str());
             }
 
-            const std::vector<std::shared_ptr<const HTNTaskNode>>& TaskNodes = BranchNode->GetTaskNodes();
-            for (const std::shared_ptr<const HTNTaskNode>& TaskNode : TaskNodes)
+            const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = BranchNode->GetTaskNodes();
+            for (const std::shared_ptr<const HTNTaskNodeBase>& TaskNode : TaskNodes)
             {
                 ImGui::Text(TaskNode->ToString().c_str());
             }

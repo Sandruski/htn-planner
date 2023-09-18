@@ -5,9 +5,9 @@
 #include "Parser/AST/HTNTaskNode.h"
 #include "Parser/AST/HTNValueNode.h"
 
-HTNBranchNode::HTNBranchNode(const std::shared_ptr<const HTNValueNode>&             inIDNode,
-                             const std::shared_ptr<const HTNConditionNodeBase>&     inPreConditionNode,
-                             const std::vector<std::shared_ptr<const HTNTaskNode>>& inTaskNodes)
+HTNBranchNode::HTNBranchNode(const std::shared_ptr<const HTNValueNode>&                 inIDNode,
+                             const std::shared_ptr<const HTNConditionNodeBase>&         inPreConditionNode,
+                             const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& inTaskNodes)
     : mIDNode(inIDNode), mPreConditionNode(inPreConditionNode), mTaskNodes(inTaskNodes)
 {
 }

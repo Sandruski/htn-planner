@@ -1,31 +1,34 @@
 #pragma once
 
-#include <memory>
-#include <string>
+#include "Interpreter/HTNEnvironment.h"
 
-class HTNTaskNode;
-class HTNNodeBase;
+#include <memory>
+
+class HTNEnvironment;
+class HTNTaskNodeBase;
 
 class HTNTaskInstance
 {
 public:
-    explicit HTNTaskInstance(const std::shared_ptr<const HTNTaskNode>& inTaskNode, const std::string& inScopeID);
+    explicit HTNTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode, const HTNEnvironment& inEnvironment);
     ~HTNTaskInstance();
 
-    const std::shared_ptr<const HTNTaskNode>& GetTaskNode() const;
-    const std::string&                        GetScopeID() const;
+    const std::shared_ptr<const HTNTaskNodeBase>& GetTaskNode() const;
+    const HTNEnvironment&                         GetEnvironment() const;
 
 private:
-    std::shared_ptr<const HTNTaskNode> mTaskNode;
-    std::string                        mScopeID;
+    std::shared_ptr<const HTNTaskNodeBase> mTaskNode;
+
+    // TODO salvarez Arguments instead of environment
+    HTNEnvironment mEnvironment;
 };
 
-inline const std::shared_ptr<const HTNTaskNode>& HTNTaskInstance::GetTaskNode() const
+inline const std::shared_ptr<const HTNTaskNodeBase>& HTNTaskInstance::GetTaskNode() const
 {
     return mTaskNode;
 }
 
-inline const std::string& HTNTaskInstance::GetScopeID() const
+inline const HTNEnvironment& HTNTaskInstance::GetEnvironment() const
 {
-    return mScopeID;
+    return mEnvironment;
 }
