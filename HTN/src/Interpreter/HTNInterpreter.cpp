@@ -32,8 +32,8 @@ bool HTNInterpreter::Interpret(std::vector<HTNTaskInstance>& outPlan)
         return false;
     }
 
-    const bool DomainNodeResult = EvaluateNode<bool>(*DomainNode);
-    if (!DomainNodeResult)
+    const bool Result = EvaluateNode<bool>(*DomainNode);
+    if (!Result)
     {
         return false;
     }
@@ -49,8 +49,8 @@ HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode
     const HTNDecompositionScope CurrentDomainScope = HTNDecompositionScope(mDecompositionContext);
 
     // Dummy root task node
-    HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
-    const std::shared_ptr<const HTNCompoundTaskNode> RootTaskNode = std::make_shared<HTNCompoundTaskNode>(
+    HTNDecompositionRecord&                          CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
+    const std::shared_ptr<const HTNCompoundTaskNode> RootTaskNode         = std::make_shared<HTNCompoundTaskNode>(
         std::make_shared<const HTNValueNode>(HTNAtom(mEntryPointName), HTNValueType::SYMBOL), std::vector<std::shared_ptr<const HTNValueNode>>());
     CurrentDecomposition.PushTaskInstanceToProcess(RootTaskNode);
 
@@ -65,8 +65,8 @@ HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode
             return false;
         }
 
-        const bool TaskNodeResult = EvaluateNode<bool>(*CurrentTaskNode);
-        if (!TaskNodeResult)
+        const bool Result = EvaluateNode<bool>(*CurrentTaskNode);
+        if (!Result)
         {
             return false;
         }
@@ -90,19 +90,81 @@ HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNAxiomNode& inAxiomNode)
     return HTNAtom();
 }
 
-HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNMethodNode& inMethodNode)
+HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
 {
-    return HTNAtom();
+    const HTNDecompositionScope CurrentMethodScope = HTNDecompositionScope(mDecompositionContext);
+
+    // Initialize the input arguments of the method with the arguments of the compound task
+    HTNDecompositionRecord&                                 CurrentDecomposition          = mDecompositionContext.GetCurrentDecompositionMutable();
+    const HTNTaskInstance&                                  CurrentTaskInstance           = CurrentDecomposition.GetCurrentTaskInstance();
+    const std::shared_ptr<const HTNTaskNodeBase>&           CurrentTaskNode               = CurrentTaskInstance.GetTaskNode();
+    const std::vector<std::shared_ptr<const HTNValueNode>>& CurentTaskNodeArgumentNodes   = CurrentTaskNode->GetArgumentNodes();
+    const std::vector<std::shared_ptr<const HTNValueNode>>& CurentMethodNodeArgumentNodes = inMethodNode.GetArgumentNodes();
+    if (!HTN::Helpers::CopyArgumentsConst(mDecompositionContext, CurentTaskNodeArgumentNodes, CurentMethodNodeArgumentNodes,
+                                          CurrentTaskInstance.GetEnvironment(), CurrentDecomposition.GetCurrentEnvironment(), {},
+                                          HTN::Helpers::InputPrefixes))
+    {
+        LOG_ERROR("Arguments could not be copied from compound task [{}] to method [{}]", CurrentTaskNode->GetID(), inMethodNode.GetID());
+        return false;
+    }
+
+    const std::string  CurrentMethodID    = inMethodNode.GetID();
+    const unsigned int CurrentBranchIndex = CurrentDecomposition.GetCurrentEnvironment().GetOrAddIndex(CurrentMethodID);
+    const std::vector<std::shared_ptr<const HTNBranchNode>>& CurrentBranchNodes = inMethodNode.GetBranchNodes();
+    if (CurrentBranchIndex >= CurrentBranchNodes.size())
+    {
+        return false;
+    }
+
+    const std::shared_ptr<const HTNBranchNode>& CurrentBranchNode = CurrentBranchNodes[CurrentBranchIndex];
+    const bool                                  Result            = EvaluateNode<bool>(*CurrentBranchNode);
+    if (!Result)
+    {
+        if (CurrentBranchIndex < CurrentBranchNodes.size() - 1)
+        {
+            // Continue
+            CurrentDecomposition.GetCurrentEnvironment().IncrementIndex(inMethodNode.GetID());
+        }
+        else // Last branch
+        {
+            // Restore state: unbound variables but updated indices
+            mDecompositionContext.RestoreDecomposition();
+        }
+
+        const HTNTaskInstance& CurrentTaskInstance = CurrentDecomposition.GetCurrentTaskInstance();
+        CurrentDecomposition.PushTaskInstanceToProcess(CurrentTaskInstance.GetTaskNode());
+
+        return false;
+    }
+
+    return true;
 }
 
-HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNBranchNode& inBranchNode)
+HTNAtom HTNInterpreter::Visit(const HTNBranchNode& inBranchNode)
 {
-    return HTNAtom();
+    HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
+
+    const std::shared_ptr<const HTNConditionNodeBase>& CurrentPreConditionNode = inBranchNode.GetPreConditionNode();
+    const bool                                         Result = !CurrentPreConditionNode || EvaluateNode<bool>(*CurrentPreConditionNode);
+    if (!Result)
+    {
+        return false;
+    }
+
+    const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = inBranchNode.GetTaskNodes();
+    for (int i = static_cast<int>(TaskNodes.size()) - 1; i >= 0; --i)
+    {
+        const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskNodes[i];
+        CurrentDecomposition.PushTaskInstanceToProcess(TaskNode);
+    }
+
+    return true;
 }
 
-HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNConditionNodeBase& inConditionNode)
+HTNAtom HTNInterpreter::Visit(const HTNConditionNodeBase& inConditionNode)
 {
-    return HTNAtom();
+    bool HasBoundVariables = false;
+    return inConditionNode.Check(mDecompositionContext, HasBoundVariables);
 }
 
 HTNAtom HTNInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
@@ -112,60 +174,16 @@ HTNAtom HTNInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
     const std::shared_ptr<const HTNMethodNode> CurrentMethodNode     = mDomainNode->FindMethodNodeByID(CurrentCompoundTaskID);
     if (!CurrentMethodNode)
     {
-        LOG_ERROR("Method node [{}] not found", CurrentCompoundTaskID);
+        LOG_ERROR("Method node [{}] could not be found", CurrentCompoundTaskID);
         return false;
     }
 
-    const HTNDecompositionScope CurrentMethodScope = HTNDecompositionScope(mDecompositionContext);
-
-    // Initialize the input arguments of the method with the arguments of the compound task
-    const std::vector<std::shared_ptr<const HTNValueNode>>& CurentTaskArgumentNodes   = CurrentTaskNode->GetArgumentNodes();
-    const std::vector<std::shared_ptr<const HTNValueNode>>& CurentMethodArgumentNodes = CurrentMethodNode->GetArgumentNodes();
-    if (!HTN::Helpers::CopyArgumentsConst(mDecompositionContext, CurentTaskArgumentNodes, CurentMethodArgumentNodes,
-                                          CurrentTaskInstance.GetEnvironment(), CurrentDecomposition.GetCurrentEnvironment(), {},
-                                          HTN::Helpers::InputPrefixes))
+    const bool Result = EvaluateNode<bool>(*CurrentMethodNode);
+    if (!Result)
     {
-        LOG_ERROR("Arguments could not be copied from compound task to method [{}]", CurrentMethodNode->ToString());
-        break;
+        return false;
     }
 
-    const unsigned int CurrentBranchIndex = CurrentDecomposition.GetCurrentEnvironment().GetOrAddIndex(CurrentMethodNode->GetID());
-    const std::vector<std::shared_ptr<const HTNBranchNode>>& CurrentBranchNodes = CurrentMethodNode->GetBranchNodes();
-    if (CurrentBranchIndex >= CurrentBranchNodes.size())
-    {
-        break;
-    }
-
-    const std::shared_ptr<const HTNBranchNode>&        CurrentBranch           = CurrentBranchNodes[CurrentBranchIndex];
-    const std::shared_ptr<const HTNConditionNodeBase>& CurrentPreConditionNode = CurrentBranch->GetPreConditionNode();
-    bool                                               HasBoundVariables       = false;
-    const bool Result = CurrentPreConditionNode ? CurrentPreConditionNode->Check(mDecompositionContext, HasBoundVariables) : true;
-    if (Result)
-    {
-        const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = CurrentBranch->GetTaskNodes();
-        for (int i = static_cast<int>(TaskNodes.size()) - 1; i >= 0; --i)
-        {
-            const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskNodes[i];
-            CurrentDecomposition.PushTaskInstanceToProcess(TaskNode);
-        }
-    }
-    else
-    {
-        if (CurrentBranchIndex < CurrentBranchNodes.size() - 1)
-        {
-            CurrentDecomposition.PushTaskInstanceToProcess(CurrentTaskNode);
-
-            // Continue
-            CurrentDecomposition.GetCurrentEnvironment().IncrementIndex(CurrentMethodNode->GetID());
-        }
-        else // Last branch
-        {
-            // Restore state: unbound variables but updated indices
-            mDecompositionContext.RestoreDecomposition();
-
-            CurrentDecomposition.PushTaskInstanceToProcess(CurrentDecomposition.GetCurrentCompoundTaskNode());
-        }
-    }
     return true;
 }
 
