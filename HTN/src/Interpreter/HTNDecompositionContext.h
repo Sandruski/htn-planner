@@ -17,8 +17,8 @@ class HTNNodeBase;
 class HTNDecompositionRecord
 {
 public:
-    void SetCurrentCompoundTaskNode(const std::shared_ptr<const HTNCompoundTaskNode>& inCompoundTaskNode);
-    const std::shared_ptr<const HTNCompoundTaskNode>& GetCurrentCompoundTaskNode() const;
+    void                   SetCurrentTaskInstance(const HTNTaskInstance& inCurrentTaskInstance);
+    const HTNTaskInstance& GetCurrentTaskInstance() const;
 
     void            PushEnvironment();
     void            PopEnvironment();
@@ -35,7 +35,7 @@ public:
 private:
     // TODO salvarez Make the current compound task node a HTNTaskInstance and add the std::vector<HTNEnvironment> there?
     // Current compound task being processed
-    std::shared_ptr<const HTNCompoundTaskNode> mCurrentCompoundTaskNode;
+    HTNTaskInstance mCurrentTaskInstance;
 
     std::vector<HTNEnvironment> mEnvironments;
 
@@ -49,9 +49,6 @@ private:
 class HTNDecompositionContext
 {
 public:
-    void                                        SetCurrentDomainNode(const std::shared_ptr<const HTNDomainNode>& inCurrentDomainNode);
-    const std::shared_ptr<const HTNDomainNode>& GetCurrentDomainNode() const;
-
     HTNDecompositionContext(const HTNWorldState& inWorldState);
 
     const HTNWorldState* GetWorldState() const;
@@ -67,8 +64,6 @@ public:
     const std::vector<HTNDecompositionRecord>& GetDecompositionHistory() const;
 
 private:
-    std::shared_ptr<const HTNDomainNode> mCurrentDomainNode;
-
     // TODO salvarez Maybe move the world state to the interpreter too
     const HTNWorldState* mWorldState = nullptr; ///< Pointer to world state. All the queries will just not be able to modify the world state at
                                                 ///< all, this is why it is important this is a const pointer.
@@ -77,14 +72,14 @@ private:
     std::vector<HTNDecompositionRecord> mDecompositionHistory;
 };
 
-inline void HTNDecompositionContext::SetCurrentDomainNode(const std::shared_ptr<const HTNDomainNode>& inCurrentDomainNode)
+inline void HTNDecompositionRecord::SetCurrentTaskInstance(const HTNTaskInstance& inCurrentTaskInstance)
 {
-    mCurrentDomainNode = inCurrentDomainNode;
+    mCurrentTaskInstance = inCurrentTaskInstance;
 }
 
-inline const std::shared_ptr<const HTNDomainNode>& HTNDecompositionContext::GetCurrentDomainNode() const
+inline const HTNTaskInstance& HTNDecompositionRecord::GetCurrentTaskInstance() const
 {
-    return mCurrentDomainNode;
+    return mCurrentTaskInstance;
 }
 
 inline void HTNDecompositionRecord::PushEnvironment()
@@ -105,16 +100,6 @@ inline HTNEnvironment& HTNDecompositionRecord::GetCurrentEnvironment()
 inline HTNEnvironment& HTNDecompositionRecord::GetPreviousEnvironment()
 {
     return mEnvironments[mEnvironments.size() - 2];
-}
-
-inline void HTNDecompositionRecord::SetCurrentCompoundTaskNode(const std::shared_ptr<const HTNCompoundTaskNode>& inCompoundTaskNode)
-{
-    mCurrentCompoundTaskNode = inCompoundTaskNode;
-}
-
-inline const std::shared_ptr<const HTNCompoundTaskNode>& HTNDecompositionRecord::GetCurrentCompoundTaskNode() const
-{
-    return mCurrentCompoundTaskNode;
 }
 
 inline void HTNDecompositionRecord::PushTaskInstanceToProcess(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode)
