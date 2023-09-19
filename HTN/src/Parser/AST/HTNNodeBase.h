@@ -2,9 +2,7 @@
 
 #include "HTNAtom.h"
 
-#include <memory>
 #include <string>
-#include <vector>
 
 class HTNNodeVisitorBase;
 

@@ -2,11 +2,9 @@
 
 #include "Parser/AST/HTNNodeBase.h"
 
-#include <array>
 #include <memory>
-#include <string>
+#include <vector>
 
-class HTNDecompositionContext;
 class HTNValueNode;
 
 /**
@@ -17,10 +15,7 @@ class HTNConditionNodeBase : public HTNNodeBase
 public:
     HTNConditionNodeBase();
 
-    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string GetID() const final;
-
-    virtual bool Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const = 0;
 
 private:
     // Generator of IDs
@@ -42,8 +37,8 @@ public:
     explicit HTNConditionNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
                               const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes);
 
+    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
-    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
 
     const std::shared_ptr<const HTNValueNode>&              GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNValueNode>>& GetArgumentNodes() const;
@@ -63,14 +58,14 @@ private:
  * Node representing an axiom condition
  * - Checks the condition of an axiom
  */
-class HTNConditionAxiomNode final : public HTNConditionNodeBase
+class HTNAxiomConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNConditionAxiomNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
+    explicit HTNAxiomConditionNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
                                    const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes);
 
+    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
-    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
 
     const std::shared_ptr<const HTNValueNode>&              GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNValueNode>>& GetArgumentNodes() const;
@@ -94,13 +89,13 @@ private:
  * - If it binds any unbound arguments of a sub-condition, the sub-condition is considered for backtracking
  * - If it succeeds, the arguments of its sub-conditions will be bound
  */
-class HTNConditionAndNode final : public HTNConditionNodeBase
+class HTNAndConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNConditionAndNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes);
+    explicit HTNAndConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes);
 
+    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
-    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetConditionNodes() const;
 
@@ -118,13 +113,13 @@ private:
  * - If it succeeds, the arguments that were already bound and the arguments of the successful sub-condition will be bound // TODO salvarez Detect
  * this case during parsing
  */
-class HTNConditionOrNode final : public HTNConditionNodeBase
+class HTNOrConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNConditionOrNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes);
+    explicit HTNOrConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes);
 
+    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
-    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetConditionNodes() const;
 
@@ -142,13 +137,13 @@ private:
  * - If it succeeds, the arguments that were already bound and the arguments of the successful sub-condition will be bound // TODO salvarez Detect
  * this case during parsing
  */
-class HTNConditionAltNode final : public HTNConditionNodeBase
+class HTNAltConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNConditionAltNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes);
+    explicit HTNAltConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes);
 
+    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
-    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetConditionNodes() const;
 
@@ -165,13 +160,13 @@ private:
  * - Its sub-condition is not considered for backtracking
  * - If it succeeds, only the arguments that were already bound will still be bound // TODO salvarez Detect this case during parsing
  */
-class HTNConditionNotNode final : public HTNConditionNodeBase
+class HTNNotConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNConditionNotNode(const std::shared_ptr<const HTNConditionNodeBase>& inConditionNode);
+    explicit HTNNotConditionNode(const std::shared_ptr<const HTNConditionNodeBase>& inConditionNode);
 
+    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
-    bool        Check(HTNDecompositionContext& ioDecompositionContext, bool& outHasBoundArguments) const final;
 
     const std::shared_ptr<const HTNConditionNodeBase>& GetConditionNode() const;
 
@@ -194,32 +189,32 @@ inline const std::vector<std::shared_ptr<const HTNValueNode>>& HTNConditionNode:
     return mArgumentNodes;
 }
 
-inline const std::shared_ptr<const HTNValueNode>& HTNConditionAxiomNode::GetIDNode() const
+inline const std::shared_ptr<const HTNValueNode>& HTNAxiomConditionNode::GetIDNode() const
 {
     return mIDNode;
 }
 
-inline const std::vector<std::shared_ptr<const HTNValueNode>>& HTNConditionAxiomNode::GetArgumentNodes() const
+inline const std::vector<std::shared_ptr<const HTNValueNode>>& HTNAxiomConditionNode::GetArgumentNodes() const
 {
     return mArgumentNodes;
 }
 
-inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNConditionAndNode::GetConditionNodes() const
+inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNAndConditionNode::GetConditionNodes() const
 {
     return mConditionNodes;
 }
 
-inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNConditionOrNode::GetConditionNodes() const
+inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNOrConditionNode::GetConditionNodes() const
 {
     return mConditionNodes;
 }
 
-inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNConditionAltNode::GetConditionNodes() const
+inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNAltConditionNode::GetConditionNodes() const
 {
     return mConditionNodes;
 }
 
-inline const std::shared_ptr<const HTNConditionNodeBase>& HTNConditionNotNode::GetConditionNode() const
+inline const std::shared_ptr<const HTNConditionNodeBase>& HTNNotConditionNode::GetConditionNode() const
 {
     return mConditionNode;
 }
