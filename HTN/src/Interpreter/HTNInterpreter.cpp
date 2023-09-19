@@ -37,8 +37,8 @@ bool HTNInterpreter::Interpret(std::vector<HTNTaskInstance>& outPlan)
         return false;
     }
 
-    const bool Result = EvaluateNode<bool>(*DomainNode);
-    if (!Result)
+    const HTNDecompositionScope CurrentDomainScope = HTNDecompositionScope(mDecompositionContext);
+    if (!EvaluateNode<bool>(*DomainNode))
     {
         return false;
     }
@@ -51,8 +51,6 @@ bool HTNInterpreter::Interpret(std::vector<HTNTaskInstance>& outPlan)
 
 HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode)
 {
-    const HTNDecompositionScope CurrentDomainScope = HTNDecompositionScope(mDecompositionContext);
-
     // Dummy root task node
     HTNDecompositionRecord&                          CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
     const std::shared_ptr<const HTNCompoundTaskNode> RootTaskNode         = std::make_shared<HTNCompoundTaskNode>(
@@ -70,8 +68,7 @@ HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode
             return false;
         }
 
-        const bool Result = EvaluateNode<bool>(*CurrentTaskNode);
-        if (!Result)
+        if (!EvaluateNode<bool>(*CurrentTaskNode))
         {
             return false;
         }
@@ -92,67 +89,21 @@ HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNConstantNode& inConstant
 
 HTNAtom HTNInterpreter::Visit(const HTNAxiomNode& inAxiomNode)
 {
-    HTNDecompositionScope CurrentAxiomScope = HTNDecompositionScope(mDecompositionContext);
-
-    HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
-
-    // Initialize the input arguments of the axiom with the arguments of the condition
-    const std::vector<std::shared_ptr<const HTNValueNode>>& CurrentAxiomArgumentNodes = inAxiomNode.GetArgumentNodes();
-    if (!HTN::Helpers::CopyArgumentsNoConst(mDecompositionContext, mArgumentNodes, CurrentAxiomArgumentNodes,
-                                            CurrentDecomposition.GetPreviousEnvironment(), CurrentDecomposition.GetCurrentEnvironment(), {},
-                                            HTN::Helpers::InputPrefixes))
-    {
-        LOG_ERROR("Arguments could not be copied from condition to axiom [{}]", AxiomID);
-        return false;
-    }
-
-    const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode = CurrentAxiomNode->GetConditionNode();
+    const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode = inAxiomNode.GetConditionNode();
     if (!CurrentConditionNode)
     {
         // If empty, it evaluates to true
         return true;
     }
 
-
-    bool       HasBoundArguments = false;
-    const bool Result            = CurrentConditionNode->Check(mDecompositionContext, HasBoundArguments);
-    if (!Result)
-    {
-        return false;
-    }
-
-    // Copy back the output arguments of the axiom
-    if (!HTN::Helpers::CopyArgumentsConst(mDecompositionContext, CurrentAxiomArgumentNodes, mArgumentNodes,
-                                          CurrentDecomposition.GetCurrentEnvironment(), CurrentDecomposition.GetPreviousEnvironment(),
-                                          HTN::Helpers::OutputPrefixes, {}))
-    {
-        LOG_ERROR("Arguments could not be copied from axiom to condition [{}]", AxiomID);
-        return false;
-    }
-
-    return true;
+    return EvaluateNode<bool>(*CurrentConditionNode);
 }
 
 HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
 {
-    const HTNDecompositionScope CurrentMethodScope = HTNDecompositionScope(mDecompositionContext);
-
-    // Initialize the input arguments of the method with the arguments of the compound task
-    HTNDecompositionRecord&                                 CurrentDecomposition          = mDecompositionContext.GetCurrentDecompositionMutable();
-    const HTNTaskInstance&                                  CurrentTaskInstance           = CurrentDecomposition.GetCurrentTaskInstance();
-    const std::shared_ptr<const HTNTaskNodeBase>&           CurrentTaskNode               = CurrentTaskInstance.GetTaskNode();
-    const std::vector<std::shared_ptr<const HTNValueNode>>& CurentTaskNodeArgumentNodes   = CurrentTaskNode->GetArgumentNodes();
-    const std::vector<std::shared_ptr<const HTNValueNode>>& CurentMethodNodeArgumentNodes = inMethodNode.GetArgumentNodes();
-    if (!HTN::Helpers::CopyArgumentsConst(mDecompositionContext, CurentTaskNodeArgumentNodes, CurentMethodNodeArgumentNodes,
-                                          CurrentTaskInstance.GetEnvironment(), CurrentDecomposition.GetCurrentEnvironment(), {},
-                                          HTN::Helpers::InputPrefixes))
-    {
-        LOG_ERROR("Arguments could not be copied from compound task [{}] to method [{}]", CurrentTaskNode->GetID(), inMethodNode.GetID());
-        return false;
-    }
-
-    const std::string  CurrentMethodID    = inMethodNode.GetID();
-    const unsigned int CurrentBranchIndex = CurrentDecomposition.GetCurrentEnvironment().GetOrAddIndex(CurrentMethodID);
+    HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
+    const std::string       CurrentMethodID      = inMethodNode.GetID();
+    const unsigned int      CurrentBranchIndex   = CurrentDecomposition.GetCurrentEnvironment().GetOrAddIndex(CurrentMethodID);
     const std::vector<std::shared_ptr<const HTNBranchNode>>& CurrentBranchNodes = inMethodNode.GetBranchNodes();
     if (CurrentBranchIndex >= CurrentBranchNodes.size())
     {
@@ -160,10 +111,9 @@ HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
     }
 
     const std::shared_ptr<const HTNBranchNode>& CurrentBranchNode = CurrentBranchNodes[CurrentBranchIndex];
-    const bool                                  Result            = EvaluateNode<bool>(*CurrentBranchNode);
-    if (Result)
+    if (EvaluateNode<bool>(*CurrentBranchNode))
     {
-        const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = inBranchNode.GetTaskNodes();
+        const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = CurrentBranchNode->GetTaskNodes();
         for (int i = static_cast<int>(TaskNodes.size()) - 1; i >= 0; --i)
         {
             const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskNodes[i];
@@ -282,15 +232,44 @@ HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 {
     outHasBoundArguments = false;
 
-    const std::string                         AxiomID          = inAxiomConditionNode.GetIDNode()->ToString();
-    const std::shared_ptr<const HTNAxiomNode> CurrentAxiomNode = mDomainNode->FindAxiomNodeByID(AxiomID);
+    const std::shared_ptr<const HTNValueNode>& CurrentAxiomNodeIDNode = inAxiomConditionNode.GetIDNode();
+    const std::string                          CurrentAxiomNodeID     = EvaluateNode<HTNAtom>(*CurrentAxiomNodeIDNode).GetValue<std::string>();
+    const std::shared_ptr<const HTNAxiomNode>  CurrentAxiomNode       = mDomainNode->FindAxiomNodeByID(CurrentAxiomNodeID);
     if (!CurrentAxiomNode)
     {
-        LOG_ERROR("Axiom node [{}] not found", AxiomID);
+        LOG_ERROR("Axiom node [{}] could not found", CurrentAxiomNodeID);
         return false;
     }
 
-    return EvaluateNode<bool>(*CurrentAxiomNode);
+    HTNDecompositionScope CurrentAxiomScope = HTNDecompositionScope(mDecompositionContext);
+
+    // Initialize the input arguments of the axiom with the arguments of the condition node
+    HTNDecompositionRecord&                                 CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
+    const std::vector<std::shared_ptr<const HTNValueNode>>& CurrentAxiomConditionArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
+    const std::vector<std::shared_ptr<const HTNValueNode>>& CurrentAxiomArgumentNodes          = CurrentAxiomNode->GetArgumentNodes();
+    if (!HTN::Helpers::CopyArgumentsNoConst(mDecompositionContext, CurrentAxiomConditionArgumentNodes, CurrentAxiomArgumentNodes,
+                                            CurrentDecomposition.GetPreviousEnvironment(), CurrentDecomposition.GetCurrentEnvironment(), {},
+                                            HTN::Helpers::InputPrefixes))
+    {
+        LOG_ERROR("Arguments could not be copied from condition node [{}] to axiom node [{}]", inAxiomConditionNode.GetID(), CurrentAxiomNodeID);
+        return false;
+    }
+
+    if (!EvaluateNode<bool>(*CurrentAxiomNode))
+    {
+        return false;
+    }
+
+    // Copy back the output arguments of the axiom node to the condition node
+    if (!HTN::Helpers::CopyArgumentsConst(mDecompositionContext, CurrentAxiomArgumentNodes, CurrentAxiomConditionArgumentNodes,
+                                          CurrentDecomposition.GetCurrentEnvironment(), CurrentDecomposition.GetPreviousEnvironment(),
+                                          HTN::Helpers::OutputPrefixes, {}))
+    {
+        LOG_ERROR("Arguments could not be copied from axiom node [{}] to condition node [{}]", CurrentAxiomNodeID, inAxiomConditionNode.GetID());
+        return false;
+    }
+
+    return true;
 }
 
 HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
@@ -313,7 +292,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
         // Check condition
         const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode = ConditionNodes[CurrentConditionIndex];
         bool                                               HasBoundArguments    = false;
-        if (!CurrentConditionNode->Check(mDecompositionContext, HasBoundArguments))
+        if (!EvaluateNode<bool>(*CurrentConditionNode))
         {
             if (CurrentConditionIndex == 0) // First condition
             {
@@ -360,7 +339,7 @@ HTNAtom HTNInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
     {
         const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode = ConditionNodes[CurrentConditionIndex];
         bool                                               HasBoundArguments    = false;
-        if (CurrentConditionNode->Check(mDecompositionContext, HasBoundArguments))
+        if (EvaluateNode<bool>(*CurrentConditionNode))
         {
             return true;
         }
@@ -392,7 +371,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
 
         const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode = ConditionNodes[CurrentConditionIndex];
         bool                                               HasBoundArguments    = false;
-        if (CurrentConditionNode->Check(mDecompositionContext, HasBoundArguments))
+        if (EvaluateNode<bool>(*CurrentConditionNode))
         {
             // Record decomposition if it has bound any arguments
             if (HasBoundArguments)
@@ -430,9 +409,9 @@ HTNAtom HTNInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode)
     const std::vector<HTNDecompositionRecord> DecompositionHistory = mDecompositionContext.GetDecompositionHistory();
 
     // Check condition
-    const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode     = inNotConditionNode.GetConditionNode();
-    bool                                               HasBoundArguments = false;
-    const bool                                         Result            = ConditionNode->Check(mDecompositionContext, HasBoundArguments);
+    const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode = inNotConditionNode.GetConditionNode();
+    bool                                               HasBoundArguments    = false;
+    const bool                                         Result               = EvaluateNode<bool>(*CurrentConditionNode);
 
     // Reset decomposition history
     mDecompositionContext.SetDecompositionHistory(DecompositionHistory);
@@ -447,11 +426,27 @@ HTNAtom HTNInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode)
 HTNAtom HTNInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
 {
     // The ID of a compound task should match the ID of a method
-    const std::string                          CurrentCompoundTaskID = inCompoundTaskNode.GetID();
-    const std::shared_ptr<const HTNMethodNode> CurrentMethodNode     = mDomainNode->FindMethodNodeByID(CurrentCompoundTaskID);
+    const std::string                          CurrentCompoundTaskNodeID = inCompoundTaskNode.GetID();
+    const std::shared_ptr<const HTNMethodNode> CurrentMethodNode         = mDomainNode->FindMethodNodeByID(CurrentCompoundTaskNodeID);
     if (!CurrentMethodNode)
     {
-        LOG_ERROR("Method node [{}] could not be found", CurrentCompoundTaskID);
+        LOG_ERROR("Method node [{}] could not be found", CurrentCompoundTaskNodeID);
+        return false;
+    }
+
+    const HTNDecompositionScope CurrentMethodScope = HTNDecompositionScope(mDecompositionContext);
+
+    // Initialize the input arguments of the method with the arguments of the compound task
+    HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
+    const HTNTaskInstance&  CurrentTaskInstance  = CurrentDecomposition.GetCurrentTaskInstance();
+    assert(CurrentTaskInstance.GetTaskNode().get() == &inCompoundTaskNode);
+    const std::vector<std::shared_ptr<const HTNValueNode>>& CurrentTaskNodeArgumentNodes   = inCompoundTaskNode.GetArgumentNodes();
+    const std::vector<std::shared_ptr<const HTNValueNode>>& CurrentMethodNodeArgumentNodes = CurrentMethodNode->GetArgumentNodes();
+    if (!HTN::Helpers::CopyArgumentsConst(mDecompositionContext, CurrentTaskNodeArgumentNodes, CurrentMethodNodeArgumentNodes,
+                                          CurrentTaskInstance.GetEnvironment(), CurrentDecomposition.GetCurrentEnvironment(), {},
+                                          HTN::Helpers::InputPrefixes))
+    {
+        LOG_ERROR("Arguments could not be copied from compound task node [{}] to method node of the same name", CurrentCompoundTaskNodeID);
         return false;
     }
 
@@ -464,6 +459,7 @@ HTNAtom HTNInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
     const HTNTaskInstance&  CurrentTaskInstance  = CurrentDecomposition.GetCurrentTaskInstance();
     assert(CurrentTaskInstance.GetTaskNode().get() == &inPrimitiveTaskNode);
     CurrentDecomposition.AddTaskToPlan(CurrentTaskInstance);
+
     return true;
 }
 
