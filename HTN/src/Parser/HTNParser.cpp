@@ -345,7 +345,7 @@ std::shared_ptr<HTNConditionNodeBase> HTNParser::ParseConditionNode(unsigned int
             SubConditionNodes.emplace_back(SubConditionNode);
         }
 
-        ConditionNode = std::make_shared<HTNConditionAndNode>(SubConditionNodes);
+        ConditionNode = std::make_shared<HTNAndConditionNode>(SubConditionNodes);
     }
     else if (ParseToken(CurrentPosition, HTNTokenType::OR))
     {
@@ -355,7 +355,7 @@ std::shared_ptr<HTNConditionNodeBase> HTNParser::ParseConditionNode(unsigned int
             SubConditionNodes.emplace_back(SubConditionNode);
         }
 
-        ConditionNode = std::make_shared<HTNConditionOrNode>(SubConditionNodes);
+        ConditionNode = std::make_shared<HTNOrConditionNode>(SubConditionNodes);
     }
     else if (ParseToken(CurrentPosition, HTNTokenType::ALT))
     {
@@ -365,7 +365,7 @@ std::shared_ptr<HTNConditionNodeBase> HTNParser::ParseConditionNode(unsigned int
             SubConditionNodes.emplace_back(SubConditionNode);
         }
 
-        ConditionNode = std::make_shared<HTNConditionAltNode>(SubConditionNodes);
+        ConditionNode = std::make_shared<HTNAltConditionNode>(SubConditionNodes);
     }
 
     if (!ParseToken(CurrentPosition, HTNTokenType::RIGHT_PARENTHESIS))
@@ -393,7 +393,7 @@ std::shared_ptr<HTNConditionNodeBase> HTNParser::ParseSubConditionNode(unsigned 
         if (ParseToken(CurrentPosition, HTNTokenType::NOT))
         {
             const std::shared_ptr<const HTNConditionNodeBase> SubConditionNode = ParseSubConditionNode(CurrentPosition);
-            ConditionNode                                                      = std::make_shared<HTNConditionNotNode>(SubConditionNode);
+            ConditionNode                                                      = std::make_shared<HTNNotConditionNode>(SubConditionNode);
         }
         else
         {
@@ -410,7 +410,7 @@ std::shared_ptr<HTNConditionNodeBase> HTNParser::ParseSubConditionNode(unsigned 
 
                 if (IsAxiom)
                 {
-                    ConditionNode = std::make_shared<HTNConditionAxiomNode>(IDNode, ArgumentNodes);
+                    ConditionNode = std::make_shared<HTNAxiomConditionNode>(IDNode, ArgumentNodes);
                 }
                 else
                 {

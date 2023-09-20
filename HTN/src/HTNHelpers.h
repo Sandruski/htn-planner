@@ -4,19 +4,19 @@
 #include <string>
 #include <vector>
 
-class HTNDecompositionContext;
+class HTNDomainNode;
 class HTNEnvironment;
 class HTNValueNode;
 
 namespace HTN::Helpers
 {
-bool CopyArgumentsNoConst(const HTNDecompositionContext&                          inDecompositionContext,
+bool CopyArgumentsNoConst(const std::shared_ptr<const HTNDomainNode>&             inDomainNode,
                           const std::vector<std::shared_ptr<const HTNValueNode>>& inSourceArgumentNodes,
                           const std::vector<std::shared_ptr<const HTNValueNode>>& inDestinationArgumentNodes, HTNEnvironment& inSourceEnvironment,
                           HTNEnvironment& inDestinationEnvironment, const std::vector<std::string>& inSourcePrefixes,
                           const std::vector<std::string>& inDestinationPrefixes);
 
-bool CopyArgumentsConst(const HTNDecompositionContext&                          inDecompositionContext,
+bool CopyArgumentsConst(const std::shared_ptr<const HTNDomainNode>&             inDomainNode,
                         const std::vector<std::shared_ptr<const HTNValueNode>>& inSourceArgumentNodes,
                         const std::vector<std::shared_ptr<const HTNValueNode>>& inDestinationArgumentNodes, const HTNEnvironment& inSourceEnvironment,
                         HTNEnvironment& inDestinationEnvironment, const std::vector<std::string>& inSourcePrefixes,

@@ -13,7 +13,7 @@
 
 namespace HTN::Helpers
 {
-bool CopyArgumentsNoConst(const HTNDecompositionContext&                          inDecompositionContext,
+bool CopyArgumentsNoConst(const std::shared_ptr<const HTNDomainNode>&             inDomainNode,
                           const std::vector<std::shared_ptr<const HTNValueNode>>& inSourceArgumentNodes,
                           const std::vector<std::shared_ptr<const HTNValueNode>>& inDestinationArgumentNodes, HTNEnvironment& inSourceEnvironment,
                           HTNEnvironment& inDestinationEnvironment, const std::vector<std::string>& inSourcePrefixes,
@@ -54,9 +54,8 @@ bool CopyArgumentsNoConst(const HTNDecompositionContext&                        
             break;
         }
         case HTNValueType::CONSTANT: {
-            const std::shared_ptr<const HTNDomainNode>& CurrentDomainNode         = inDecompositionContext.GetCurrentDomainNode();
-            std::string                                 SourceArgumentValueString = SourceArgumentValue->GetValue<std::string>();
-            std::shared_ptr<const HTNConstantNode>      ConstantNode = CurrentDomainNode->FindConstantNodeByID(SourceArgumentValueString);
+            std::string                            SourceArgumentValueString = SourceArgumentValue->GetValue<std::string>();
+            std::shared_ptr<const HTNConstantNode> ConstantNode              = inDomainNode->FindConstantNodeByID(SourceArgumentValueString);
             if (!ConstantNode)
             {
                 LOG_ERROR("Constant node [{}] not found", SourceArgumentValueString);
@@ -105,7 +104,7 @@ bool CopyArgumentsNoConst(const HTNDecompositionContext&                        
     return true;
 }
 
-bool CopyArgumentsConst(const HTNDecompositionContext&                          inDecompositionContext,
+bool CopyArgumentsConst(const std::shared_ptr<const HTNDomainNode>&             inDomainNode,
                         const std::vector<std::shared_ptr<const HTNValueNode>>& inSourceArgumentNodes,
                         const std::vector<std::shared_ptr<const HTNValueNode>>& inDestinationArgumentNodes, const HTNEnvironment& inSourceEnvironment,
                         HTNEnvironment& inDestinationEnvironment, const std::vector<std::string>& inSourcePrefixes,
@@ -146,9 +145,8 @@ bool CopyArgumentsConst(const HTNDecompositionContext&                          
             break;
         }
         case HTNValueType::CONSTANT: {
-            const std::shared_ptr<const HTNDomainNode>& CurrentDomainNode         = inDecompositionContext.GetCurrentDomainNode();
-            std::string                                 SourceArgumentValueString = SourceArgumentValue->GetValue<std::string>();
-            std::shared_ptr<const HTNConstantNode>      ConstantNode = CurrentDomainNode->FindConstantNodeByID(SourceArgumentValueString);
+            std::string                            SourceArgumentValueString = SourceArgumentValue->GetValue<std::string>();
+            std::shared_ptr<const HTNConstantNode> ConstantNode              = inDomainNode->FindConstantNodeByID(SourceArgumentValueString);
             if (!ConstantNode)
             {
                 LOG_ERROR("Constant node [{}] not found", SourceArgumentValueString);
