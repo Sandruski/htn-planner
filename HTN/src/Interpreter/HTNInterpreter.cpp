@@ -20,6 +20,21 @@
 
 #include <cassert>
 
+namespace
+{
+bool IsNodeSuccessful(const HTNAtomList& inNodeResult)
+{
+    static constexpr size_t IsNodeSuccessfulIndex = 0;
+    return inNodeResult.Find(IsNodeSuccessfulIndex);
+}
+
+bool HasNodeBoundArguments(const HTNAtomList& inNodeResult)
+{
+    static constexpr size_t HasNodeBoundArgumentsIndex = 1;
+    return inNodeResult.Find(HasNodeBoundArgumentsIndex);
+}
+} // namespace
+
 HTNInterpreter::HTNInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointName,
                                const HTNWorldState& inWorldState)
     : mDomainNode(inDomainNode), mEntryPointName(inEntryPointName), mDecompositionContext(inWorldState)
@@ -149,11 +164,9 @@ HTNAtom HTNInterpreter::Visit(const HTNBranchNode& inBranchNode)
     }
 
     const HTNAtomList ConditionNodeResult       = EvaluateNode<HTNAtomList>(*CurrentPreConditionNode);
-    const bool        IsConditionNodeSuccessful = ConditionNodeResult.Find(0);
-    return IsConditionNodeSuccessful;
+    return IsNodeSuccessful(ConditionNodeResult);
 }
 
-// TODO salvarez Check whether variables have been bound or not
 HTNAtom HTNInterpreter::Visit(const HTNConditionNode& inConditionNode)
 {
     const std::string       ID                   = inConditionNode.GetID();
@@ -250,8 +263,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
     }
 
     const HTNAtomList AxiomNodeResult       = EvaluateNode<HTNAtomList>(*CurrentAxiomNode);
-    const bool        IsAxiomNodeSuccessful = AxiomNodeResult.Find(0);
-    if (!IsAxiomNodeSuccessful)
+    if (!IsNodeSuccessful(AxiomNodeResult))
     {
         return HTNAtomList({false});
     }
@@ -287,8 +299,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
         // Check condition
         const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode      = ConditionNodes[CurrentConditionIndex];
         const HTNAtomList                                  ConditionNodeResult       = EvaluateNode<HTNAtomList>(*CurrentConditionNode);
-        const bool                                         IsConditionNodeSuccessful = ConditionNodeResult.Find(0);
-        if (!IsConditionNodeSuccessful)
+        if (!IsNodeSuccessful(ConditionNodeResult))
         {
             if (CurrentConditionIndex == 0) // First condition
             {
@@ -303,8 +314,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
         }
 
         // Record decomposition if it has bound any arguments
-        const bool HasConditionNodeBoundArguments = ConditionNodeResult.Find(1);
-        if (HasConditionNodeBoundArguments)
+        if (HasNodeBoundArguments(ConditionNodeResult))
         {
             HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
             HTNEnvironment&        NewEnvironment   = NewDecomposition.GetCurrentEnvironment();
@@ -335,8 +345,7 @@ HTNAtom HTNInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
     {
         const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode      = ConditionNodes[CurrentConditionIndex];
         const HTNAtomList                                  ConditionNodeResult       = EvaluateNode<HTNAtomList>(*CurrentConditionNode);
-        const bool                                         IsConditionNodeSuccessful = ConditionNodeResult.Find(0);
-        if (IsConditionNodeSuccessful)
+        if (IsNodeSuccessful(ConditionNodeResult))
         {
             static constexpr bool CanBindArguments = false;
             return HTNAtomList({true, CanBindArguments});
@@ -367,12 +376,10 @@ HTNAtom HTNInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
 
         const std::shared_ptr<const HTNConditionNodeBase>& CurrentConditionNode      = ConditionNodes[CurrentConditionIndex];
         const HTNAtomList                                  ConditionNodeResult       = EvaluateNode<HTNAtomList>(*CurrentConditionNode);
-        const bool                                         IsConditionNodeSuccessful = ConditionNodeResult.Find(0);
-        if (IsConditionNodeSuccessful)
+        if (IsNodeSuccessful(ConditionNodeResult))
         {
             // Record decomposition if it has bound any arguments
-            const bool HasConditionNodeBoundArguments = ConditionNodeResult.Find(1);
-            if (HasConditionNodeBoundArguments)
+            if (HasNodeBoundArguments(ConditionNodeResult))
             {
                 HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
                 HTNEnvironment&        NewEnvironment   = NewDecomposition.GetCurrentEnvironment();
@@ -416,8 +423,7 @@ HTNAtom HTNInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode)
     CurrentDecomposition.GetCurrentEnvironment().SetVariables(CurrentVariables);
 
     // Invert result
-    const bool IsConditionNodeSuccessful = ConditionNodeResult.Find(0);
-    if (IsConditionNodeSuccessful)
+    if (IsNodeSuccessful(ConditionNodeResult))
     {
         return HTNAtomList({false});
     }
