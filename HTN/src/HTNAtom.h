@@ -11,8 +11,8 @@ class HTNAtomList
 {
 public:
     HTNAtomList() = default;
+    HTNAtomList(const std::initializer_list<HTNAtom>& inElements);
     HTNAtomList(const HTNAtomList& inOther);
-
     ~HTNAtomList();
 
     bool operator==(const HTNAtomList& inOther) const;

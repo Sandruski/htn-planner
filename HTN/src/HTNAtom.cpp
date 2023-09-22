@@ -4,6 +4,14 @@
 #include <ios>
 #include <sstream>
 
+HTNAtomList::HTNAtomList(const std::initializer_list<HTNAtom>& inElements)
+{
+    for (const HTNAtom& Element : inElements)
+    {
+        Add(Element);
+    }
+}
+
 HTNAtomList::HTNAtomList(const HTNAtomList& inOther)
 {
     for (const HTNAtomNode* Current = inOther.mHead; Current; Current = Current->GetNext())

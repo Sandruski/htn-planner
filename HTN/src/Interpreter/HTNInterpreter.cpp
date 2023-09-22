@@ -156,8 +156,6 @@ HTNAtom HTNInterpreter::Visit(const HTNBranchNode& inBranchNode)
 // TODO salvarez Check whether variables have been bound or not
 HTNAtom HTNInterpreter::Visit(const HTNConditionNode& inConditionNode)
 {
-    HTNAtomList Result;
-
     const std::string       ID                   = inConditionNode.GetID();
     const std::string       FactID               = inConditionNode.GetIDNode()->ToString();
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
@@ -191,8 +189,7 @@ HTNAtom HTNInterpreter::Visit(const HTNConditionNode& inConditionNode)
             if (!ConstantNode)
             {
                 LOG_ERROR("Constant node [{}] not found", ArgumentValueString);
-                Result.Add(false);
-                return Result;
+                return HTNAtomList({false});
             }
 
             ArgumentValue = &ConstantNode->GetValueNode()->GetValue();
@@ -220,28 +217,22 @@ HTNAtom HTNInterpreter::Visit(const HTNConditionNode& inConditionNode)
     {
         if (Condition.Check(*WorldState, CurrentFactEntryIndex))
         {
-            Result.Add(true);
-            Result.Add(ShouldBindArguments);
-            return Result;
+            return HTNAtomList({true, ShouldBindArguments});
         }
     }
 
-    Result.Add(false);
-    return Result;
+    return HTNAtomList({false});
 }
 
 HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 {
-    HTNAtomList Result;
-
     const std::shared_ptr<const HTNValueNode>& CurrentAxiomNodeIDNode = inAxiomConditionNode.GetIDNode();
     const std::string                          CurrentAxiomNodeID     = EvaluateNode<std::string>(*CurrentAxiomNodeIDNode);
     const std::shared_ptr<const HTNAxiomNode>  CurrentAxiomNode       = mDomainNode->FindAxiomNodeByID(CurrentAxiomNodeID);
     if (!CurrentAxiomNode)
     {
         LOG_ERROR("Axiom node [{}] could not found", CurrentAxiomNodeID);
-        Result.Add(false);
-        return Result;
+        return HTNAtomList({false});
     }
 
     HTNDecompositionScope CurrentAxiomScope = HTNDecompositionScope(mDecompositionContext);
@@ -255,16 +246,14 @@ HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
                                             HTN::Helpers::InputPrefixes))
     {
         LOG_ERROR("Arguments could not be copied from condition node [{}] to axiom node [{}]", inAxiomConditionNode.GetID(), CurrentAxiomNodeID);
-        Result.Add(false);
-        return Result;
+        return HTNAtomList({false});
     }
 
     const HTNAtomList AxiomNodeResult       = EvaluateNode<HTNAtomList>(*CurrentAxiomNode);
     const bool        IsAxiomNodeSuccessful = AxiomNodeResult.Find(0);
     if (!IsAxiomNodeSuccessful)
     {
-        Result.Add(false);
-        return Result;
+        return HTNAtomList({false});
     }
 
     // Copy back the output arguments of the axiom node to the condition node
@@ -273,21 +262,17 @@ HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
                                           HTN::Helpers::OutputPrefixes, {}))
     {
         LOG_ERROR("Arguments could not be copied from axiom node [{}] to condition node [{}]", CurrentAxiomNodeID, inAxiomConditionNode.GetID());
-        Result.Add(false);
-        return Result;
+        return HTNAtomList({false});
     }
 
-    Result.Add(true);
-    Result.Add(false);
-    return Result;
+    static constexpr bool CanBindArguments = false;
+    return HTNAtomList({true, CanBindArguments});
 }
 
 HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
 {
     // YES bindings
     // YES backtracking
-
-    HTNAtomList Result;
 
     const std::string       ID                   = inAndConditionNode.GetID();
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
@@ -307,8 +292,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
         {
             if (CurrentConditionIndex == 0) // First condition
             {
-                Result.Add(false);
-                return Result;
+                return HTNAtomList({false});
             }
             else
             {
@@ -333,17 +317,14 @@ HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
     }
 
     // If empty, it evaluates to true
-    Result.Add(true);
-    Result.Add(false);
-    return Result;
+    static constexpr bool CanBindArguments = false;
+    return HTNAtomList({true, CanBindArguments});
 }
 
 HTNAtom HTNInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
 {
     // YES bindings
     // NO backtracking
-
-    HTNAtomList Result;
 
     const std::string       ID                   = inOrConditionNode.GetID();
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
@@ -357,9 +338,8 @@ HTNAtom HTNInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
         const bool                                         IsConditionNodeSuccessful = ConditionNodeResult.Find(0);
         if (IsConditionNodeSuccessful)
         {
-            Result.Add(true);
-            Result.Add(false);
-            return Result;
+            static constexpr bool CanBindArguments = false;
+            return HTNAtomList({true, CanBindArguments});
         }
 
         // Continue
@@ -367,16 +347,13 @@ HTNAtom HTNInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
     }
 
     // If empty, it evaluates to false
-    Result.Add(false);
-    return Result;
+    return HTNAtomList({false});
 }
 
 HTNAtom HTNInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
 {
     // YES bindings
     // YES backtracking
-
-    HTNAtomList Result;
 
     const std::string       ID                   = inAltConditionNode.GetID();
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
@@ -403,9 +380,8 @@ HTNAtom HTNInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
                 mDecompositionContext.RecordDecomposition(NewDecomposition);
             }
 
-            Result.Add(true);
-            Result.Add(false);
-            return Result;
+            static constexpr bool CanBindArguments = false;
+            return HTNAtomList({true, CanBindArguments});
         }
 
         // Continue
@@ -413,16 +389,13 @@ HTNAtom HTNInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
     }
 
     // If empty, it evaluates to false
-    Result.Add(false);
-    return Result;
+    return HTNAtomList({false});
 }
 
 HTNAtom HTNInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode)
 {
     // NO bindings
     // NO backtracking
-
-    HTNAtomList Result;
 
     // Copy variables
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
@@ -444,13 +417,13 @@ HTNAtom HTNInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode)
 
     // Invert result
     const bool IsConditionNodeSuccessful = ConditionNodeResult.Find(0);
-    Result.Add(!IsConditionNodeSuccessful);
-    if (!IsConditionNodeSuccessful)
+    if (IsConditionNodeSuccessful)
     {
-        Result.Add(false);
+        return HTNAtomList({false});
     }
 
-    return Result;
+    static constexpr bool CanBindArguments = false;
+    return HTNAtomList({true, CanBindArguments});
 }
 
 HTNAtom HTNInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
