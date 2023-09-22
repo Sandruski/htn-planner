@@ -11,6 +11,7 @@ class HTNCompoundTaskNode;
 class HTNConditionNode;
 class HTNConstantNode;
 class HTNConstantsNode;
+class HTNConstantValueNode;
 class HTNDomainNode;
 class HTNEnvironment;
 class HTNMethodNode;
@@ -18,6 +19,7 @@ class HTNNotConditionNode;
 class HTNOrConditionNode;
 class HTNPrimitiveTaskNode;
 class HTNValueNode;
+class HTNVariableValueNode;
 
 // TODO salvarez Revisit this class and implement planning and printing the AST tree through it. Use templates!!!
 class HTNNodeVisitorBase
@@ -40,4 +42,6 @@ public:
     virtual HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode)     = 0;
     virtual HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)   = 0;
     virtual HTNAtom Visit(const HTNValueNode& inValueNode)                   = 0;
+    virtual HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode)   = 0;
+    virtual HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode)   = 0;
 };

@@ -7,6 +7,7 @@
 
 class HTNConditionNodeBase;
 class HTNValueNode;
+class HTNValueNodeBase;
 
 /**
  * Node representing an axiom
@@ -15,7 +16,7 @@ class HTNAxiomNode final : public HTNNodeBase
 {
 public:
     explicit HTNAxiomNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
-                          const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes,
+                          const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes,
                           const std::shared_ptr<const HTNConditionNodeBase>&      inConditionNode);
     ~HTNAxiomNode();
 
@@ -24,7 +25,7 @@ public:
     std::string ToString() const final;
 
     const std::shared_ptr<const HTNValueNode>&              GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNValueNode>>& GetArgumentNodes() const;
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetArgumentNodes() const;
     const std::shared_ptr<const HTNConditionNodeBase>&      GetConditionNode() const;
 
 private:
@@ -33,7 +34,7 @@ private:
     std::shared_ptr<const HTNValueNode> mIDNode;
 
     // Nodes representing the arguments of the axiom
-    std::vector<std::shared_ptr<const HTNValueNode>> mArgumentNodes;
+    std::vector<std::shared_ptr<const HTNValueNodeBase>> mArgumentNodes;
 
     // Node representing the condition of the axiom
     std::shared_ptr<const HTNConditionNodeBase> mConditionNode;
@@ -44,7 +45,7 @@ inline const std::shared_ptr<const HTNValueNode>& HTNAxiomNode::GetIDNode() cons
     return mIDNode;
 }
 
-inline const std::vector<std::shared_ptr<const HTNValueNode>>& HTNAxiomNode::GetArgumentNodes() const
+inline const std::vector<std::shared_ptr<const HTNValueNodeBase>>& HTNAxiomNode::GetArgumentNodes() const
 {
     return mArgumentNodes;
 }

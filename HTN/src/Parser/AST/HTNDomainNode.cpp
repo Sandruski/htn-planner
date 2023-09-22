@@ -39,14 +39,14 @@ std::string HTNDomainNode::ToString() const
     return Description;
 }
 
-std::shared_ptr<const HTNConstantNode> HTNDomainNode::FindConstantNodeByID(const std::string& inID) const
+std::shared_ptr<const HTNConstantNode> HTNDomainNode::FindConstantNodeByID(const std::string& inConstantNodeID) const
 {
     for (const std::shared_ptr<const HTNConstantsNode>& ConstantNodes : mConstantNodes)
     {
         const std::vector<std::shared_ptr<const HTNConstantNode>>& ConstantNodesContainer = ConstantNodes->GetConstantNodes();
         for (const std::shared_ptr<const HTNConstantNode>& ConstantNode : ConstantNodesContainer)
         {
-            if (inID == ConstantNode->GetID())
+            if (inConstantNodeID == ConstantNode->GetID())
             {
                 return ConstantNode;
             }
@@ -56,11 +56,11 @@ std::shared_ptr<const HTNConstantNode> HTNDomainNode::FindConstantNodeByID(const
     return nullptr;
 }
 
-std::shared_ptr<const HTNAxiomNode> HTNDomainNode::FindAxiomNodeByID(const std::string& inID) const
+std::shared_ptr<const HTNAxiomNode> HTNDomainNode::FindAxiomNodeByID(const std::string& inAxiomNodeID) const
 {
     for (const std::shared_ptr<const HTNAxiomNode>& AxiomNode : mAxiomNodes)
     {
-        if (inID == AxiomNode->GetID())
+        if (inAxiomNodeID == AxiomNode->GetID())
         {
             return AxiomNode;
         }
@@ -69,11 +69,11 @@ std::shared_ptr<const HTNAxiomNode> HTNDomainNode::FindAxiomNodeByID(const std::
     return nullptr;
 }
 
-std::shared_ptr<const HTNMethodNode> HTNDomainNode::FindMethodNodeByID(const std::string& inID) const
+std::shared_ptr<const HTNMethodNode> HTNDomainNode::FindMethodNodeByID(const std::string& inMethodNodeID) const
 {
     for (const std::shared_ptr<const HTNMethodNode>& MethodNode : mMethodNodes)
     {
-        if (inID == MethodNode->GetID())
+        if (inMethodNodeID == MethodNode->GetID())
         {
             return MethodNode;
         }

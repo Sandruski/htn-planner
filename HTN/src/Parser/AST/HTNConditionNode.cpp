@@ -10,8 +10,8 @@ std::string HTNConditionNodeBase::GetID() const
     return std::to_string(mID);
 }
 
-HTNConditionNode::HTNConditionNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
-                                   const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes)
+HTNConditionNode::HTNConditionNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+                                   const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes)
 {
 }
@@ -25,7 +25,7 @@ std::string HTNConditionNode::ToString() const
 {
     std::string Description = GetIDNode()->ToString();
 
-    for (const std::shared_ptr<const HTNValueNode>& ArgumentNode : mArgumentNodes)
+    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : mArgumentNodes)
     {
         Description.append(std::format("{} ", ArgumentNode->ToString()));
     }
@@ -40,8 +40,8 @@ std::string HTNConditionNode::ToString() const
     return Description;
 }
 
-HTNAxiomConditionNode::HTNAxiomConditionNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
-                                             const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes)
+HTNAxiomConditionNode::HTNAxiomConditionNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+                                             const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes)
 {
 }
@@ -55,7 +55,7 @@ std::string HTNAxiomConditionNode::ToString() const
 {
     std::string Description = GetIDNode()->ToString();
 
-    for (const std::shared_ptr<const HTNValueNode>& ArgumentNode : mArgumentNodes)
+    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : mArgumentNodes)
     {
         Description.append(std::format("{} ", ArgumentNode->ToString()));
     }
@@ -70,8 +70,8 @@ std::string HTNAxiomConditionNode::ToString() const
     return Description;
 }
 
-HTNAndConditionNode::HTNAndConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes)
-    : mConditionNodes(inConditionNodes)
+HTNAndConditionNode::HTNAndConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes)
+    : mSubConditionNodes(inSubConditionNodes)
 {
 }
 
@@ -84,16 +84,16 @@ std::string HTNAndConditionNode::ToString() const
 {
     std::string Description = "and";
 
-    for (const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode : mConditionNodes)
+    for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : mSubConditionNodes)
     {
-        Description.append(std::format(" {}", ConditionNode->ToString()));
+        Description.append(std::format(" {}", SubConditionNode->ToString()));
     }
 
     return Description;
 }
 
-HTNOrConditionNode::HTNOrConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes)
-    : mConditionNodes(inConditionNodes)
+HTNOrConditionNode::HTNOrConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes)
+    : mSubConditionNodes(inSubConditionNodes)
 {
 }
 
@@ -106,16 +106,16 @@ std::string HTNOrConditionNode::ToString() const
 {
     std::string Description = "or";
 
-    for (const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode : mConditionNodes)
+    for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : mSubConditionNodes)
     {
-        Description.append(std::format(" {}", ConditionNode->ToString()));
+        Description.append(std::format(" {}", SubConditionNode->ToString()));
     }
 
     return Description;
 }
 
-HTNAltConditionNode::HTNAltConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes)
-    : mConditionNodes(inConditionNodes)
+HTNAltConditionNode::HTNAltConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes)
+    : mSubConditionNodes(inSubConditionNodes)
 {
 }
 
@@ -128,15 +128,16 @@ std::string HTNAltConditionNode::ToString() const
 {
     std::string Description = "alt";
 
-    for (const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode : mConditionNodes)
+    for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : mSubConditionNodes)
     {
-        Description.append(std::format(" {}", ConditionNode->ToString()));
+        Description.append(std::format(" {}", SubConditionNode->ToString()));
     }
 
     return Description;
 }
 
-HTNNotConditionNode::HTNNotConditionNode(const std::shared_ptr<const HTNConditionNodeBase>& inConditionNode) : mConditionNode(inConditionNode)
+HTNNotConditionNode::HTNNotConditionNode(const std::shared_ptr<const HTNConditionNodeBase>& inSubConditionNode)
+    : mSubConditionNode(inSubConditionNode)
 {
 }
 
@@ -147,5 +148,5 @@ HTNAtom HTNNotConditionNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
 
 std::string HTNNotConditionNode::ToString() const
 {
-    return std::format("not {}", mConditionNode->ToString());
+    return std::format("not {}", mSubConditionNode->ToString());
 }

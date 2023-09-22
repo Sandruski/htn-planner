@@ -5,8 +5,8 @@
 
 #include <format>
 
-HTNConstantNode::HTNConstantNode(const std::shared_ptr<const HTNValueNode>& inIDNode, const std::shared_ptr<const HTNValueNode>& inValueNode)
-    : mIDNode(inIDNode), mValueNode(inValueNode)
+HTNConstantNode::HTNConstantNode(const std::shared_ptr<const HTNValueNode>& inIDNode, const std::shared_ptr<const HTNValueNodeBase>& inArgumentNode)
+    : mIDNode(inIDNode), mArgumentNode(inArgumentNode)
 {
 }
 
@@ -24,5 +24,5 @@ std::string HTNConstantNode::GetID() const
 
 std::string HTNConstantNode::ToString() const
 {
-    return std::format("{} {}", GetID(), mValueNode->ToString());
+    return std::format("{} {}", GetID(), mArgumentNode->ToString());
 }

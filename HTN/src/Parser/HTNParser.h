@@ -17,6 +17,7 @@ class HTNDomainNode;
 class HTNMethodNode;
 class HTNTaskNodeBase;
 class HTNValueNode;
+class HTNValueNodeBase;
 
 // Recursive descent parser
 // Builds an abstract syntax tree from a series of tokens
@@ -37,12 +38,13 @@ private:
     std::shared_ptr<HTNBranchNode>        ParseBranchNode(unsigned int& inPosition);
     std::shared_ptr<HTNConditionNodeBase> ParseConditionNode(unsigned int& inPosition);
     std::shared_ptr<HTNConditionNodeBase> ParseSubConditionNode(unsigned int& inPosition);
-    std::shared_ptr<HTNTaskNodeBase>          ParseTaskNode(unsigned int& inPosition);
-    std::shared_ptr<HTNValueNode>         ParseArgumentNode(unsigned int& inPosition);
-    std::shared_ptr<HTNValueNode>         ParseIdentifierNode(unsigned int& inPosition, const HTNValueType inValueType);
-    std::shared_ptr<HTNValueNode>         ParseNumberNode(unsigned int& inPosition);
-    std::shared_ptr<HTNValueNode>         ParseStringNode(unsigned int& inPosition);
-    const HTNToken*                       ParseToken(unsigned int& inPosition, const HTNTokenType inTokenType);
+    // HTNPrimitiveTaskNode or HTNCompoundTaskNode
+    std::shared_ptr<HTNTaskNodeBase>      ParseTaskNode(unsigned int& inPosition);
+    std::shared_ptr<HTNValueNode>         ParseIdentifierNode(unsigned int& inPosition);
+    // HTNValueNode, HTNVariableValueNode, or HTNConstantValueNode
+    std::shared_ptr<HTNValueNodeBase>     ParseArgumentNode(unsigned int& inPosition);
+
+    const HTNToken* ParseToken(unsigned int& inPosition, const HTNTokenType inTokenType);
 
     const HTNToken* GetToken(const unsigned int inPosition) const;
 

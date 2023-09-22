@@ -2,18 +2,22 @@
 
 #include "Parser/AST/HTNNodeVisitorBase.h"
 
+std::string HTNValueNodeBase::ToString() const
+{
+    return mValue.ToString();
+}
+
 HTNAtom HTNValueNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
 {
     return inNodeVisitor.Visit(*this);
 }
 
-std::string HTNValueNode::GetID() const
+HTNAtom HTNVariableValueNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
 {
-    // Not used
-    return "";
+    return inNodeVisitor.Visit(*this);
 }
 
-std::string HTNValueNode::ToString() const
+HTNAtom HTNConstantValueNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
 {
-    return mValue.ToString();
+    return inNodeVisitor.Visit(*this);
 }

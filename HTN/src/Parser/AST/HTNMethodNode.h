@@ -7,6 +7,7 @@
 
 class HTNBranchNode;
 class HTNValueNode;
+class HTNValueNodeBase;
 
 /**
  * Node representing a method
@@ -15,7 +16,7 @@ class HTNMethodNode final : public HTNNodeBase
 {
 public:
     explicit HTNMethodNode(const std::shared_ptr<const HTNValueNode>&               inIDNode,
-                           const std::vector<std::shared_ptr<const HTNValueNode>>&  inArgumentNodes,
+                           const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes,
                            const std::vector<std::shared_ptr<const HTNBranchNode>>& inBranchNodes, const bool inIsTopLevel);
     ~HTNMethodNode();
 
@@ -24,7 +25,7 @@ public:
     std::string ToString() const final;
 
     const std::shared_ptr<const HTNValueNode>&               GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNValueNode>>&  GetArgumentNodes() const;
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetArgumentNodes() const;
     const std::vector<std::shared_ptr<const HTNBranchNode>>& GetBranchNodes() const;
     bool                                                     IsTopLevel() const;
 
@@ -34,7 +35,7 @@ private:
     std::shared_ptr<const HTNValueNode> mIDNode;
 
     // Nodes representing the arguments of the method
-    std::vector<std::shared_ptr<const HTNValueNode>> mArgumentNodes;
+    std::vector<std::shared_ptr<const HTNValueNodeBase>> mArgumentNodes;
 
     // Nodes representing the branches of the method
     std::vector<std::shared_ptr<const HTNBranchNode>> mBranchNodes;
@@ -48,7 +49,7 @@ inline const std::shared_ptr<const HTNValueNode>& HTNMethodNode::GetIDNode() con
     return mIDNode;
 }
 
-inline const std::vector<std::shared_ptr<const HTNValueNode>>& HTNMethodNode::GetArgumentNodes() const
+inline const std::vector<std::shared_ptr<const HTNValueNodeBase>>& HTNMethodNode::GetArgumentNodes() const
 {
     return mArgumentNodes;
 }

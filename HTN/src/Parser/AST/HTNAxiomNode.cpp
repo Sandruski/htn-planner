@@ -7,7 +7,7 @@
 #include <format>
 
 HTNAxiomNode::HTNAxiomNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
-                           const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes,
+                           const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes,
                            const std::shared_ptr<const HTNConditionNodeBase>&      inConditionNode)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mConditionNode(inConditionNode)
 {
@@ -29,7 +29,7 @@ std::string HTNAxiomNode::ToString() const
 {
     std::string Description = GetID();
 
-    for (const std::shared_ptr<const HTNValueNode>& ArgumentNode : mArgumentNodes)
+    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : mArgumentNodes)
     {
         Description.append(std::format("{} ", ArgumentNode->ToString()));
     }

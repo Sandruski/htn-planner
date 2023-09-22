@@ -38,6 +38,8 @@ public:
     HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode) final;
     HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode) final;
     HTNAtom Visit(const HTNValueNode& inValueNode) final;
+    HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode) final; 
+    HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
 
 private:
     template<typename T>

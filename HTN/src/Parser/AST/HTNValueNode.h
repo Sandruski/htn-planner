@@ -3,51 +3,79 @@
 #include "HTNAtom.h"
 #include "Parser/AST/HTNNodeBase.h"
 
-enum class HTNValueType : unsigned int
+/**
+ * Node representing a value
+ */
+class HTNValueNodeBase : public HTNNodeBase
 {
-    SYMBOL,
-    AXIOM,
-    VARIABLE,
-    CONSTANT,
-    LITERAL,
+public:
+    explicit HTNValueNodeBase(const HTNAtom& inValue);
 
-    INVALID
+    std::string GetID() const final;
+    std::string ToString() const final;
+
+    const HTNAtom& GetValue() const;
+
+private:
+    // Value
+    HTNAtom mValue;
 };
 
 /**
  * Node representing a value
  */
-class HTNValueNode final : public HTNNodeBase
+class HTNValueNode final : public HTNValueNodeBase
 {
 public:
-    explicit HTNValueNode(const HTNAtom& inValue, const HTNValueType inType);
+    explicit HTNValueNode(const HTNAtom& inValue);
 
-    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
-    std::string GetID() const final;
-    std::string ToString() const final;
-
-    const HTNAtom& GetValue() const;
-    HTNValueType   GetType() const;
-
-private:
-    // Value
-    HTNAtom mValue;
-
-    // Type of the value
-    // - Symbol, variable, constant, axiom, or literal
-    HTNValueType mType = HTNValueType::INVALID;
+    HTNAtom Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
 };
 
-inline HTNValueNode::HTNValueNode(const HTNAtom& inValue, const HTNValueType inType) : mValue(inValue), mType(inType)
+/**
+ * Node representing a variable value
+ */
+class HTNVariableValueNode final : public HTNValueNodeBase
+{
+public:
+    explicit HTNVariableValueNode(const HTNAtom& inValue);
+
+    HTNAtom Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+};
+
+/**
+ * Node representing a constant value
+ */
+class HTNConstantValueNode final : public HTNValueNodeBase
+{
+public:
+    explicit HTNConstantValueNode(const HTNAtom& inValue);
+
+    HTNAtom Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+};
+
+inline HTNValueNodeBase::HTNValueNodeBase(const HTNAtom& inValue) : mValue(inValue)
 {
 }
 
-inline const HTNAtom& HTNValueNode::GetValue() const
+inline std::string HTNValueNodeBase::GetID() const
+{
+    return "";
+}
+
+inline const HTNAtom& HTNValueNodeBase::GetValue() const
 {
     return mValue;
 }
 
-inline HTNValueType HTNValueNode::GetType() const
+inline HTNValueNode::HTNValueNode(const HTNAtom& inValue) : HTNValueNodeBase(inValue)
 {
-    return mType;
+}
+
+inline HTNVariableValueNode::HTNVariableValueNode(const HTNAtom& inValue) : HTNValueNodeBase(inValue)
+{
+}
+
+inline HTNConstantValueNode::HTNConstantValueNode(const HTNAtom& inValue) : HTNValueNodeBase(inValue)
+{
 }

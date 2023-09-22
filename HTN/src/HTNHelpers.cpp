@@ -14,11 +14,12 @@
 namespace HTN::Helpers
 {
 bool CopyArgumentsNoConst(const std::shared_ptr<const HTNDomainNode>&             inDomainNode,
-                          const std::vector<std::shared_ptr<const HTNValueNode>>& inSourceArgumentNodes,
-                          const std::vector<std::shared_ptr<const HTNValueNode>>& inDestinationArgumentNodes, HTNEnvironment& inSourceEnvironment,
+                          const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inSourceArgumentNodes,
+                          const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inDestinationArgumentNodes, HTNEnvironment& inSourceEnvironment,
                           HTNEnvironment& inDestinationEnvironment, const std::vector<std::string>& inSourcePrefixes,
                           const std::vector<std::string>& inDestinationPrefixes)
 {
+    /*
     const size_t SourceArgumentNodesSize      = inSourceArgumentNodes.size();
     const size_t DestinationArgumentNodesSize = inDestinationArgumentNodes.size();
     if (SourceArgumentNodesSize != DestinationArgumentNodesSize)
@@ -100,6 +101,7 @@ bool CopyArgumentsNoConst(const std::shared_ptr<const HTNDomainNode>&           
         // Copy the source argument to the destination variable
         DestinationVariable = *SourceArgumentValue;
     }
+    */
 
     return true;
 }
@@ -110,6 +112,7 @@ bool CopyArgumentsConst(const std::shared_ptr<const HTNDomainNode>&             
                         HTNEnvironment& inDestinationEnvironment, const std::vector<std::string>& inSourcePrefixes,
                         const std::vector<std::string>& inDestinationPrefixes)
 {
+    /*
     const size_t SourceArgumentNodesSize      = inSourceArgumentNodes.size();
     const size_t DestinationArgumentNodesSize = inDestinationArgumentNodes.size();
     if (SourceArgumentNodesSize != DestinationArgumentNodesSize)
@@ -191,6 +194,7 @@ bool CopyArgumentsConst(const std::shared_ptr<const HTNDomainNode>&             
         // Copy the source argument to the destination variable
         DestinationVariable = *SourceArgumentValue;
     }
+    */
 
     return true;
 }

@@ -6,6 +6,7 @@
 #include <vector>
 
 class HTNValueNode;
+class HTNValueNodeBase;
 
 /**
  * Base node representing a condition
@@ -34,14 +35,14 @@ private:
 class HTNConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNConditionNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
-                              const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes);
+    explicit HTNConditionNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+                              const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes);
 
     HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
 
-    const std::shared_ptr<const HTNValueNode>&              GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNValueNode>>& GetArgumentNodes() const;
+    const std::shared_ptr<const HTNValueNode>&                  GetIDNode() const;
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetArgumentNodes() const;
 
 private:
     // Node representing the ID of the condition
@@ -51,7 +52,7 @@ private:
 
     // Nodes representing the arguments of the condition
     // - Arguments of the fact in the world state
-    std::vector<std::shared_ptr<const HTNValueNode>> mArgumentNodes;
+    std::vector<std::shared_ptr<const HTNValueNodeBase>> mArgumentNodes;
 };
 
 /**
@@ -61,14 +62,14 @@ private:
 class HTNAxiomConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNAxiomConditionNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
-                                   const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes);
+    explicit HTNAxiomConditionNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+                                   const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes);
 
     HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
 
-    const std::shared_ptr<const HTNValueNode>&              GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNValueNode>>& GetArgumentNodes() const;
+    const std::shared_ptr<const HTNValueNode>&                  GetIDNode() const;
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetArgumentNodes() const;
 
 private:
     // Node representing the ID of the condition
@@ -78,7 +79,7 @@ private:
 
     // Nodes representing the arguments of the condition
     // - Arguments of the axiom node
-    std::vector<std::shared_ptr<const HTNValueNode>> mArgumentNodes;
+    std::vector<std::shared_ptr<const HTNValueNodeBase>> mArgumentNodes;
 };
 
 /**
@@ -92,16 +93,16 @@ private:
 class HTNAndConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNAndConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes);
+    explicit HTNAndConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes);
 
     HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
 
-    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetConditionNodes() const;
+    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetSubConditionNodes() const;
 
 private:
-    // Nodes representing the conditions of the condition
-    std::vector<std::shared_ptr<const HTNConditionNodeBase>> mConditionNodes;
+    // Nodes representing the sub-conditions of the condition
+    std::vector<std::shared_ptr<const HTNConditionNodeBase>> mSubConditionNodes;
 };
 
 /**
@@ -116,16 +117,16 @@ private:
 class HTNOrConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNOrConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes);
+    explicit HTNOrConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes);
 
     HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
 
-    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetConditionNodes() const;
+    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetSubConditionNodes() const;
 
 private:
-    // Nodes representing the conditions of the condition
-    std::vector<std::shared_ptr<const HTNConditionNodeBase>> mConditionNodes;
+    // Nodes representing the sub-conditions of the condition
+    std::vector<std::shared_ptr<const HTNConditionNodeBase>> mSubConditionNodes;
 };
 
 /**
@@ -140,16 +141,16 @@ private:
 class HTNAltConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNAltConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inConditionNodes);
+    explicit HTNAltConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes);
 
     HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
 
-    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetConditionNodes() const;
+    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetSubConditionNodes() const;
 
 private:
-    // Nodes representing the conditions of the condition
-    std::vector<std::shared_ptr<const HTNConditionNodeBase>> mConditionNodes;
+    // Nodes representing the sub-conditions of the condition
+    std::vector<std::shared_ptr<const HTNConditionNodeBase>> mSubConditionNodes;
 };
 
 /**
@@ -163,16 +164,16 @@ private:
 class HTNNotConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNNotConditionNode(const std::shared_ptr<const HTNConditionNodeBase>& inConditionNode);
+    explicit HTNNotConditionNode(const std::shared_ptr<const HTNConditionNodeBase>& inSubConditionNode);
 
     HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
     std::string ToString() const final;
 
-    const std::shared_ptr<const HTNConditionNodeBase>& GetConditionNode() const;
+    const std::shared_ptr<const HTNConditionNodeBase>& GetSubConditionNode() const;
 
 private:
-    // Node representing the condition of the condition
-    std::shared_ptr<const HTNConditionNodeBase> mConditionNode;
+    // Node representing the sub-condition of the condition
+    std::shared_ptr<const HTNConditionNodeBase> mSubConditionNode;
 };
 
 inline HTNConditionNodeBase::HTNConditionNodeBase() : mID(mIDGenerator++)
@@ -184,7 +185,7 @@ inline const std::shared_ptr<const HTNValueNode>& HTNConditionNode::GetIDNode() 
     return mIDNode;
 }
 
-inline const std::vector<std::shared_ptr<const HTNValueNode>>& HTNConditionNode::GetArgumentNodes() const
+inline const std::vector<std::shared_ptr<const HTNValueNodeBase>>& HTNConditionNode::GetArgumentNodes() const
 {
     return mArgumentNodes;
 }
@@ -194,27 +195,27 @@ inline const std::shared_ptr<const HTNValueNode>& HTNAxiomConditionNode::GetIDNo
     return mIDNode;
 }
 
-inline const std::vector<std::shared_ptr<const HTNValueNode>>& HTNAxiomConditionNode::GetArgumentNodes() const
+inline const std::vector<std::shared_ptr<const HTNValueNodeBase>>& HTNAxiomConditionNode::GetArgumentNodes() const
 {
     return mArgumentNodes;
 }
 
-inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNAndConditionNode::GetConditionNodes() const
+inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNAndConditionNode::GetSubConditionNodes() const
 {
-    return mConditionNodes;
+    return mSubConditionNodes;
 }
 
-inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNOrConditionNode::GetConditionNodes() const
+inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNOrConditionNode::GetSubConditionNodes() const
 {
-    return mConditionNodes;
+    return mSubConditionNodes;
 }
 
-inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNAltConditionNode::GetConditionNodes() const
+inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNAltConditionNode::GetSubConditionNodes() const
 {
-    return mConditionNodes;
+    return mSubConditionNodes;
 }
 
-inline const std::shared_ptr<const HTNConditionNodeBase>& HTNNotConditionNode::GetConditionNode() const
+inline const std::shared_ptr<const HTNConditionNodeBase>& HTNNotConditionNode::GetSubConditionNode() const
 {
-    return mConditionNode;
+    return mSubConditionNode;
 }

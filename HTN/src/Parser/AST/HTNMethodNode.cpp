@@ -7,7 +7,7 @@
 #include <format>
 
 HTNMethodNode::HTNMethodNode(const std::shared_ptr<const HTNValueNode>&               inIDNode,
-                             const std::vector<std::shared_ptr<const HTNValueNode>>&  inArgumentNodes,
+                             const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes,
                              const std::vector<std::shared_ptr<const HTNBranchNode>>& inBranchNodes, const bool inIsTopLevel)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mBranchNodes(inBranchNodes), mIsTopLevel(inIsTopLevel)
 {
@@ -29,7 +29,7 @@ std::string HTNMethodNode::ToString() const
 {
     std::string Description = GetID();
 
-    for (const std::shared_ptr<const HTNValueNode>& ArgumentNode : mArgumentNodes)
+    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : mArgumentNodes)
     {
         Description.append(std::format("{} ", ArgumentNode->ToString()));
     }

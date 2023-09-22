@@ -27,9 +27,9 @@ public:
     std::string GetID() const final;
     std::string ToString() const final;
 
-    std::shared_ptr<const HTNConstantNode> FindConstantNodeByID(const std::string& inID) const;
-    std::shared_ptr<const HTNAxiomNode>    FindAxiomNodeByID(const std::string& inID) const;
-    std::shared_ptr<const HTNMethodNode>   FindMethodNodeByID(const std::string& inID) const;
+    std::shared_ptr<const HTNConstantNode> FindConstantNodeByID(const std::string& inConstantNodeID) const;
+    std::shared_ptr<const HTNAxiomNode>    FindAxiomNodeByID(const std::string& inAxiomNodeID) const;
+    std::shared_ptr<const HTNMethodNode>   FindMethodNodeByID(const std::string& inMethodNodeID) const;
 
     const std::shared_ptr<const HTNValueNode>&                  GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNConstantsNode>>& GetConstantNodes() const;

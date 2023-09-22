@@ -6,7 +6,7 @@
 #include <format>
 
 HTNTaskNodeBase::HTNTaskNodeBase(const std::shared_ptr<const HTNValueNode>&              inIDNode,
-                                 const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes)
+                                 const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes)
 {
 }
@@ -22,7 +22,7 @@ std::string HTNTaskNodeBase::ToString() const
 {
     std::string Description = GetID();
 
-    for (const std::shared_ptr<const HTNValueNode>& ArgumentNode : mArgumentNodes)
+    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : mArgumentNodes)
     {
         Description.append(std::format("{} ", ArgumentNode->ToString()));
     }
@@ -38,7 +38,7 @@ std::string HTNTaskNodeBase::ToString() const
 }
 
 HTNCompoundTaskNode::HTNCompoundTaskNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
-                                         const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes)
+                                         const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
     : HTNTaskNodeBase(inIDNode, inArgumentNodes)
 {
 }
@@ -49,7 +49,7 @@ HTNAtom HTNCompoundTaskNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
 }
 
 HTNPrimitiveTaskNode::HTNPrimitiveTaskNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
-                                         const std::vector<std::shared_ptr<const HTNValueNode>>& inArgumentNodes)
+                                           const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
     : HTNTaskNodeBase(inIDNode, inArgumentNodes)
 {
 }
