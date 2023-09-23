@@ -42,6 +42,8 @@ public:
     HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
 
 private:
+    HTNAtom EvaluateNode(const HTNNodeBase& inNode);
+
     template<typename T>
     T EvaluateNode(const HTNNodeBase& inNode);
 
@@ -51,8 +53,13 @@ private:
     HTNDecompositionContext mDecompositionContext;
 };
 
+inline HTNAtom HTNInterpreter::EvaluateNode(const HTNNodeBase& inNode)
+{
+    return inNode.Accept(*this);
+}
+
 template<typename T>
 inline T HTNInterpreter::EvaluateNode(const HTNNodeBase& inNode)
 {
-    return inNode.Accept(*this).GetValue<T>();
+    return EvaluateNode(inNode).GetValue<T>();
 }
