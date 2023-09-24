@@ -1,26 +1,19 @@
 #pragma once
 
-#include "Interpreter/HTNDecompositionContext.h"
 #include "Parser/AST/HTNNodeVisitorBase.h"
 
 #include <memory>
-#include <string>
-#include <vector>
 
-class HTNAtom;
 class HTNDomainNode;
-class HTNTaskInstance;
-class HTNWorldState;
 
-// Returns a plan from an abstract syntax tree
-class HTNInterpreter final : public HTNNodeVisitorBase
+// Returns a string from an abstract syntax tree
+class HTNPrinter final : public HTNNodeVisitorBase
 {
 public:
-    explicit HTNInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointName,
-                            const HTNWorldState& inWorldState);
-    ~HTNInterpreter();
+    explicit HTNPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
+	~HTNPrinter();
 
-    bool Interpret(std::vector<HTNTaskInstance>& outPlan);
+	bool Print();
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
     HTNAtom Visit(const HTNConstantsNode& inConstantsNode) final;
@@ -37,13 +30,9 @@ public:
     HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode) final;
     HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode) final;
     HTNAtom Visit(const HTNValueNode& inValueNode) final;
-    void    Visit(const HTNVariableValueNode& inVariableValueNode, const HTNAtom& inVariableValueNodeValue) final;
     HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode) final;
     HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
 
 private:
     std::shared_ptr<const HTNDomainNode> mDomainNode;
-    std::string                          mEntryPointName;
-
-    HTNDecompositionContext mDecompositionContext;
 };

@@ -4,8 +4,6 @@
 #include "Parser/AST/HTNNodeVisitorBase.h"
 #include "Parser/AST/HTNValueNode.h"
 
-#include <format>
-
 HTNAxiomNode::HTNAxiomNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
                            const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes,
                            const std::shared_ptr<const HTNConditionNodeBase>&      inConditionNode)
@@ -22,24 +20,5 @@ HTNAtom HTNAxiomNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 
 std::string HTNAxiomNode::GetID() const
 {
-    return GetIDNode()->ToString();
-}
-
-std::string HTNAxiomNode::ToString() const
-{
-    std::string Description = GetID();
-
-    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : mArgumentNodes)
-    {
-        Description.append(std::format("{} ", ArgumentNode->ToString()));
-    }
-
-    // Remove last " "
-    const size_t Position = Description.find_last_of(" ");
-    if (Position != std::string::npos)
-    {
-        Description.erase(Position);
-    }
-
-    return Description;
+    return mIDNode->ToString();
 }

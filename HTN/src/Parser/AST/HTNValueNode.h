@@ -3,6 +3,8 @@
 #include "HTNAtom.h"
 #include "Parser/AST/HTNNodeBase.h"
 
+#include <string>
+
 /**
  * Node representing a value
  */
@@ -12,9 +14,9 @@ public:
     explicit HTNValueNodeBase(const HTNAtom& inValue);
 
     std::string GetID() const final;
-    std::string ToString() const final;
 
     const HTNAtom& GetValue() const;
+    std::string ToString() const;
 
 private:
     // Value

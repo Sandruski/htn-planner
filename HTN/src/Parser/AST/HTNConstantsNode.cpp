@@ -21,8 +21,3 @@ std::string HTNConstantsNode::GetID() const
 {
     return mIDNode->ToString();
 }
-
-std::string HTNConstantsNode::ToString() const
-{
-    return GetID();
-}

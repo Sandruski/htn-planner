@@ -23,8 +23,3 @@ std::string HTNBranchNode::GetID() const
 {
     return mIDNode->ToString();
 }
-
-std::string HTNBranchNode::ToString() const
-{
-    return GetID();
-}

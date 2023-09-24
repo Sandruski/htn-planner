@@ -15,18 +15,18 @@ class HTNValueNodeBase;
 class HTNAxiomNode final : public HTNNodeBase
 {
 public:
-    explicit HTNAxiomNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
+    explicit HTNAxiomNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
                           const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes,
-                          const std::shared_ptr<const HTNConditionNodeBase>&      inConditionNode);
+                          const std::shared_ptr<const HTNConditionNodeBase>&          inConditionNode);
     ~HTNAxiomNode();
 
-    HTNAtom     Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
-    std::string GetID() const final;
-    std::string ToString() const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
-    const std::shared_ptr<const HTNValueNode>&              GetIDNode() const;
+    std::string GetID() const final;
+
+    const std::shared_ptr<const HTNValueNode>&                  GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetArgumentNodes() const;
-    const std::shared_ptr<const HTNConditionNodeBase>&      GetConditionNode() const;
+    const std::shared_ptr<const HTNConditionNodeBase>&          GetConditionNode() const;
 
 private:
     // Node representing the ID of the axiom

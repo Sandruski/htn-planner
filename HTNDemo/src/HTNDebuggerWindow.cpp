@@ -12,6 +12,7 @@
 #include "Parser/AST/HTNTaskNode.h"
 #include "Planner/HTNPlannerHook.h"
 #include "Planner/HTNTaskResult.h"
+#include "HTNPrinter.h"
 
 #include "imgui.h"
 #include "imgui_stdlib.h"
@@ -291,6 +292,8 @@ void HTNDebuggerWindow::RenderDecomposition()
         return;
     }
 
+    ImGui::Separator();
+
     for (const LastPlan& LastPlan : LastPlans)
     {
         ImGui::Text(LastPlan.EntryPointID.c_str());
@@ -377,54 +380,14 @@ void HTNDebuggerWindow::RenderParsing()
         return;
     }
 
+    ImGui::Separator();
+
     ImGui::Text(LastDomainPath.c_str());
 
-    // TODO salvarez Do this in the Printer class
     ImGui::Indent();
     const std::shared_ptr<const HTNDomainNode>& DomainNode = mPlanner->GetDomainNode();
-    ImGui::Text(DomainNode->ToString().c_str());
-
-    ImGui::Indent();
-    const std::vector<std::shared_ptr<const HTNAxiomNode>>& AxiomNodes = DomainNode->GetAxiomNodes();
-    for (const std::shared_ptr<const HTNAxiomNode>& AxiomNode : AxiomNodes)
-    {
-        ImGui::Text(AxiomNode->ToString().c_str());
-
-        ImGui::Indent();
-        if (const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode = AxiomNode->GetConditionNode())
-        {
-            ImGui::Text(ConditionNode->ToString().c_str());
-        }
-        ImGui::Unindent();
-    }
-
-    const std::vector<std::shared_ptr<const HTNMethodNode>>& MethodNodes = DomainNode->GetMethodNodes();
-    for (const std::shared_ptr<const HTNMethodNode>& MethodNode : MethodNodes)
-    {
-        ImGui::Text(MethodNode->ToString().c_str());
-
-        ImGui::Indent();
-        const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes = MethodNode->GetBranchNodes();
-        for (const std::shared_ptr<const HTNBranchNode>& BranchNode : BranchNodes)
-        {
-            ImGui::Text(BranchNode->ToString().c_str());
-
-            ImGui::Indent();
-            if (const std::shared_ptr<const HTNConditionNodeBase>& PreConditionNode = BranchNode->GetPreConditionNode())
-            {
-                ImGui::Text(PreConditionNode->ToString().c_str());
-            }
-
-            const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = BranchNode->GetTaskNodes();
-            for (const std::shared_ptr<const HTNTaskNodeBase>& TaskNode : TaskNodes)
-            {
-                ImGui::Text(TaskNode->ToString().c_str());
-            }
-            ImGui::Unindent();
-        }
-        ImGui::Unindent();
-    }
-    ImGui::Unindent();
+    HTNPrinter                                  Printer    = HTNPrinter(DomainNode);
+    Printer.Print();
     ImGui::Unindent();
 }
 

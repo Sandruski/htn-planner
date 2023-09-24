@@ -1,7 +1,6 @@
 #pragma once
 
-#include "HTNAtom.h"
-
+class HTNAtom;
 class HTNAltConditionNode;
 class HTNAndConditionNode;
 class HTNAxiomNode;
@@ -13,8 +12,8 @@ class HTNConstantNode;
 class HTNConstantsNode;
 class HTNConstantValueNode;
 class HTNDomainNode;
-class HTNEnvironment;
 class HTNMethodNode;
+class HTNNodeBase;
 class HTNNotConditionNode;
 class HTNOrConditionNode;
 class HTNPrimitiveTaskNode;
@@ -26,22 +25,26 @@ class HTNNodeVisitorBase
 public:
     virtual ~HTNNodeVisitorBase() = default;
 
-    virtual HTNAtom Visit(const HTNDomainNode& inDomainNode)                                                        = 0;
-    virtual HTNAtom Visit(const HTNConstantsNode& inConstantsNode)                                                  = 0;
-    virtual HTNAtom Visit(const HTNConstantNode& inConstantNode)                                                    = 0;
-    virtual HTNAtom Visit(const HTNAxiomNode& inAxiomNode)                                                          = 0;
-    virtual HTNAtom Visit(const HTNMethodNode& inMethodNode)                                                        = 0;
-    virtual HTNAtom Visit(const HTNBranchNode& inBranchNode)                                                        = 0;
-    virtual HTNAtom Visit(const HTNConditionNode& inConditionNode)                                                  = 0;
-    virtual HTNAtom Visit(const HTNAxiomConditionNode& inAxiomConditionNode)                                        = 0;
-    virtual HTNAtom Visit(const HTNAndConditionNode& inAndConditionNode)                                            = 0;
-    virtual HTNAtom Visit(const HTNOrConditionNode& inOrConditionNode)                                              = 0;
-    virtual HTNAtom Visit(const HTNAltConditionNode& inAltConditionNode)                                            = 0;
-    virtual HTNAtom Visit(const HTNNotConditionNode& inNotConditionNode)                                            = 0;
-    virtual HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode)                                            = 0;
-    virtual HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)                                          = 0;
-    virtual HTNAtom Visit(const HTNValueNode& inValueNode)                                                          = 0;
-    virtual void    Visit(const HTNVariableValueNode& inVariableValueNode, const HTNAtom& inVariableValueNodeValue) = 0;
-    virtual HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode)                                          = 0;
-    virtual HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode)                                          = 0;
+    virtual HTNAtom Visit(const HTNDomainNode& inDomainNode);
+    virtual HTNAtom Visit(const HTNConstantsNode& inConstantsNode);
+    virtual HTNAtom Visit(const HTNConstantNode& inConstantNode);
+    virtual HTNAtom Visit(const HTNAxiomNode& inAxiomNode);
+    virtual HTNAtom Visit(const HTNMethodNode& inMethodNode);
+    virtual HTNAtom Visit(const HTNBranchNode& inBranchNode);
+    virtual HTNAtom Visit(const HTNConditionNode& inConditionNode);
+    virtual HTNAtom Visit(const HTNAxiomConditionNode& inAxiomConditionNode);
+    virtual HTNAtom Visit(const HTNAndConditionNode& inAndConditionNode);
+    virtual HTNAtom Visit(const HTNOrConditionNode& inOrConditionNode);
+    virtual HTNAtom Visit(const HTNAltConditionNode& inAltConditionNode);
+    virtual HTNAtom Visit(const HTNNotConditionNode& inNotConditionNode);
+    virtual HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode);
+    virtual HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode);
+    virtual HTNAtom Visit(const HTNValueNode& inValueNode);
+    virtual void    Visit(const HTNVariableValueNode& inVariableValueNode, const HTNAtom& inVariableValueNodeValue);
+    virtual HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode);
+    virtual HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode);
+
+protected:
+    void    SetNodeValue(const HTNNodeBase& inNode, const HTNAtom& inNodeValue);
+    HTNAtom GetNodeValue(const HTNNodeBase& inNode);
 };

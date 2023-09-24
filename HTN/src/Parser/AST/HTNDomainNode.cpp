@@ -27,18 +27,6 @@ std::string HTNDomainNode::GetID() const
     return mIDNode->ToString();
 }
 
-std::string HTNDomainNode::ToString() const
-{
-    std::string Description = GetID();
-
-    if (mIsTopLevel)
-    {
-        Description.append(" top_level_domain");
-    }
-
-    return Description;
-}
-
 std::shared_ptr<const HTNConstantNode> HTNDomainNode::FindConstantNodeByID(const std::string& inConstantNodeID) const
 {
     for (const std::shared_ptr<const HTNConstantsNode>& ConstantNodes : mConstantNodes)

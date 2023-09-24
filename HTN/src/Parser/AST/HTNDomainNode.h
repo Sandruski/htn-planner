@@ -24,8 +24,8 @@ public:
     ~HTNDomainNode();
 
     HTNAtom     Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+
     std::string GetID() const final;
-    std::string ToString() const final;
 
     std::shared_ptr<const HTNConstantNode> FindConstantNodeByID(const std::string& inConstantNodeID) const;
     std::shared_ptr<const HTNAxiomNode>    FindAxiomNodeByID(const std::string& inAxiomNodeID) const;

@@ -24,7 +24,6 @@ public:
     void            PushEnvironment(const HTNEnvironment& inEnvironment);
     void            PopEnvironment();
     HTNEnvironment& GetCurrentEnvironment();
-    HTNEnvironment& GetPreviousEnvironment();
 
     void            PushTaskInstanceToProcess(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode);
     HTNTaskInstance PopTaskInstanceToProcess();
@@ -101,11 +100,6 @@ inline void HTNDecompositionRecord::PopEnvironment()
 inline HTNEnvironment& HTNDecompositionRecord::GetCurrentEnvironment()
 {
     return mEnvironments.back();
-}
-
-inline HTNEnvironment& HTNDecompositionRecord::GetPreviousEnvironment()
-{
-    return mEnvironments[mEnvironments.size() - 2];
 }
 
 inline void HTNDecompositionRecord::PushTaskInstanceToProcess(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode)

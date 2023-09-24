@@ -5,6 +5,7 @@
 #include "Interpreter/HTNConditionQuery.h"
 #include "Interpreter/HTNDecompositionContext.h"
 #include "Interpreter/HTNDecompositionScope.h"
+#include "Interpreter/HTNEnvironment.h"
 #include "Interpreter/HTNTaskInstance.h"
 #include "Parser/AST/HTNAxiomNode.h"
 #include "Parser/AST/HTNBranchNode.h"
@@ -15,7 +16,6 @@
 #include "Parser/AST/HTNMethodNode.h"
 #include "Parser/AST/HTNTaskNode.h"
 #include "Parser/AST/HTNValueNode.h"
-#include "Parser/HTNToken.h"
 
 #include <cassert>
 
@@ -80,7 +80,8 @@ bool HTNInterpreter::Interpret(std::vector<HTNTaskInstance>& outPlan)
     }
 
     const HTNDecompositionScope DomainScope = HTNDecompositionScope(mDecompositionContext);
-    if (!GetNodeValue<bool>(*DomainNode))
+    const bool                  IsDomainNodeSuccessful = GetNodeValue(*DomainNode).GetValue<bool>();
+    if (!IsDomainNodeSuccessful)
     {
         return false;
     }
@@ -109,7 +110,8 @@ HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode
         const HTNDecompositionScope TaskScope   = HTNDecompositionScope(mDecompositionContext, Environment);
 
         const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskInstanceToProcess.GetTaskNode();
-        if (!GetNodeValue<bool>(*TaskNode))
+        const bool                                    IsTaskNodeSuccessful = GetNodeValue(*TaskNode).GetValue<bool>();
+        if (!IsTaskNodeSuccessful)
         {
             return false;
         }
@@ -120,6 +122,7 @@ HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode
 
 HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNConstantsNode& inConstantsNode)
 {
+    // TODO salvarez Remove HTNConstantsNode
     return HTNAtom();
 }
 
@@ -153,8 +156,9 @@ HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
         return false;
     }
 
-    const std::shared_ptr<const HTNBranchNode>& BranchNode = BranchNodes[BranchIndex];
-    if (GetNodeValue<bool>(*BranchNode))
+    const std::shared_ptr<const HTNBranchNode>& BranchNode           = BranchNodes[BranchIndex];
+    const bool                                  IsBranchNodeSuccessful = GetNodeValue(*BranchNode).GetValue<bool>();
+    if (IsBranchNodeSuccessful)
     {
         const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = BranchNode->GetTaskNodes();
         for (int i = static_cast<int>(TaskNodes.size()) - 1; i >= 0; --i)
@@ -192,7 +196,7 @@ HTNAtom HTNInterpreter::Visit(const HTNBranchNode& inBranchNode)
         return true;
     }
 
-    const HTNAtomList ConditionNodeValue = GetNodeValue<HTNAtomList>(*CurrentPreConditionNode);
+    const HTNAtomList ConditionNodeValue = GetNodeValue(*CurrentPreConditionNode).GetValue<HTNAtomList>();
     return IsNodeSuccessful(ConditionNodeValue);
 }
 
@@ -217,7 +221,7 @@ HTNAtom HTNInterpreter::Visit(const HTNConditionNode& inConditionNode)
 
     // Check bound arguments and bind unbound arguments
     const std::shared_ptr<const HTNValueNode>& ConditionNodeIDNode      = inConditionNode.GetIDNode();
-    const std::string                          FactID                   = GetNodeValue<std::string>(*ConditionNodeIDNode);
+    const std::string                          FactID                   = GetNodeValue(*ConditionNodeIDNode).GetValue<std::string>();
     const HTNConditionQueryWorldState          ConditionQueryWorldState = HTNConditionQueryWorldState(FactID, Arguments);
     const unsigned int                         ArgumentsCount           = static_cast<unsigned int>(Arguments.size());
     const unsigned int                         FactEntriesCount         = WorldState->GetNumFactEntries(FactID, ArgumentsCount);
@@ -244,7 +248,7 @@ HTNAtom HTNInterpreter::Visit(const HTNConditionNode& inConditionNode)
 HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 {
     const std::shared_ptr<const HTNValueNode>& AxiomConditionNodeIDNode = inAxiomConditionNode.GetIDNode();
-    const std::string                          AxiomNodeID              = GetNodeValue<std::string>(*AxiomConditionNodeIDNode);
+    const std::string                          AxiomNodeID              = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
     const std::shared_ptr<const HTNAxiomNode>  AxiomNode                = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
     if (!AxiomNode)
     {
@@ -275,7 +279,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
             SetNodeValue(*AxiomNodeArgumentNode, AxiomConditionNodeArgument);
         }
 
-        const HTNAtomList AxiomNodeValue = GetNodeValue<HTNAtomList>(*AxiomNode);
+        const HTNAtomList AxiomNodeValue = GetNodeValue(*AxiomNode).GetValue<HTNAtomList>();
         if (!IsNodeSuccessful(AxiomNodeValue))
         {
             return HTNAtomList({false});
@@ -319,7 +323,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
 
         // Check condition
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode   = SubConditionNodes[SubConditionIndex];
-        const HTNAtomList                                  ConditionNodeValue = GetNodeValue<HTNAtomList>(*SubConditionNode);
+        const HTNAtomList                                  ConditionNodeValue = GetNodeValue(*SubConditionNode).GetValue<HTNAtomList>();
         if (!IsNodeSuccessful(ConditionNodeValue))
         {
             if (SubConditionIndex == 0) // First condition
@@ -366,7 +370,7 @@ HTNAtom HTNInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
          SubConditionIndex = CurrentDecomposition.GetCurrentEnvironment().GetOrAddIndex(OrConditionNodeID))
     {
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode   = SubConditionNodes[SubConditionIndex];
-        const HTNAtomList                                  ConditionNodeValue = GetNodeValue<HTNAtomList>(*SubConditionNode);
+        const HTNAtomList                                  ConditionNodeValue = GetNodeValue(*SubConditionNode).GetValue<HTNAtomList>();
         if (IsNodeSuccessful(ConditionNodeValue))
         {
             static constexpr bool HasBoundArguments = false;
@@ -398,7 +402,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
         const std::unordered_map<std::string, HTNAtom> Variables = CurrentDecomposition.GetCurrentEnvironment().GetVariables();
 
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode   = SubConditionNodes[SubConditionIndex];
-        const HTNAtomList                                  ConditionNodeValue = GetNodeValue<HTNAtomList>(*SubConditionNode);
+        const HTNAtomList                                  ConditionNodeValue = GetNodeValue(*SubConditionNode).GetValue<HTNAtomList>();
         if (IsNodeSuccessful(ConditionNodeValue))
         {
             // Record decomposition if it has bound any arguments
@@ -437,7 +441,7 @@ HTNAtom HTNInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode)
 
     // Check condition
     const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode   = inNotConditionNode.GetSubConditionNode();
-    const HTNAtomList                                  ConditionNodeValue = GetNodeValue<HTNAtomList>(*SubConditionNode);
+    const HTNAtomList                                  ConditionNodeValue = GetNodeValue(*SubConditionNode).GetValue<HTNAtomList>();
 
     // Reset decomposition history
     mDecompositionContext.SetDecompositionHistory(DecompositionHistory);

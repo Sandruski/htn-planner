@@ -15,19 +15,19 @@ class HTNValueNodeBase;
 class HTNMethodNode final : public HTNNodeBase
 {
 public:
-    explicit HTNMethodNode(const std::shared_ptr<const HTNValueNode>&               inIDNode,
+    explicit HTNMethodNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
                            const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes,
                            const std::vector<std::shared_ptr<const HTNBranchNode>>& inBranchNodes, const bool inIsTopLevel);
     ~HTNMethodNode();
 
-    HTNAtom     Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
-    std::string GetID() const final;
-    std::string ToString() const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
-    const std::shared_ptr<const HTNValueNode>&               GetIDNode() const;
+    std::string GetID() const final;
+
+    const std::shared_ptr<const HTNValueNode>&                  GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetArgumentNodes() const;
-    const std::vector<std::shared_ptr<const HTNBranchNode>>& GetBranchNodes() const;
-    bool                                                     IsTopLevel() const;
+    const std::vector<std::shared_ptr<const HTNBranchNode>>&    GetBranchNodes() const;
+    bool                                                        IsTopLevel() const;
 
 private:
     // Node representing the ID of the method

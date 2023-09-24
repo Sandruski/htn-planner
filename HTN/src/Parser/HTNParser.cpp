@@ -24,7 +24,7 @@ Backus Naur Form (BNF):
 <sub-condition> ::= <condition> | ('(' ('not' <sub-condition>)* ')') | ('(' ('#'? <identifier> <argument>*)* ')')
 <task> ::= '(' '!'? <identifier> <argument>* ')'
 <identifier> ::= 'identifier'
-<argument> ::= ('?' <identifier>) | ('@' <identifier>) | <identifier> | 'number' | 'string'
+<argument> ::= ('?' <identifier>) | ('@' <identifier>) | 'number' | 'string'
 */
 
 std::shared_ptr<const HTNDomainNode> HTNParser::Parse()
@@ -502,10 +502,6 @@ std::shared_ptr<HTNValueNodeBase> HTNParser::ParseArgumentNode(unsigned int& inP
         {
             ArgumentNode = std::make_shared<HTNConstantValueNode>(IdentifierToken->GetValue());
         }
-    }
-    else if (const HTNToken* IdentifierToken = ParseToken(CurrentPosition, HTNTokenType::IDENTIFIER))
-    {
-        ArgumentNode = std::make_shared<HTNValueNode>(IdentifierToken->GetValue());
     }
     else if (const HTNToken* NumberToken = ParseToken(CurrentPosition, HTNTokenType::NUMBER))
     {
