@@ -12,9 +12,9 @@ HTNConstantNode::HTNConstantNode(const std::shared_ptr<const HTNValueNode>& inID
 
 HTNConstantNode::~HTNConstantNode() = default;
 
-HTNAtom HTNConstantNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
+HTNAtom HTNConstantNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {
-    return inNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this);
 }
 
 std::string HTNConstantNode::GetID() const

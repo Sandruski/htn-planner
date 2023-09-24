@@ -11,7 +11,8 @@ class HTNNodeBase
 public:
     virtual ~HTNNodeBase() = default;
 
-    virtual HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const = 0;
-    virtual std::string GetID() const                                   = 0;
-    virtual std::string ToString() const                                = 0;
+    virtual void        Accept(HTNNodeVisitorBase& ioNodeVisitor, const HTNAtom& inNodeValue) const;
+    virtual HTNAtom     Accept(HTNNodeVisitorBase& ioNodeVisitor) const;
+    virtual std::string GetID() const                                                           = 0;
+    virtual std::string ToString() const                                                        = 0;
 };

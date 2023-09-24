@@ -7,17 +7,22 @@ std::string HTNValueNodeBase::ToString() const
     return mValue.ToString();
 }
 
-HTNAtom HTNValueNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
+HTNAtom HTNValueNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {
-    return inNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this);
 }
 
-HTNAtom HTNVariableValueNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
+void HTNVariableValueNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, const HTNAtom& inNodeValue) const
 {
-    return inNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this, inNodeValue);
 }
 
-HTNAtom HTNConstantValueNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
+HTNAtom HTNVariableValueNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {
-    return inNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this);
+}
+
+HTNAtom HTNConstantValueNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
+{
+    return ioNodeVisitor.Visit(*this);
 }

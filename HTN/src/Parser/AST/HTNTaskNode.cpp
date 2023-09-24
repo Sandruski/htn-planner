@@ -43,9 +43,9 @@ HTNCompoundTaskNode::HTNCompoundTaskNode(const std::shared_ptr<const HTNValueNod
 {
 }
 
-HTNAtom HTNCompoundTaskNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
+HTNAtom HTNCompoundTaskNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {
-    return inNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this);
 }
 
 HTNPrimitiveTaskNode::HTNPrimitiveTaskNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
@@ -54,7 +54,7 @@ HTNPrimitiveTaskNode::HTNPrimitiveTaskNode(const std::shared_ptr<const HTNValueN
 {
 }
 
-HTNAtom HTNPrimitiveTaskNode::Accept(HTNNodeVisitorBase& inNodeVisitor) const
+HTNAtom HTNPrimitiveTaskNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {
-    return inNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this);
 }

@@ -19,7 +19,7 @@ public:
                            const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& inTaskNodes);
     ~HTNBranchNode();
 
-    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+    HTNAtom     Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
     std::string GetID() const final;
     std::string ToString() const final;
 

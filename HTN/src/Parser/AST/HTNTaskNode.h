@@ -42,7 +42,7 @@ public:
     explicit HTNCompoundTaskNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
                                  const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes);
 
-    HTNAtom Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 };
 
 /**
@@ -54,7 +54,7 @@ public:
     explicit HTNPrimitiveTaskNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
                                   const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes);
 
-    HTNAtom Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 };
 
 inline const std::shared_ptr<const HTNValueNode>& HTNTaskNodeBase::GetIDNode() const

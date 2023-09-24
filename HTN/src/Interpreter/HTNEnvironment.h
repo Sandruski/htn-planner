@@ -8,12 +8,10 @@
 class HTNEnvironment
 {
 public:
-    HTNAtom& GetOrAddVariable(const std::string& inVariableID); // TODO salvarez Remove this
+    void           SetVariable(const std::string& inVariableID, const HTNAtom& inVariableValue);
+    const HTNAtom& GetOrAddVariable(const std::string& inVariableID);
 
-    void           SetOrAddVariable(const std::string& inVariableID, const HTNAtom& inVariableValue);
-    const HTNAtom* FindVariable(const std::string& inVariableID) const;
-
-    void SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables);
+    void                                            SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables);
     const std::unordered_map<std::string, HTNAtom>& GetVariables() const;
 
     // Returns an existing index or adds a new index
@@ -36,25 +34,14 @@ private:
     std::unordered_map<std::string, unsigned int> mIndices;
 };
 
-inline HTNAtom& HTNEnvironment::GetOrAddVariable(const std::string& inVariableID)
-{
-    return mVariables[inVariableID];
-}
-
-inline void HTNEnvironment::SetOrAddVariable(const std::string& inVariableID, const HTNAtom& inVariableValue)
+inline void HTNEnvironment::SetVariable(const std::string& inVariableID, const HTNAtom& inVariableValue)
 {
     mVariables[inVariableID] = inVariableValue;
 }
 
-inline const HTNAtom* HTNEnvironment::FindVariable(const std::string& inVariableID) const
+inline const HTNAtom& HTNEnvironment::GetOrAddVariable(const std::string& inVariableID)
 {
-    const auto VariableIt = mVariables.find(inVariableID);
-    if (VariableIt == mVariables.end())
-    {
-        return nullptr;
-    }
-
-    return &VariableIt->second;
+    return mVariables[inVariableID];
 }
 
 inline void HTNEnvironment::SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables)

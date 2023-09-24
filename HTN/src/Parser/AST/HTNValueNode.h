@@ -29,7 +29,7 @@ class HTNValueNode final : public HTNValueNodeBase
 public:
     explicit HTNValueNode(const HTNAtom& inValue);
 
-    HTNAtom Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 };
 
 /**
@@ -40,7 +40,8 @@ class HTNVariableValueNode final : public HTNValueNodeBase
 public:
     explicit HTNVariableValueNode(const HTNAtom& inValue);
 
-    HTNAtom Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+    void    Accept(HTNNodeVisitorBase& ioNodeVisitor, const HTNAtom& inNodeValue) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 };
 
 /**
@@ -51,7 +52,7 @@ class HTNConstantValueNode final : public HTNValueNodeBase
 public:
     explicit HTNConstantValueNode(const HTNAtom& inValue);
 
-    HTNAtom Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 };
 
 inline HTNValueNodeBase::HTNValueNodeBase(const HTNAtom& inValue) : mValue(inValue)

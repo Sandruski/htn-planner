@@ -38,14 +38,16 @@ public:
     HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode) final;
     HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode) final;
     HTNAtom Visit(const HTNValueNode& inValueNode) final;
-    HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode) final; 
+    void    Visit(const HTNVariableValueNode& inVariableValueNode, const HTNAtom& inVariableValueNodeValue) final;
+    HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode) final;
     HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
 
 private:
-    HTNAtom EvaluateNode(const HTNNodeBase& inNode);
+    void    SetNodeValue(const HTNNodeBase& inNode, const HTNAtom& inNodeValue);
+    HTNAtom GetNodeValue(const HTNNodeBase& inNode);
 
     template<typename T>
-    T EvaluateNode(const HTNNodeBase& inNode);
+    T GetNodeValue(const HTNNodeBase& inNode);
 
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointName;
@@ -53,13 +55,18 @@ private:
     HTNDecompositionContext mDecompositionContext;
 };
 
-inline HTNAtom HTNInterpreter::EvaluateNode(const HTNNodeBase& inNode)
+inline void HTNInterpreter::SetNodeValue(const HTNNodeBase& inNode, const HTNAtom& inNodeValue)
+{
+    inNode.Accept(*this, inNodeValue);
+}
+
+inline HTNAtom HTNInterpreter::GetNodeValue(const HTNNodeBase& inNode)
 {
     return inNode.Accept(*this);
 }
 
 template<typename T>
-inline T HTNInterpreter::EvaluateNode(const HTNNodeBase& inNode)
+inline T HTNInterpreter::GetNodeValue(const HTNNodeBase& inNode)
 {
-    return EvaluateNode(inNode).GetValue<T>();
+    return GetNodeValue(inNode).GetValue<T>();
 }

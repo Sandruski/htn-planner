@@ -16,7 +16,7 @@ public:
     explicit HTNConstantNode(const std::shared_ptr<const HTNValueNode>& inIDNode, const std::shared_ptr<const HTNValueNodeBase>& inArgumentNode);
     ~HTNConstantNode();
 
-    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+    HTNAtom     Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
     std::string GetID() const final;
     std::string ToString() const final;
 

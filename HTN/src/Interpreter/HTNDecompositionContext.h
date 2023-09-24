@@ -21,6 +21,7 @@ public:
     const HTNTaskInstance& GetCurrentTaskInstance() const;
 
     void            PushEnvironment();
+    void            PushEnvironment(const HTNEnvironment& inEnvironment);
     void            PopEnvironment();
     HTNEnvironment& GetCurrentEnvironment();
     HTNEnvironment& GetPreviousEnvironment();
@@ -85,6 +86,11 @@ inline const HTNTaskInstance& HTNDecompositionRecord::GetCurrentTaskInstance() c
 inline void HTNDecompositionRecord::PushEnvironment()
 {
     mEnvironments.emplace_back();
+}
+
+inline void HTNDecompositionRecord::PushEnvironment(const HTNEnvironment& inEnvironment)
+{
+    mEnvironments.emplace_back(inEnvironment);
 }
 
 inline void HTNDecompositionRecord::PopEnvironment()

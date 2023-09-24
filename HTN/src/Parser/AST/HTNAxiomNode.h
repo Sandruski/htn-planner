@@ -20,7 +20,7 @@ public:
                           const std::shared_ptr<const HTNConditionNodeBase>&      inConditionNode);
     ~HTNAxiomNode();
 
-    HTNAtom     Accept(HTNNodeVisitorBase& inNodeVisitor) const final;
+    HTNAtom     Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
     std::string GetID() const final;
     std::string ToString() const final;
 
