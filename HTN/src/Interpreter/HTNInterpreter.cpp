@@ -49,13 +49,13 @@ bool RemoveOutputPrefix(std::string& ioString)
 bool IsNodeSuccessful(const HTNAtomList& inNodeValue)
 {
     static constexpr size_t IsNodeSuccessfulIndex = 0;
-    return inNodeValue.Find(IsNodeSuccessfulIndex);
+    return inNodeValue.Find(IsNodeSuccessfulIndex)->GetValue<bool>();
 }
 
 bool HasNodeBoundArguments(const HTNAtomList& inNodeValue)
 {
     static constexpr size_t HasNodeBoundArgumentsIndex = 1;
-    return inNodeValue.Find(HasNodeBoundArgumentsIndex);
+    return inNodeValue.Find(HasNodeBoundArgumentsIndex)->GetValue<bool>();
 }
 
 } // namespace
@@ -117,11 +117,6 @@ HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode
     }
 
     return true;
-}
-
-HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNConstantsNode& inConstantsNode)
-{
-    return HTNAtom();
 }
 
 HTNAtom HTNInterpreter::Visit(const HTNConstantNode& inConstantNode)

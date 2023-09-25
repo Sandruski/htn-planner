@@ -23,7 +23,6 @@ public:
     bool Interpret(std::vector<HTNTaskResult>& outPlan);
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
-    HTNAtom Visit(const HTNConstantsNode& inConstantsNode) final;
     HTNAtom Visit(const HTNConstantNode& inConstantNode) final;
     HTNAtom Visit(const HTNAxiomNode& inAxiomNode) final;
     HTNAtom Visit(const HTNMethodNode& inMethodNode) final;
