@@ -1,22 +1,22 @@
-#include "Interpreter/HTNDecompositionScope.h"
+#include "Interpreter/HTNScope.h"
 
 #include "Interpreter/HTNDecompositionContext.h"
 
-HTNDecompositionScope::HTNDecompositionScope(HTNDecompositionContext& ioDecompositionContext)
+HTNScope::HTNScope(HTNDecompositionContext& ioDecompositionContext)
     : mDecompositionContext(ioDecompositionContext)
 {
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
     CurrentDecomposition.PushEnvironment();
 }
 
-HTNDecompositionScope::HTNDecompositionScope(HTNDecompositionContext& ioDecompositionContext, const HTNEnvironment& inEnvironment)
+HTNScope::HTNScope(HTNDecompositionContext& ioDecompositionContext, const HTNEnvironment& inEnvironment)
     : mDecompositionContext(ioDecompositionContext)
 {
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
     CurrentDecomposition.PushEnvironment(inEnvironment);
 }
 
-HTNDecompositionScope::~HTNDecompositionScope()
+HTNScope::~HTNScope()
 {
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
     CurrentDecomposition.PopEnvironment();

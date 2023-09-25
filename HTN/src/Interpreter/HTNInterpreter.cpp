@@ -4,8 +4,8 @@
 #include "HTNLog.h"
 #include "Interpreter/HTNConditionQuery.h"
 #include "Interpreter/HTNDecompositionContext.h"
-#include "Interpreter/HTNDecompositionScope.h"
 #include "Interpreter/HTNEnvironment.h"
+#include "Interpreter/HTNScope.h"
 #include "Interpreter/HTNTaskInstance.h"
 #include "Parser/AST/HTNAxiomNode.h"
 #include "Parser/AST/HTNBranchNode.h"
@@ -79,8 +79,8 @@ bool HTNInterpreter::Interpret(std::vector<HTNTaskInstance>& outPlan)
         return false;
     }
 
-    const HTNDecompositionScope DomainScope            = HTNDecompositionScope(mDecompositionContext);
-    const bool                  IsDomainNodeSuccessful = GetNodeValue(*DomainNode).GetValue<bool>();
+    const HTNScope DomainScope            = HTNScope(mDecompositionContext);
+    const bool     IsDomainNodeSuccessful = GetNodeValue(*DomainNode).GetValue<bool>();
     if (!IsDomainNodeSuccessful)
     {
         return false;
@@ -103,12 +103,12 @@ HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode
 
     while (CurrentDecomposition.HasPendingTaskInstances())
     {
-        const HTNTaskInstance CurrentTaskInstance = CurrentDecomposition.PopPendingTaskInstance();
-        const std::shared_ptr<const HTNTaskNodeBase>& CurrentTaskNode = CurrentTaskInstance.GetTaskNode();
+        const HTNTaskInstance                         CurrentTaskInstance = CurrentDecomposition.PopPendingTaskInstance();
+        const std::shared_ptr<const HTNTaskNodeBase>& CurrentTaskNode     = CurrentTaskInstance.GetTaskNode();
         CurrentDecomposition.SetCurrentTaskNode(CurrentTaskNode);
 
-        const HTNEnvironment&       Environment = CurrentTaskInstance.GetEnvironment();
-        const HTNDecompositionScope TaskScope   = HTNDecompositionScope(mDecompositionContext, Environment);
+        const HTNEnvironment& Environment = CurrentTaskInstance.GetEnvironment();
+        const HTNScope        TaskScope   = HTNScope(mDecompositionContext, Environment);
 
         const std::shared_ptr<const HTNTaskNodeBase>& TaskNode             = CurrentTaskInstance.GetTaskNode();
         const bool                                    IsTaskNodeSuccessful = GetNodeValue(*TaskNode).GetValue<bool>();
@@ -267,7 +267,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
     std::vector<HTNAtom> AxiomNodeArguments;
 
     {
-        HTNDecompositionScope AxiomScope = HTNDecompositionScope(mDecompositionContext);
+        const HTNScope AxiomScope = HTNScope(mDecompositionContext);
 
         // Initialize the input arguments of the axiom node with the arguments of the condition node
         const std::vector<std::shared_ptr<const HTNValueNodeBase>>& AxiomNodeArgumentNodes = AxiomNode->GetArgumentNodes();
@@ -478,7 +478,7 @@ HTNAtom HTNInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
         CompoundTaskNodeArguments.emplace_back(CompoundTaskNodeArgument);
     }
 
-    const HTNDecompositionScope MethodScope = HTNDecompositionScope(mDecompositionContext);
+    const HTNScope MethodScope = HTNScope(mDecompositionContext);
 
     // Initialize the input arguments of the method node with the arguments of the compound task node
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& MethodNodeArgumentNodes = MethodNode->GetArgumentNodes();
