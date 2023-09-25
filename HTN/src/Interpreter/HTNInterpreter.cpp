@@ -161,7 +161,7 @@ HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
         if (BranchIndex < BranchNodes.size() - 1)
         {
             // Continue
-            CurrentDecomposition.GetCurrentEnvironment().IncrementIndex(inMethodNode.GetID());
+            CurrentDecomposition.GetCurrentEnvironment().IncrementIndex(MethodID);
         }
         else // Last branch
         {
