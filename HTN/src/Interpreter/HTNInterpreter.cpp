@@ -79,7 +79,7 @@ bool HTNInterpreter::Interpret(std::vector<HTNTaskInstance>& outPlan)
         return false;
     }
 
-    const HTNDecompositionScope DomainScope = HTNDecompositionScope(mDecompositionContext);
+    const HTNDecompositionScope DomainScope            = HTNDecompositionScope(mDecompositionContext);
     const bool                  IsDomainNodeSuccessful = GetNodeValue(*DomainNode).GetValue<bool>();
     if (!IsDomainNodeSuccessful)
     {
@@ -99,17 +99,18 @@ HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode
     // Dummy root task node
     const std::shared_ptr<const HTNCompoundTaskNode> RootCompoundTaskNode = std::make_shared<HTNCompoundTaskNode>(
         std::make_shared<const HTNValueNode>(mEntryPointName), std::vector<std::shared_ptr<const HTNValueNodeBase>>());
-    CurrentDecomposition.PushTaskInstanceToProcess(RootCompoundTaskNode);
+    CurrentDecomposition.PushPendingTaskInstance(RootCompoundTaskNode);
 
-    while (CurrentDecomposition.HasTaskInstancesToProcess())
+    while (CurrentDecomposition.HasPendingTaskInstances())
     {
-        const HTNTaskInstance& TaskInstanceToProcess = CurrentDecomposition.PopTaskInstanceToProcess();
-        CurrentDecomposition.SetCurrentTaskInstance(TaskInstanceToProcess);
+        const HTNTaskInstance CurrentTaskInstance = CurrentDecomposition.PopPendingTaskInstance();
+        const std::shared_ptr<const HTNTaskNodeBase>& CurrentTaskNode = CurrentTaskInstance.GetTaskNode();
+        CurrentDecomposition.SetCurrentTaskNode(CurrentTaskNode);
 
-        const HTNEnvironment&       Environment = TaskInstanceToProcess.GetEnvironment();
+        const HTNEnvironment&       Environment = CurrentTaskInstance.GetEnvironment();
         const HTNDecompositionScope TaskScope   = HTNDecompositionScope(mDecompositionContext, Environment);
 
-        const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskInstanceToProcess.GetTaskNode();
+        const std::shared_ptr<const HTNTaskNodeBase>& TaskNode             = CurrentTaskInstance.GetTaskNode();
         const bool                                    IsTaskNodeSuccessful = GetNodeValue(*TaskNode).GetValue<bool>();
         if (!IsTaskNodeSuccessful)
         {
@@ -155,7 +156,7 @@ HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
         return false;
     }
 
-    const std::shared_ptr<const HTNBranchNode>& BranchNode           = BranchNodes[BranchIndex];
+    const std::shared_ptr<const HTNBranchNode>& BranchNode             = BranchNodes[BranchIndex];
     const bool                                  IsBranchNodeSuccessful = GetNodeValue(*BranchNode).GetValue<bool>();
     if (IsBranchNodeSuccessful)
     {
@@ -163,7 +164,7 @@ HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
         for (int i = static_cast<int>(TaskNodes.size()) - 1; i >= 0; --i)
         {
             const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskNodes[i];
-            CurrentDecomposition.PushTaskInstanceToProcess(TaskNode);
+            CurrentDecomposition.PushPendingTaskInstance(TaskNode);
         }
     }
     else
@@ -179,9 +180,8 @@ HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
             mDecompositionContext.RestoreDecomposition();
         }
 
-        const HTNTaskInstance&                        CurrentTaskInstance = CurrentDecomposition.GetCurrentTaskInstance();
-        const std::shared_ptr<const HTNTaskNodeBase>& CurrentTaskNode     = CurrentTaskInstance.GetTaskNode();
-        CurrentDecomposition.PushTaskInstanceToProcess(CurrentTaskNode);
+        const std::shared_ptr<const HTNTaskNodeBase>& CurrentTaskNode = CurrentDecomposition.GetCurrentTaskNode();
+        CurrentDecomposition.PushPendingTaskInstance(CurrentTaskNode);
     }
 
     return true;
@@ -496,9 +496,9 @@ HTNAtom HTNInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
 {
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
 
-    const HTNTaskInstance& CurrentTaskInstance = CurrentDecomposition.GetCurrentTaskInstance();
-    assert(CurrentTaskInstance.GetTaskNode().get() == &inPrimitiveTaskNode);
-    CurrentDecomposition.AddTaskToPlan(CurrentTaskInstance);
+    const std::shared_ptr<const HTNTaskNodeBase>& CurrentTaskNode = CurrentDecomposition.GetCurrentTaskNode();
+    assert(CurrentTaskNode.get() == &inPrimitiveTaskNode);
+    CurrentDecomposition.AddTaskInstanceToPlan(CurrentTaskNode);
 
     return true;
 }

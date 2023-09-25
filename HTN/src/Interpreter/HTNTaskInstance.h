@@ -19,8 +19,6 @@ public:
 
 private:
     std::shared_ptr<const HTNTaskNodeBase> mTaskNode;
-
-    // TODO salvarez Arguments instead of environment
     HTNEnvironment mEnvironment;
 };
 

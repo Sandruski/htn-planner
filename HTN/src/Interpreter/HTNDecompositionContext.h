@@ -17,33 +17,33 @@ class HTNNodeBase;
 class HTNDecompositionRecord
 {
 public:
-    void                   SetCurrentTaskInstance(const HTNTaskInstance& inCurrentTaskInstance);
-    const HTNTaskInstance& GetCurrentTaskInstance() const;
+    void            PushPendingTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inPendingTaskNode);
+    HTNTaskInstance PopPendingTaskInstance();
+    bool            HasPendingTaskInstances() const;
+
+    void                                          SetCurrentTaskNode(const std::shared_ptr<const HTNTaskNodeBase>& inCurrentTaskNode);
+    const std::shared_ptr<const HTNTaskNodeBase>& GetCurrentTaskNode() const;
+
+    void                                AddTaskInstanceToPlan(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode);
+    const std::vector<HTNTaskInstance>& GetPlan() const;
 
     void            PushEnvironment();
     void            PushEnvironment(const HTNEnvironment& inEnvironment);
     void            PopEnvironment();
     HTNEnvironment& GetCurrentEnvironment();
 
-    void            PushTaskInstanceToProcess(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode);
-    HTNTaskInstance PopTaskInstanceToProcess();
-    bool            HasTaskInstancesToProcess() const;
-
-    void                                AddTaskToPlan(const HTNTaskInstance& inTaskInstance);
-    const std::vector<HTNTaskInstance>& GetPlan() const;
-
 private:
-    // TODO salvarez Make the current compound task node a HTNTaskInstance and add the std::vector<HTNEnvironment> there?
-    // Current compound task being processed
-    HTNTaskInstance mCurrentTaskInstance;
-
-    std::vector<HTNEnvironment> mEnvironments;
-
     // Tasks pending to be processed
-    std::vector<HTNTaskInstance> mTaskInstancesToProcess;
+    std::vector<HTNTaskInstance> mPendingTaskInstances;
+
+    // Current task being processed
+    std::shared_ptr<const HTNTaskNodeBase> mCurrentTaskNode;
 
     // Final plan of tasks
     std::vector<HTNTaskInstance> mPlan;
+
+    // State
+    std::vector<HTNEnvironment> mEnvironments;
 };
 
 class HTNDecompositionContext
@@ -72,14 +72,44 @@ private:
     std::vector<HTNDecompositionRecord> mDecompositionHistory;
 };
 
-inline void HTNDecompositionRecord::SetCurrentTaskInstance(const HTNTaskInstance& inCurrentTaskInstance)
+inline void HTNDecompositionRecord::PushPendingTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inPendingTaskNode)
 {
-    mCurrentTaskInstance = inCurrentTaskInstance;
+    const HTNEnvironment& CurrentEnvironment = GetCurrentEnvironment();
+    mPendingTaskInstances.emplace_back(inPendingTaskNode, CurrentEnvironment);
 }
 
-inline const HTNTaskInstance& HTNDecompositionRecord::GetCurrentTaskInstance() const
+inline HTNTaskInstance HTNDecompositionRecord::PopPendingTaskInstance()
 {
-    return mCurrentTaskInstance;
+    const HTNTaskInstance& PendingTaskInstance = mPendingTaskInstances.back();
+    mPendingTaskInstances.pop_back();
+
+    return PendingTaskInstance;
+}
+
+inline bool HTNDecompositionRecord::HasPendingTaskInstances() const
+{
+    return !mPendingTaskInstances.empty();
+}
+
+inline void HTNDecompositionRecord::SetCurrentTaskNode(const std::shared_ptr<const HTNTaskNodeBase>& inCurrentTaskNode)
+{
+    mCurrentTaskNode = inCurrentTaskNode;
+}
+
+inline const std::shared_ptr<const HTNTaskNodeBase>& HTNDecompositionRecord::GetCurrentTaskNode() const
+{
+    return mCurrentTaskNode;
+}
+
+inline void HTNDecompositionRecord::AddTaskInstanceToPlan(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode)
+{
+    const HTNEnvironment& CurrentEnvironment = GetCurrentEnvironment();
+    mPlan.emplace_back(inTaskNode, CurrentEnvironment);
+}
+
+inline const std::vector<HTNTaskInstance>& HTNDecompositionRecord::GetPlan() const
+{
+    return mPlan;
 }
 
 inline void HTNDecompositionRecord::PushEnvironment()
@@ -100,33 +130,6 @@ inline void HTNDecompositionRecord::PopEnvironment()
 inline HTNEnvironment& HTNDecompositionRecord::GetCurrentEnvironment()
 {
     return mEnvironments.back();
-}
-
-inline void HTNDecompositionRecord::PushTaskInstanceToProcess(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode)
-{
-    mTaskInstancesToProcess.emplace_back(inTaskNode, GetCurrentEnvironment());
-}
-
-inline HTNTaskInstance HTNDecompositionRecord::PopTaskInstanceToProcess()
-{
-    const HTNTaskInstance TaskInstance = mTaskInstancesToProcess.back();
-    mTaskInstancesToProcess.pop_back();
-    return TaskInstance;
-}
-
-inline bool HTNDecompositionRecord::HasTaskInstancesToProcess() const
-{
-    return !mTaskInstancesToProcess.empty();
-}
-
-inline void HTNDecompositionRecord::AddTaskToPlan(const HTNTaskInstance& inTaskInstance)
-{
-    mPlan.emplace_back(inTaskInstance);
-}
-
-inline const std::vector<HTNTaskInstance>& HTNDecompositionRecord::GetPlan() const
-{
-    return mPlan;
 }
 
 inline HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldState) : mWorldState(&inWorldState)
