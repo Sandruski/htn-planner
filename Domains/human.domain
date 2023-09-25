@@ -24,12 +24,10 @@
 
     (:method (entry_point) top_level_method
         (branch_eat
-            (and    (#find_food "italian" ?food)
-                    (#find_food "spanish" ?food2)
-                    //(#find_food @italian ?food)
-                    //(#find_food @spanish ?food2)
-                    //(not (#is_spoiled ?food))
-                    //(not (#is_spoiled ?food2))
+            (and    (#find_food @italian ?food)
+                    (#find_food @spanish ?food2)
+                    (not (#is_spoiled ?food))
+                    (not (#is_spoiled ?food2))
             )
             (   (eat ?food)
                 (eat ?food2)

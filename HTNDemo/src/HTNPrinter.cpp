@@ -48,9 +48,9 @@ bool HTNPrinter::Print()
 HTNAtom HTNPrinter::Visit(const HTNDomainNode& inDomainNode)
 {
     PrintKeyword("domain");
-    ImGui::SameLine();
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inDomainNode.GetIDNode();
+    ImGui::SameLine();
     GetNodeValue(*IDNode);
 
     if (inDomainNode.IsTopLevel())
@@ -59,14 +59,11 @@ HTNAtom HTNPrinter::Visit(const HTNDomainNode& inDomainNode)
     }
 
     ImGui::Indent();
-
-    // TODO salvarez
-    /*
     const std::vector<std::shared_ptr<const HTNConstantsNode>>& ConstantsNodes = inDomainNode.GetConstantNodes();
     for (const std::shared_ptr<const HTNConstantsNode>& ConstantsNode : ConstantsNodes)
     {
+        GetNodeValue(*ConstantsNode);
     }
-    */
 
     const std::vector<std::shared_ptr<const HTNAxiomNode>>& AxiomNodes = inDomainNode.GetAxiomNodes();
     for (const std::shared_ptr<const HTNAxiomNode>& AxiomNode : AxiomNodes)
@@ -79,35 +76,53 @@ HTNAtom HTNPrinter::Visit(const HTNDomainNode& inDomainNode)
     {
         GetNodeValue(*MethodNode);
     }
-
     ImGui::Unindent();
 
     return true;
 }
 
-HTNAtom HTNPrinter::Visit([[maybe_unused]] const HTNConstantsNode& inConstantsNode)
+HTNAtom HTNPrinter::Visit(const HTNConstantsNode& inConstantsNode)
 {
     PrintKeyword("constants");
-    ImGui::SameLine();
+
+    if (const std::shared_ptr<const HTNValueNode>& IDNode = inConstantsNode.GetIDNode())
+    {
+        ImGui::SameLine();
+        GetNodeValue(*IDNode);
+    }
+
+    ImGui::Indent();
+    const std::vector<std::shared_ptr<const HTNConstantNode>>& ConstantNodes = inConstantsNode.GetConstantNodes();
+    for (const std::shared_ptr<const HTNConstantNode>& ConstantNode : ConstantNodes)
+    {
+        GetNodeValue(*ConstantNode);
+    }
+    ImGui::Unindent();
 
     return true;
 }
 
-HTNAtom HTNPrinter::Visit([[maybe_unused]] const HTNConstantNode& inConstantNode)
+HTNAtom HTNPrinter::Visit(const HTNConstantNode& inConstantNode)
 {
+    const std::shared_ptr<const HTNValueNode>& IDNode = inConstantNode.GetIDNode();
+    GetNodeValue(*IDNode);
+
+    const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode = inConstantNode.GetArgumentNode();
+    ImGui::SameLine();
+    GetNodeValue(*ArgumentNode);
+
     return true;
 }
 
 HTNAtom HTNPrinter::Visit(const HTNAxiomNode& inAxiomNode)
 {
     PrintKeyword("axiom");
-    ImGui::SameLine();
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inAxiomNode.GetIDNode();
+    ImGui::SameLine();
     GetNodeValue(*IDNode);
 
     ImGui::Indent();
-
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inAxiomNode.GetArgumentNodes();
     for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
@@ -119,7 +134,6 @@ HTNAtom HTNPrinter::Visit(const HTNAxiomNode& inAxiomNode)
     {
         GetNodeValue(*ConditionNode);
     }
-
     ImGui::Unindent();
 
     return true;
@@ -128,9 +142,9 @@ HTNAtom HTNPrinter::Visit(const HTNAxiomNode& inAxiomNode)
 HTNAtom HTNPrinter::Visit(const HTNMethodNode& inMethodNode)
 {
     PrintKeyword("method");
-    ImGui::SameLine();
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inMethodNode.GetIDNode();
+    ImGui::SameLine();
     GetNodeValue(*IDNode);
 
     if (inMethodNode.IsTopLevel())
@@ -139,7 +153,6 @@ HTNAtom HTNPrinter::Visit(const HTNMethodNode& inMethodNode)
     }
 
     ImGui::Indent();
-
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inMethodNode.GetArgumentNodes();
     for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
@@ -152,7 +165,6 @@ HTNAtom HTNPrinter::Visit(const HTNMethodNode& inMethodNode)
     {
         GetNodeValue(*BranchNode);
     }
-
     ImGui::Unindent();
 
     return true;
@@ -164,22 +176,16 @@ HTNAtom HTNPrinter::Visit(const HTNBranchNode& inBranchNode)
     GetNodeValue(*IDNode);
 
     ImGui::Indent();
-
     if (const std::shared_ptr<const HTNConditionNodeBase>& PreConditionNode = inBranchNode.GetPreConditionNode())
     {
         GetNodeValue(*PreConditionNode);
     }
-
-    ImGui::Indent();
 
     const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = inBranchNode.GetTaskNodes();
     for (const std::shared_ptr<const HTNTaskNodeBase>& TaskNode : TaskNodes)
     {
         GetNodeValue(*TaskNode);
     }
-
-    ImGui::Unindent();
-
     ImGui::Unindent();
 
     return true;
@@ -191,14 +197,12 @@ HTNAtom HTNPrinter::Visit(const HTNConditionNode& inConditionNode)
     GetNodeValue(*IDNode);
 
     ImGui::Indent();
-
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inConditionNode.GetArgumentNodes();
     for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
         ImGui::SameLine();
         GetNodeValue(*ArgumentNode);
     }
-
     ImGui::Unindent();
 
     return true;
@@ -207,20 +211,18 @@ HTNAtom HTNPrinter::Visit(const HTNConditionNode& inConditionNode)
 HTNAtom HTNPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 {
     PrintKeyword("axiom");
-    ImGui::SameLine();
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inAxiomConditionNode.GetIDNode();
+    ImGui::SameLine();
     GetNodeValue(*IDNode);
 
     ImGui::Indent();
-
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
     for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
         ImGui::SameLine();
         GetNodeValue(*ArgumentNode);
     }
-
     ImGui::Unindent();
 
     return true;
@@ -229,12 +231,19 @@ HTNAtom HTNPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 HTNAtom HTNPrinter::Visit(const HTNAndConditionNode& inAndConditionNode)
 {
     PrintKeyword("and");
-    ImGui::SameLine();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAndConditionNode.GetSubConditionNodes();
-    for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
+    if (!SubConditionNodes.empty())
     {
-        GetNodeValue(*SubConditionNode);
+        ImGui::SameLine();
+        const float CursorPosX = ImGui::GetCursorPosX();
+        for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
+        {
+            GetNodeValue(*SubConditionNode);
+            ImGui::NewLine();
+            ImGui::SameLine(CursorPosX);
+        }
+        ImGui::SameLine(0.f, 0.f);
     }
 
     return true;
@@ -243,12 +252,19 @@ HTNAtom HTNPrinter::Visit(const HTNAndConditionNode& inAndConditionNode)
 HTNAtom HTNPrinter::Visit(const HTNOrConditionNode& inOrConditionNode)
 {
     PrintKeyword("or");
-    ImGui::SameLine();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inOrConditionNode.GetSubConditionNodes();
-    for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
+    if (!SubConditionNodes.empty())
     {
-        GetNodeValue(*SubConditionNode);
+        ImGui::SameLine();
+        const float CursorPosX = ImGui::GetCursorPosX();
+        for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
+        {
+            GetNodeValue(*SubConditionNode);
+            ImGui::NewLine();
+            ImGui::SameLine(CursorPosX);
+        }
+        ImGui::SameLine(0.f, 0.f);
     }
 
     return true;
@@ -257,12 +273,19 @@ HTNAtom HTNPrinter::Visit(const HTNOrConditionNode& inOrConditionNode)
 HTNAtom HTNPrinter::Visit(const HTNAltConditionNode& inAltConditionNode)
 {
     PrintKeyword("alt");
-    ImGui::SameLine();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAltConditionNode.GetSubConditionNodes();
-    for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
+    if (!SubConditionNodes.empty())
     {
-        GetNodeValue(*SubConditionNode);
+        ImGui::SameLine();
+        const float CursorPosX = ImGui::GetCursorPosX();
+        for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
+        {
+            GetNodeValue(*SubConditionNode);
+            ImGui::NewLine();
+            ImGui::SameLine(CursorPosX);
+        }
+        ImGui::SameLine(0.f, 0.f);
     }
 
     return true;
@@ -271,9 +294,9 @@ HTNAtom HTNPrinter::Visit(const HTNAltConditionNode& inAltConditionNode)
 HTNAtom HTNPrinter::Visit(const HTNNotConditionNode& inNotConditionNode)
 {
     PrintKeyword("not");
-    ImGui::SameLine();
 
     const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = inNotConditionNode.GetSubConditionNode();
+    ImGui::SameLine();
     GetNodeValue(*SubConditionNode);
 
     return true;
@@ -285,14 +308,12 @@ HTNAtom HTNPrinter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
     GetNodeValue(*IDNode);
 
     ImGui::Indent();
-
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
     for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
         ImGui::SameLine();
         GetNodeValue(*ArgumentNode);
     }
-
     ImGui::Unindent();
 
     return true;
@@ -301,20 +322,18 @@ HTNAtom HTNPrinter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
 HTNAtom HTNPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
 {
     PrintKeyword("primitive");
-    ImGui::SameLine();
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inPrimitiveTaskNode.GetIDNode();
+    ImGui::SameLine();
     GetNodeValue(*IDNode);
 
     ImGui::Indent();
-
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
     for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
         ImGui::SameLine();
         GetNodeValue(*ArgumentNode);
     }
-
     ImGui::Unindent();
 
     return true;
@@ -330,8 +349,8 @@ HTNAtom HTNPrinter::Visit(const HTNValueNode& inValueNode)
 HTNAtom HTNPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
 {
     PrintKeyword("variable");
-    ImGui::SameLine();
 
+    ImGui::SameLine();
     ImGui::Text(inVariableValueNode.ToString().c_str());
 
     return true;
@@ -340,8 +359,8 @@ HTNAtom HTNPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
 HTNAtom HTNPrinter::Visit(const HTNConstantValueNode& inConstantValueNode)
 {
     PrintKeyword("constant");
-    ImGui::SameLine();
 
+    ImGui::SameLine();
     ImGui::Text(inConstantValueNode.ToString().c_str());
 
     return true;

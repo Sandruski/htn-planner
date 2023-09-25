@@ -122,7 +122,6 @@ HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode
 
 HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNConstantsNode& inConstantsNode)
 {
-    // TODO salvarez Remove HTNConstantsNode
     return HTNAtom();
 }
 
