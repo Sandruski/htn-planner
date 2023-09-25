@@ -32,18 +32,14 @@ bool RemovePrefix(const std::string& inPrefix, std::string& ioString)
     return true;
 }
 
-const std::string InputPrefix       = "inp_";
-const std::string OutputPrefix      = "out_";
-const std::string InputOutputPrefix = "io_";
 
-bool RemoveInputPrefix(std::string& ioString)
-{
-    return RemovePrefix(InputPrefix, ioString) || RemovePrefix(InputOutputPrefix, ioString);
-}
 
-bool RemoveOutputPrefix(std::string& ioString)
+bool RemoveVariableIDPrefixes(std::string& ioString)
 {
-    return RemovePrefix(OutputPrefix, ioString) || RemovePrefix(InputOutputPrefix, ioString);
+    static const std::string InputPrefix       = "inp_";
+    static const std::string OutputPrefix      = "out_";
+    static const std::string InputOutputPrefix = "io_";
+    return RemovePrefix(InputPrefix, ioString) || RemovePrefix(OutputPrefix, ioString) || RemovePrefix(InputOutputPrefix, ioString);
 }
 
 bool IsNodeSuccessful(const HTNAtomList& inNodeValue)
@@ -258,7 +254,6 @@ HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
     }
 
     std::vector<HTNAtom> AxiomNodeArguments;
-
     {
         const HTNScope AxiomScope = HTNScope(mDecompositionContext);
 
@@ -517,7 +512,7 @@ void HTNInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode, cons
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
 
     std::string VariableID = inVariableValueNode.GetValue().GetValue<std::string>();
-    RemoveInputPrefix(VariableID);
+    RemoveVariableIDPrefixes(VariableID);
     CurrentDecomposition.GetCurrentEnvironment().SetVariable(VariableID, inVariableValueNodeValue);
 }
 
@@ -526,7 +521,7 @@ HTNAtom HTNInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode)
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
 
     std::string VariableID = inVariableValueNode.GetValue().GetValue<std::string>();
-    RemoveOutputPrefix(VariableID);
+    RemoveVariableIDPrefixes(VariableID);
     return CurrentDecomposition.GetCurrentEnvironment().GetOrAddVariable(VariableID);
 }
 

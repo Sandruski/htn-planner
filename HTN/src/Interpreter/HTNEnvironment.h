@@ -72,5 +72,5 @@ inline unsigned int HTNEnvironment::AddOrIncrementIndex(const std::string& inID)
         return mIndices[inID];
     }
 
-    return ++ScopeIt->second;
+    return ++mIndices[inID];
 }
