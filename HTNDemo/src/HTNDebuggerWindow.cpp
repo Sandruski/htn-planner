@@ -11,7 +11,7 @@
 #include "Parser/AST/HTNMethodNode.h"
 #include "Parser/AST/HTNTaskNode.h"
 #include "Planner/HTNPlannerHook.h"
-#include "Planner/HTNTaskResult.h"
+#include "Interpreter/HTNTaskResult.h"
 #include "HTNPrinter.h"
 
 #include "imgui.h"
@@ -301,7 +301,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         ImGui::Indent();
         for (const HTNTaskResult& Task : LastPlan.Plan)
         {
-            ImGui::Text(Task.GetName().c_str());
+            ImGui::Text(Task.GetID().c_str());
 
             const std::vector<HTNAtom>& Arguments = Task.GetArguments();
             for (const HTNAtom& Argument : Arguments)

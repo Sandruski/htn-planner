@@ -20,7 +20,7 @@ public:
                             const HTNWorldState& inWorldState);
     ~HTNInterpreter();
 
-    bool Interpret(std::vector<HTNTaskInstance>& outPlan);
+    bool Interpret(std::vector<HTNTaskResult>& outPlan);
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
     HTNAtom Visit(const HTNConstantsNode& inConstantsNode) final;
