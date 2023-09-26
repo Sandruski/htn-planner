@@ -43,8 +43,11 @@ private:
     // Final plan of tasks
     std::vector<HTNTaskResult> mPlan;
 
-    // State
-    std::vector<HTNEnvironment> mEnvironments;
+    // State of variables and indices
+    std::vector<HTNEnvironment> mEnvironments; // This should be called EnvironmentStack
+
+    // TODO salvarez Path from current node to previous decomposition record node
+    std::vector<std::shared_ptr<const HTNNodeBase>> mBacktrackStack;
 };
 
 class HTNDecompositionContext
