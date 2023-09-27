@@ -64,6 +64,17 @@ bool HTNLexerBase::Lex(std::vector<HTNToken>& outTokens)
             AdvancePosition();
             break;
         }
+        // TODO salvarez Check for separator that just advances position
+        case ';': {
+            // Semicolon
+            AdvancePosition();
+            break;
+        }
+        case ',': {
+            // Comma
+            AdvancePosition();
+            break;
+        }
         case '(': {
             // Left parenthesis
             AddToken(HTNTokenType::LEFT_PARENTHESIS, std::string(1, Character), HTNAtom(), outTokens);

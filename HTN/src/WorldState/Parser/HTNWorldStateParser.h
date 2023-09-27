@@ -15,7 +15,6 @@ public:
     bool Parse(HTNWorldState& ioWorldState);
 
 private:
-    bool ParseFacts(HTNWorldState& ioWorldState, unsigned int& ioPosition);
     bool ParseFact(HTNWorldState& ioWorldState, unsigned int& ioPosition);
 
     const HTNAtom* ParseIdentifier(unsigned int& inPosition);

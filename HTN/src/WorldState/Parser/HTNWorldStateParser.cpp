@@ -1,37 +1,22 @@
 #include "WorldState/Parser/HTNWorldStateParser.h"
 
 #include "WorldState/HTNWorldState.h"
+#include "HTNAtom.h"
+#include "HTNToken.h"
 
-// TODO salvarez Implement lexer for world state (; and ,)
 bool HTNWorldStateParser::Parse(HTNWorldState& ioWorldState)
 {
     unsigned int CurrentPosition = 0;
-    if (!ParseFacts(ioWorldState, CurrentPosition))
+
+    while (!ParseToken(HTNTokenType::END_OF_FILE, CurrentPosition))
     {
+        if (!ParseFact(ioWorldState, CurrentPosition))
+        {
 #if HTN_DEBUG
-        LogLastError();
+            LogLastError();
 #endif
-        return false;
-    }
-
-    if (!ParseToken(HTNTokenType::END_OF_FILE, CurrentPosition))
-    {
-#if HTN_DEBUG
-        LogLastError();
-#endif
-        return false;
-    }
-
-    return true;
-}
-
-bool HTNWorldStateParser::ParseFacts(HTNWorldState& ioWorldState, unsigned int& ioPosition)
-{
-    unsigned int CurrentPosition = ioPosition;
-
-    while (!ParseToken(HTNTokenType::END_OF_LINE, CurrentPosition))
-    {
-        ParseFact(ioWorldState, CurrentPosition);
+            return false;
+        }
     }
 
     return true;
@@ -50,7 +35,6 @@ bool HTNWorldStateParser::ParseFact(HTNWorldState& ioWorldState, unsigned int& i
     std::vector<HTNAtom> Arguments;
     while (const HTNAtom* Argument = ParseArgument(CurrentPosition))
     {
-        // TODO salvarez If not bound it is invalid
         Arguments.emplace_back(*Argument);
     }
 
@@ -80,18 +64,18 @@ const HTNAtom* HTNWorldStateParser::ParseArgument(unsigned int& inPosition)
 {
     unsigned int CurrentPosition = inPosition;
 
-    if (!ParseToken(HTNTokenType::SEMICOLON, CurrentPosition))
-    {
-        return nullptr;
-    }
+    const HTNAtom* Argument = nullptr;
 
-    const HTNAtom* Identifier = ParseIdentifier(CurrentPosition);
-    if (!Identifier)
+    if (const HTNToken* NumberToken = ParseToken(HTNTokenType::NUMBER, CurrentPosition))
     {
-        return nullptr;
+        Argument = &NumberToken->GetValue();
+    }
+    else if (const HTNToken* StringToken = ParseToken(HTNTokenType::STRING, CurrentPosition))
+    {
+        Argument = &StringToken->GetValue();
     }
 
     inPosition = CurrentPosition;
 
-    return Identifier;
+    return Argument;
 }

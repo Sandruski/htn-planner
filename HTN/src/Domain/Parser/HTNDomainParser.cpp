@@ -9,6 +9,7 @@
 #include "Domain/AST/HTNMethodNode.h"
 #include "Domain/AST/HTNTaskNode.h"
 #include "Domain/AST/HTNValueNode.h"
+#include "HTNToken.h"
 
 /*
 Backus Naur Form (BNF):

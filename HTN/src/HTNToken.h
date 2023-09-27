@@ -9,7 +9,6 @@
 enum class HTNTokenType : unsigned int
 {
     COLON,
-    SEMICOLON, // TODO salvarez
     LEFT_PARENTHESIS,
     RIGHT_PARENTHESIS,
     EXCLAMATION_MARK,
@@ -33,7 +32,6 @@ enum class HTNTokenType : unsigned int
     NUMBER,
     STRING,
 
-    END_OF_LINE, // TODO salvarez
     END_OF_FILE
 };
 
