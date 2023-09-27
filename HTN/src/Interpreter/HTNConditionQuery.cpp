@@ -1,6 +1,6 @@
 #include "Interpreter/HTNConditionQuery.h"
 
-#include "Database/HTNWorldState.h"
+#include "WorldState/HTNWorldState.h"
 
 bool HTNConditionQueryWorldState::Check(const HTNWorldState& inWorldState, const int inIndex) const
 {

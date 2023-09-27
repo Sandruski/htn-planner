@@ -1,79 +1,58 @@
 #include "Planner/HTNPlannerHook.h"
 
+#include "Domain/AST/HTNDomainNode.h"
+#include "Domain/Parser/HTNDomainLexer.h"
+#include "Domain/Parser/HTNDomainParser.h"
+#include "HTNFileHandler.h"
 #include "HTNLog.h"
+#include "HTNToken.h"
 #include "Interpreter/HTNInterpreter.h"
 #include "Interpreter/HTNTaskResult.h"
-#include "Parser/HTNLexer.h"
-#include "Parser/HTNParser.h"
 
-#include <fstream>
-#include <sstream>
-
-namespace
+bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
 {
-bool ReadFile(const std::string& inPath, std::string& outText)
-{
-    // Open file
-    std::ifstream File;
-    File.open(inPath);
-    if (!File.is_open())
+    const HTNFileHandler DomainFileHandler = HTNFileHandler(inDomainFilePath);
+    std::string          DomainFileText;
+    if (!DomainFileHandler.ReadFile(DomainFileText))
     {
-        LOG_ERROR("File [{}] could not be opened", inPath);
+        LOG_ERROR("Domain [{}] could not be read", inDomainFilePath);
         return false;
     }
 
-    // Read file
-    std::ostringstream Buffer;
-    Buffer << File.rdbuf();
-    outText = Buffer.str();
-
-    // Close file
-    File.close();
-
-    return true;
-}
-} // namespace
-
-HTNPlannerHook::~HTNPlannerHook() = default;
-
-bool HTNPlannerHook::ParseDomain(const std::string& inDomainPath)
-{
-    std::string Text;
-    if (!ReadFile(inDomainPath, Text))
-    {
-        LOG_ERROR("File [{}] could not be read", inDomainPath);
-        return false;
-    }
-
-    // Lex
-    HTNLexer              Lexer = HTNLexer(Text);
+    HTNDomainLexer        DomainLexer = HTNDomainLexer(DomainFileText);
     std::vector<HTNToken> Tokens;
-    if (!Lexer.Lex(Tokens))
+    if (!DomainLexer.Lex(Tokens))
     {
-        LOG_ERROR("Lex failed");
+        LOG_ERROR("Domain [{}] could not be lexed", inDomainFilePath);
         return false;
     }
 
-    // Parse
-    HTNParser Parser = HTNParser(Tokens);
-    mDomainNode      = Parser.Parse();
-    if (!mDomainNode)
+    HTNDomainParser                            DomainParser = HTNDomainParser(Tokens);
+    const std::shared_ptr<const HTNDomainNode> DomainNode   = DomainParser.Parse();
+    if (!DomainNode)
     {
-        LOG_ERROR("Parse failed");
+        LOG_ERROR("Domain [{}] could not be parsed", inDomainFilePath);
         return false;
     }
+
+    mDomainNode = DomainNode;
 
     return true;
 }
 
 std::vector<HTNTaskResult> HTNPlannerHook::MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState) const
 {
-    // Interpret
+    if (!mDomainNode)
+    {
+        LOG_ERROR("Domain node is null");
+        return {};
+    }
+
     HTNInterpreter             Interpreter = HTNInterpreter(mDomainNode, inEntryPointName, inWorldState);
     std::vector<HTNTaskResult> Plan;
     if (!Interpreter.Interpret(Plan))
     {
-        LOG_ERROR("Interpret failed");
+        LOG_ERROR("Domain [{}] could not be interpreted", mDomainNode->GetID());
         return {};
     }
 

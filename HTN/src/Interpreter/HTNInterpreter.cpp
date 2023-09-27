@@ -1,21 +1,22 @@
 #include "Interpreter/HTNInterpreter.h"
 
-#include "Database/HTNWorldState.h"
+#include "WorldState/HTNWorldState.h"
 #include "HTNLog.h"
 #include "Interpreter/HTNConditionQuery.h"
 #include "Interpreter/HTNDecompositionContext.h"
 #include "Interpreter/HTNEnvironment.h"
 #include "Interpreter/HTNScope.h"
 #include "Interpreter/HTNTaskInstance.h"
-#include "Parser/AST/HTNAxiomNode.h"
-#include "Parser/AST/HTNBranchNode.h"
-#include "Parser/AST/HTNConditionNode.h"
-#include "Parser/AST/HTNConstantNode.h"
-#include "Parser/AST/HTNConstantsNode.h"
-#include "Parser/AST/HTNDomainNode.h"
-#include "Parser/AST/HTNMethodNode.h"
-#include "Parser/AST/HTNTaskNode.h"
-#include "Parser/AST/HTNValueNode.h"
+#include "Domain/AST/HTNAxiomNode.h"
+#include "Domain/AST/HTNBranchNode.h"
+#include "Domain/AST/HTNConditionNode.h"
+#include "Domain/AST/HTNConstantNode.h"
+#include "Domain/AST/HTNConstantsNode.h"
+#include "Domain/AST/HTNDomainNode.h"
+#include "Domain/AST/HTNMethodNode.h"
+#include "Domain/AST/HTNTaskNode.h"
+#include "Domain/AST/HTNValueNode.h"
+#include "HTNMacros.h"
 
 namespace
 {
@@ -31,8 +32,6 @@ bool RemovePrefix(const std::string& inPrefix, std::string& ioString)
 
     return true;
 }
-
-
 
 bool RemoveVariableIDPrefixes(std::string& ioString)
 {
@@ -86,7 +85,7 @@ bool HTNInterpreter::Interpret(std::vector<HTNTaskResult>& outPlan)
     return true;
 }
 
-HTNAtom HTNInterpreter::Visit([[maybe_unused]] const HTNDomainNode& inDomainNode)
+HTNAtom HTNInterpreter::Visit(MAYBE_UNUSED const HTNDomainNode& inDomainNode)
 {
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
 

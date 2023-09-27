@@ -1,12 +1,12 @@
 #pragma once
 
 class HTNPlannerHook;
-class HTNWorldState;
+class HTNWorldStateHook;
 
 class HTNDebuggerWindow
 {
 public:
-    explicit HTNDebuggerWindow(HTNPlannerHook& inPlanner, HTNWorldState& inWorldState);
+    explicit HTNDebuggerWindow(HTNPlannerHook& inPlannerHook, HTNWorldStateHook& inWorldStateHook);
 
     void Render(bool& _IsOpen);
 
@@ -16,10 +16,11 @@ private:
     void RenderParsing();
     void RenderDatabase();
 
-    HTNPlannerHook* mPlanner    = nullptr;
-    HTNWorldState*  mWorldState = nullptr;
+    HTNPlannerHook*    mPlannerHook    = nullptr;
+    HTNWorldStateHook* mWorldStateHook = nullptr;
 };
 
-inline HTNDebuggerWindow::HTNDebuggerWindow(HTNPlannerHook& inPlanner, HTNWorldState& inWorldState) : mPlanner(&inPlanner), mWorldState(&inWorldState)
+inline HTNDebuggerWindow::HTNDebuggerWindow(HTNPlannerHook& inPlannerHook, HTNWorldStateHook& inWorldStateHook)
+    : mPlannerHook(&inPlannerHook), mWorldStateHook(&inWorldStateHook)
 {
 }

@@ -7,7 +7,7 @@
 // because it provides a rather limited API to the end-user. We provide this backend for the sake of completeness.
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
-#include "Database/HTNWorldState.h"
+#include "WorldState/HTNWorldStateHook.h"
 #include "HTNDebuggerWindow.h"
 #include "Planner/HTNPlannerHook.h"
 #include "imgui.h"
@@ -91,16 +91,8 @@ int main(int, char**)
     bool   ShowHTNDebuggerWindow = true;
     ImVec4 clear_color           = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    HTNPlannerHook Planner;
-    HTNWorldState  WorldState;
-    WorldState.AddFact("food", "spanish", "tortilla");
-    WorldState.AddFact("food", "spanish", "paella");
-    WorldState.AddFact("has_mold", "paella");
-    // WorldState.AddFact("food", "italian", "pasta");
-    // WorldState.AddFact("food", "italian", "pizza");
-    // WorldState.AddFact("food", "italian", "gelato");
-    // WorldState.AddFact("has_mold", "pasta");
-    // WorldState.AddFact("is_dry", "pizza");
+    HTNPlannerHook PlannerHook;
+    HTNWorldStateHook  WorldStateHook;
 
     // Main loop
     bool done = false;
@@ -134,7 +126,7 @@ int main(int, char**)
 
         if (ShowHTNDebuggerWindow)
         {
-            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(Planner, WorldState);
+            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlannerHook, WorldStateHook);
             sHTNDebuggerWindow.Render(ShowHTNDebuggerWindow);
         }
 
