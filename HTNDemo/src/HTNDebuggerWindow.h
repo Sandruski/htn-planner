@@ -12,9 +12,9 @@ public:
 
 private:
     void RenderActivePlan();
-    void RenderDecomposition();
-    void RenderParsing();
-    void RenderDatabase();
+    void RenderPlan();
+    void RenderDomain();
+    void RenderWorldState();
 
     HTNPlannerHook*    mPlannerHook    = nullptr;
     HTNWorldStateHook* mWorldStateHook = nullptr;

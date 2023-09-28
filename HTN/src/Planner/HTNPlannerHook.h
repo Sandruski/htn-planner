@@ -31,7 +31,7 @@ public:
         return nullptr;
     }
 
-    std::vector<HTNTaskResult> MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState) const;
+    bool MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState, std::vector<HTNTaskResult>& outPlan) const;
 
     const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 

@@ -14,7 +14,7 @@ public:
     explicit HTNPlanningUnit(const HTNPlannerHook& inPlannerHook, const HTNWorldStateHook& inWorldStateHook);
 
     // Execute planning unit top level method
-    std::vector<HTNTaskResult> ExecuteTopLevelMethod(const std::string& inEntryPointName) const;
+    bool ExecuteTopLevelMethod(const std::string& inEntryPointName, std::vector<HTNTaskResult>& outPlan) const;
 
 private:
     const HTNPlannerHook*    mPlannerHook    = nullptr;

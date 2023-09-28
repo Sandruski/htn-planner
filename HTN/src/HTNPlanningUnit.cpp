@@ -5,9 +5,9 @@
 #include "Interpreter/HTNTaskResult.h"
 #include "Planner/HTNPlannerHook.h"
 
-std::vector<HTNTaskResult> HTNPlanningUnit::ExecuteTopLevelMethod(const std::string& inEntryPointName) const
+bool HTNPlanningUnit::ExecuteTopLevelMethod(const std::string& inEntryPointName, std::vector<HTNTaskResult>& outPlan) const
 {
     // Copy the world state
     const HTNWorldState WorldState = mWorldStateHook->GetWorldState();
-    return mPlannerHook->MakePlan(inEntryPointName, WorldState);
+    return mPlannerHook->MakePlan(inEntryPointName, WorldState, outPlan);
 }

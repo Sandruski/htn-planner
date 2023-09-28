@@ -11,18 +11,12 @@ public:
     bool ImportWorldStateFile(const std::string& inWorldStateFilePath);
 
     const HTNWorldState& GetWorldState() const;
-    HTNWorldState& GetWorldStateMutable();
 
 private:
     HTNWorldState mWorldState;
 };
 
 inline const HTNWorldState& HTNWorldStateHook::GetWorldState() const
-{
-    return mWorldState;
-}
-
-inline HTNWorldState& HTNWorldStateHook::GetWorldStateMutable()
 {
     return mWorldState;
 }

@@ -40,12 +40,13 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
     return true;
 }
 
-std::vector<HTNTaskResult> HTNPlannerHook::MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState) const
+bool HTNPlannerHook::MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState,
+                                                    std::vector<HTNTaskResult>& outPlan) const
 {
     if (!mDomainNode)
     {
         LOG_ERROR("Domain node is null");
-        return {};
+        return false;
     }
 
     HTNInterpreter             Interpreter = HTNInterpreter(mDomainNode, inEntryPointName, inWorldState);
@@ -53,8 +54,10 @@ std::vector<HTNTaskResult> HTNPlannerHook::MakePlan(const std::string& inEntryPo
     if (!Interpreter.Interpret(Plan))
     {
         LOG_ERROR("Domain [{}] could not be interpreted", mDomainNode->GetID());
-        return {};
+        return false;
     }
 
-    return Plan;
+    outPlan = Plan;
+
+    return true;
 }

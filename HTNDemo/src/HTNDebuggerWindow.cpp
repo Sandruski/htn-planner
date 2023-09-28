@@ -1,18 +1,18 @@
 #include "HTNDebuggerWindow.h"
 
-#include "WorldState/HTNWorldStateHook.h"
-#include "HTNAtom.h"
-#include "HTNPlanningUnit.h"
-#include "Domain/HTNDomainPrinter.h"
-#include "Interpreter/HTNInterpreter.h"
-#include "Interpreter/HTNTaskResult.h"
 #include "Domain/AST/HTNAxiomNode.h"
 #include "Domain/AST/HTNBranchNode.h"
 #include "Domain/AST/HTNConditionNode.h"
 #include "Domain/AST/HTNDomainNode.h"
 #include "Domain/AST/HTNMethodNode.h"
 #include "Domain/AST/HTNTaskNode.h"
+#include "Domain/HTNDomainPrinter.h"
+#include "HTNAtom.h"
+#include "HTNPlanningUnit.h"
+#include "Interpreter/HTNInterpreter.h"
+#include "Interpreter/HTNTaskResult.h"
 #include "Planner/HTNPlannerHook.h"
+#include "WorldState/HTNWorldStateHook.h"
 
 #include "imgui.h"
 #include "imgui_stdlib.h"
@@ -118,21 +118,21 @@ void HTNDebuggerWindow::Render(bool& _IsOpen)
                 ImGui::EndTabItem();
             }
 
-            if (ImGui::BeginTabItem("Decomposition"))
+            if (ImGui::BeginTabItem("Plan"))
             {
-                RenderDecomposition();
+                RenderPlan();
                 ImGui::EndTabItem();
             }
 
-            if (ImGui::BeginTabItem("Parsing"))
+            if (ImGui::BeginTabItem("Domain"))
             {
-                RenderParsing();
+                RenderDomain();
                 ImGui::EndTabItem();
             }
 
-            if (ImGui::BeginTabItem("Database"))
+            if (ImGui::BeginTabItem("World State"))
             {
-                RenderDatabase();
+                RenderWorldState();
                 ImGui::EndTabItem();
             }
 
@@ -148,7 +148,7 @@ void HTNDebuggerWindow::RenderActivePlan()
     // TODO salvarez
 }
 
-void HTNDebuggerWindow::RenderDecomposition()
+void HTNDebuggerWindow::RenderPlan()
 {
     const std::shared_ptr<const HTNDomainNode>&              DomainNode  = mPlannerHook->GetDomainNode();
     const std::vector<std::shared_ptr<const HTNMethodNode>>* MethodNodes = nullptr;
@@ -290,17 +290,17 @@ void HTNDebuggerWindow::RenderDecomposition()
     };
 
     static std::vector<LastPlan> LastPlans;
-    static OperationResult       LastDecompositionResult = OperationResult::NONE;
-    if (ImGui::Button("Decompose"))
+    static OperationResult       LastPlanResult = OperationResult::NONE;
+    if (ImGui::Button("Plan"))
     {
         LastPlans.clear();
 
         std::for_each(std::execution::par, EntryPoints.begin(), EntryPoints.end(), [this](EntryPoint& inEntryPoint) {
             for (unsigned int i = 0; i < inEntryPoint.Amount; ++i)
             {
-                const HTNPlanningUnit             PlanningUnit = HTNPlanningUnit(*mPlannerHook, *mWorldStateHook);
-                const std::vector<HTNTaskResult>& Plan         = PlanningUnit.ExecuteTopLevelMethod(inEntryPoint.ID);
-                if (Plan.empty())
+                const HTNPlanningUnit      PlanningUnit = HTNPlanningUnit(*mPlannerHook, *mWorldStateHook);
+                std::vector<HTNTaskResult> Plan;
+                if (!PlanningUnit.ExecuteTopLevelMethod(inEntryPoint.ID, Plan))
                 {
                     continue;
                 }
@@ -309,15 +309,15 @@ void HTNDebuggerWindow::RenderDecomposition()
             }
         });
 
-        LastDecompositionResult = static_cast<OperationResult>(!LastPlans.empty());
+        LastPlanResult = static_cast<OperationResult>(!LastPlans.empty());
     }
 
     if (ImGui::IsItemHovered())
     {
-        ImGui::SetTooltip("Decompose the selected entry points of the domain using the database");
+        ImGui::SetTooltip("Plan the selected entry points of the parsed domain using the parsed world state");
     }
 
-    RenderOperationResult(LastDecompositionResult);
+    RenderOperationResult(LastPlanResult);
 
     ImGui::Separator();
 
@@ -341,7 +341,7 @@ void HTNDebuggerWindow::RenderDecomposition()
     }
 }
 
-void HTNDebuggerWindow::RenderParsing()
+void HTNDebuggerWindow::RenderDomain()
 {
     static const std::string     DomainsDirectoryName = "Domains";
     static const std::string     DomainFileExtension  = ".domain";
@@ -373,7 +373,7 @@ void HTNDebuggerWindow::RenderParsing()
     DomainPrinter.Print();
 }
 
-void HTNDebuggerWindow::RenderDatabase()
+void HTNDebuggerWindow::RenderWorldState()
 {
     static const std::string     WorldStatesDirectoryName = "WorldStates";
     static const std::string     WorldStateFileExtension  = ".worldstate";
@@ -381,162 +381,25 @@ void HTNDebuggerWindow::RenderDatabase()
     RenderFileSelector(WorldStatesDirectoryName, WorldStateFileExtension, SelectedWorldStateFilePath);
 
     static OperationResult LastImportWorldStateResult = OperationResult::NONE;
-    if (ImGui::Button("Import"))
+    if (ImGui::Button("Parse"))
     {
         LastImportWorldStateResult = static_cast<OperationResult>(mWorldStateHook->ImportWorldStateFile(SelectedWorldStateFilePath.string()));
     }
 
     if (ImGui::IsItemHovered())
     {
-        ImGui::SetTooltip("Import the selected world state file");
+        ImGui::SetTooltip("Parse the selected world state file");
     }
 
     RenderOperationResult(LastImportWorldStateResult);
 
     ImGui::Separator();
 
-    HTNWorldState& WorldState = mWorldStateHook->GetWorldStateMutable();
-
-    ImGui::Text("Facts");
-
-    ImGui::SameLine();
-
-    const char* NewFactPopupName = "New Fact";
-    if (ImGui::Button("+"))
-    {
-        ImGui::OpenPopup(NewFactPopupName);
-    }
-
-    if (ImGui::IsItemHovered())
-    {
-        ImGui::SetTooltip("Add Fact");
-    }
-
-    if (ImGui::BeginPopupModal(NewFactPopupName, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        static std::string Name;
-        ImGui::InputText("Name", &Name, InputTextFlags);
-
-        static std::vector<HTNAtom> Arguments;
-        ImGui::Text("Arguments");
-
-        ImGui::SameLine();
-
-        if (ImGui::Button("+"))
-        {
-            Arguments.emplace_back();
-        }
-
-        if (ImGui::IsItemHovered())
-        {
-            ImGui::SetTooltip("Add Argument");
-        }
-
-        ImGui::SameLine();
-
-        if (ImGui::Button("-"))
-        {
-            Arguments.clear();
-        }
-
-        if (ImGui::IsItemHovered())
-        {
-            ImGui::SetTooltip("Remove All Arguments");
-        }
-
-        const char* Types[] = {"int", "float", "string"};
-
-        for (size_t i = 0; i < Arguments.size(); ++i)
-        {
-            HTNAtom& Argument = Arguments[i];
-
-            int Type = 0;
-            if (Argument.IsSet())
-            {
-                if (Argument.IsType<int>())
-                {
-                    Type = 0;
-                }
-                else if (Argument.IsType<float>())
-                {
-                    Type = 1;
-                }
-                else if (Argument.IsType<std::string>())
-                {
-                    Type = 2;
-                }
-            }
-
-            ImGui::Combo(std::format("##Type{}", i).c_str(), &Type, Types, IM_ARRAYSIZE(Types));
-
-            ImGui::SameLine();
-
-            if (Type == 0)
-            {
-                int Value = (Argument.IsSet() && Argument.IsType<int>()) ? Argument.GetValue<int>() : 0;
-                ImGui::InputInt(std::format("##Value{}", i).c_str(), &Value, 0, 0, InputTextFlags | ImGuiInputTextFlags_CharsDecimal);
-                Argument = HTNAtom(Value);
-            }
-            else if (Type == 1)
-            {
-                float Value = (Argument.IsSet() && Argument.IsType<float>()) ? Argument.GetValue<float>() : 0.f;
-                ImGui::InputFloat(std::format("##Value{}", i).c_str(), &Value, 0.f, 0.f, "%.2f", InputTextFlags | ImGuiInputTextFlags_CharsDecimal);
-                Argument = HTNAtom(Value);
-            }
-            else if (Type == 2)
-            {
-                std::string Value = (Argument.IsSet() && Argument.IsType<std::string>()) ? Argument.GetValue<std::string>() : "";
-                ImGui::InputText(std::format("##Value{}", i).c_str(), &Value, InputTextFlags);
-                Argument = HTNAtom(Value);
-            }
-
-            ImGui::SameLine();
-
-            if (ImGui::Button(std::format("-##{}", i).c_str()))
-            {
-                Arguments.erase(Arguments.begin() + i);
-            }
-
-            if (ImGui::IsItemHovered())
-            {
-                ImGui::SetTooltip("Remove Argument");
-            }
-        }
-
-        ImGui::Spacing();
-
-        if (ImGui::Button("OK", ImVec2(120.f, 0.f)))
-        {
-            WorldState.AddFact(Name.c_str(), Arguments);
-            ImGui::CloseCurrentPopup();
-        }
-
-        ImGui::SameLine();
-
-        if (ImGui::Button("Cancel", ImVec2(120.f, 0.f)))
-        {
-            ImGui::CloseCurrentPopup();
-        }
-
-        ImGui::EndPopup();
-    }
-
-    ImGui::SameLine();
-
-    if (ImGui::Button("-"))
-    {
-        WorldState.RemoveAllFacts();
-    }
-
-    if (ImGui::IsItemHovered())
-    {
-        ImGui::SetTooltip("Remove All Facts");
-    }
-
     static ImGuiTextFilter Filter;
     Filter.Draw("##");
 
-    const std::unordered_map<std::string, HTNWorldState::HTNFact>& Facts = WorldState.GetFacts();
+    const HTNWorldState&                                           WorldState = mWorldStateHook->GetWorldState();
+    const std::unordered_map<std::string, HTNWorldState::HTNFact>& Facts      = WorldState.GetFacts();
     for (auto It = Facts.begin(); It != Facts.end(); ++It)
     {
         const std::string&            Name   = It->first;
@@ -571,18 +434,6 @@ void HTNDebuggerWindow::RenderDatabase()
                 {
                     ImGui::SameLine();
                     ImGui::Text(Argument.ToString().c_str());
-                }
-
-                ImGui::SameLine();
-
-                if (ImGui::Button(std::format("-##{}{}{}", Name, i, j).c_str()))
-                {
-                    WorldState.RemoveFact(Name.c_str(), static_cast<int>(i), static_cast<int>(j));
-                }
-
-                if (ImGui::IsItemHovered())
-                {
-                    ImGui::SetTooltip("Remove Fact");
                 }
             }
         }
