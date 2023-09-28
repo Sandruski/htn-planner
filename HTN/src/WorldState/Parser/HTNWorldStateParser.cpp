@@ -1,20 +1,26 @@
 #include "WorldState/Parser/HTNWorldStateParser.h"
 
-#include "WorldState/HTNWorldState.h"
 #include "HTNAtom.h"
+#include "HTNLog.h"
 #include "HTNToken.h"
+#include "WorldState/HTNWorldState.h"
 
-bool HTNWorldStateParser::Parse(HTNWorldState& ioWorldState)
+/*
+Backus Naur Form (BNF):
+<fact> ::= <identifier> <argument>*
+<identifier> ::= 'identifier'
+<argument> ::= 'number' | 'string'
+*/
+
+bool HTNWorldStateParser::Parse(HTNWorldState& outWorldState)
 {
     unsigned int CurrentPosition = 0;
 
     while (!ParseToken(HTNTokenType::END_OF_FILE, CurrentPosition))
     {
-        if (!ParseFact(ioWorldState, CurrentPosition))
+        if (!ParseFact(outWorldState, CurrentPosition))
         {
-#if HTN_DEBUG
-            LogLastError();
-#endif
+            LOG_HTN_ERROR(mLastErrorRow, mLastErrorColumn, "{}", mLastErrorMessage);
             return false;
         }
     }
@@ -22,7 +28,7 @@ bool HTNWorldStateParser::Parse(HTNWorldState& ioWorldState)
     return true;
 }
 
-bool HTNWorldStateParser::ParseFact(HTNWorldState& ioWorldState, unsigned int& ioPosition)
+bool HTNWorldStateParser::ParseFact(HTNWorldState& outWorldState, unsigned int& ioPosition)
 {
     unsigned int CurrentPosition = ioPosition;
 
@@ -38,7 +44,7 @@ bool HTNWorldStateParser::ParseFact(HTNWorldState& ioWorldState, unsigned int& i
         Arguments.emplace_back(*Argument);
     }
 
-    ioWorldState.AddFact(Identifier->GetValue<std::string>().c_str(), Arguments);
+    outWorldState.AddFact(Identifier->GetValue<std::string>().c_str(), Arguments);
 
     ioPosition = CurrentPosition;
 

@@ -376,7 +376,7 @@ void HTNDebuggerWindow::RenderParsing()
 void HTNDebuggerWindow::RenderDatabase()
 {
     static const std::string     WorldStatesDirectoryName = "WorldStates";
-    static const std::string     WorldStateFileExtension  = ".csv";
+    static const std::string     WorldStateFileExtension  = ".worldstate";
     static std::filesystem::path SelectedWorldStateFilePath;
     RenderFileSelector(WorldStatesDirectoryName, WorldStateFileExtension, SelectedWorldStateFilePath);
 

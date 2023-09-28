@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HTNParserBase.h"
+#include "Parser/HTNParserBase.h"
 
 #include <memory>
 #include <vector>
@@ -20,27 +20,27 @@ class HTNValueNodeBase;
 // Recursive descent parser
 // Builds an abstract syntax tree from a series of tokens
 // Reports the first syntax error of the tokens
-class HTNDomainParser final : public HTNParserBase
+class HTNDomainParser final : public HTNParserBase<std::shared_ptr<const HTNDomainNode>>
 {
 public:
     explicit HTNDomainParser(const std::vector<HTNToken>& inDomainTokens);
 
-    std::shared_ptr<const HTNDomainNode> Parse();
+    bool Parse(std::shared_ptr<const HTNDomainNode>& outDomainNode) final;
 
 private:
-    std::shared_ptr<HTNDomainNode>        ParseDomainNode(unsigned int& inPosition);
-    std::shared_ptr<HTNConstantsNode>     ParseConstantsNode(unsigned int& inPosition);
-    std::shared_ptr<HTNConstantNode>      ParseConstantNode(unsigned int& inPosition);
-    std::shared_ptr<HTNAxiomNode>         ParseAxiomNode(unsigned int& inPosition);
-    std::shared_ptr<HTNMethodNode>        ParseMethodNode(unsigned int& inPosition);
-    std::shared_ptr<HTNBranchNode>        ParseBranchNode(unsigned int& inPosition);
-    std::shared_ptr<HTNConditionNodeBase> ParseConditionNode(unsigned int& inPosition);
-    std::shared_ptr<HTNConditionNodeBase> ParseSubConditionNode(unsigned int& inPosition);
+    bool ParseDomainNode(std::shared_ptr<const HTNDomainNode>& outDomainNode, unsigned int& ioPosition);
+    bool ParseConstantsNode(std::shared_ptr<const HTNConstantsNode>& outConstantsNode, unsigned int& ioPosition);
+    bool ParseConstantNode(std::shared_ptr<const HTNConstantNode>& outConstantNode, unsigned int& ioPosition);
+    bool ParseAxiomNode(std::shared_ptr<const HTNAxiomNode>& outAxiomNode, unsigned int& ioPosition);
+    bool ParseMethodNode(std::shared_ptr<const HTNMethodNode>& outMethodNode, unsigned int& ioPosition);
+    bool ParseBranchNode(std::shared_ptr<const HTNBranchNode>& outBranchNode, unsigned int& ioPosition);
+    bool ParseConditionNode(std::shared_ptr<const HTNConditionNodeBase>& outConditionNode, unsigned int& ioPosition);
+    bool ParseSubConditionNode(std::shared_ptr<const HTNConditionNodeBase>& outSubConditionNode, unsigned int& ioPosition);
     // HTNPrimitiveTaskNode or HTNCompoundTaskNode
-    std::shared_ptr<HTNTaskNodeBase>      ParseTaskNode(unsigned int& inPosition);
-    std::shared_ptr<HTNValueNode>         ParseIdentifierNode(unsigned int& inPosition);
+    bool ParseTaskNode(std::shared_ptr<const HTNTaskNodeBase>& outTaskNode, unsigned int& ioPosition);
+    bool ParseIdentifierNode(std::shared_ptr<const HTNValueNode>& outIdentifierNode, unsigned int& ioPosition);
     // HTNValueNode, HTNVariableValueNode, or HTNConstantValueNode
-    std::shared_ptr<HTNValueNodeBase>     ParseArgumentNode(unsigned int& inPosition);
+    bool ParseArgumentNode(std::shared_ptr<const HTNValueNodeBase>& outArgumentNode, unsigned int& ioPosition);
 };
 
 inline HTNDomainParser::HTNDomainParser(const std::vector<HTNToken>& inDomainTokens) : HTNParserBase(inDomainTokens)

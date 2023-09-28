@@ -9,6 +9,7 @@
 #include "Domain/AST/HTNMethodNode.h"
 #include "Domain/AST/HTNTaskNode.h"
 #include "Domain/AST/HTNValueNode.h"
+#include "HTNLog.h"
 #include "HTNToken.h"
 
 /*
@@ -26,324 +27,345 @@ Backus Naur Form (BNF):
 <argument> ::= ('?' <identifier>) | ('@' <identifier>) | 'number' | 'string'
 */
 
-std::shared_ptr<const HTNDomainNode> HTNDomainParser::Parse()
+bool HTNDomainParser::Parse(std::shared_ptr<const HTNDomainNode>& outDomainNode)
 {
-    unsigned int                               CurrentPosition = 0;
-    const std::shared_ptr<const HTNDomainNode> DomainNode      = ParseDomainNode(CurrentPosition);
-    if (!DomainNode)
+    std::shared_ptr<const HTNDomainNode> DomainNode;
+    unsigned int                         CurrentPosition = 0;
+    if (!ParseDomainNode(DomainNode, CurrentPosition))
     {
-#if HTN_DEBUG
-        LogLastError();
-#endif
-        return nullptr;
+        LOG_HTN_ERROR(mLastErrorRow, mLastErrorColumn, "{}", mLastErrorMessage);
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::END_OF_FILE, CurrentPosition))
     {
-#if HTN_DEBUG
-        LogLastError();
-#endif
-        return nullptr;
+        LOG_HTN_ERROR(mLastErrorRow, mLastErrorColumn, "{}", mLastErrorMessage);
+        return false;
     }
 
-    return DomainNode;
+    outDomainNode = DomainNode;
+
+    return true;
 }
 
-std::shared_ptr<HTNDomainNode> HTNDomainParser::ParseDomainNode(unsigned int& inPosition)
+bool HTNDomainParser::ParseDomainNode(std::shared_ptr<const HTNDomainNode>& outDomainNode, unsigned int& ioPosition)
 {
-    unsigned int CurrentPosition = inPosition;
+    unsigned int CurrentPosition = ioPosition;
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::COLON, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::HTN_DOMAIN, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    const std::shared_ptr<const HTNValueNode> IDNode = ParseIdentifierNode(CurrentPosition);
-    if (!IDNode)
+    std::shared_ptr<const HTNValueNode> IDNode;
+    if (!ParseIdentifierNode(IDNode, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     const bool IsTopLevelDomain = ParseToken(HTNTokenType::HTN_TOP_LEVEL_DOMAIN, CurrentPosition);
 
     std::vector<std::shared_ptr<const HTNConstantsNode>> ConstantNodes;
-    while (const std::shared_ptr<const HTNConstantsNode> ConstantNodesContainer = ParseConstantsNode(CurrentPosition))
+    std::shared_ptr<const HTNConstantsNode>              ConstantNodesContainer;
+    while (ParseConstantsNode(ConstantNodesContainer, CurrentPosition))
     {
         ConstantNodes.emplace_back(ConstantNodesContainer);
     }
 
     std::vector<std::shared_ptr<const HTNAxiomNode>> AxiomNodes;
-    while (const std::shared_ptr<const HTNAxiomNode> AxiomNode = ParseAxiomNode(CurrentPosition))
+    std::shared_ptr<const HTNAxiomNode>              AxiomNode;
+    while (ParseAxiomNode(AxiomNode, CurrentPosition))
     {
         AxiomNodes.emplace_back(AxiomNode);
     }
 
     std::vector<std::shared_ptr<const HTNMethodNode>> MethodNodes;
-    while (const std::shared_ptr<const HTNMethodNode> MethodNode = ParseMethodNode(CurrentPosition))
+    std::shared_ptr<const HTNMethodNode>              MethodNode;
+    while (ParseMethodNode(MethodNode, CurrentPosition))
     {
         MethodNodes.emplace_back(MethodNode);
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    inPosition = CurrentPosition;
+    outDomainNode = std::make_shared<HTNDomainNode>(IDNode, ConstantNodes, AxiomNodes, MethodNodes, IsTopLevelDomain);
+    ioPosition    = CurrentPosition;
 
-    return std::make_shared<HTNDomainNode>(IDNode, ConstantNodes, AxiomNodes, MethodNodes, IsTopLevelDomain);
+    return true;
 }
 
-std::shared_ptr<HTNConstantsNode> HTNDomainParser::ParseConstantsNode(unsigned int& inPosition)
+bool HTNDomainParser::ParseConstantsNode(std::shared_ptr<const HTNConstantsNode>& outConstantsNode, unsigned int& ioPosition)
 {
-    unsigned int CurrentPosition = inPosition;
+    unsigned int CurrentPosition = ioPosition;
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::COLON, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::HTN_CONSTANTS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    const std::shared_ptr<const HTNValueNode> IDNode = ParseIdentifierNode(CurrentPosition);
+    std::shared_ptr<const HTNValueNode> IDNode;
+    ParseIdentifierNode(IDNode, CurrentPosition);
 
     std::vector<std::shared_ptr<const HTNConstantNode>> ConstantNodes;
-    while (const std::shared_ptr<const HTNConstantNode> ConstantNode = ParseConstantNode(CurrentPosition))
+    std::shared_ptr<const HTNConstantNode>              ConstantNode;
+    while (ParseConstantNode(ConstantNode, CurrentPosition))
     {
         ConstantNodes.emplace_back(ConstantNode);
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    inPosition = CurrentPosition;
+    outConstantsNode = std::make_shared<HTNConstantsNode>(IDNode, ConstantNodes);
+    ioPosition       = CurrentPosition;
 
-    return std::make_shared<HTNConstantsNode>(IDNode, ConstantNodes);
+    return true;
 }
 
-std::shared_ptr<HTNConstantNode> HTNDomainParser::ParseConstantNode(unsigned int& inPosition)
+bool HTNDomainParser::ParseConstantNode(std::shared_ptr<const HTNConstantNode>& outConstantNode, unsigned int& ioPosition)
 {
-    unsigned int CurrentPosition = inPosition;
+    unsigned int CurrentPosition = ioPosition;
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    const std::shared_ptr<const HTNValueNode> IDNode = ParseIdentifierNode(CurrentPosition);
-    if (!IDNode)
+    std::shared_ptr<const HTNValueNode> IDNode;
+    if (!ParseIdentifierNode(IDNode, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    const std::shared_ptr<const HTNValueNodeBase> ArgumentNode = ParseArgumentNode(CurrentPosition);
-    if (!ArgumentNode)
+    std::shared_ptr<const HTNValueNodeBase> ArgumentNode;
+    if (!ParseArgumentNode(ArgumentNode, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    inPosition = CurrentPosition;
+    outConstantNode = std::make_shared<HTNConstantNode>(IDNode, ArgumentNode);
+    ioPosition      = CurrentPosition;
 
-    return std::make_shared<HTNConstantNode>(IDNode, ArgumentNode);
+    return true;
 }
 
-std::shared_ptr<HTNAxiomNode> HTNDomainParser::ParseAxiomNode(unsigned int& inPosition)
+bool HTNDomainParser::ParseAxiomNode(std::shared_ptr<const HTNAxiomNode>& outAxiomNode, unsigned int& ioPosition)
 {
-    unsigned int CurrentPosition = inPosition;
+    unsigned int CurrentPosition = ioPosition;
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::COLON, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::HTN_AXIOM, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    const std::shared_ptr<const HTNValueNode> IDNode = ParseIdentifierNode(CurrentPosition);
-    if (!IDNode)
+    std::shared_ptr<const HTNValueNode> IDNode;
+    if (!ParseIdentifierNode(IDNode, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     std::vector<std::shared_ptr<const HTNValueNodeBase>> ArgumentNodes;
-    while (const std::shared_ptr<const HTNValueNodeBase> ArgumentNode = ParseArgumentNode(CurrentPosition))
+    std::shared_ptr<const HTNValueNodeBase>              ArgumentNode;
+    while (ParseArgumentNode(ArgumentNode, CurrentPosition))
     {
         ArgumentNodes.emplace_back(ArgumentNode);
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    const std::shared_ptr<const HTNConditionNodeBase> ConditionNode = ParseConditionNode(CurrentPosition);
+    std::shared_ptr<const HTNConditionNodeBase> ConditionNode;
+    ParseConditionNode(ConditionNode, CurrentPosition);
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    inPosition = CurrentPosition;
+    outAxiomNode = std::make_shared<HTNAxiomNode>(IDNode, ArgumentNodes, ConditionNode);
+    ioPosition   = CurrentPosition;
 
-    return std::make_shared<HTNAxiomNode>(IDNode, ArgumentNodes, ConditionNode);
+    return true;
 }
 
-std::shared_ptr<HTNMethodNode> HTNDomainParser::ParseMethodNode(unsigned int& inPosition)
+bool HTNDomainParser::ParseMethodNode(std::shared_ptr<const HTNMethodNode>& outMethodNode, unsigned int& ioPosition)
 {
-    unsigned int CurrentPosition = inPosition;
+    unsigned int CurrentPosition = ioPosition;
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::COLON, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::HTN_METHOD, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    const std::shared_ptr<const HTNValueNode> IDNode = ParseIdentifierNode(CurrentPosition);
-    if (!IDNode)
+    std::shared_ptr<const HTNValueNode> IDNode;
+    if (!ParseIdentifierNode(IDNode, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     std::vector<std::shared_ptr<const HTNValueNodeBase>> ArgumentNodes;
-    while (const std::shared_ptr<const HTNValueNodeBase> ArgumentNode = ParseArgumentNode(CurrentPosition))
+    std::shared_ptr<const HTNValueNodeBase>              ArgumentNode;
+    while (ParseArgumentNode(ArgumentNode, CurrentPosition))
     {
         ArgumentNodes.emplace_back(ArgumentNode);
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     const bool IsTopLevelMethod = ParseToken(HTNTokenType::HTN_TOP_LEVEL_METHOD, CurrentPosition);
 
     std::vector<std::shared_ptr<const HTNBranchNode>> BranchNodes;
-    while (const std::shared_ptr<const HTNBranchNode> BranchNode = ParseBranchNode(CurrentPosition))
+    std::shared_ptr<const HTNBranchNode>              BranchNode;
+    while (ParseBranchNode(BranchNode, CurrentPosition))
     {
         BranchNodes.emplace_back(BranchNode);
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    inPosition = CurrentPosition;
+    outMethodNode = std::make_shared<HTNMethodNode>(IDNode, ArgumentNodes, BranchNodes, IsTopLevelMethod);
+    ioPosition    = CurrentPosition;
 
-    return std::make_shared<HTNMethodNode>(IDNode, ArgumentNodes, BranchNodes, IsTopLevelMethod);
+    return true;
 }
 
-std::shared_ptr<HTNBranchNode> HTNDomainParser::ParseBranchNode(unsigned int& inPosition)
+bool HTNDomainParser::ParseBranchNode(std::shared_ptr<const HTNBranchNode>& outBranchNode, unsigned int& ioPosition)
 {
-    unsigned int CurrentPosition = inPosition;
+    unsigned int CurrentPosition = ioPosition;
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    const std::shared_ptr<const HTNValueNode> IDNode = ParseIdentifierNode(CurrentPosition);
-    if (!IDNode)
+    std::shared_ptr<const HTNValueNode> IDNode;
+    if (!ParseIdentifierNode(IDNode, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    const std::shared_ptr<const HTNConditionNodeBase> PreConditionNode = ParseConditionNode(CurrentPosition);
+    std::shared_ptr<const HTNConditionNodeBase> PreConditionNode;
+    ParseConditionNode(PreConditionNode, CurrentPosition);
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     std::vector<std::shared_ptr<const HTNTaskNodeBase>> TaskNodes;
-    while (const std::shared_ptr<const HTNTaskNodeBase> TaskNode = ParseTaskNode(CurrentPosition))
+    std::shared_ptr<const HTNTaskNodeBase>              TaskNode;
+    while (ParseTaskNode(TaskNode, CurrentPosition))
     {
         TaskNodes.emplace_back(TaskNode);
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    inPosition = CurrentPosition;
+    outBranchNode = std::make_shared<HTNBranchNode>(IDNode, PreConditionNode, TaskNodes);
+    ioPosition    = CurrentPosition;
 
-    return std::make_shared<HTNBranchNode>(IDNode, PreConditionNode, TaskNodes);
+    return true;
 }
 
-std::shared_ptr<HTNConditionNodeBase> HTNDomainParser::ParseConditionNode(unsigned int& inPosition)
+bool HTNDomainParser::ParseConditionNode(std::shared_ptr<const HTNConditionNodeBase>& outConditionNode, unsigned int& ioPosition)
 {
-    unsigned int CurrentPosition = inPosition;
+    unsigned int CurrentPosition = ioPosition;
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    std::shared_ptr<HTNConditionNodeBase> ConditionNode;
+    std::shared_ptr<const HTNConditionNodeBase> ConditionNode;
 
     if (ParseToken(HTNTokenType::AND, CurrentPosition))
     {
         std::vector<std::shared_ptr<const HTNConditionNodeBase>> SubConditionNodes;
-        while (const std::shared_ptr<const HTNConditionNodeBase> SubConditionNode = ParseSubConditionNode(CurrentPosition))
+        std::shared_ptr<const HTNConditionNodeBase>              SubConditionNode;
+        while (ParseSubConditionNode(SubConditionNode, CurrentPosition))
         {
             SubConditionNodes.emplace_back(SubConditionNode);
+        }
+
+        if (SubConditionNodes.empty())
+        {
+            return false;
         }
 
         ConditionNode = std::make_shared<HTNAndConditionNode>(SubConditionNodes);
@@ -351,9 +373,15 @@ std::shared_ptr<HTNConditionNodeBase> HTNDomainParser::ParseConditionNode(unsign
     else if (ParseToken(HTNTokenType::OR, CurrentPosition))
     {
         std::vector<std::shared_ptr<const HTNConditionNodeBase>> SubConditionNodes;
-        while (const std::shared_ptr<const HTNConditionNodeBase> SubConditionNode = ParseSubConditionNode(CurrentPosition))
+        std::shared_ptr<const HTNConditionNodeBase>              SubConditionNode;
+        while (ParseSubConditionNode(SubConditionNode, CurrentPosition))
         {
             SubConditionNodes.emplace_back(SubConditionNode);
+        }
+
+        if (SubConditionNodes.empty())
+        {
+            return false;
         }
 
         ConditionNode = std::make_shared<HTNOrConditionNode>(SubConditionNodes);
@@ -361,9 +389,15 @@ std::shared_ptr<HTNConditionNodeBase> HTNDomainParser::ParseConditionNode(unsign
     else if (ParseToken(HTNTokenType::ALT, CurrentPosition))
     {
         std::vector<std::shared_ptr<const HTNConditionNodeBase>> SubConditionNodes;
-        while (const std::shared_ptr<const HTNConditionNodeBase> SubConditionNode = ParseSubConditionNode(CurrentPosition))
+        std::shared_ptr<const HTNConditionNodeBase>              SubConditionNode;
+        while (ParseSubConditionNode(SubConditionNode, CurrentPosition))
         {
             SubConditionNodes.emplace_back(SubConditionNode);
+        }
+
+        if (SubConditionNodes.empty())
+        {
+            return false;
         }
 
         ConditionNode = std::make_shared<HTNAltConditionNode>(SubConditionNodes);
@@ -371,43 +405,50 @@ std::shared_ptr<HTNConditionNodeBase> HTNDomainParser::ParseConditionNode(unsign
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
-    inPosition = CurrentPosition;
+    outConditionNode = ConditionNode;
+    ioPosition       = CurrentPosition;
 
-    return ConditionNode;
+    return true;
 }
 
-std::shared_ptr<HTNConditionNodeBase> HTNDomainParser::ParseSubConditionNode(unsigned int& inPosition)
+bool HTNDomainParser::ParseSubConditionNode(std::shared_ptr<const HTNConditionNodeBase>& outConditionNode, unsigned int& ioPosition)
 {
-    unsigned int CurrentPosition = inPosition;
+    unsigned int CurrentPosition = ioPosition;
 
-    std::shared_ptr<HTNConditionNodeBase> ConditionNode = ParseConditionNode(CurrentPosition);
-    if (!ConditionNode)
+    std::shared_ptr<const HTNConditionNodeBase> ConditionNode;
+    if (!ParseConditionNode(ConditionNode, CurrentPosition))
     {
         if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
         {
-            return nullptr;
+            return false;
         }
 
         if (ParseToken(HTNTokenType::NOT, CurrentPosition))
         {
-            const std::shared_ptr<const HTNConditionNodeBase> SubConditionNode = ParseSubConditionNode(CurrentPosition);
-            ConditionNode                                                      = std::make_shared<HTNNotConditionNode>(SubConditionNode);
+            std::shared_ptr<const HTNConditionNodeBase> SubConditionNode;
+            if (!ParseSubConditionNode(SubConditionNode, CurrentPosition))
+            {
+                return false;
+            }
+
+            ConditionNode = std::make_shared<HTNNotConditionNode>(SubConditionNode);
         }
         else
         {
             const bool IsAxiomConditionNode = ParseToken(HTNTokenType::HASH, CurrentPosition);
 
-            const std::shared_ptr<const HTNValueNode> IDNode = ParseIdentifierNode(CurrentPosition);
-            if (!IDNode)
+            std::shared_ptr<const HTNValueNode> IDNode;
+            if (!ParseIdentifierNode(IDNode, CurrentPosition))
             {
-                return nullptr;
+                return false;
             }
 
             std::vector<std::shared_ptr<const HTNValueNodeBase>> ArgumentNodes;
-            while (const std::shared_ptr<const HTNValueNodeBase> ArgumentNode = ParseArgumentNode(CurrentPosition))
+            std::shared_ptr<const HTNValueNodeBase>              ArgumentNode;
+            while (ParseArgumentNode(ArgumentNode, CurrentPosition))
             {
                 ArgumentNodes.emplace_back(ArgumentNode);
             }
@@ -424,98 +465,119 @@ std::shared_ptr<HTNConditionNodeBase> HTNDomainParser::ParseSubConditionNode(uns
 
         if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
         {
-            return nullptr;
+            return false;
         }
     }
 
-    inPosition = CurrentPosition;
+    outConditionNode = ConditionNode;
+    ioPosition       = CurrentPosition;
 
-    return ConditionNode;
+    return true;
 }
 
-std::shared_ptr<HTNTaskNodeBase> HTNDomainParser::ParseTaskNode(unsigned int& inPosition)
+bool HTNDomainParser::ParseTaskNode(std::shared_ptr<const HTNTaskNodeBase>& outTaskNode, unsigned int& ioPosition)
 {
-    unsigned int CurrentPosition = inPosition;
+    unsigned int CurrentPosition = ioPosition;
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     const bool IsPrimitiveTaskNode = ParseToken(HTNTokenType::EXCLAMATION_MARK, CurrentPosition);
 
-    const std::shared_ptr<const HTNValueNode> IDNode = ParseIdentifierNode(CurrentPosition);
-    if (!IDNode)
+    std::shared_ptr<const HTNValueNode> IDNode;
+    if (!ParseIdentifierNode(IDNode, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
 
     std::vector<std::shared_ptr<const HTNValueNodeBase>> ArgumentNodes;
-    while (const std::shared_ptr<const HTNValueNodeBase> ArgumentNode = ParseArgumentNode(CurrentPosition))
+    std::shared_ptr<const HTNValueNodeBase>              ArgumentNode;
+    while (ParseArgumentNode(ArgumentNode, CurrentPosition))
     {
         ArgumentNodes.emplace_back(ArgumentNode);
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
     {
-        return nullptr;
+        return false;
     }
-
-    inPosition = CurrentPosition;
 
     if (IsPrimitiveTaskNode)
     {
-        return std::make_shared<HTNPrimitiveTaskNode>(IDNode, ArgumentNodes);
+        outTaskNode = std::make_shared<HTNPrimitiveTaskNode>(IDNode, ArgumentNodes);
+    }
+    else
+    {
+        outTaskNode = std::make_shared<HTNCompoundTaskNode>(IDNode, ArgumentNodes);
     }
 
-    return std::make_shared<HTNCompoundTaskNode>(IDNode, ArgumentNodes);
+    ioPosition = CurrentPosition;
+
+    return true;
 }
 
-std::shared_ptr<HTNValueNode> HTNDomainParser::ParseIdentifierNode(unsigned int& inPosition)
+bool HTNDomainParser::ParseIdentifierNode(std::shared_ptr<const HTNValueNode>& outIdentifierNode, unsigned int& ioPosition)
 {
-    unsigned int CurrentPosition = inPosition;
+    unsigned int CurrentPosition = ioPosition;
 
     const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
     if (!IdentifierToken)
     {
-        return nullptr;
+        return false;
     }
 
-    inPosition = CurrentPosition;
+    outIdentifierNode = std::make_shared<HTNValueNode>(IdentifierToken->GetValue());
+    ioPosition        = CurrentPosition;
 
-    return std::make_shared<HTNValueNode>(IdentifierToken->GetValue());
+    return true;
 }
 
-std::shared_ptr<HTNValueNodeBase> HTNDomainParser::ParseArgumentNode(unsigned int& inPosition)
+bool HTNDomainParser::ParseArgumentNode(std::shared_ptr<const HTNValueNodeBase>& outArgumentNode, unsigned int& ioPosition)
 {
-    unsigned int CurrentPosition = inPosition;
+    unsigned int CurrentPosition = ioPosition;
 
-    std::shared_ptr<HTNValueNodeBase> ArgumentNode;
+    std::shared_ptr<const HTNValueNodeBase> ArgumentNode;
 
     if (ParseToken(HTNTokenType::QUESTION_MARK, CurrentPosition))
     {
-        if (const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition))
+        const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
+        if (!IdentifierToken)
         {
-            ArgumentNode = std::make_shared<HTNVariableValueNode>(IdentifierToken->GetValue());
+            return false;
         }
+
+        ArgumentNode = std::make_shared<HTNVariableValueNode>(IdentifierToken->GetValue());
     }
     else if (ParseToken(HTNTokenType::AT, CurrentPosition))
     {
-        if (const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition))
+        const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
+        if (!IdentifierToken)
         {
-            ArgumentNode = std::make_shared<HTNConstantValueNode>(IdentifierToken->GetValue());
+            return false;
+        }
+
+        ArgumentNode = std::make_shared<HTNConstantValueNode>(IdentifierToken->GetValue());
+    }
+    else
+    {
+        if (const HTNToken* NumberToken = ParseToken(HTNTokenType::NUMBER, CurrentPosition))
+        {
+            ArgumentNode = std::make_shared<HTNValueNode>(NumberToken->GetValue());
+        }
+        else if (const HTNToken* StringToken = ParseToken(HTNTokenType::STRING, CurrentPosition))
+        {
+            ArgumentNode = std::make_shared<HTNValueNode>(StringToken->GetValue());
+        }
+        else
+        {
+            return false;
         }
     }
-    else if (const HTNToken* NumberToken = ParseToken(HTNTokenType::NUMBER, CurrentPosition))
-    {
-        ArgumentNode = std::make_shared<HTNValueNode>(NumberToken->GetValue());
-    }
-    else if (const HTNToken* StringToken = ParseToken(HTNTokenType::STRING, CurrentPosition))
-    {
-        ArgumentNode = std::make_shared<HTNValueNode>(StringToken->GetValue());
-    }
 
-    inPosition = CurrentPosition;
+    outArgumentNode = ArgumentNode;
+    ioPosition      = CurrentPosition;
 
-    return ArgumentNode;
+    return true;
 }

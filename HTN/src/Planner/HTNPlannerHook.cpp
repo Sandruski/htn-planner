@@ -28,8 +28,8 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
     }
 
     HTNDomainParser                            DomainParser = HTNDomainParser(Tokens);
-    const std::shared_ptr<const HTNDomainNode> DomainNode   = DomainParser.Parse();
-    if (!DomainNode)
+    std::shared_ptr<const HTNDomainNode> DomainNode;
+    if (!DomainParser.Parse(DomainNode))
     {
         LOG_ERROR("Domain [{}] could not be parsed", inDomainFilePath);
         return false;
