@@ -13,6 +13,24 @@ bool HTNWorldStateLexer::Lex(std::vector<HTNToken>& outTokens)
     {
         switch (Character)
         {
+        case '{': {
+            // Left brace
+            AddToken(HTNTokenType::LEFT_BRACE, std::string(1, Character), HTNAtom(), outTokens);
+            AdvancePosition();
+            break;
+        }
+        case '}': {
+            // Right brace
+            AddToken(HTNTokenType::RIGHT_BRACE, std::string(1, Character), HTNAtom(), outTokens);
+            AdvancePosition();
+            break;
+        }
+        case ',': {
+            // Comma
+            AddToken(HTNTokenType::COMMA, std::string(1, Character), HTNAtom(), outTokens);
+            AdvancePosition();
+            break;
+        }
         case '"': {
             // String
             Result = LexString(outTokens) && Result;
@@ -39,7 +57,9 @@ bool HTNWorldStateLexer::Lex(std::vector<HTNToken>& outTokens)
             else if (HTNLexer::Helpers::IsLetter(Character))
             {
                 // Identifier
-                LexIdentifier(outTokens, {});
+                static const std::unordered_map<std::string, HTNTokenType> Keywords = {
+                    {"true", HTNTokenType::TRUE}, {"false", HTNTokenType::FALSE}};
+                LexIdentifier(outTokens, Keywords);
                 break;
             }
 

@@ -24,7 +24,18 @@ void HTNLexerBase::LexIdentifier(std::vector<HTNToken>& outTokens, const std::un
     const std::string  Lexeme      = mText.substr(StartPosition, EndPosition);
     const auto         It          = inKeywords.find(Lexeme);
     const HTNTokenType TokenType   = It != inKeywords.end() ? It->second : HTNTokenType::IDENTIFIER;
-    AddToken(TokenType, Lexeme, HTNAtom(Lexeme), outTokens);
+    if (TokenType == HTNTokenType::TRUE)
+    {
+        AddToken(TokenType, Lexeme, HTNAtom(true), outTokens);
+    }
+    else if (TokenType == HTNTokenType::FALSE)
+    {
+        AddToken(TokenType, Lexeme, HTNAtom(false), outTokens);
+    }
+    else
+    {
+        AddToken(TokenType, Lexeme, HTNAtom(Lexeme), outTokens);
+    }
 }
 
 void HTNLexerBase::LexNumber(std::vector<HTNToken>& outTokens)

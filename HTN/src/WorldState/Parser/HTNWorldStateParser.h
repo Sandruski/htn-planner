@@ -17,8 +17,8 @@ public:
 private:
     bool ParseFact(HTNWorldState& outWorldState, unsigned int& ioPosition);
 
-    const HTNAtom* ParseIdentifier(unsigned int& inPosition);
-    const HTNAtom* ParseArgument(unsigned int& inPosition);
+    bool ParseIdentifier(HTNAtom& outIdentifier, unsigned int& inPosition);
+    bool ParseArgument(HTNAtom& outArgument, unsigned int& inPosition);
 };
 
 inline HTNWorldStateParser::HTNWorldStateParser(const std::vector<HTNToken>& inWorldStateTokens) : HTNParserBase(inWorldStateTokens)

@@ -24,7 +24,7 @@ Backus Naur Form (BNF):
 <sub-condition> ::= <condition> | ('(' ('not' <sub-condition>)* ')') | ('(' ('#'? <identifier> <argument>*)* ')')
 <task> ::= '(' '!'? <identifier> <argument>* ')'
 <identifier> ::= 'identifier'
-<argument> ::= ('?' <identifier>) | ('@' <identifier>) | 'number' | 'string'
+<argument> ::= ('?' <identifier>) | ('@' <identifier>) | 'true' | 'false' | 'number' | 'string'
 */
 
 bool HTNDomainParser::Parse(std::shared_ptr<const HTNDomainNode>& outDomainNode)
@@ -562,7 +562,15 @@ bool HTNDomainParser::ParseArgumentNode(std::shared_ptr<const HTNValueNodeBase>&
     }
     else
     {
-        if (const HTNToken* NumberToken = ParseToken(HTNTokenType::NUMBER, CurrentPosition))
+        if (const HTNToken* TrueToken = ParseToken(HTNTokenType::TRUE, CurrentPosition))
+        {
+            ArgumentNode = std::make_shared<HTNValueNode>(TrueToken->GetValue());
+        }
+        else if (const HTNToken* FalseToken = ParseToken(HTNTokenType::FALSE, CurrentPosition))
+        {
+            ArgumentNode = std::make_shared<HTNValueNode>(FalseToken->GetValue());
+        }
+        else if (const HTNToken* NumberToken = ParseToken(HTNTokenType::NUMBER, CurrentPosition))
         {
             ArgumentNode = std::make_shared<HTNValueNode>(NumberToken->GetValue());
         }

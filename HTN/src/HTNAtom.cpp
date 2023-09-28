@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <ios>
 #include <sstream>
+#include <format>
 
 HTNAtomList::HTNAtomList(const std::initializer_list<HTNAtom>& inElements)
 {
@@ -87,19 +88,20 @@ const HTNAtom* HTNAtomList::Find(const unsigned int inIndex) const
 
 std::string HTNAtomList::ToString() const
 {
-    std::string String;
+    std::string String = "{";
 
     for (const HTNAtomNode* Current = mHead; Current; Current = Current->GetNext())
     {
-        String += Current->GetData().ToString();
-        String += "->";
+        String.append(std::format("{},", Current->GetData().ToString()));
     }
 
-    // Erase last "->"
-    if (!String.empty())
+    const size_t Index = String.find_last_of(",");
+    if (Index != std::string::npos)
     {
-        String.erase(String.size() - 2);
+        String.erase(Index);
     }
+
+    String.append("}");
 
     return String;
 }
@@ -159,7 +161,11 @@ std::string HTNAtom::ToString() const
         return "";
     }
 
-    if (IsType<int>())
+    if (IsType<bool>())
+    {
+        return std::format("{}", GetValue<bool>());
+    }
+    else if (IsType<int>())
     {
         return std::to_string(GetValue<int>());
     }
@@ -167,7 +173,7 @@ std::string HTNAtom::ToString() const
     {
         std::ostringstream Buffer;
         Buffer << std::fixed;
-        Buffer << std::setprecision(2);
+        Buffer << std::setprecision(1);
         Buffer << GetValue<float>();
         return Buffer.str();
     }

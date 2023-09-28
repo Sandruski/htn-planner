@@ -38,7 +38,7 @@ public:
     HTNAtom(const bool inValue);
     HTNAtom(const int inValue);
     HTNAtom(const float inValue);
-    HTNAtom(const char* inValue);
+    HTNAtom(const char* inValue); // TODO salvarez Remove this
     HTNAtom(const std::string& inValue);
     HTNAtom(const HTNAtomList& inValue);
 

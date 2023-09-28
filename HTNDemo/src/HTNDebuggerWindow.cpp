@@ -21,6 +21,7 @@
 #include <execution>
 #include <filesystem>
 #include <string>
+#include <format>
 #include <vector>
 
 namespace
@@ -433,7 +434,14 @@ void HTNDebuggerWindow::RenderWorldState()
                 for (const HTNAtom& Argument : Entry)
                 {
                     ImGui::SameLine();
-                    ImGui::Text(Argument.ToString().c_str());
+
+                    std::string ArgumentString = Argument.ToString();
+                    if (Argument.IsType<std::string>())
+                    {
+                        ArgumentString = std::format("\"{}\"", ArgumentString);
+                    }
+
+                    ImGui::Text(ArgumentString.c_str());
                 }
             }
         }

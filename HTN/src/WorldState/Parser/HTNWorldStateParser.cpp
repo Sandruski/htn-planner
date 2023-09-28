@@ -9,7 +9,7 @@
 Backus Naur Form (BNF):
 <fact> ::= <identifier> <argument>*
 <identifier> ::= 'identifier'
-<argument> ::= 'number' | 'string'
+<argument> ::= 'true' | 'false' | 'number' | 'string'
 */
 
 bool HTNWorldStateParser::Parse(HTNWorldState& outWorldState)
@@ -32,47 +32,57 @@ bool HTNWorldStateParser::ParseFact(HTNWorldState& outWorldState, unsigned int& 
 {
     unsigned int CurrentPosition = ioPosition;
 
-    const HTNAtom* Identifier = ParseIdentifier(CurrentPosition);
-    if (!Identifier)
+    HTNAtom Identifier;
+    if (!ParseIdentifier(Identifier, CurrentPosition))
     {
         return false;
     }
 
     std::vector<HTNAtom> Arguments;
-    while (const HTNAtom* Argument = ParseArgument(CurrentPosition))
+    HTNAtom              Argument;
+    while (ParseArgument(Argument, CurrentPosition))
     {
-        Arguments.emplace_back(*Argument);
+        Arguments.emplace_back(Argument);
     }
 
-    outWorldState.AddFact(Identifier->GetValue<std::string>().c_str(), Arguments);
+    outWorldState.AddFact(Identifier.GetValue<std::string>().c_str(), Arguments);
 
     ioPosition = CurrentPosition;
 
     return true;
 }
 
-const HTNAtom* HTNWorldStateParser::ParseIdentifier(unsigned int& inPosition)
+bool HTNWorldStateParser::ParseIdentifier(HTNAtom& outIdentifier, unsigned int& inPosition)
 {
     unsigned int CurrentPosition = inPosition;
 
     const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
     if (!IdentifierToken)
     {
-        return nullptr;
+        return false;
     }
 
-    inPosition = CurrentPosition;
+    outIdentifier = IdentifierToken->GetValue();
+    inPosition    = CurrentPosition;
 
-    return &IdentifierToken->GetValue();
+    return true;
 }
 
-const HTNAtom* HTNWorldStateParser::ParseArgument(unsigned int& inPosition)
+bool HTNWorldStateParser::ParseArgument(HTNAtom& outArgument, unsigned int& inPosition)
 {
     unsigned int CurrentPosition = inPosition;
 
     const HTNAtom* Argument = nullptr;
 
-    if (const HTNToken* NumberToken = ParseToken(HTNTokenType::NUMBER, CurrentPosition))
+    if (const HTNToken* TrueToken = ParseToken(HTNTokenType::TRUE, CurrentPosition))
+    {
+        Argument = &TrueToken->GetValue();
+    }
+    else if (const HTNToken* FalseToken = ParseToken(HTNTokenType::FALSE, CurrentPosition))
+    {
+        Argument = &FalseToken->GetValue();
+    }
+    else if (const HTNToken* NumberToken = ParseToken(HTNTokenType::NUMBER, CurrentPosition))
     {
         Argument = &NumberToken->GetValue();
     }
@@ -80,8 +90,13 @@ const HTNAtom* HTNWorldStateParser::ParseArgument(unsigned int& inPosition)
     {
         Argument = &StringToken->GetValue();
     }
+    else
+    {
+        return false;
+    }
 
-    inPosition = CurrentPosition;
+    outArgument = *Argument;
+    inPosition  = CurrentPosition;
 
-    return Argument;
+    return true;
 }
