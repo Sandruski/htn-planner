@@ -23,7 +23,7 @@ public:
                            const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel);
     ~HTNDomainNode();
 
-    HTNAtom     Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
     std::string GetID() const final;
 
@@ -36,6 +36,18 @@ public:
     const std::vector<std::shared_ptr<const HTNAxiomNode>>&     GetAxiomNodes() const;
     const std::vector<std::shared_ptr<const HTNMethodNode>>&    GetMethodNodes() const;
     bool                                                        IsTopLevel() const;
+
+    // Returns an HTNAtom with the information about the constant requested.
+    // Returns an unbinded atom if the constant wasn't found.
+    /*
+    const HTNAtom* GetConstantByName(const char* inConstantGroup, const char* inConstantId)
+    {
+        // TODO SANDRA.
+        (void*)inConstantGroup;
+        (void*)inConstantId;
+        return nullptr;
+    }
+    */
 
 private:
     // Node representing the ID of the domain

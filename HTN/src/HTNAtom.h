@@ -39,7 +39,6 @@ public:
     HTNAtom(const bool inValue);
     HTNAtom(const int inValue);
     HTNAtom(const float inValue);
-    HTNAtom(const char* inValue); // TODO salvarez Remove this
     HTNAtom(const std::string& inValue);
     HTNAtom(const HTNAtomList& inValue);
 
@@ -110,10 +109,6 @@ inline HTNAtom::HTNAtom(const int inValue) : mData(inValue)
 }
 
 inline HTNAtom::HTNAtom(const float inValue) : mData(inValue)
-{
-}
-
-inline HTNAtom::HTNAtom(const char* inValue) : mData(inValue)
 {
 }
 

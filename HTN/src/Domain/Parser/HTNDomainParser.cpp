@@ -607,7 +607,7 @@ bool HTNDomainParser::ParseArgument(HTNAtom& outArgument, unsigned int& inPositi
         }
     }
     else if (const HTNToken* TrueToken = ParseToken(HTNTokenType::TRUE, CurrentPosition))
-    {
+    {   
         Argument = TrueToken->GetValue();
     }
     else if (const HTNToken* FalseToken = ParseToken(HTNTokenType::FALSE, CurrentPosition))

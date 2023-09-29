@@ -9,17 +9,21 @@
 #include "Domain/AST/HTNMethodNode.h"
 #include "Domain/AST/HTNTaskNode.h"
 #include "Domain/AST/HTNValueNode.h"
-#include "HTNDebugHelpers.h"
 #include "HTNLog.h"
 
 #include "imgui.h"
 
 namespace
 {
+void PrintKeyword(const std::string& inKeyword)
+{
+    ImGui::TextDisabled(inKeyword.c_str());
+}
+
 void PrintTopLevelKeyword()
 {
     ImGui::SameLine();
-    HTNDebug::Helpers::PrintKeyword("top_level");
+    PrintKeyword("top_level");
 }
 } // namespace
 
@@ -37,7 +41,7 @@ bool HTNDomainPrinter::Print(const std::shared_ptr<const HTNDomainNode>& inDomai
 
 HTNAtom HTNDomainPrinter::Visit(const HTNDomainNode& inDomainNode)
 {
-    HTNDebug::Helpers::PrintKeyword("domain");
+    PrintKeyword("domain");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inDomainNode.GetIDNode();
     ImGui::SameLine();
@@ -73,7 +77,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNDomainNode& inDomainNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNConstantsNode& inConstantsNode)
 {
-    HTNDebug::Helpers::PrintKeyword("constants");
+    PrintKeyword("constants");
 
     if (const std::shared_ptr<const HTNValueNode>& IDNode = inConstantsNode.GetIDNode())
     {
@@ -106,7 +110,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNConstantNode& inConstantNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAxiomNode& inAxiomNode)
 {
-    HTNDebug::Helpers::PrintKeyword("axiom");
+    PrintKeyword("axiom");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inAxiomNode.GetIDNode();
     ImGui::SameLine();
@@ -131,7 +135,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAxiomNode& inAxiomNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNMethodNode& inMethodNode)
 {
-    HTNDebug::Helpers::PrintKeyword("method");
+    PrintKeyword("method");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inMethodNode.GetIDNode();
     ImGui::SameLine();
@@ -200,7 +204,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNConditionNode& inConditionNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 {
-    HTNDebug::Helpers::PrintKeyword("#");
+    PrintKeyword("#");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inAxiomConditionNode.GetIDNode();
     ImGui::SameLine(0.f, 0.f);
@@ -220,7 +224,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNod
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAndConditionNode& inAndConditionNode)
 {
-    HTNDebug::Helpers::PrintKeyword("and");
+    PrintKeyword("and");
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAndConditionNode.GetSubConditionNodes();
     if (!SubConditionNodes.empty())
@@ -241,7 +245,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAndConditionNode& inAndConditionNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNOrConditionNode& inOrConditionNode)
 {
-    HTNDebug::Helpers::PrintKeyword("or");
+    PrintKeyword("or");
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inOrConditionNode.GetSubConditionNodes();
     if (!SubConditionNodes.empty())
@@ -262,7 +266,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNOrConditionNode& inOrConditionNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAltConditionNode& inAltConditionNode)
 {
-    HTNDebug::Helpers::PrintKeyword("alt");
+    PrintKeyword("alt");
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAltConditionNode.GetSubConditionNodes();
     if (!SubConditionNodes.empty())
@@ -283,7 +287,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAltConditionNode& inAltConditionNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNNotConditionNode& inNotConditionNode)
 {
-    HTNDebug::Helpers::PrintKeyword("not");
+    PrintKeyword("not");
 
     const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = inNotConditionNode.GetSubConditionNode();
     ImGui::SameLine();
@@ -311,7 +315,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
 {
-    HTNDebug::Helpers::PrintKeyword("!");
+    PrintKeyword("!");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inPrimitiveTaskNode.GetIDNode();
     ImGui::SameLine(0.f, 0.f);
@@ -341,7 +345,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNValueNode& inValueNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
 {
-    HTNDebug::Helpers::PrintKeyword("?");
+   PrintKeyword("?");
 
     ImGui::SameLine(0.f, 0.f);
     ImGui::Text(inVariableValueNode.ToString().c_str());
@@ -351,7 +355,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNConstantValueNode& inConstantValueNode)
 {
-    HTNDebug::Helpers::PrintKeyword("@");
+    PrintKeyword("@");
 
     ImGui::SameLine(0.f, 0.f);
     ImGui::Text(inConstantValueNode.ToString().c_str());

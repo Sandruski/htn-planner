@@ -6,7 +6,9 @@
 
 class HTNDomainNode;
 
-// Prints an abstract syntax tree representing a domain
+/**
+ * Prints an abstract syntax tree representing a domain
+ */
 class HTNDomainPrinter final : public HTNNodeVisitorBase
 {
 public:

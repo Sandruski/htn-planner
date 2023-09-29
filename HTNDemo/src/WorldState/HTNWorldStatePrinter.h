@@ -8,7 +8,9 @@ class HTNWorldState;
 
 struct ImGuiTextFilter;
 
-// Prints a database representing a world state
+/**
+ * Prints a database representing a world state
+ */
 class HTNWorldStatePrinter
 {
 public:
