@@ -332,7 +332,8 @@ void HTNDebuggerWindow::RenderPlan()
             for (const HTNAtom& Argument : Arguments)
             {
                 ImGui::SameLine();
-                ImGui::Text(Argument.ToString().c_str());
+                static constexpr bool ShouldDoubleQuoteString = true;
+                ImGui::Text(Argument.ToString(ShouldDoubleQuoteString).c_str());
             }
         }
         ImGui::Unindent();

@@ -1,9 +1,9 @@
 #include "Domain/Parser/HTNDomainLexer.h"
 
 #include "HTNAtom.h"
-#include "Parser/HTNLexerHelpers.h"
-#include "HTNToken.h"
 #include "HTNLog.h"
+#include "HTNToken.h"
+#include "Parser/HTNLexerHelpers.h"
 
 bool HTNDomainLexer::Lex(std::vector<HTNToken>& outTokens)
 {
@@ -85,7 +85,7 @@ bool HTNDomainLexer::Lex(std::vector<HTNToken>& outTokens)
             break;
         }
         case '\n': {
-            // Newline      
+            // Newline
             static constexpr bool IsNewLine = true;
             AdvancePosition(true);
             break;
@@ -105,7 +105,8 @@ bool HTNDomainLexer::Lex(std::vector<HTNToken>& outTokens)
                     {"method", HTNTokenType::HTN_METHOD}, {"top_level_method", HTNTokenType::HTN_TOP_LEVEL_METHOD},
                     {"axiom", HTNTokenType::HTN_AXIOM},   {"constants", HTNTokenType::HTN_CONSTANTS},
                     {"and", HTNTokenType::AND},           {"or", HTNTokenType::OR},
-                    {"alt", HTNTokenType::ALT},           {"not", HTNTokenType::NOT}};
+                    {"alt", HTNTokenType::ALT},           {"not", HTNTokenType::NOT},
+                    {"true", HTNTokenType::TRUE},         {"false", HTNTokenType::FALSE}};
                 LexIdentifier(outTokens, Keywords);
                 break;
             }

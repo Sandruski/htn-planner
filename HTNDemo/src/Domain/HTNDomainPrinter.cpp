@@ -200,10 +200,10 @@ HTNAtom HTNDomainPrinter::Visit(const HTNConditionNode& inConditionNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 {
-    HTNDebug::Helpers::PrintKeyword("axiom");
+    HTNDebug::Helpers::PrintKeyword("#");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inAxiomConditionNode.GetIDNode();
-    ImGui::SameLine();
+    ImGui::SameLine(0.f, 0.f);
     GetNodeValue(*IDNode);
 
     ImGui::Indent();
@@ -311,10 +311,10 @@ HTNAtom HTNDomainPrinter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
 {
-    HTNDebug::Helpers::PrintKeyword("primitive");
+    HTNDebug::Helpers::PrintKeyword("!");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inPrimitiveTaskNode.GetIDNode();
-    ImGui::SameLine();
+    ImGui::SameLine(0.f, 0.f);
     GetNodeValue(*IDNode);
 
     ImGui::Indent();
@@ -331,17 +331,9 @@ HTNAtom HTNDomainPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNValueNode& inValueNode)
 {
-    const std::string ValueString = inValueNode.ToString();
-    if (!inValueNode.IsIdentifier())
-    {
-        const HTNAtom& Value = inValueNode.GetValue();
-        if (Value.IsType<std::string>())
-        {
-            HTNDebug::Helpers::PrintString(ValueString);
-            return true;
-        }
-    }
-
+    const HTNAtom&    Value                   = inValueNode.GetValue();
+    const bool        ShouldDoubleQuoteString = !inValueNode.IsIdentifier();
+    const std::string ValueString             = Value.ToString(ShouldDoubleQuoteString);
     ImGui::Text(ValueString.c_str());
 
     return true;
@@ -349,9 +341,9 @@ HTNAtom HTNDomainPrinter::Visit(const HTNValueNode& inValueNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
 {
-    HTNDebug::Helpers::PrintKeyword("variable");
+    HTNDebug::Helpers::PrintKeyword("?");
 
-    ImGui::SameLine();
+    ImGui::SameLine(0.f, 0.f);
     ImGui::Text(inVariableValueNode.ToString().c_str());
 
     return true;
@@ -359,9 +351,9 @@ HTNAtom HTNDomainPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNConstantValueNode& inConstantValueNode)
 {
-    HTNDebug::Helpers::PrintKeyword("constant");
+    HTNDebug::Helpers::PrintKeyword("@");
 
-    ImGui::SameLine();
+    ImGui::SameLine(0.f, 0.f);
     ImGui::Text(inConstantValueNode.ToString().c_str());
 
     return true;

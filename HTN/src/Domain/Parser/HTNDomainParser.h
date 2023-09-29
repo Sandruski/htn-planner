@@ -41,6 +41,8 @@ private:
     bool ParseIdentifierNode(std::shared_ptr<const HTNValueNode>& outIdentifierNode, unsigned int& ioPosition);
     // HTNValueNode, HTNVariableValueNode, or HTNConstantValueNode
     bool ParseArgumentNode(std::shared_ptr<const HTNValueNodeBase>& outArgumentNode, unsigned int& ioPosition);
+
+    bool ParseArgument(HTNAtom& outArgument, unsigned int& inPosition);
 };
 
 inline HTNDomainParser::HTNDomainParser(const std::vector<HTNToken>& inDomainTokens) : HTNParserBase(inDomainTokens)

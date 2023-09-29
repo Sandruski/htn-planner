@@ -9,7 +9,7 @@
 Backus Naur Form (BNF):
 <fact> ::= <identifier> <argument>*
 <identifier> ::= 'identifier'
-<argument> ::= 'true' | 'false' | 'number' | 'string'
+<argument> ::= ('(' <argument>+ ')') | 'true' | 'false' | 'number' | 'string'
 */
 
 bool HTNWorldStateParser::Parse(HTNWorldState& outWorldState)
@@ -72,30 +72,48 @@ bool HTNWorldStateParser::ParseArgument(HTNAtom& outArgument, unsigned int& inPo
 {
     unsigned int CurrentPosition = inPosition;
 
-    const HTNAtom* Argument = nullptr;
+    HTNAtom Argument;
 
-    if (const HTNToken* TrueToken = ParseToken(HTNTokenType::TRUE, CurrentPosition))
+    if (ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
     {
-        Argument = &TrueToken->GetValue();
+        HTNAtom ArgumentElement;
+        while (ParseArgument(ArgumentElement, CurrentPosition))
+        {
+            Argument.AddListElement(ArgumentElement);
+        }
+
+        if (Argument.IsListEmpty())
+        {
+            return false;
+        }
+
+        if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
+        {
+            return false;
+        }
+    }
+    else if (const HTNToken* TrueToken = ParseToken(HTNTokenType::TRUE, CurrentPosition))
+    {
+        Argument = TrueToken->GetValue();
     }
     else if (const HTNToken* FalseToken = ParseToken(HTNTokenType::FALSE, CurrentPosition))
     {
-        Argument = &FalseToken->GetValue();
+        Argument = FalseToken->GetValue();
     }
     else if (const HTNToken* NumberToken = ParseToken(HTNTokenType::NUMBER, CurrentPosition))
     {
-        Argument = &NumberToken->GetValue();
+        Argument = NumberToken->GetValue();
     }
     else if (const HTNToken* StringToken = ParseToken(HTNTokenType::STRING, CurrentPosition))
     {
-        Argument = &StringToken->GetValue();
+        Argument = StringToken->GetValue();
     }
     else
     {
         return false;
     }
 
-    outArgument = *Argument;
+    outArgument = Argument;
     inPosition  = CurrentPosition;
 
     return true;

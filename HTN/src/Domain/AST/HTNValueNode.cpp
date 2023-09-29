@@ -4,7 +4,8 @@
 
 std::string HTNValueNodeBase::ToString() const
 {
-    return mValue.ToString();
+    static constexpr bool ShouldDoubleQuoteString = false;
+    return mValue.ToString(ShouldDoubleQuoteString);
 }
 
 HTNAtom HTNValueNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const

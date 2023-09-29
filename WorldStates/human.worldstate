@@ -7,5 +7,3 @@ food "italian" "pizza"
 food "italian" "gelato"
 has_mold "pasta"
 is_dry "pizza"
-
-test 2.5343 true false

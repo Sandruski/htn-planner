@@ -22,8 +22,9 @@ public:
     const HTNAtom* Find(const unsigned int inIndex) const;
 
     unsigned int GetSize() const;
+    bool IsEmpty() const;
 
-    std::string ToString() const;
+    std::string ToString(const bool inShouldDoubleQuoteString) const;
 
 private:
     HTNAtomNode* mHead = nullptr;
@@ -62,12 +63,13 @@ public:
     const HTNAtom* FindListElement(const unsigned int inElementIdx) const;
 
     int GetListNumItems() const;
+    bool IsListEmpty() const;
 
     // Unbinds this HtnAtom, this can be used in the context of multiresult queries where we might want to reuse the same HtnAtom
     // multiple times because the backtracking mechanism (we will talk about this later) is making us reevaluate the planner.
     void UnBind();
 
-    std::string ToString() const;
+    std::string ToString(const bool inShouldDoubleQuoteString) const;
 
 private:
     std::optional<std::variant<bool, int, float, std::string, HTNAtomList>> mData;
@@ -92,6 +94,11 @@ private:
 inline unsigned int HTNAtomList::GetSize() const
 {
     return mSize;
+}
+
+inline bool HTNAtomList::IsEmpty() const
+{
+    return mSize == 0;
 }
 
 inline HTNAtom::HTNAtom(const bool inValue) : mData(inValue)

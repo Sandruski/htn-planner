@@ -1,9 +1,9 @@
 #include "HTNAtom.h"
 
+#include <format>
 #include <iomanip>
 #include <ios>
 #include <sstream>
-#include <format>
 
 HTNAtomList::HTNAtomList(const std::initializer_list<HTNAtom>& inElements)
 {
@@ -86,13 +86,13 @@ const HTNAtom* HTNAtomList::Find(const unsigned int inIndex) const
     return &Current->GetData();
 }
 
-std::string HTNAtomList::ToString() const
+std::string HTNAtomList::ToString(const bool inShouldDoubleQuoteString) const
 {
     std::string String = "(";
 
     for (const HTNAtomNode* Current = mHead; Current; Current = Current->GetNext())
     {
-        String.append(std::format("{} ", Current->GetData().ToString()));
+        String.append(std::format("{} ", Current->GetData().ToString(inShouldDoubleQuoteString)));
     }
 
     // Remove last whitespace
@@ -155,7 +155,23 @@ int HTNAtom::GetListNumItems() const
     return List.GetSize();
 }
 
-std::string HTNAtom::ToString() const
+bool HTNAtom::IsListEmpty() const
+{
+    if (!IsSet())
+    {
+        return true;
+    }
+
+    if (!IsType<HTNAtomList>())
+    {
+        return true;
+    }
+
+    const HTNAtomList& List = GetValue<HTNAtomList>();
+    return List.IsEmpty();
+}
+
+std::string HTNAtom::ToString(const bool inShouldDoubleQuoteString) const
 {
     if (!IsSet())
     {
@@ -180,11 +196,11 @@ std::string HTNAtom::ToString() const
     }
     else if (IsType<std::string>())
     {
-        return GetValue<std::string>();
+        return inShouldDoubleQuoteString ? std::format("\"{}\"", GetValue<std::string>()) : GetValue<std::string>();
     }
     else if (IsType<HTNAtomList>())
     {
-        return GetValue<HTNAtomList>().ToString();
+        return GetValue<HTNAtomList>().ToString(inShouldDoubleQuoteString);
     }
 
     return "";
