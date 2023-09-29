@@ -1,7 +1,7 @@
 #pragma once
 
-#include "HTNAtom.h"
 #include "Domain/AST/HTNNodeBase.h"
+#include "HTNAtom.h"
 
 #include <string>
 
@@ -16,7 +16,7 @@ public:
     std::string GetID() const final;
 
     const HTNAtom& GetValue() const;
-    std::string ToString() const;
+    std::string    ToString() const;
 
 private:
     // Value
@@ -29,9 +29,15 @@ private:
 class HTNValueNode final : public HTNValueNodeBase
 {
 public:
-    explicit HTNValueNode(const HTNAtom& inValue);
+    explicit HTNValueNode(const HTNAtom& inValue, const bool inIsIdentifier);
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+
+    bool IsIdentifier() const;
+
+private:
+    // Whether this node is an identifier
+    bool mIsIdentifier = false;
 };
 
 /**
@@ -71,8 +77,13 @@ inline const HTNAtom& HTNValueNodeBase::GetValue() const
     return mValue;
 }
 
-inline HTNValueNode::HTNValueNode(const HTNAtom& inValue) : HTNValueNodeBase(inValue)
+inline HTNValueNode::HTNValueNode(const HTNAtom& inValue, const bool inIsIdentifier) : HTNValueNodeBase(inValue), mIsIdentifier(inIsIdentifier)
 {
+}
+
+inline bool HTNValueNode::IsIdentifier() const
+{
+    return mIsIdentifier;
 }
 
 inline HTNVariableValueNode::HTNVariableValueNode(const HTNAtom& inValue) : HTNValueNodeBase(inValue)

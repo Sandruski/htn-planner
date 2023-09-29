@@ -6,14 +6,11 @@
 
 class HTNDomainNode;
 
-// Returns a string from an abstract syntax tree
+// Prints an abstract syntax tree representing a domain
 class HTNDomainPrinter final : public HTNNodeVisitorBase
 {
 public:
-    explicit HTNDomainPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
-    ~HTNDomainPrinter();
-
-	bool Print();
+	bool Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
     HTNAtom Visit(const HTNConstantsNode& inConstantsNode) final;
@@ -32,7 +29,4 @@ public:
     HTNAtom Visit(const HTNValueNode& inValueNode) final;
     HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode) final;
     HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
-
-private:
-    std::shared_ptr<const HTNDomainNode> mDomainNode;
 };

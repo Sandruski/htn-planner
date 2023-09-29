@@ -88,20 +88,21 @@ const HTNAtom* HTNAtomList::Find(const unsigned int inIndex) const
 
 std::string HTNAtomList::ToString() const
 {
-    std::string String = "{";
+    std::string String = "(";
 
     for (const HTNAtomNode* Current = mHead; Current; Current = Current->GetNext())
     {
-        String.append(std::format("{},", Current->GetData().ToString()));
+        String.append(std::format("{} ", Current->GetData().ToString()));
     }
 
-    const size_t Index = String.find_last_of(",");
+    // Remove last whitespace
+    const size_t Index = String.find_last_of(" ");
     if (Index != std::string::npos)
     {
         String.erase(Index);
     }
 
-    String.append("}");
+    String.append(")");
 
     return String;
 }

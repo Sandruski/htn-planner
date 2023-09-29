@@ -1,6 +1,5 @@
 #include "Domain/HTNDomainPrinter.h"
 
-#include "HTNLog.h"
 #include "Domain/AST/HTNAxiomNode.h"
 #include "Domain/AST/HTNBranchNode.h"
 #include "Domain/AST/HTNConditionNode.h"
@@ -10,32 +9,23 @@
 #include "Domain/AST/HTNMethodNode.h"
 #include "Domain/AST/HTNTaskNode.h"
 #include "Domain/AST/HTNValueNode.h"
+#include "HTNDebugHelpers.h"
+#include "HTNLog.h"
 
 #include "imgui.h"
 
 namespace
 {
-void PrintKeyword(const std::string& inKeyword)
-{
-    ImGui::TextDisabled(inKeyword.c_str());
-}
-
 void PrintTopLevelKeyword()
 {
     ImGui::SameLine();
-    PrintKeyword("top_level");
+    HTNDebug::Helpers::PrintKeyword("top_level");
 }
 } // namespace
 
-HTNDomainPrinter::HTNDomainPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode) : mDomainNode(inDomainNode)
+bool HTNDomainPrinter::Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode)
 {
-}
-
-HTNDomainPrinter::~HTNDomainPrinter() = default;
-
-bool HTNDomainPrinter::Print()
-{
-    const HTNDomainNode* DomainNode = mDomainNode.get();
+    const HTNDomainNode* DomainNode = inDomainNode.get();
     if (!DomainNode)
     {
         LOG_ERROR("Domain node is null");
@@ -47,7 +37,7 @@ bool HTNDomainPrinter::Print()
 
 HTNAtom HTNDomainPrinter::Visit(const HTNDomainNode& inDomainNode)
 {
-    PrintKeyword("domain");
+    HTNDebug::Helpers::PrintKeyword("domain");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inDomainNode.GetIDNode();
     ImGui::SameLine();
@@ -83,7 +73,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNDomainNode& inDomainNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNConstantsNode& inConstantsNode)
 {
-    PrintKeyword("constants");
+    HTNDebug::Helpers::PrintKeyword("constants");
 
     if (const std::shared_ptr<const HTNValueNode>& IDNode = inConstantsNode.GetIDNode())
     {
@@ -116,7 +106,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNConstantNode& inConstantNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAxiomNode& inAxiomNode)
 {
-    PrintKeyword("axiom");
+    HTNDebug::Helpers::PrintKeyword("axiom");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inAxiomNode.GetIDNode();
     ImGui::SameLine();
@@ -141,7 +131,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAxiomNode& inAxiomNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNMethodNode& inMethodNode)
 {
-    PrintKeyword("method");
+    HTNDebug::Helpers::PrintKeyword("method");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inMethodNode.GetIDNode();
     ImGui::SameLine();
@@ -210,7 +200,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNConditionNode& inConditionNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 {
-    PrintKeyword("axiom");
+    HTNDebug::Helpers::PrintKeyword("axiom");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inAxiomConditionNode.GetIDNode();
     ImGui::SameLine();
@@ -230,7 +220,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNod
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAndConditionNode& inAndConditionNode)
 {
-    PrintKeyword("and");
+    HTNDebug::Helpers::PrintKeyword("and");
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAndConditionNode.GetSubConditionNodes();
     if (!SubConditionNodes.empty())
@@ -251,7 +241,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAndConditionNode& inAndConditionNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNOrConditionNode& inOrConditionNode)
 {
-    PrintKeyword("or");
+    HTNDebug::Helpers::PrintKeyword("or");
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inOrConditionNode.GetSubConditionNodes();
     if (!SubConditionNodes.empty())
@@ -272,7 +262,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNOrConditionNode& inOrConditionNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAltConditionNode& inAltConditionNode)
 {
-    PrintKeyword("alt");
+    HTNDebug::Helpers::PrintKeyword("alt");
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAltConditionNode.GetSubConditionNodes();
     if (!SubConditionNodes.empty())
@@ -293,7 +283,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAltConditionNode& inAltConditionNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNNotConditionNode& inNotConditionNode)
 {
-    PrintKeyword("not");
+    HTNDebug::Helpers::PrintKeyword("not");
 
     const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = inNotConditionNode.GetSubConditionNode();
     ImGui::SameLine();
@@ -321,7 +311,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
 {
-    PrintKeyword("primitive");
+    HTNDebug::Helpers::PrintKeyword("primitive");
 
     const std::shared_ptr<const HTNValueNode>& IDNode = inPrimitiveTaskNode.GetIDNode();
     ImGui::SameLine();
@@ -341,14 +331,25 @@ HTNAtom HTNDomainPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNValueNode& inValueNode)
 {
-    ImGui::Text(inValueNode.ToString().c_str());
+    const std::string ValueString = inValueNode.ToString();
+    if (!inValueNode.IsIdentifier())
+    {
+        const HTNAtom& Value = inValueNode.GetValue();
+        if (Value.IsType<std::string>())
+        {
+            HTNDebug::Helpers::PrintString(ValueString);
+            return true;
+        }
+    }
+
+    ImGui::Text(ValueString.c_str());
 
     return true;
 }
 
 HTNAtom HTNDomainPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
 {
-    PrintKeyword("variable");
+    HTNDebug::Helpers::PrintKeyword("variable");
 
     ImGui::SameLine();
     ImGui::Text(inVariableValueNode.ToString().c_str());
@@ -358,7 +359,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
 
 HTNAtom HTNDomainPrinter::Visit(const HTNConstantValueNode& inConstantValueNode)
 {
-    PrintKeyword("constant");
+    HTNDebug::Helpers::PrintKeyword("constant");
 
     ImGui::SameLine();
     ImGui::Text(inConstantValueNode.ToString().c_str());

@@ -90,8 +90,9 @@ HTNAtom HTNInterpreter::Visit(MAYBE_UNUSED const HTNDomainNode& inDomainNode)
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
 
     // Dummy root task node
+    static constexpr bool                            IsIdentifier         = true;
     const std::shared_ptr<const HTNCompoundTaskNode> RootCompoundTaskNode = std::make_shared<HTNCompoundTaskNode>(
-        std::make_shared<const HTNValueNode>(mEntryPointName), std::vector<std::shared_ptr<const HTNValueNodeBase>>());
+        std::make_shared<const HTNValueNode>(mEntryPointName, IsIdentifier), std::vector<std::shared_ptr<const HTNValueNodeBase>>());
     CurrentDecomposition.PushPendingTaskNode(RootCompoundTaskNode);
 
     while (CurrentDecomposition.HasPendingTaskInstances())

@@ -1,11 +1,5 @@
 #include "HTNDebuggerWindow.h"
 
-#include "Domain/AST/HTNAxiomNode.h"
-#include "Domain/AST/HTNBranchNode.h"
-#include "Domain/AST/HTNConditionNode.h"
-#include "Domain/AST/HTNDomainNode.h"
-#include "Domain/AST/HTNMethodNode.h"
-#include "Domain/AST/HTNTaskNode.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "HTNAtom.h"
 #include "HTNPlanningUnit.h"
@@ -13,6 +7,9 @@
 #include "Interpreter/HTNTaskResult.h"
 #include "Planner/HTNPlannerHook.h"
 #include "WorldState/HTNWorldStateHook.h"
+#include "WorldState/HTNWorldStatePrinter.h"
+#include "Domain/AST/HTNDomainNode.h"
+#include "Domain/AST/HTNMethodNode.h"
 
 #include "imgui.h"
 #include "imgui_stdlib.h"
@@ -20,8 +17,8 @@
 #include <algorithm>
 #include <execution>
 #include <filesystem>
-#include <string>
 #include <format>
+#include <string>
 #include <vector>
 
 namespace
@@ -370,8 +367,8 @@ void HTNDebuggerWindow::RenderDomain()
         return;
     }
 
-    HTNDomainPrinter DomainPrinter = HTNDomainPrinter(DomainNode);
-    DomainPrinter.Print();
+    static HTNDomainPrinter DomainPrinter;
+    DomainPrinter.Print(DomainNode);
 }
 
 void HTNDebuggerWindow::RenderWorldState()
@@ -396,54 +393,10 @@ void HTNDebuggerWindow::RenderWorldState()
 
     ImGui::Separator();
 
-    static ImGuiTextFilter Filter;
-    Filter.Draw("##");
+    static ImGuiTextFilter TextFilter;
+    TextFilter.Draw("##");
 
-    const HTNWorldState&                                           WorldState = mWorldStateHook->GetWorldState();
-    const std::unordered_map<std::string, HTNWorldState::HTNFact>& Facts      = WorldState.GetFacts();
-    for (auto It = Facts.begin(); It != Facts.end(); ++It)
-    {
-        const std::string&            Name   = It->first;
-        const HTNWorldState::HTNFact& Tables = It->second;
-        for (size_t i = 0; i < Tables.size(); ++i)
-        {
-            const HTNTableBase* Table = Tables[i];
-            if (!Table)
-            {
-                continue;
-            }
-
-            const std::vector<std::vector<HTNAtom>> Entries = Table->GetEntries();
-            for (size_t j = 0; j < Entries.size(); ++j)
-            {
-                const std::vector<HTNAtom>& Entry = Entries[j];
-
-                std::string NameArguments = Name;
-                for (const HTNAtom& Argument : Entry)
-                {
-                    NameArguments.append(std::format(" {}", Argument.ToString()));
-                }
-
-                if (!Filter.PassFilter(NameArguments.c_str()))
-                {
-                    continue;
-                }
-
-                ImGui::Text(Name.c_str());
-
-                for (const HTNAtom& Argument : Entry)
-                {
-                    ImGui::SameLine();
-
-                    std::string ArgumentString = Argument.ToString();
-                    if (Argument.IsType<std::string>())
-                    {
-                        ArgumentString = std::format("\"{}\"", ArgumentString);
-                    }
-
-                    ImGui::Text(ArgumentString.c_str());
-                }
-            }
-        }
-    }
+    static const HTNWorldStatePrinter WorldStatePrinter;
+    const HTNWorldState& WorldState = mWorldStateHook->GetWorldState();
+    WorldStatePrinter.Print(WorldState, TextFilter);
 }

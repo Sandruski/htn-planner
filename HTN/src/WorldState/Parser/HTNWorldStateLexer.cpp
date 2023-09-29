@@ -13,21 +13,15 @@ bool HTNWorldStateLexer::Lex(std::vector<HTNToken>& outTokens)
     {
         switch (Character)
         {
-        case '{': {
-            // Left brace
-            AddToken(HTNTokenType::LEFT_BRACE, std::string(1, Character), HTNAtom(), outTokens);
+        case '(': {
+            // Left parenthesis
+            AddToken(HTNTokenType::LEFT_PARENTHESIS, std::string(1, Character), HTNAtom(), outTokens);
             AdvancePosition();
             break;
         }
-        case '}': {
-            // Right brace
-            AddToken(HTNTokenType::RIGHT_BRACE, std::string(1, Character), HTNAtom(), outTokens);
-            AdvancePosition();
-            break;
-        }
-        case ',': {
-            // Comma
-            AddToken(HTNTokenType::COMMA, std::string(1, Character), HTNAtom(), outTokens);
+        case ')': {
+            // Right parenthesis
+            AddToken(HTNTokenType::RIGHT_PARENTHESIS, std::string(1, Character), HTNAtom(), outTokens);
             AdvancePosition();
             break;
         }

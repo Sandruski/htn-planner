@@ -9,11 +9,8 @@
 enum class HTNTokenType : unsigned int
 {
     COLON,
-    COMMA,
     LEFT_PARENTHESIS,
     RIGHT_PARENTHESIS,
-    LEFT_BRACE,
-    RIGHT_BRACE,
     EXCLAMATION_MARK,
     QUESTION_MARK,
     HASH,

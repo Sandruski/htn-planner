@@ -528,7 +528,8 @@ bool HTNDomainParser::ParseIdentifierNode(std::shared_ptr<const HTNValueNode>& o
         return false;
     }
 
-    outIdentifierNode = std::make_shared<HTNValueNode>(IdentifierToken->GetValue());
+    static constexpr bool IsIdentifier = true;
+    outIdentifierNode                  = std::make_shared<HTNValueNode>(IdentifierToken->GetValue(), IsIdentifier);
     ioPosition        = CurrentPosition;
 
     return true;
@@ -564,19 +565,23 @@ bool HTNDomainParser::ParseArgumentNode(std::shared_ptr<const HTNValueNodeBase>&
     {
         if (const HTNToken* TrueToken = ParseToken(HTNTokenType::TRUE, CurrentPosition))
         {
-            ArgumentNode = std::make_shared<HTNValueNode>(TrueToken->GetValue());
+            static constexpr bool IsIdentifier = false;
+            ArgumentNode = std::make_shared<HTNValueNode>(TrueToken->GetValue(), IsIdentifier);
         }
         else if (const HTNToken* FalseToken = ParseToken(HTNTokenType::FALSE, CurrentPosition))
         {
-            ArgumentNode = std::make_shared<HTNValueNode>(FalseToken->GetValue());
+            static constexpr bool IsIdentifier = false;
+            ArgumentNode = std::make_shared<HTNValueNode>(FalseToken->GetValue(), IsIdentifier);
         }
         else if (const HTNToken* NumberToken = ParseToken(HTNTokenType::NUMBER, CurrentPosition))
         {
-            ArgumentNode = std::make_shared<HTNValueNode>(NumberToken->GetValue());
+            static constexpr bool IsIdentifier = false;
+            ArgumentNode = std::make_shared<HTNValueNode>(NumberToken->GetValue(), IsIdentifier);
         }
         else if (const HTNToken* StringToken = ParseToken(HTNTokenType::STRING, CurrentPosition))
         {
-            ArgumentNode = std::make_shared<HTNValueNode>(StringToken->GetValue());
+            static constexpr bool IsIdentifier = false;
+            ArgumentNode = std::make_shared<HTNValueNode>(StringToken->GetValue(), IsIdentifier);
         }
         else
         {
