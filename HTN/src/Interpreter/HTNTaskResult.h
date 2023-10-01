@@ -14,7 +14,10 @@ public:
     const std::vector<HTNAtom>& GetArguments() const;
 
 private:
-    std::string          mID;
+    // ID of the task
+    std::string mID;
+
+    // Arguments of the task
     std::vector<HTNAtom> mArguments;
 };
 

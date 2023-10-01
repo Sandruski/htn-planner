@@ -6,6 +6,7 @@
 #include "Interpreter/HTNTaskResult.h"
 
 #include <memory>
+#include <string>
 #include <vector>
 
 class HTNCompoundTaskNode;
@@ -18,36 +19,31 @@ class HTNNodeBase;
 class HTNDecompositionRecord
 {
 public:
-    void            PushPendingTaskNode(const std::shared_ptr<const HTNTaskNodeBase>& inPendingTaskNode);
+    void            PushPendingTaskInstance(const HTNTaskInstance& inPendingTaskInstance);
     HTNTaskInstance PopPendingTaskInstance();
     bool            HasPendingTaskInstances() const;
 
     void                                          SetCurrentTaskNode(const std::shared_ptr<const HTNTaskNodeBase>& inCurrentTaskNode);
     const std::shared_ptr<const HTNTaskNodeBase>& GetCurrentTaskNode() const;
 
+    void            SetEnvironment(const HTNEnvironment& inEnvironment);
+    HTNEnvironment& GetEnvironmentMutable();
+
     void                              AddTaskResultToPlan(const HTNTaskResult& inTaskResult);
     const std::vector<HTNTaskResult>& GetPlan() const;
 
-    void            PushEnvironment();
-    void            PushEnvironment(const HTNEnvironment& inEnvironment);
-    void            PopEnvironment();
-    HTNEnvironment& GetCurrentEnvironment();
-
 private:
-    // Tasks pending to be processed
-    std::vector<HTNTaskInstance> mPendingTaskInstances;
-
     // Current task being processed
     std::shared_ptr<const HTNTaskNodeBase> mCurrentTaskNode;
 
+    // State of variables and indices
+    HTNEnvironment mEnvironment;
+
+    // Tasks pending to be processed
+    std::vector<HTNTaskInstance> mPendingTaskInstances;
+
     // Final plan of tasks
     std::vector<HTNTaskResult> mPlan;
-
-    // State of variables and indices
-    std::vector<HTNEnvironment> mEnvironments; // This should be called EnvironmentStack
-
-    // TODO salvarez Path from current node to previous decomposition record node
-    std::vector<std::shared_ptr<const HTNNodeBase>> mBacktrackStack;
 };
 
 class HTNDecompositionContext
@@ -67,18 +63,38 @@ public:
     void                                       SetDecompositionHistory(const std::vector<HTNDecompositionRecord>& inDecompositionHistory);
     const std::vector<HTNDecompositionRecord>& GetDecompositionHistory() const;
 
+    bool               PushNodeToCurrentNodePath(const std::string& inNodeID);
+    bool               PopNodeFromCurrentNodePath();
+    void               SetCurrentNodePath(const std::string& inCurrentNodePath);
+    const std::string& GetCurrentNodePath() const;
+
+    bool               PushNodeToCurrentVariableScopePath(const std::string& inNodeID);
+    bool               PopNodeFromCurrentVariableScopePath();
+    void               SetCurrentVariableScopePath(const std::string& inCurrentVariableScopePath);
+    const std::string& GetCurrentVariableScopePath() const;
+    std::string        MakeCurrentVariablePath(const std::string& inVariableID) const;
+
 private:
     // TODO salvarez Maybe move the world state to the interpreter too
     const HTNWorldState* mWorldState = nullptr; ///< Pointer to world state. All the queries will just not be able to modify the world state at
                                                 ///< all, this is why it is important this is a const pointer.
 
-    HTNDecompositionRecord              mCurrentDecomposition;
+    // Current decomposition
+    HTNDecompositionRecord mCurrentDecomposition;
+
+    // Record of previous decompositions
     std::vector<HTNDecompositionRecord> mDecompositionHistory;
+
+    // Path from the root node to the current node being processed
+    std::string mCurrentNodePath;
+
+    // Path from the root node to the node that determines the scope of variables
+    std::string mCurrentVariableScopePath;
 };
 
-inline void HTNDecompositionRecord::PushPendingTaskNode(const std::shared_ptr<const HTNTaskNodeBase>& inPendingTaskNode)
+inline void HTNDecompositionRecord::PushPendingTaskInstance(const HTNTaskInstance& inPendingTaskInstance)
 {
-    mPendingTaskInstances.emplace_back(inPendingTaskNode, GetCurrentEnvironment());
+    mPendingTaskInstances.emplace_back(inPendingTaskInstance);
 }
 
 inline HTNTaskInstance HTNDecompositionRecord::PopPendingTaskInstance()
@@ -104,6 +120,16 @@ inline const std::shared_ptr<const HTNTaskNodeBase>& HTNDecompositionRecord::Get
     return mCurrentTaskNode;
 }
 
+inline void HTNDecompositionRecord::SetEnvironment(const HTNEnvironment& inEnvironment)
+{
+    mEnvironment = inEnvironment;
+}
+
+inline HTNEnvironment& HTNDecompositionRecord::GetEnvironmentMutable()
+{
+    return mEnvironment;
+}
+
 inline void HTNDecompositionRecord::AddTaskResultToPlan(const HTNTaskResult& inTaskResult)
 {
     mPlan.emplace_back(inTaskResult);
@@ -112,26 +138,6 @@ inline void HTNDecompositionRecord::AddTaskResultToPlan(const HTNTaskResult& inT
 inline const std::vector<HTNTaskResult>& HTNDecompositionRecord::GetPlan() const
 {
     return mPlan;
-}
-
-inline void HTNDecompositionRecord::PushEnvironment()
-{
-    mEnvironments.emplace_back();
-}
-
-inline void HTNDecompositionRecord::PushEnvironment(const HTNEnvironment& inEnvironment)
-{
-    mEnvironments.emplace_back(inEnvironment);
-}
-
-inline void HTNDecompositionRecord::PopEnvironment()
-{
-    mEnvironments.pop_back();
-}
-
-inline HTNEnvironment& HTNDecompositionRecord::GetCurrentEnvironment()
-{
-    return mEnvironments.back();
 }
 
 inline HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldState) : mWorldState(&inWorldState)
@@ -153,6 +159,16 @@ inline void HTNDecompositionContext::RecordCurrentDecomposition()
     RecordDecomposition(mCurrentDecomposition);
 }
 
+inline const HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecomposition() const
+{
+    return mCurrentDecomposition;
+}
+
+inline HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecompositionMutable()
+{
+    return mCurrentDecomposition;
+}
+
 inline void HTNDecompositionContext::SetDecompositionHistory(const std::vector<HTNDecompositionRecord>& inDecompositionHistory)
 {
     mDecompositionHistory = inDecompositionHistory;
@@ -163,12 +179,22 @@ inline const std::vector<HTNDecompositionRecord>& HTNDecompositionContext::GetDe
     return mDecompositionHistory;
 }
 
-inline const HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecomposition() const
+inline void HTNDecompositionContext::SetCurrentNodePath(const std::string& inCurrentNodePath)
 {
-    return mCurrentDecomposition;
+    mCurrentNodePath = inCurrentNodePath;
 }
 
-inline HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecompositionMutable()
+inline const std::string& HTNDecompositionContext::GetCurrentNodePath() const
 {
-    return mCurrentDecomposition;
+    return mCurrentNodePath;
+}
+
+inline void HTNDecompositionContext::SetCurrentVariableScopePath(const std::string& inCurrentVariableScopePath)
+{
+    mCurrentVariableScopePath = inCurrentVariableScopePath;
+}
+
+inline const std::string& HTNDecompositionContext::GetCurrentVariableScopePath() const
+{
+    return mCurrentVariableScopePath;
 }
