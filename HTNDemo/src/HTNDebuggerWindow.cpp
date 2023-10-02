@@ -1,5 +1,7 @@
 #include "HTNDebuggerWindow.h"
 
+#include "Domain/AST/HTNDomainNode.h"
+#include "Domain/AST/HTNMethodNode.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "HTNAtom.h"
 #include "HTNPlanningUnit.h"
@@ -8,8 +10,6 @@
 #include "Planner/HTNPlannerHook.h"
 #include "WorldState/HTNWorldStateHook.h"
 #include "WorldState/HTNWorldStatePrinter.h"
-#include "Domain/AST/HTNDomainNode.h"
-#include "Domain/AST/HTNMethodNode.h"
 
 #include "imgui.h"
 #include "imgui_stdlib.h"
@@ -18,6 +18,7 @@
 #include <execution>
 #include <filesystem>
 #include <format>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -287,11 +288,14 @@ void HTNDebuggerWindow::RenderPlan()
         std::vector<HTNTaskResult> Plan;
     };
 
+    static std::mutex            LastPlansMutex;
     static std::vector<LastPlan> LastPlans;
     static OperationResult       LastPlanResult = OperationResult::NONE;
     if (ImGui::Button("Plan"))
     {
+        LastPlansMutex.lock();
         LastPlans.clear();
+        LastPlansMutex.unlock();
 
         std::for_each(std::execution::par, EntryPoints.begin(), EntryPoints.end(), [this](EntryPoint& inEntryPoint) {
             for (unsigned int i = 0; i < inEntryPoint.Amount; ++i)
@@ -303,7 +307,9 @@ void HTNDebuggerWindow::RenderPlan()
                     continue;
                 }
 
+                LastPlansMutex.lock();
                 LastPlans.emplace_back(inEntryPoint.ID, Plan);
+                LastPlansMutex.unlock();
             }
         });
 
@@ -319,6 +325,7 @@ void HTNDebuggerWindow::RenderPlan()
 
     ImGui::Separator();
 
+    LastPlansMutex.lock();
     for (const LastPlan& LastPlan : LastPlans)
     {
         ImGui::Text(LastPlan.EntryPointID.c_str());
@@ -338,6 +345,7 @@ void HTNDebuggerWindow::RenderPlan()
         }
         ImGui::Unindent();
     }
+    LastPlansMutex.unlock();
 }
 
 void HTNDebuggerWindow::RenderDomain()
@@ -398,6 +406,6 @@ void HTNDebuggerWindow::RenderWorldState()
     TextFilter.Draw("##");
 
     static const HTNWorldStatePrinter WorldStatePrinter;
-    const HTNWorldState& WorldState = mWorldStateHook->GetWorldState();
+    const HTNWorldState&              WorldState = mWorldStateHook->GetWorldState();
     WorldStatePrinter.Print(WorldState, TextFilter);
 }
