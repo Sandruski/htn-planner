@@ -23,9 +23,6 @@ public:
     HTNTaskInstance PopPendingTaskInstance();
     bool            HasPendingTaskInstances() const;
 
-    void                                          SetCurrentTaskNode(const std::shared_ptr<const HTNTaskNodeBase>& inCurrentTaskNode);
-    const std::shared_ptr<const HTNTaskNodeBase>& GetCurrentTaskNode() const;
-
     void            SetEnvironment(const HTNEnvironment& inEnvironment);
     const HTNEnvironment& GetEnvironment() const;
     HTNEnvironment& GetEnvironmentMutable();
@@ -108,16 +105,6 @@ inline HTNTaskInstance HTNDecompositionRecord::PopPendingTaskInstance()
 inline bool HTNDecompositionRecord::HasPendingTaskInstances() const
 {
     return !mPendingTaskInstances.empty();
-}
-
-inline void HTNDecompositionRecord::SetCurrentTaskNode(const std::shared_ptr<const HTNTaskNodeBase>& inCurrentTaskNode)
-{
-    mCurrentTaskNode = inCurrentTaskNode;
-}
-
-inline const std::shared_ptr<const HTNTaskNodeBase>& HTNDecompositionRecord::GetCurrentTaskNode() const
-{
-    return mCurrentTaskNode;
 }
 
 inline void HTNDecompositionRecord::SetEnvironment(const HTNEnvironment& inEnvironment)
