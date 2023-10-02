@@ -1,7 +1,5 @@
 #include "Interpreter/HTNDecompositionContext.h"
 
-#include <cassert>
-
 namespace
 {
 bool PushSegmentToPath(const std::string& inSegment, std::string& ioPath)
@@ -39,7 +37,6 @@ bool HTNDecompositionContext::RestoreDecomposition()
 {
     if (mDecompositionHistory.empty())
     {
-        assert(false);
         return false;
     }
 
