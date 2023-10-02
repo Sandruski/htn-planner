@@ -96,8 +96,7 @@ HTNAtom HTNInterpreter::Visit(const HTNDomainNode& inDomainNode)
         CurrentDecomposition.SetEnvironment(CurrentTaskInstance.GetEnvironment());
         mDecompositionContext.SetCurrentVariableScopePath(CurrentTaskInstance.GetVariableScopePath());
 
-        const bool IsTaskNodeSuccessful = GetNodeValue(*CurrentTaskNode).GetValue<bool>();
-        if (!IsTaskNodeSuccessful)
+        if (!GetNodeValue(*CurrentTaskNode).GetValue<bool>())
         {
             return false;
         }
