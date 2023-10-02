@@ -60,6 +60,12 @@ bool HTNInterpreter::Interpret(std::vector<HTNTaskResult>& outPlan)
         return false;
     }
 
+    if (!DomainNode->IsTopLevel())
+    {
+        LOG_ERROR("Domain node [{}] is not top-level", DomainNode->GetID());
+        return false;
+    }
+
     const bool IsDomainNodeSuccessful = GetNodeValue(*DomainNode).GetValue<bool>();
     if (!IsDomainNodeSuccessful)
     {
@@ -82,8 +88,9 @@ HTNAtom HTNInterpreter::Visit(const HTNDomainNode& inDomainNode)
 
     // Dummy root task node
     static constexpr bool                            IsIdentifier         = true;
+    static constexpr bool                            IsTopLevel           = true;
     const std::shared_ptr<const HTNCompoundTaskNode> RootCompoundTaskNode = std::make_shared<HTNCompoundTaskNode>(
-        std::make_shared<const HTNValueNode>(mEntryPointName, IsIdentifier), std::vector<std::shared_ptr<const HTNValueNodeBase>>());
+        std::make_shared<const HTNValueNode>(mEntryPointName, IsIdentifier), std::vector<std::shared_ptr<const HTNValueNodeBase>>(), IsTopLevel);
     const std::string&    CurrentVariableScopePath = mDecompositionContext.GetCurrentVariableScopePath();
     const HTNTaskInstance RootCompoundTaskInstance = HTNTaskInstance(RootCompoundTaskNode, HTNEnvironment(), CurrentVariableScopePath);
     CurrentDecomposition.PushPendingTaskInstance(RootCompoundTaskInstance);
@@ -465,6 +472,12 @@ HTNAtom HTNInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
     if (!MethodNode)
     {
         LOG_ERROR("Method node [{}] could not be found", CompoundTaskNodeID);
+        return false;
+    }
+
+    if (inCompoundTaskNode.IsTopLevel() && !MethodNode->IsTopLevel())
+    {
+        LOG_ERROR("Method node [{}] is not top-level", CompoundTaskNodeID);
         return false;
     }
 

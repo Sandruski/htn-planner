@@ -14,13 +14,13 @@ class HTNValueNodeBase;
 class HTNTaskNodeBase : public HTNNodeBase
 {
 public:
-    explicit HTNTaskNodeBase(const std::shared_ptr<const HTNValueNode>&              inIDNode,
+    explicit HTNTaskNodeBase(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
                              const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes);
     ~HTNTaskNodeBase();
 
     std::string GetID() const final;
 
-    const std::shared_ptr<const HTNValueNode>&              GetIDNode() const;
+    const std::shared_ptr<const HTNValueNode>&                  GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetArgumentNodes() const;
 
 private:
@@ -38,10 +38,16 @@ private:
 class HTNCompoundTaskNode final : public HTNTaskNodeBase
 {
 public:
-    explicit HTNCompoundTaskNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
-                                 const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes);
+    explicit HTNCompoundTaskNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+                                 const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes, const bool inIsTopLevel);
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+
+    bool IsTopLevel() const;
+
+private:
+    // Whether the compound task serves as an entry point for a decomposition
+    bool mIsTopLevel = false;
 };
 
 /**
@@ -50,7 +56,7 @@ public:
 class HTNPrimitiveTaskNode final : public HTNTaskNodeBase
 {
 public:
-    explicit HTNPrimitiveTaskNode(const std::shared_ptr<const HTNValueNode>&              inIDNode,
+    explicit HTNPrimitiveTaskNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
                                   const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes);
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
@@ -64,4 +70,9 @@ inline const std::shared_ptr<const HTNValueNode>& HTNTaskNodeBase::GetIDNode() c
 inline const std::vector<std::shared_ptr<const HTNValueNodeBase>>& HTNTaskNodeBase::GetArgumentNodes() const
 {
     return mArgumentNodes;
+}
+
+inline bool HTNCompoundTaskNode::IsTopLevel() const
+{
+    return mIsTopLevel;
 }
