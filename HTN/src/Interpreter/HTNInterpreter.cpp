@@ -152,7 +152,7 @@ HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
 
-    const unsigned int                                       BranchIndex = Environment.GetOrAddIndex(CurrentNodePath);
+    const unsigned int                                       BranchIndex = Environment.AddIndex(CurrentNodePath);
     const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes = inMethodNode.GetBranchNodes();
     if (BranchIndex >= BranchNodes.size())
     {
@@ -331,8 +331,8 @@ HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAndConditionNode.GetSubConditionNodes();
-    for (unsigned int SubConditionIndex = Environment.GetOrAddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodes.size();
-         SubConditionIndex              = Environment.GetOrAddIndex(CurrentNodePath))
+    for (int SubConditionIndex = Environment.AddIndex(CurrentNodePath); SubConditionIndex >= 0 && SubConditionIndex < SubConditionNodes.size();
+         SubConditionIndex     = Environment.GetIndex(CurrentNodePath))
     {
         // Copy variables
         const std::unordered_map<std::string, HTNAtom> Variables = Environment.GetVariables();
@@ -387,8 +387,8 @@ HTNAtom HTNInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inOrConditionNode.GetSubConditionNodes();
-    for (unsigned int SubConditionIndex = Environment.GetOrAddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodes.size();
-         SubConditionIndex              = Environment.GetOrAddIndex(CurrentNodePath))
+    for (int SubConditionIndex = Environment.AddIndex(CurrentNodePath); SubConditionIndex >= 0 && SubConditionIndex < SubConditionNodes.size();
+         SubConditionIndex     = Environment.GetIndex(CurrentNodePath))
     {
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode   = SubConditionNodes[SubConditionIndex];
         const HTNAtomList                                  ConditionNodeValue = GetNodeValue(*SubConditionNode).GetValue<HTNAtomList>();
@@ -419,8 +419,8 @@ HTNAtom HTNInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAltConditionNode.GetSubConditionNodes();
-    for (unsigned int SubConditionIndex = Environment.GetOrAddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodes.size();
-         SubConditionIndex              = Environment.GetOrAddIndex(CurrentNodePath))
+    for (int SubConditionIndex = Environment.AddIndex(CurrentNodePath); SubConditionIndex >= 0 && SubConditionIndex < SubConditionNodes.size();
+         SubConditionIndex     = Environment.GetIndex(CurrentNodePath))
     {
         // Copy variables
         const std::unordered_map<std::string, HTNAtom> Variables = Environment.GetVariables();

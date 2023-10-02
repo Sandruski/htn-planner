@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HTNAtom.h"
+#include "HTNMacros.h"
 
 #include <string>
 #include <unordered_map>
@@ -14,14 +15,17 @@ public:
     void                                            SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables);
     const std::unordered_map<std::string, HTNAtom>& GetVariables() const;
 
-    // Returns an existing index or adds a new index
-    unsigned int GetOrAddIndex(const std::string& inID);
+    // Adds a new index if not existing
+    unsigned int AddIndex(const std::string& inID);
 
     // Increments an existing index or adds a new index and increments it
     unsigned int IncrementIndex(const std::string& inID);
 
     // Adds a new index or increments an existing index
     unsigned int AddOrIncrementIndex(const std::string& inID);
+
+    // Returns an existing index or INVALID_INDEX if not existing
+    int GetIndex(const std::string& inID) const;
 
 private:
     // Variable ID to value
@@ -54,7 +58,7 @@ inline const std::unordered_map<std::string, HTNAtom>& HTNEnvironment::GetVariab
     return mVariables;
 }
 
-inline unsigned int HTNEnvironment::GetOrAddIndex(const std::string& inID)
+inline unsigned int HTNEnvironment::AddIndex(const std::string& inID)
 {
     return mIndices[inID];
 }
@@ -72,5 +76,16 @@ inline unsigned int HTNEnvironment::AddOrIncrementIndex(const std::string& inID)
         return mIndices[inID];
     }
 
-    return ++mIndices[inID];
+    return ++(ScopeIt->second);
+}
+
+inline int HTNEnvironment::GetIndex(const std::string& inID) const
+{
+    auto ScopeIt = mIndices.find(inID);
+    if (ScopeIt == mIndices.end())
+    {
+        return INVALID_INDEX;
+    }
+
+    return ScopeIt->second;
 }
