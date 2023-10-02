@@ -55,7 +55,6 @@ public:
     const HTNWorldState* GetWorldState() const;
 
     void RecordDecomposition(HTNDecompositionRecord& inDecomposition);
-    void RecordCurrentDecomposition();
     bool RestoreDecomposition();
 
     const HTNDecompositionRecord& GetCurrentDecomposition() const;
@@ -158,11 +157,6 @@ inline const HTNWorldState* HTNDecompositionContext::GetWorldState() const
 inline void HTNDecompositionContext::RecordDecomposition(HTNDecompositionRecord& inDecomposition)
 {
     mDecompositionHistory.emplace_back(inDecomposition);
-}
-
-inline void HTNDecompositionContext::RecordCurrentDecomposition()
-{
-    RecordDecomposition(mCurrentDecomposition);
 }
 
 inline const HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecomposition() const
