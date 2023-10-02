@@ -22,7 +22,7 @@ public:
     const HTNAtom* Find(const unsigned int inIndex) const;
 
     unsigned int GetSize() const;
-    bool IsEmpty() const;
+    bool         IsEmpty() const;
 
     std::string ToString(const bool inShouldDoubleQuoteString) const;
 
@@ -61,7 +61,7 @@ public:
     // Return the list element
     const HTNAtom* FindListElement(const unsigned int inElementIdx) const;
 
-    int GetListNumItems() const;
+    int  GetListNumItems() const;
     bool IsListEmpty() const;
 
     // Unbinds this HtnAtom, this can be used in the context of multiresult queries where we might want to reuse the same HtnAtom

@@ -9,43 +9,66 @@
 class HTNEnvironment
 {
 public:
-    void           SetVariable(const std::string& inVariableID, const HTNAtom& inVariableValue);
-    const HTNAtom& GetOrAddVariable(const std::string& inVariableID);
+    // Sets the value of an existing variable or adds a new variable and sets its value
+    void SetVariable(const std::string& inVariablePath, const HTNAtom& inVariableValue);
+
+    // Returns an existing variable or an unset HTNAtom if not existing
+    HTNAtom GetVariable(const std::string& inVariablePath) const;
+
+    // Removes an existing variable
+    void RemoveVariable(const std::string& inVariablePath);
+
+    // Removes all existing variables under the scope path
+    void RemoveVariables(const std::string& inVariableScopePath);
 
     void                                            SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables);
     const std::unordered_map<std::string, HTNAtom>& GetVariables() const;
 
-    // Adds a new index if not existing
-    unsigned int AddIndex(const std::string& inID);
+    // Adds a new index
+    unsigned int AddIndex(const std::string& inNodePath);
 
     // Increments an existing index or adds a new index and increments it
-    unsigned int IncrementIndex(const std::string& inID);
+    unsigned int IncrementIndex(const std::string& inNodePath);
 
     // Adds a new index or increments an existing index
-    unsigned int AddOrIncrementIndex(const std::string& inID);
+    unsigned int AddOrIncrementIndex(const std::string& inNodePath);
+
+    // Removes an existing index
+    void RemoveIndex(const std::string& inNodePath);
 
     // Returns an existing index or INVALID_INDEX if not existing
-    int GetIndex(const std::string& inID) const;
+    int GetIndex(const std::string& inNodePath) const;
 
 private:
-    // Variable ID to value
+    // Variable path to value
     std::unordered_map<std::string, HTNAtom> mVariables;
 
-    // Node ID to index
-    // - Method scope ID to branch index
-    // - HTNConditionAnd, HTNConditionOr, and HTNConditionAlt scope ID to sub-condition index
-    // - HTNCondition scope ID to fact entry index
+    // Node path to index
+    // - Method to branch
+    // - And, or, and alt conditions to sub-condition
+    // - Condition to fact entry
     std::unordered_map<std::string, unsigned int> mIndices;
 };
 
-inline void HTNEnvironment::SetVariable(const std::string& inVariableID, const HTNAtom& inVariableValue)
+inline void HTNEnvironment::SetVariable(const std::string& inVariablePath, const HTNAtom& inVariableValue)
 {
-    mVariables[inVariableID] = inVariableValue;
+    mVariables[inVariablePath] = inVariableValue;
 }
 
-inline const HTNAtom& HTNEnvironment::GetOrAddVariable(const std::string& inVariableID)
+inline HTNAtom HTNEnvironment::GetVariable(const std::string& inVariablePath) const
 {
-    return mVariables[inVariableID];
+    auto ScopeIt = mVariables.find(inVariablePath);
+    if (ScopeIt == mVariables.end())
+    {
+        return HTNAtom();
+    }
+
+    return ScopeIt->second;
+}
+
+inline void HTNEnvironment::RemoveVariable(const std::string& inVariablePath)
+{
+    mVariables.erase(inVariablePath);
 }
 
 inline void HTNEnvironment::SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables)
@@ -58,30 +81,35 @@ inline const std::unordered_map<std::string, HTNAtom>& HTNEnvironment::GetVariab
     return mVariables;
 }
 
-inline unsigned int HTNEnvironment::AddIndex(const std::string& inID)
+inline unsigned int HTNEnvironment::AddIndex(const std::string& inNodePath)
 {
-    return mIndices[inID];
+    return mIndices[inNodePath];
 }
 
-inline unsigned int HTNEnvironment::IncrementIndex(const std::string& inID)
+inline unsigned int HTNEnvironment::IncrementIndex(const std::string& inNodePath)
 {
-    return ++mIndices[inID];
+    return ++mIndices[inNodePath];
 }
 
-inline unsigned int HTNEnvironment::AddOrIncrementIndex(const std::string& inID)
+inline unsigned int HTNEnvironment::AddOrIncrementIndex(const std::string& inNodePath)
 {
-    auto ScopeIt = mIndices.find(inID);
+    auto ScopeIt = mIndices.find(inNodePath);
     if (ScopeIt == mIndices.end())
     {
-        return mIndices[inID];
+        return AddIndex(inNodePath);
     }
 
-    return ++(ScopeIt->second);
+    return IncrementIndex(inNodePath);
 }
 
-inline int HTNEnvironment::GetIndex(const std::string& inID) const
+inline void HTNEnvironment::RemoveIndex(const std::string& inNodePath)
 {
-    auto ScopeIt = mIndices.find(inID);
+    mIndices.erase(inNodePath);
+}
+
+inline int HTNEnvironment::GetIndex(const std::string& inNodePath) const
+{
+    auto ScopeIt = mIndices.find(inNodePath);
     if (ScopeIt == mIndices.end())
     {
         return INVALID_INDEX;

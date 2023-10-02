@@ -16,4 +16,5 @@ public:
 
 private:
     HTNDecompositionContext& mDecompositionContext;
+    bool                     mResult = false;
 };

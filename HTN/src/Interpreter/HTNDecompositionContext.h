@@ -27,6 +27,7 @@ public:
     const std::shared_ptr<const HTNTaskNodeBase>& GetCurrentTaskNode() const;
 
     void            SetEnvironment(const HTNEnvironment& inEnvironment);
+    const HTNEnvironment& GetEnvironment() const;
     HTNEnvironment& GetEnvironmentMutable();
 
     void                              AddTaskResultToPlan(const HTNTaskResult& inTaskResult);
@@ -123,6 +124,11 @@ inline const std::shared_ptr<const HTNTaskNodeBase>& HTNDecompositionRecord::Get
 inline void HTNDecompositionRecord::SetEnvironment(const HTNEnvironment& inEnvironment)
 {
     mEnvironment = inEnvironment;
+}
+
+inline const HTNEnvironment& HTNDecompositionRecord::GetEnvironment() const
+{
+    return mEnvironment;
 }
 
 inline HTNEnvironment& HTNDecompositionRecord::GetEnvironmentMutable()

@@ -146,7 +146,6 @@ HTNAtom HTNInterpreter::Visit(const HTNAxiomNode& inAxiomNode)
 HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
 {
     const HTNNodeScope MethodNodeScope = HTNNodeScope(mDecompositionContext, inMethodNode.GetID());
-
     const std::string& CurrentNodePath = mDecompositionContext.GetCurrentNodePath();
 
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
@@ -211,8 +210,7 @@ HTNAtom HTNInterpreter::Visit(const HTNBranchNode& inBranchNode)
 HTNAtom HTNInterpreter::Visit(const HTNConditionNode& inConditionNode)
 {
     const HTNNodeScope ConditionNodeScope = HTNNodeScope(mDecompositionContext, inConditionNode.GetID());
-
-    const std::string& CurrentNodePath = mDecompositionContext.GetCurrentNodePath();
+    const std::string& CurrentNodePath    = mDecompositionContext.GetCurrentNodePath();
 
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
@@ -321,8 +319,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
 {
     const HTNNodeScope AndConditionNodeScope = HTNNodeScope(mDecompositionContext, inAndConditionNode.GetID());
-
-    const std::string& CurrentNodePath = mDecompositionContext.GetCurrentNodePath();
+    const std::string& CurrentNodePath       = mDecompositionContext.GetCurrentNodePath();
 
     // YES bindings
     // YES backtracking
@@ -342,8 +339,6 @@ HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
         const HTNAtomList                                  ConditionNodeValue = GetNodeValue(*SubConditionNode).GetValue<HTNAtomList>();
         if (!IsNodeSuccessful(ConditionNodeValue))
         {
-            // TODO salvarez Why this early out?
-            // TODO salvarez Get function in conditions for index to backtrack using -1
             if (SubConditionIndex == 0) // First condition
             {
                 return HTNAtomList({false});
@@ -377,8 +372,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
 HTNAtom HTNInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
 {
     const HTNNodeScope OrConditionNodeScope = HTNNodeScope(mDecompositionContext, inOrConditionNode.GetID());
-
-    const std::string& CurrentNodePath = mDecompositionContext.GetCurrentNodePath();
+    const std::string& CurrentNodePath      = mDecompositionContext.GetCurrentNodePath();
 
     // YES bindings
     // NO backtracking
@@ -409,8 +403,7 @@ HTNAtom HTNInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
 HTNAtom HTNInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
 {
     const HTNNodeScope AltConditionNodeScope = HTNNodeScope(mDecompositionContext, inAltConditionNode.GetID());
-
-    const std::string& CurrentNodePath = mDecompositionContext.GetCurrentNodePath();
+    const std::string& CurrentNodePath       = mDecompositionContext.GetCurrentNodePath();
 
     // YES bindings
     // YES backtracking
@@ -572,13 +565,13 @@ HTNAtom HTNInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode)
 {
     const HTNNodeScope VariableValueNodeScope = HTNNodeScope(mDecompositionContext, inVariableValueNode.GetID());
 
-    HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
-    HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
+    const HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecomposition();
+    const HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironment();
 
     std::string VariableID = inVariableValueNode.GetValue().GetValue<std::string>();
     RemoveVariableIDPrefixes(VariableID);
     const std::string CurrentVariablePath = mDecompositionContext.MakeCurrentVariablePath(VariableID);
-    return Environment.GetOrAddVariable(CurrentVariablePath);
+    return Environment.GetVariable(CurrentVariablePath);
 }
 
 HTNAtom HTNInterpreter::Visit(const HTNConstantValueNode& inConstantValueNode)
