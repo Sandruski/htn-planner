@@ -5,5 +5,5 @@
 bool HTNConditionQueryWorldState::Check(const HTNWorldState& inWorldState, const std::string& inFactID, const std::size_t inArgumentsIndex,
                                       std::vector<HTNAtom>& ioArguments)
 {
-    return inWorldState.CheckIndex(inFactID, inArgumentsIndex, ioArguments);
+    return inWorldState.CheckIndex(inFactID, inArgumentsIndex, ioArguments.begin(), ioArguments.end());
 }

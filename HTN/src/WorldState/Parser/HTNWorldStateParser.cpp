@@ -45,7 +45,7 @@ bool HTNWorldStateParser::ParseFact(HTNWorldState& outWorldState, unsigned int& 
         Arguments.emplace_back(Argument);
     }
 
-    outWorldState.AddFact(Identifier.GetValue<std::string>().c_str(), Arguments);
+    outWorldState.AddFact(Identifier.GetValue<std::string>().c_str(), Arguments.begin(), Arguments.end());
 
     ioPosition = CurrentPosition;
 
