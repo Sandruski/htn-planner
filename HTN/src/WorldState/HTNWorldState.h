@@ -8,62 +8,79 @@
 #include <unordered_map>
 #include <vector>
 
-// Contains the array with a list of arguments that corresponds to certain HtnWorldState key.
+/**
+ * Table of fact arguments mapped to a fact ID in the world state
+ * - The table has a fixed number of fact arguments
+ * - Each row of the table represents a group of fact arguments, and each column represents a single fact argument within its group
+ * - Each group of fact arguments can only be contained once in the table
+ */
 class HTNFactArgumentsTable
 {
 public:
+    // Adds a unique row to the table
     bool AddUniqueFactArguments(const std::vector<HTNAtom>& inFactArguments);
+
+    // Removes the row at the index from the table
     void RemoveFactArguments(const std::size_t inFactArgumentsIndex);
+
+    // Removes all rows from the table
     void RemoveAllFactArguments();
 
+    // Checks if the passed fact arguments match the ones of the row at the index in the table
+    // Binds the passed fact arguments that are unbound
     bool Check(const std::size_t inFactArgumentsIndex, std::vector<HTNAtom>& ioFactArguments) const;
 
+    // Checks if the passed arguments match the fact arguments of any row in the table
     bool ContainsFactArguments(const std::vector<HTNAtom>& inFactArguments) const;
 
     const std::vector<HTNFactArguments>& GetFactArguments() const;
     std::size_t                          GetFactArgumentsSize() const;
 
 private:
+    // Adds a row to the table
     void AddFactArguments(const std::vector<HTNAtom>& inFactArguments);
 
-    // Fact arguments
     std::vector<HTNFactArguments> mFactArguments;
 };
 
-// World state for the HTN planner.
-// Knowledge
-// Data structure includes a map of <sKey, Array<HTNTable>>. Each key can contain multiple tables, each table has a specific number of arguments.
-// There can't be two tables with the same number of arguments for the same key.
+/**
+ * Database of facts used for knowledge representation
+ * Map of fact IDs to fact tables
+ * - Each fact ID can contain multiple fact tables, but it can only contain once a fact table of a number of fact arguments
+ */
 class HTNWorldState
 {
 public:
+    // Adds a unique row to the table associated to the fact ID
     void AddFact(const std::string& inFactID, const std::vector<HTNAtom>& inFactArguments);
+
+    // Removes the row at the index from the table of the number of fact arguments associated to the fact ID
     void RemoveFact(const std::string& inFactID, const std::size_t inFactArgumentsSize, const std::size_t inFactArgumentsIndex);
+
+    // Removes all facts
     void RemoveAllFacts();
 
-    // It checks if there is an existing entry for the inKey + arguments.
-    // If all the arguments are binded then the result is like a binary operation, that query results in true or false.
-    // If not all the arguments are binded then the result might return more than 1.
-    // Return the number of possible results in the database.
+    // If all fact arguments are bound, returns 1
+    // Otherwise, returns the number of rows of the table associated to the fact ID
     std::size_t Query(const std::string& inFactID, const std::vector<HTNAtom>& inFactArguments) const;
 
-    // It checks if there is an existing entry for the inKey + arguments.
-    // If all the arguments are binded then the result is like a binary operation, that query results in true or false.
-    // If not all the arguments are binded then we need to bind it according to the row that correspond to inIndex, the result will always be 0 or 1.
-    // Return either 0 or 1 because we are pointing to a specific row within a table.
+    // If all fact arguments are bound, returns true
+    // Otherwise, checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
     bool QueryIndex(const std::string& inFactID, const std::size_t inFactArgumentsIndex, std::vector<HTNAtom>& ioFactArguments) const;
 
+    // Checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
     bool CheckIndex(const std::string& inFactID, const std::size_t inFactArgumentsIndex, std::vector<HTNAtom>& ioFactArguments) const;
 
-    // Returns the number of HTNTables registered for the fact inKey.
+    // Returns the number of tables associated to the fact ID
     std::size_t GetFactArgumentsTablesSize(const std::string& inFactID) const;
 
-    // Returns the number of HTNTables registered for the fact inKey and the inNumArgs. This function should only return 0 or 1.
-    // If it does returns something different then this will cause problems later on during decomposition.
+    // Returns whether the table of the number of arguments is associated to the fact ID
     bool ContainsFactArgumentTable(const std::string& inFactID, const std::size_t inFactArgumentsSize) const;
 
+    // Returns the number of rows of the table of the number of arguments associated to the fact ID
     std::size_t GetFactArgumentsSize(const std::string& inFactID, const std::size_t inFactArgumentsSize) const;
 
+    // Returns whether the fact arguments are contained by the fact ID
     bool ContainsFactArguments(const std::string& inFactID, const std::vector<HTNAtom>& inFactArguments) const;
 
     const std::unordered_map<std::string, HTNFactArgumentsTables>& GetFacts() const;

@@ -4,6 +4,10 @@
 
 #include <cassert>
 
+#ifdef HTN_DEBUG
+#include <format>
+#endif
+
 namespace
 {
 unsigned int CountFactArgumentsBound(const std::vector<HTNAtom>& inFactArguments)
@@ -26,7 +30,23 @@ bool HTNFactArgumentsTable::AddUniqueFactArguments(const std::vector<HTNAtom>& i
 {
     if (ContainsFactArguments(inFactArguments))
     {
-        LOG_ERROR("Fact arguments already contained");
+#ifdef HTN_DEBUG
+        std::string FactArgumentsDescription;
+
+        for (const HTNAtom& FactArgument : inFactArguments)
+        {
+            static constexpr bool ShouldDoubleQuoteString = true;
+            FactArgumentsDescription.append(std::format("{} ", FactArgument.ToString(ShouldDoubleQuoteString)));
+        }
+
+        // Remove last whitespace
+        const std::size_t Index = FactArgumentsDescription.find_last_of(" ");
+        if (Index != std::string::npos)
+        {
+            FactArgumentsDescription.erase(Index);
+        }
+#endif
+        LOG_ERROR("Fact arguments [{}] already contained", FactArgumentsDescription);
         return false;
     }
 
