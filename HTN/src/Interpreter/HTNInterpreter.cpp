@@ -207,11 +207,11 @@ HTNAtom HTNInterpreter::Visit(const HTNConditionNode& inConditionNode)
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inConditionNode.GetArgumentNodes();
     std::vector<HTNAtom>                                        FactArguments;
     FactArguments.reserve(ArgumentNodes.size());
-    bool ShouldBindArguments = false;
+    bool ShouldBindFactArguments = false;
     for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
-        const HTNAtom Argument = GetNodeValue(*ArgumentNode);
-        ShouldBindArguments    = ShouldBindArguments || !Argument.IsSet();
+        const HTNAtom Argument  = GetNodeValue(*ArgumentNode);
+        ShouldBindFactArguments = ShouldBindFactArguments || !Argument.IsSet();
         FactArguments.emplace_back(Argument);
     }
 
@@ -222,33 +222,42 @@ HTNAtom HTNInterpreter::Visit(const HTNConditionNode& inConditionNode)
     for (std::size_t FactArgumentsIndex = Environment.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsSize;
          FactArgumentsIndex             = Environment.AddOrIncrementIndex(CurrentNodePath))
     {
-        if (HTNConditionQueryWorldState::Check(*WorldState, FactID, FactArgumentsIndex, FactArguments))
+        if (!HTNConditionQueryWorldState::Check(*WorldState, FactID, FactArgumentsIndex, FactArguments))
         {
-            // Copy variables before they change
-            const std::unordered_map<std::string, HTNAtom> Variables = Environment.GetVariables();
+            continue;
+        }
 
-            // Update variables
-            for (std::size_t i = 0; i < ArgumentNodes.size(); ++i)
-            {
-                const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode = ArgumentNodes[i];
-                const HTNAtom                                  FactArgument = FactArguments[i];
-                SetNodeValue(*ArgumentNode, FactArgument);
-            }
-
-            const bool IsLastFactEntry = (FactArgumentsIndex == FactArgumentsSize - 1);
-            if (ShouldBindArguments && !IsLastFactEntry)
-            {
-                // Copy unchanged variables to decomposition
-                HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
-                HTNEnvironment&        NewEnvironment   = NewDecomposition.GetEnvironmentMutable();
-                NewEnvironment.SetVariables(Variables);
-
-                // Record decomposition
-                mDecompositionContext.RecordDecomposition(NewDecomposition);
-            }
-
+        if (!ShouldBindFactArguments)
+        {
             return true;
         }
+
+        // Copy variables before they change
+        const std::unordered_map<std::string, HTNAtom> Variables = Environment.GetVariables();
+
+        // Update variables
+        for (std::size_t i = 0; i < ArgumentNodes.size(); ++i)
+        {
+            const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode = ArgumentNodes[i];
+            const HTNAtom                                  FactArgument = FactArguments[i];
+            SetNodeValue(*ArgumentNode, FactArgument);
+        }
+
+        const bool IsLastFactEntry = (FactArgumentsIndex == FactArgumentsSize - 1);
+        if (IsLastFactEntry)
+        {
+            return true;
+        }
+
+        // Copy unchanged variables to decomposition
+        HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
+        HTNEnvironment&        NewEnvironment   = NewDecomposition.GetEnvironmentMutable();
+        NewEnvironment.SetVariables(Variables);
+
+        // Record decomposition
+        mDecompositionContext.RecordDecomposition(NewDecomposition);
+
+        return true;
     }
 
     return false;
