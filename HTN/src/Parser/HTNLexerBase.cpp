@@ -15,7 +15,7 @@ void HTNLexerBase::LexIdentifier(std::vector<HTNToken>& outTokens, const std::un
 
     AdvancePosition();
 
-    for (char Character = GetCharacter(); HTNLexer::Helpers::IsAlphaNumeric(Character); Character = GetCharacter())
+    for (char Character = GetCharacter(); HTNLexerHelpers::IsAlphaNumeric(Character); Character = GetCharacter())
     {
         AdvancePosition();
     }
@@ -50,19 +50,19 @@ void HTNLexerBase::LexNumber(std::vector<HTNToken>& outTokens)
     AdvancePosition();
 
     // Check for more digits
-    for (char Character = GetCharacter(); HTNLexer::Helpers::IsDigit(Character); Character = GetCharacter())
+    for (char Character = GetCharacter(); HTNLexerHelpers::IsDigit(Character); Character = GetCharacter())
     {
         AdvancePosition();
     }
 
     // Check for fractional part
     const char NextCharacter = GetCharacter(1);
-    if (GetCharacter() == '.' && HTNLexer::Helpers::IsDigit(NextCharacter))
+    if (GetCharacter() == '.' && HTNLexerHelpers::IsDigit(NextCharacter))
     {
         AdvancePosition();
 
         // Check for more digits in fractional part
-        for (char Character = GetCharacter(); HTNLexer::Helpers::IsDigit(Character); Character = GetCharacter())
+        for (char Character = GetCharacter(); HTNLexerHelpers::IsDigit(Character); Character = GetCharacter())
         {
             AdvancePosition();
         }

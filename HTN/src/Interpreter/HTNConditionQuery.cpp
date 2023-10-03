@@ -2,7 +2,8 @@
 
 #include "WorldState/HTNWorldState.h"
 
-bool HTNConditionQueryWorldState::Check(const HTNWorldState& inWorldState, const int inIndex) const
+bool HTNConditionQueryWorldState::Check(const HTNWorldState& inWorldState, const std::string& inFactID, const std::size_t inArgumentsIndex,
+                                      std::vector<HTNAtom>& ioArguments)
 {
-    return inWorldState.CheckIndex(mKey.c_str(), inIndex, mArguments);
+    return inWorldState.CheckIndex(inFactID, inArgumentsIndex, ioArguments);
 }

@@ -21,7 +21,7 @@ bool PushSegmentToPath(const std::string& inSegment, std::string& ioPath)
 
 bool PopSegmentFromPath(std::string& ioPath)
 {
-    const size_t Index = ioPath.find_last_of(" ");
+    const std::size_t Index = ioPath.find_last_of(" ");
     if (Index == std::string::npos)
     {
         return false;

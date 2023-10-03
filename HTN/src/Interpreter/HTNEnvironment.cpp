@@ -7,7 +7,7 @@ void HTNEnvironment::RemoveVariables(const std::string& inVariableScopePath)
         const std::string& VariablePath = It->first;
 
         // Check if variable path is prefixed by variable scope path
-        const size_t Index = VariablePath.find(inVariableScopePath);
+        const std::size_t Index = VariablePath.find(inVariableScopePath);
         if (Index != 0)
         {
             ++It;

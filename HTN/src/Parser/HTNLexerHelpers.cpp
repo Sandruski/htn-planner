@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 
-namespace HTNLexer::Helpers
+namespace HTNLexerHelpers
 {
 bool IsValidCharacter(const char inCharacter)
 {
@@ -32,4 +32,4 @@ std::string GetSpecialCharacterEscapeSequence(const char inCharacter)
     const auto It = SpecialCharactersToEscapeSequences.find(inCharacter);
     return (It != SpecialCharactersToEscapeSequences.end() ? It->second : std::string(1, inCharacter));
 }
-} // namespace HTNLexer::Helpers
+} // namespace HTNLexerHelpers

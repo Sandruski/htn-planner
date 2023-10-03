@@ -1,9 +1,9 @@
 #pragma once
 
-#include <string>
-#include <vector>
+#include "WorldState/HTNWorldStateHelpers.h"
 
-class HTNAtom;
+#include <string>
+
 class HTNWorldState;
 
 struct ImGuiTextFilter;
@@ -18,5 +18,5 @@ public:
 
 private:
     void PrintFactID(const std::string& inFactID) const;
-    void PrintFactArguments(const std::vector<HTNAtom>& inFactArguments) const;
+    void PrintFactArguments(const HTNFactArguments& inFactArguments) const;
 };

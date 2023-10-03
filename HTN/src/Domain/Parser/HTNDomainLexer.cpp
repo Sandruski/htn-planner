@@ -9,7 +9,7 @@ bool HTNDomainLexer::Lex(std::vector<HTNToken>& outTokens)
 {
     bool Result = true;
 
-    for (char Character = GetCharacter(); HTNLexer::Helpers::IsValidCharacter(Character); Character = GetCharacter())
+    for (char Character = GetCharacter(); HTNLexerHelpers::IsValidCharacter(Character); Character = GetCharacter())
     {
         switch (Character)
         {
@@ -91,13 +91,13 @@ bool HTNDomainLexer::Lex(std::vector<HTNToken>& outTokens)
             break;
         }
         default: {
-            if (HTNLexer::Helpers::IsDigit(Character))
+            if (HTNLexerHelpers::IsDigit(Character))
             {
                 // Number
                 LexNumber(outTokens);
                 break;
             }
-            else if (HTNLexer::Helpers::IsLetter(Character))
+            else if (HTNLexerHelpers::IsLetter(Character))
             {
                 // Identifier
                 static const std::unordered_map<std::string, HTNTokenType> Keywords = {
@@ -111,7 +111,7 @@ bool HTNDomainLexer::Lex(std::vector<HTNToken>& outTokens)
                 break;
             }
 
-            LOG_HTN_ERROR(mRow, mColumn, "Character [{}] not recognized", HTNLexer::Helpers::GetSpecialCharacterEscapeSequence(Character));
+            LOG_HTN_ERROR(mRow, mColumn, "Character [{}] not recognized", HTNLexerHelpers::GetSpecialCharacterEscapeSequence(Character));
             Result = false;
             AdvancePosition();
         }

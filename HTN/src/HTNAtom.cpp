@@ -96,7 +96,7 @@ std::string HTNAtomList::ToString(const bool inShouldDoubleQuoteString) const
     }
 
     // Remove last whitespace
-    const size_t Index = String.find_last_of(" ");
+    const std::size_t Index = String.find_last_of(" ");
     if (Index != std::string::npos)
     {
         String.erase(Index);

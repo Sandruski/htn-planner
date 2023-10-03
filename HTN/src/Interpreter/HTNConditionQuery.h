@@ -8,6 +8,8 @@ class HTNWorldState;
 
 class HTNConditionQueryBase
 {
+public:
+    virtual ~HTNConditionQueryBase() = default;
 };
 
 /**
@@ -18,31 +20,6 @@ class HTNConditionQueryBase
 class HTNConditionQueryWorldState final : public HTNConditionQueryBase
 {
 public:
-    HTNConditionQueryWorldState() = default;
-    explicit HTNConditionQueryWorldState(const std::string& inKey, const std::vector<HTNAtom*>& inArguments);
-
     // Check if the condition is true
-    bool Check(const HTNWorldState& inWorldState, const int inIndex) const;
-
-    void SetKey(const std::string& inKey);
-    void AddArgument(HTNAtom& inArgument);
-
-private:
-    std::string           mKey;
-    std::vector<HTNAtom*> mArguments;
+    static bool Check(const HTNWorldState& inWorldState, const std::string& inFactID, const std::size_t inArgumentsIndex, std::vector<HTNAtom>& ioArguments);
 };
-
-inline HTNConditionQueryWorldState::HTNConditionQueryWorldState(const std::string& inKey, const std::vector<HTNAtom*>& inArguments)
-    : mKey(inKey), mArguments(inArguments)
-{
-}
-
-inline void HTNConditionQueryWorldState::SetKey(const std::string& inKey)
-{
-    mKey = inKey;
-}
-
-inline void HTNConditionQueryWorldState::AddArgument(HTNAtom& inArgument)
-{
-    mArguments.emplace_back(&inArgument);
-}
