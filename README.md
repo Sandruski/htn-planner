@@ -9,7 +9,8 @@
 ## Usage
 The solution contains three projects, HTNPlanner, HTNDemo, and HTNTest. HTNPlanner is the core planner, HTNDemo is a playground for testing the planner, and HTNTest contains all the unit tests of the planner.
 
-## Libraries
+## Third-Party
 - [SDL](https://www.libsdl.org/)
 - [Dear ImGui](https://github.com/ocornut/imgui)
 - [GoogleTest](https://google.github.io/googletest/)
+- [Premake](https://premake.github.io/)
