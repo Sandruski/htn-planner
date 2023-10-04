@@ -1,9 +1,9 @@
 #pragma once
 
 #include "HTNAtom.h"
-#include "Interpreter/HTNEnvironment.h"
-#include "Interpreter/HTNTaskInstance.h"
-#include "Interpreter/HTNTaskResult.h"
+#include "Domain/Interpreter/HTNEnvironment.h"
+#include "Domain/Interpreter/HTNTaskInstance.h"
+#include "Domain/Interpreter/HTNTaskResult.h"
 
 #include <memory>
 #include <string>
@@ -23,17 +23,14 @@ public:
     HTNTaskInstance PopPendingTaskInstance();
     bool            HasPendingTaskInstances() const;
 
-    void            SetEnvironment(const HTNEnvironment& inEnvironment);
+    void                  SetEnvironment(const HTNEnvironment& inEnvironment);
     const HTNEnvironment& GetEnvironment() const;
-    HTNEnvironment& GetEnvironmentMutable();
+    HTNEnvironment&       GetEnvironmentMutable();
 
     void                              AddTaskResultToPlan(const HTNTaskResult& inTaskResult);
     const std::vector<HTNTaskResult>& GetPlan() const;
 
 private:
-    // Current task being processed
-    std::shared_ptr<const HTNTaskNodeBase> mCurrentTaskNode;
-
     // State of variables and indices
     HTNEnvironment mEnvironment;
 

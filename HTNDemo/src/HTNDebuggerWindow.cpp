@@ -3,12 +3,12 @@
 #include "Domain/AST/HTNDomainNode.h"
 #include "Domain/AST/HTNMethodNode.h"
 #include "Domain/HTNDomainPrinter.h"
+#include "Domain/Interpreter/HTNDomainInterpreter.h"
+#include "Domain/Interpreter/HTNTaskResult.h"
 #include "HTNAtom.h"
-#include "HTNPlanningUnit.h"
-#include "Interpreter/HTNInterpreter.h"
-#include "Interpreter/HTNTaskResult.h"
+#include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
-#include "WorldState/HTNWorldStateHook.h"
+#include "Planner/HTNPlanningUnit.h"
 #include "WorldState/HTNWorldStatePrinter.h"
 
 #include "imgui.h"
@@ -300,7 +300,8 @@ void HTNDebuggerWindow::RenderPlan()
         std::for_each(std::execution::par, EntryPoints.begin(), EntryPoints.end(), [this](EntryPoint& inEntryPoint) {
             for (unsigned int i = 0; i < inEntryPoint.Amount; ++i)
             {
-                const HTNPlanningUnit      PlanningUnit = HTNPlanningUnit(*mPlannerHook, *mWorldStateHook);
+                // AI has upper-body planning unit and lower-body planning unit
+                const HTNPlanningUnit      PlanningUnit = HTNPlanningUnit(*mPlannerHook, *mDatabaseHook);
                 std::vector<HTNTaskResult> Plan;
                 if (!PlanningUnit.ExecuteTopLevelMethod(inEntryPoint.ID, Plan))
                 {
@@ -390,7 +391,7 @@ void HTNDebuggerWindow::RenderWorldState()
     static OperationResult LastImportWorldStateResult = OperationResult::NONE;
     if (ImGui::Button("Parse"))
     {
-        LastImportWorldStateResult = static_cast<OperationResult>(mWorldStateHook->ImportWorldStateFile(SelectedWorldStateFilePath.string()));
+        LastImportWorldStateResult = static_cast<OperationResult>(mDatabaseHook->ParseWorldStateFile(SelectedWorldStateFilePath.string()));
     }
 
     if (ImGui::IsItemHovered())
@@ -406,6 +407,6 @@ void HTNDebuggerWindow::RenderWorldState()
     TextFilter.Draw("##");
 
     static const HTNWorldStatePrinter WorldStatePrinter;
-    const HTNWorldState&              WorldState = mWorldStateHook->GetWorldState();
+    const HTNWorldState&              WorldState = mDatabaseHook->GetWorldState();
     WorldStatePrinter.Print(WorldState, TextFilter);
 }

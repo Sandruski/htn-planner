@@ -1,12 +1,12 @@
-#include "WorldState/HTNWorldStateHook.h"
+#include "Planner/HTNDatabaseHook.h"
 
 #include "HTNFileHandler.h"
 #include "HTNLog.h"
 #include "HTNToken.h"
-#include "WorldState/Parser/HTNWorldStateParser.h"
 #include "WorldState/Parser/HTNWorldStateLexer.h"
+#include "WorldState/Parser/HTNWorldStateParser.h"
 
-bool HTNWorldStateHook::ImportWorldStateFile(const std::string& inWorldStateFilePath)
+bool HTNDatabaseHook::ParseWorldStateFile(const std::string& inWorldStateFilePath)
 {
     const HTNFileHandler WorldStateFileHandler = HTNFileHandler(inWorldStateFilePath);
     std::string          WorldStateFileText;

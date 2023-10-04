@@ -1,7 +1,7 @@
-#include "Interpreter/HTNVariableScope.h"
+#include "Domain/Interpreter/HTNVariableScope.h"
 
-#include "Interpreter/HTNDecompositionContext.h"
-#include "Interpreter/HTNEnvironment.h"
+#include "Domain/Interpreter/HTNDecompositionContext.h"
+#include "Domain/Interpreter/HTNEnvironment.h"
 
 HTNVariableScope::HTNVariableScope(HTNDecompositionContext& ioDecompositionContext, const std::string& inNodeID)
     : mDecompositionContext(ioDecompositionContext)

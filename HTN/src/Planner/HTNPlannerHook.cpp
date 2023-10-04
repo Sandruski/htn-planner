@@ -1,13 +1,14 @@
 #include "Planner/HTNPlannerHook.h"
 
 #include "Domain/AST/HTNDomainNode.h"
+#include "Domain/Interpreter/HTNDomainInterpreter.h"
+#include "Domain/Interpreter/HTNDomainResolver.h"
+#include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Parser/HTNDomainLexer.h"
 #include "Domain/Parser/HTNDomainParser.h"
 #include "HTNFileHandler.h"
 #include "HTNLog.h"
 #include "HTNToken.h"
-#include "Interpreter/HTNInterpreter.h"
-#include "Interpreter/HTNTaskResult.h"
 
 bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
 {
@@ -27,7 +28,7 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
         return false;
     }
 
-    HTNDomainParser                            DomainParser = HTNDomainParser(Tokens);
+    HTNDomainParser                      DomainParser = HTNDomainParser(Tokens);
     std::shared_ptr<const HTNDomainNode> DomainNode;
     if (!DomainParser.Parse(DomainNode))
     {
@@ -40,8 +41,7 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
     return true;
 }
 
-bool HTNPlannerHook::MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState,
-                                                    std::vector<HTNTaskResult>& outPlan) const
+bool HTNPlannerHook::MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState, std::vector<HTNTaskResult>& outPlan) const
 {
     if (!mDomainNode)
     {
@@ -49,9 +49,16 @@ bool HTNPlannerHook::MakePlan(const std::string& inEntryPointName, const HTNWorl
         return false;
     }
 
-    HTNInterpreter             Interpreter = HTNInterpreter(mDomainNode, inEntryPointName, inWorldState);
+    HTNDomainResolver DomainResolver = HTNDomainResolver(mDomainNode);
+    if (!DomainResolver.Resolve())
+    {
+        LOG_ERROR("Domain [{}] could not be resolved", mDomainNode->GetID());
+        return false;
+    }
+
+    HTNDomainInterpreter       DomainInterpreter = HTNDomainInterpreter(mDomainNode, inEntryPointName, inWorldState);
     std::vector<HTNTaskResult> Plan;
-    if (!Interpreter.Interpret(Plan))
+    if (!DomainInterpreter.Interpret(Plan))
     {
         LOG_ERROR("Domain [{}] could not be interpreted", mDomainNode->GetID());
         return false;

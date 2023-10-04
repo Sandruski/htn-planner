@@ -22,7 +22,7 @@ public:
     void RemoveVariables(const std::string& inVariableScopePath);
 
     void                                            SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables);
-    const std::unordered_map<std::string, HTNAtom>& GetVariables() const;
+    const std::unordered_map<std::string, HTNAtom>& GetVariables() const; // TODO salvarez Using
 
     // Adds a new index
     std::size_t AddIndex(const std::string& inNodePath);

@@ -13,11 +13,7 @@ class HTNWorldState;
 class HTNPlannerHook
 {
 public:
-    // Parses a domain file and builds an abstract syntax tree
-
-    // The information needed would be: ConstantsGroups, Methods, Axioms.
-    // Once we got all this information we need to know before hand what is the top_level method.
-    // The top level method determines the root/parent node of the entire hierarchy.
+    // Parses a domain file and builds a domain node
     bool ParseDomainFile(const std::string& inDomainFilePath);
 
     bool MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState, std::vector<HTNTaskResult>& outPlan) const;

@@ -1,4 +1,4 @@
-#include "Interpreter/HTNEnvironment.h"
+#include "Domain/Interpreter/HTNEnvironment.h"
 
 void HTNEnvironment::RemoveVariables(const std::string& inVariableScopePath)
 {

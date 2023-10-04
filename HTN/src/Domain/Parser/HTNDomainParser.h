@@ -17,6 +17,7 @@ class HTNToken;
 class HTNValueNode;
 class HTNValueNodeBase;
 
+// Syntactic analysis
 // Recursive descent parser
 // Builds an abstract syntax tree from a series of tokens
 // Reports the first syntax error of the tokens

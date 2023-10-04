@@ -1,4 +1,4 @@
-#include "Interpreter/HTNConditionQuery.h"
+#include "Domain/Interpreter/HTNConditionQuery.h"
 
 #include "WorldState/HTNWorldState.h"
 

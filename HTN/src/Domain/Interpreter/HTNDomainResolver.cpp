@@ -1,4 +1,4 @@
-#include "Interpreter/HTNInterpreter.h"
+#include "Domain/Interpreter/HTNDomainResolver.h"
 
 #include "Domain/AST/HTNAxiomNode.h"
 #include "Domain/AST/HTNBranchNode.h"
@@ -10,48 +10,15 @@
 #include "Domain/AST/HTNTaskNode.h"
 #include "Domain/AST/HTNValueNode.h"
 #include "HTNLog.h"
-#include "HTNMacros.h"
-#include "Interpreter/HTNConditionQuery.h"
-#include "Interpreter/HTNDecompositionContext.h"
-#include "Interpreter/HTNEnvironment.h"
-#include "Interpreter/HTNNodeScope.h"
-#include "Interpreter/HTNTaskInstance.h"
-#include "Interpreter/HTNVariableScope.h"
-#include "WorldState/HTNWorldState.h"
 
-namespace
-{
-bool RemovePrefix(const std::string& inPrefix, std::string& ioString)
-{
-    const std::size_t Position = ioString.find(inPrefix);
-    if (Position == std::string::npos)
-    {
-        return false;
-    }
-
-    ioString = ioString.erase(Position, inPrefix.size());
-
-    return true;
-}
-
-bool RemoveVariableIDPrefixes(std::string& ioString)
-{
-    static const std::string InputPrefix       = "inp_";
-    static const std::string OutputPrefix      = "out_";
-    static const std::string InputOutputPrefix = "io_";
-    return RemovePrefix(InputPrefix, ioString) || RemovePrefix(OutputPrefix, ioString) || RemovePrefix(InputOutputPrefix, ioString);
-}
-} // namespace
-
-HTNInterpreter::HTNInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointName,
-                               const HTNWorldState& inWorldState)
-    : mDomainNode(inDomainNode), mEntryPointName(inEntryPointName), mDecompositionContext(inWorldState)
+HTNDomainResolver::HTNDomainResolver(const std::shared_ptr<const HTNDomainNode>& inDomainNode)
+    : mDomainNode(inDomainNode)
 {
 }
 
-HTNInterpreter::~HTNInterpreter() = default;
+HTNDomainResolver::~HTNDomainResolver() = default;
 
-bool HTNInterpreter::Interpret(std::vector<HTNTaskResult>& outPlan)
+bool HTNDomainResolver::Resolve()
 {
     const HTNDomainNode* DomainNode = mDomainNode.get();
     if (!DomainNode)
@@ -66,19 +33,13 @@ bool HTNInterpreter::Interpret(std::vector<HTNTaskResult>& outPlan)
         return false;
     }
 
-    const bool IsDomainNodeSuccessful = GetNodeValue(*DomainNode).GetValue<bool>();
-    if (!IsDomainNodeSuccessful)
-    {
-        return false;
-    }
-
-    const HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecomposition();
-    outPlan                                            = CurrentDecomposition.GetPlan();
-
     return true;
+
+    //return GetNodeValue(*DomainNode).GetValue<bool>();
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNDomainNode& inDomainNode)
+/*
+HTNAtom HTNDomainResolver::Visit(const HTNDomainNode& inDomainNode)
 {
     const std::string      DomainNodeID        = inDomainNode.GetID();
     const HTNNodeScope     DomainNodeScope     = HTNNodeScope(mDecompositionContext, DomainNodeID);
@@ -113,7 +74,7 @@ HTNAtom HTNInterpreter::Visit(const HTNDomainNode& inDomainNode)
     return true;
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNConstantNode& inConstantNode)
+HTNAtom HTNDomainResolver::Visit(const HTNConstantNode& inConstantNode)
 {
     const HTNNodeScope ConstantNodeScope = HTNNodeScope(mDecompositionContext, inConstantNode.GetID());
 
@@ -121,7 +82,7 @@ HTNAtom HTNInterpreter::Visit(const HTNConstantNode& inConstantNode)
     return GetNodeValue(*ArgumentNode);
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNAxiomNode& inAxiomNode)
+HTNAtom HTNDomainResolver::Visit(const HTNAxiomNode& inAxiomNode)
 {
     const HTNNodeScope AxiomNodeScope = HTNNodeScope(mDecompositionContext, inAxiomNode.GetID());
 
@@ -136,7 +97,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAxiomNode& inAxiomNode)
     return GetNodeValue(*ConditionNode);
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
+HTNAtom HTNDomainResolver::Visit(const HTNMethodNode& inMethodNode)
 {
     const HTNNodeScope MethodNodeScope = HTNNodeScope(mDecompositionContext, inMethodNode.GetID());
     const std::string& CurrentNodePath = mDecompositionContext.GetCurrentNodePath();
@@ -181,7 +142,7 @@ HTNAtom HTNInterpreter::Visit(const HTNMethodNode& inMethodNode)
     return false;
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNBranchNode& inBranchNode)
+HTNAtom HTNDomainResolver::Visit(const HTNBranchNode& inBranchNode)
 {
     const HTNNodeScope BranchNodeScope = HTNNodeScope(mDecompositionContext, inBranchNode.GetID());
 
@@ -194,7 +155,7 @@ HTNAtom HTNInterpreter::Visit(const HTNBranchNode& inBranchNode)
     return GetNodeValue(*CurrentPreConditionNode).GetValue<bool>();
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNConditionNode& inConditionNode)
+HTNAtom HTNDomainResolver::Visit(const HTNConditionNode& inConditionNode)
 {
     const HTNNodeScope ConditionNodeScope = HTNNodeScope(mDecompositionContext, inConditionNode.GetID());
     const std::string& CurrentNodePath    = mDecompositionContext.GetCurrentNodePath();
@@ -263,7 +224,7 @@ HTNAtom HTNInterpreter::Visit(const HTNConditionNode& inConditionNode)
     return false;
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
+HTNAtom HTNDomainResolver::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 {
     const HTNNodeScope AxiomConditionNodeScope = HTNNodeScope(mDecompositionContext, inAxiomConditionNode.GetID());
 
@@ -324,7 +285,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 
 // YES bindings
 // YES backtracking
-HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
+HTNAtom HTNDomainResolver::Visit(const HTNAndConditionNode& inAndConditionNode)
 {
     const HTNNodeScope AndConditionNodeScope = HTNNodeScope(mDecompositionContext, inAndConditionNode.GetID());
     const std::string& CurrentNodePath       = mDecompositionContext.GetCurrentNodePath();
@@ -363,7 +324,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
 
 // YES bindings
 // NO backtracking
-HTNAtom HTNInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
+HTNAtom HTNDomainResolver::Visit(const HTNOrConditionNode& inOrConditionNode)
 {
     const HTNNodeScope OrConditionNodeScope = HTNNodeScope(mDecompositionContext, inOrConditionNode.GetID());
     const std::string& CurrentNodePath      = mDecompositionContext.GetCurrentNodePath();
@@ -401,7 +362,7 @@ HTNAtom HTNInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
 
 // YES bindings
 // YES backtracking
-HTNAtom HTNInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
+HTNAtom HTNDomainResolver::Visit(const HTNAltConditionNode& inAltConditionNode)
 {
     const HTNNodeScope AltConditionNodeScope = HTNNodeScope(mDecompositionContext, inAltConditionNode.GetID());
     const std::string& CurrentNodePath       = mDecompositionContext.GetCurrentNodePath();
@@ -439,7 +400,7 @@ HTNAtom HTNInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
 
 // NO bindings
 // NO backtracking
-HTNAtom HTNInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode)
+HTNAtom HTNDomainResolver::Visit(const HTNNotConditionNode& inNotConditionNode)
 {
     const HTNNodeScope NotConditionNodeScope = HTNNodeScope(mDecompositionContext, inNotConditionNode.GetID());
 
@@ -466,7 +427,7 @@ HTNAtom HTNInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode)
     return !ConditionNodeValue;
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
+HTNAtom HTNDomainResolver::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
 {
     const std::string  CompoundTaskNodeID    = inCompoundTaskNode.GetID();
     const HTNNodeScope CompoundTaskNodeScope = HTNNodeScope(mDecompositionContext, CompoundTaskNodeID);
@@ -509,7 +470,7 @@ HTNAtom HTNInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
     return GetNodeValue(*MethodNode);
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
+HTNAtom HTNDomainResolver::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
 {
     const HTNNodeScope PrimitiveTaskNodeScope = HTNNodeScope(mDecompositionContext, inPrimitiveTaskNode.GetID());
 
@@ -533,14 +494,14 @@ HTNAtom HTNInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
     return true;
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNValueNode& inValueNode)
+HTNAtom HTNDomainResolver::Visit(const HTNValueNode& inValueNode)
 {
     const HTNNodeScope ValueNodeScope = HTNNodeScope(mDecompositionContext, inValueNode.GetID());
 
     return inValueNode.GetValue();
 }
 
-void HTNInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode, const HTNAtom& inVariableValueNodeValue)
+void HTNDomainResolver::Visit(const HTNVariableValueNode& inVariableValueNode, const HTNAtom& inVariableValueNodeValue)
 {
     const HTNNodeScope VariableValueNodeScope = HTNNodeScope(mDecompositionContext, inVariableValueNode.GetID());
 
@@ -553,7 +514,7 @@ void HTNInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode, cons
     Environment.SetVariable(CurrentVariablePath, inVariableValueNodeValue);
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode)
+HTNAtom HTNDomainResolver::Visit(const HTNVariableValueNode& inVariableValueNode)
 {
     const HTNNodeScope VariableValueNodeScope = HTNNodeScope(mDecompositionContext, inVariableValueNode.GetID());
 
@@ -566,7 +527,7 @@ HTNAtom HTNInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode)
     return Environment.GetVariable(CurrentVariablePath);
 }
 
-HTNAtom HTNInterpreter::Visit(const HTNConstantValueNode& inConstantValueNode)
+HTNAtom HTNDomainResolver::Visit(const HTNConstantValueNode& inConstantValueNode)
 {
     const HTNNodeScope ConstantValueNodeScope = HTNNodeScope(mDecompositionContext, inConstantValueNode.GetID());
 
@@ -580,3 +541,4 @@ HTNAtom HTNInterpreter::Visit(const HTNConstantValueNode& inConstantValueNode)
 
     return GetNodeValue(*ConstantNode);
 }
+*/

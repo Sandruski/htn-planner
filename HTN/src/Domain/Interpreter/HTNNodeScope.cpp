@@ -1,12 +1,14 @@
-#include "Interpreter/HTNNodeScope.h"
+#include "Domain/Interpreter/HTNNodeScope.h"
 
-#include "Interpreter/HTNDecompositionContext.h"
-#include "Interpreter/HTNEnvironment.h"
+#include "Domain/Interpreter/HTNDecompositionContext.h"
+#include "Domain/Interpreter/HTNEnvironment.h"
 
 HTNNodeScope::HTNNodeScope(HTNDecompositionContext& ioDecompositionContext, const std::string& inNodeID)
     : mDecompositionContext(ioDecompositionContext)
 {
     mResult = mDecompositionContext.PushNodeToCurrentNodePath(inNodeID);
+
+    // TODO salvarez Call debugger to record decomposition
 }
 
 HTNNodeScope::~HTNNodeScope()
@@ -24,4 +26,6 @@ HTNNodeScope::~HTNNodeScope()
 
     // Remove the current node from the path
     mDecompositionContext.PopNodeFromCurrentNodePath();
+
+    // TODO salvarez Call debugger to record decomposition
 }

@@ -7,8 +7,8 @@
 // because it provides a rather limited API to the end-user. We provide this backend for the sake of completeness.
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
-#include "WorldState/HTNWorldStateHook.h"
 #include "HTNDebuggerWindow.h"
+#include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
@@ -91,8 +91,8 @@ int main(int, char**)
     bool   ShowHTNDebuggerWindow = true;
     ImVec4 clear_color           = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    HTNPlannerHook PlannerHook;
-    HTNWorldStateHook  WorldStateHook;
+    HTNPlannerHook  PlannerHook;
+    HTNDatabaseHook DatabaseHook;
 
     // Main loop
     bool done = false;
@@ -126,7 +126,7 @@ int main(int, char**)
 
         if (ShowHTNDebuggerWindow)
         {
-            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlannerHook, WorldStateHook);
+            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlannerHook, DatabaseHook);
             sHTNDebuggerWindow.Render(ShowHTNDebuggerWindow);
         }
 

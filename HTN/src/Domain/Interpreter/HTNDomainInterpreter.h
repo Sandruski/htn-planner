@@ -1,25 +1,24 @@
 #pragma once
 
-#include "Interpreter/HTNDecompositionContext.h"
+#include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Domain/AST/HTNNodeVisitorBase.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-class HTNAtom;
 class HTNDomainNode;
 class HTNTaskInstance;
 class HTNWorldState;
 
 // Decision-making
 // Returns a plan from an abstract syntax tree
-class HTNInterpreter final : public HTNNodeVisitorBase
+class HTNDomainInterpreter final : public HTNNodeVisitorBase
 {
 public:
-    explicit HTNInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointName,
+    explicit HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointName,
                             const HTNWorldState& inWorldState);
-    ~HTNInterpreter();
+    ~HTNDomainInterpreter();
 
     bool Interpret(std::vector<HTNTaskResult>& outPlan);
 

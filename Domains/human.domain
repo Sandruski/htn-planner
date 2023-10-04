@@ -12,13 +12,13 @@
     )
 
     (:axiom (find_food ?inp_food_type ?out_food)
-		(and    (food ?food_type ?food)
+		(and    (food ?inp_food_type ?out_food)
 		)
 	)
 
     (:axiom (is_spoiled ?inp_food)
-		(and    (or (has_mold ?food)
-                    (is_dry ?food)
+		(and    (or (has_mold ?inp_food)
+                    (is_dry ?inp_food)
                 )
 		)
 	)
@@ -40,7 +40,7 @@
         (branch_eat
             (
             )
-            (   (!eat ?food)
+            (   (!eat ?inp_food)
             )
         )
     )
