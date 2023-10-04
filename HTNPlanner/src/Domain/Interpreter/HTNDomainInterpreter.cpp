@@ -232,7 +232,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
         }
 
         // Copy variables before they change
-        const std::unordered_map<std::string, HTNAtom> Variables = Environment.GetVariables();
+        const HTNVariables Variables = Environment.GetVariables();
 
         // Update variables
         for (std::size_t i = 0; i < ArgumentNodes.size(); ++i)
@@ -446,7 +446,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
 
     // Copy variables
-    const std::unordered_map<std::string, HTNAtom> Variables = Environment.GetVariables();
+    const HTNVariables Variables = Environment.GetVariables();
 
     // Copy decomposition history
     const std::vector<HTNDecompositionRecord> DecompositionHistory = mDecompositionContext.GetDecompositionHistory();

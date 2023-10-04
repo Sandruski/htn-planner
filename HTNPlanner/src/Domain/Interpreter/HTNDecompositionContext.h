@@ -1,20 +1,13 @@
 #pragma once
 
-#include "HTNAtom.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNTaskInstance.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
 
-#include <memory>
 #include <string>
 #include <vector>
 
-class HTNCompoundTaskNode;
-class HTNDomainNode;
-class HTNMethodNode;
-class HTNTaskNodeBase;
 class HTNWorldState;
-class HTNNodeBase;
 
 class HTNDecompositionRecord
 {

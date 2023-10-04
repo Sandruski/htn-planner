@@ -6,6 +6,9 @@
 #include <string>
 #include <unordered_map>
 
+using HTNVariables = std::unordered_map<std::string, HTNAtom>;
+using HTNIndices   = std::unordered_map<std::string, std::size_t>;
+
 class HTNEnvironment
 {
 public:
@@ -21,8 +24,8 @@ public:
     // Removes all existing variables under the scope path
     void RemoveVariables(const std::string& inVariableScopePath);
 
-    void                                            SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables);
-    const std::unordered_map<std::string, HTNAtom>& GetVariables() const; // TODO salvarez Using
+    void                SetVariables(const HTNVariables& inVariables);
+    const HTNVariables& GetVariables() const;
 
     // Adds a new index
     std::size_t AddIndex(const std::string& inNodePath);
@@ -41,13 +44,13 @@ public:
 
 private:
     // Variable path to value
-    std::unordered_map<std::string, HTNAtom> mVariables;
+    HTNVariables mVariables;
 
     // Node path to index
     // - Method to branch
     // - And, or, and alt conditions to sub-condition
     // - Condition to fact entry
-    std::unordered_map<std::string, std::size_t> mIndices;
+    HTNIndices mIndices;
 };
 
 inline void HTNEnvironment::SetVariable(const std::string& inVariablePath, const HTNAtom& inVariableValue)
@@ -71,12 +74,12 @@ inline void HTNEnvironment::RemoveVariable(const std::string& inVariablePath)
     mVariables.erase(inVariablePath);
 }
 
-inline void HTNEnvironment::SetVariables(const std::unordered_map<std::string, HTNAtom>& inVariables)
+inline void HTNEnvironment::SetVariables(const HTNVariables& inVariables)
 {
     mVariables = inVariables;
 }
 
-inline const std::unordered_map<std::string, HTNAtom>& HTNEnvironment::GetVariables() const
+inline const HTNVariables& HTNEnvironment::GetVariables() const
 {
     return mVariables;
 }
