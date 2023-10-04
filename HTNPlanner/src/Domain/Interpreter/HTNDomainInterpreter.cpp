@@ -18,30 +18,6 @@
 #include "Domain/Interpreter/HTNVariableScope.h"
 #include "WorldState/HTNWorldState.h"
 
-namespace
-{
-bool RemovePrefix(const std::string& inPrefix, std::string& ioString)
-{
-    const std::size_t Position = ioString.find(inPrefix);
-    if (Position == std::string::npos)
-    {
-        return false;
-    }
-
-    ioString = ioString.erase(Position, inPrefix.size());
-
-    return true;
-}
-
-bool RemoveVariableIDPrefixes(std::string& ioString)
-{
-    static const std::string InputPrefix       = "inp_";
-    static const std::string OutputPrefix      = "out_";
-    static const std::string InputOutputPrefix = "io_";
-    return RemovePrefix(InputPrefix, ioString) || RemovePrefix(OutputPrefix, ioString) || RemovePrefix(InputOutputPrefix, ioString);
-}
-} // namespace
-
 HTNDomainInterpreter::HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointName,
                                const HTNWorldState& inWorldState)
     : mDomainNode(inDomainNode), mEntryPointName(inEntryPointName), mDecompositionContext(inWorldState)
@@ -546,8 +522,7 @@ void HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
 
-    std::string VariableID = inVariableValueNode.GetValue().GetValue<std::string>();
-    RemoveVariableIDPrefixes(VariableID);
+    const std::string VariableID = inVariableValueNode.GetValue().GetValue<std::string>();
     const std::string CurrentVariablePath = mDecompositionContext.MakeCurrentVariablePath(VariableID);
     Environment.SetVariable(CurrentVariablePath, inVariableValueNodeValue);
 }
@@ -559,8 +534,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueN
     const HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecomposition();
     const HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironment();
 
-    std::string VariableID = inVariableValueNode.GetValue().GetValue<std::string>();
-    RemoveVariableIDPrefixes(VariableID);
+    const std::string VariableID = inVariableValueNode.GetValue().GetValue<std::string>();
     const std::string CurrentVariablePath = mDecompositionContext.MakeCurrentVariablePath(VariableID);
     return Environment.GetVariable(CurrentVariablePath);
 }
