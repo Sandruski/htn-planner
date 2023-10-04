@@ -1,5 +1,5 @@
 # HTN
- A hierarchical task network (HTN) planner.
+ A hierarchical task network (HTN) planner with a custom domain language.
 
 ## Getting Started
 1. Clone the repository with `git clone https://github.com/Sandruski/HTN`.
@@ -7,7 +7,9 @@
 3. If you add or remove project files, regenerate the solution by rerunning [GenerateProjectFiles.bat](https://github.com/Sandruski/HTN/blob/main/GenerateProjectFiles.bat).
 
 ## Usage
-The solution contains two projects, HTN and HTNTest. HTN is the planner itself and HTNTest are all the unit tests of the planner.
+The solution contains three projects, HTN, HTNDemo, and HTNTest. HTN is the core planner, HTNDemo is a playground for testing the planner, and HTNTest contains all the unit tests of the planner.
 
 ## Libraries
+- [SDL](https://www.libsdl.org/)
+- [Dear ImGui](https://github.com/ocornut/imgui)
 - [GoogleTest](https://google.github.io/googletest/)
