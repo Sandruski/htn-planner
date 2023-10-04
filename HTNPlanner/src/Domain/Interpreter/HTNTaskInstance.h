@@ -10,7 +10,6 @@ class HTNTaskNodeBase;
 class HTNTaskInstance
 {
 public:
-    HTNTaskInstance() = default;
     explicit HTNTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode, const HTNEnvironment& inEnvironment,
                              const std::string& inVariableScopePath);
     ~HTNTaskInstance();
