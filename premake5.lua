@@ -20,9 +20,9 @@ workspace "HTN"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
--- HTN
-project "HTN"
-    location "HTN"
+-- HTNPlanner
+project "HTNPlanner"
+    location "HTNPlanner"
     kind "StaticLib"
     language "C++"
     cppdialect "C++20"
@@ -54,14 +54,13 @@ project "HTNTest"
 
     files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h" }
 
-    includedirs { "%{prj.name}/src", "HTN/src" }
+    includedirs { "%{prj.name}/src", "HTNPlanner/src" }
 
-    links { "HTN" }
+    links { "HTNPlanner" }
 
     nuget { "Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1.7" }
 
-
--- HTNTest
+-- HTNDemo
 project "HTNDemo"
     location "HTNDemo"
     kind "ConsoleApp"
@@ -94,10 +93,10 @@ project "HTNDemo"
 				"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdlrenderer.cpp" 
 		}
 
-    includedirs { "%{prj.name}/src", "HTN/src", "ThirdParty/SDL2-2.26.4/include", "ThirdParty/imgui-1.89.4", "ThirdParty/imgui-1.89.4/backends", "ThirdParty/imgui-1.89.4/misc/cpp" }
+    includedirs { "%{prj.name}/src", "HTNPlanner/src", "ThirdParty/SDL2-2.26.4/include", "ThirdParty/imgui-1.89.4", "ThirdParty/imgui-1.89.4/backends", "ThirdParty/imgui-1.89.4/misc/cpp" }
 
 	libdirs { "ThirdParty/SDL2-2.26.4/lib/x64" }
-    links { "HTN", "SDL2", "SDL2main" }
+    links { "HTNPlanner", "SDL2", "SDL2main" }
 	
 	-- TODO JOSE: Make this work properly, we should copy the SDL2.dll in the right target dir, I am pretty sure there is a macro to do that.
 	-- filter "configurations:Debug"

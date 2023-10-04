@@ -7,7 +7,7 @@
 3. If you add or remove project files, regenerate the solution by rerunning [GenerateProjectFiles.bat](https://github.com/Sandruski/HTN/blob/main/GenerateProjectFiles.bat).
 
 ## Usage
-The solution contains three projects, HTN, HTNDemo, and HTNTest. HTN is the core planner, HTNDemo is a playground for testing the planner, and HTNTest contains all the unit tests of the planner.
+The solution contains three projects, HTNPlanner, HTNDemo, and HTNTest. HTNPlanner is the core planner, HTNDemo is a playground for testing the planner, and HTNTest contains all the unit tests of the planner.
 
 ## Libraries
 - [SDL](https://www.libsdl.org/)
