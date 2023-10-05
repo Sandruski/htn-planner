@@ -2,13 +2,14 @@
 
 #include "Domain/AST/HTNDomainNode.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
-#include "Domain/Interpreter/HTNDomainResolver.h"
-#include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Parser/HTNDomainLexer.h"
 #include "Domain/Parser/HTNDomainParser.h"
+#include "Domain/Parser/HTNDomainValidator.h"
 #include "HTNFileHandler.h"
 #include "HTNLog.h"
 #include "HTNToken.h"
+
+#include <vector>
 
 bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
 {
@@ -36,12 +37,19 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
         return false;
     }
 
+    HTNDomainValidator DomainValidator = HTNDomainValidator(DomainNode);
+    if (!DomainValidator.Validate())
+    {
+        LOG_ERROR("Domain [{}] could not be validated", DomainNode->GetID());
+        return false;
+    }
+
     mDomainNode = DomainNode;
 
     return true;
 }
 
-bool HTNPlannerHook::MakePlan(const std::string& inEntryPointName, const HTNWorldState& inWorldState, std::vector<HTNTaskResult>& outPlan) const
+bool HTNPlannerHook::MakePlan(const std::string& inEntryPointName, HTNDecompositionContext& ioDecompositionContext) const
 {
     if (!mDomainNode)
     {
@@ -49,22 +57,12 @@ bool HTNPlannerHook::MakePlan(const std::string& inEntryPointName, const HTNWorl
         return false;
     }
 
-    HTNDomainResolver DomainResolver = HTNDomainResolver(mDomainNode);
-    if (!DomainResolver.Resolve())
-    {
-        LOG_ERROR("Domain [{}] could not be resolved", mDomainNode->GetID());
-        return false;
-    }
-
-    HTNDomainInterpreter       DomainInterpreter = HTNDomainInterpreter(mDomainNode, inEntryPointName, inWorldState);
-    std::vector<HTNTaskResult> Plan;
-    if (!DomainInterpreter.Interpret(Plan))
+    HTNDomainInterpreter DomainInterpreter = HTNDomainInterpreter(mDomainNode, inEntryPointName, ioDecompositionContext);
+    if (!DomainInterpreter.Interpret())
     {
         LOG_ERROR("Domain [{}] could not be interpreted", mDomainNode->GetID());
         return false;
     }
-
-    outPlan = Plan;
 
     return true;
 }

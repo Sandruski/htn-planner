@@ -1,25 +1,25 @@
 #pragma once
 
 #include "Domain/AST/HTNNodeVisitorBase.h"
+#include "Domain/Interpreter/HTNDecompositionContext.h"
 
 #include <memory>
-#include <string>
 
-class HTNDecompositionContext;
+class HTNDecompositionSnapshotDebug;
 class HTNDomainNode;
 
-// Decision-making
-// Returns a plan from an abstract syntax tree
-class HTNDomainInterpreter final : public HTNNodeVisitorBase
+/**
+ * Prints a decomposition
+ */
+class HTNDecompositionPrinter final : public HTNNodeVisitorBase
 {
 public:
-    explicit HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointName,
-                                  HTNDecompositionContext& ioDecompositionContext);
-    ~HTNDomainInterpreter();
+    explicit HTNDecompositionPrinter(const HTNDecompositionSnapshotDebug& inDecompositionSnapshot);
 
-    bool Interpret();
+    bool Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
+    HTNAtom Visit(const HTNConstantsNode& inConstantsNode) final;
     HTNAtom Visit(const HTNConstantNode& inConstantNode) final;
     HTNAtom Visit(const HTNAxiomNode& inAxiomNode) final;
     HTNAtom Visit(const HTNMethodNode& inMethodNode) final;
@@ -33,12 +33,16 @@ public:
     HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode) final;
     HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode) final;
     HTNAtom Visit(const HTNValueNode& inValueNode) final;
-    void    Visit(const HTNVariableValueNode& inVariableValueNode, const HTNAtom& inVariableValueNodeValue) final;
     HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode) final;
     HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
 
 private:
-    std::shared_ptr<const HTNDomainNode> mDomainNode;
-    std::string                          mEntryPointName;
-    HTNDecompositionContext& mDecompositionContext;
+    HTNDecompositionContext mDecompositionContext;
+
+    const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
 };
+
+inline HTNDecompositionPrinter::HTNDecompositionPrinter(const HTNDecompositionSnapshotDebug& inDecompositionSnapshot)
+    : mDecompositionSnapshot(inDecompositionSnapshot)
+{
+}

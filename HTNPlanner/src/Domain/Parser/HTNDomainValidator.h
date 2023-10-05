@@ -8,13 +8,13 @@
 class HTNDomainNode;
 
 // Semantic analysis
-class HTNDomainResolver final : public HTNNodeVisitorBase
+class HTNDomainValidator final : public HTNNodeVisitorBase
 {
 public:
-    explicit HTNDomainResolver(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
-    ~HTNDomainResolver();
+    explicit HTNDomainValidator(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
+    ~HTNDomainValidator();
 
-    bool Resolve();
+    bool Validate();
 
     // HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
     // HTNAtom Visit(const HTNConstantNode& inConstantNode) final;

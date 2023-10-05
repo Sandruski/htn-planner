@@ -7,6 +7,10 @@
 #include <string>
 #include <vector>
 
+#ifdef HTN_DEBUG
+#include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
+#endif
+
 class HTNWorldState;
 
 class HTNDecompositionRecord
@@ -37,6 +41,7 @@ private:
 class HTNDecompositionContext
 {
 public:
+    HTNDecompositionContext() = default;
     HTNDecompositionContext(const HTNWorldState& inWorldState);
 
     const HTNWorldState* GetWorldState() const;
@@ -77,6 +82,16 @@ private:
 
     // Path from the root node to the node that determines the scope of variables
     std::string mCurrentVariableScopePath;
+
+#ifdef HTN_DEBUG
+public:
+    void RecordNodeSnapshot(const std::string& inNodePath);
+
+    const HTNDecompositionSnapshotDebug& GetDecompositionSnapshot() const;
+
+private:
+    HTNDecompositionSnapshotDebug mDecompositionSnapshot;
+#endif
 };
 
 inline void HTNDecompositionRecord::PushPendingTaskInstance(const HTNTaskInstance& inPendingTaskInstance)
@@ -174,4 +189,9 @@ inline void HTNDecompositionContext::SetCurrentVariableScopePath(const std::stri
 inline const std::string& HTNDecompositionContext::GetCurrentVariableScopePath() const
 {
     return mCurrentVariableScopePath;
+}
+
+inline const HTNDecompositionSnapshotDebug& HTNDecompositionContext::GetDecompositionSnapshot() const
+{
+    return mDecompositionSnapshot;
 }

@@ -11,6 +11,12 @@
 #include "Domain/AST/HTNValueNode.h"
 #include "HTNLog.h"
 #include "HTNToken.h"
+#include "Parser/HTNParserHelpers.h"
+
+namespace
+{
+    int A= 1;
+}
 
 /*
 Backus Naur Form (BNF):
@@ -128,7 +134,11 @@ bool HTNDomainParser::ParseConstantsNode(std::shared_ptr<const HTNConstantsNode>
     }
 
     std::shared_ptr<const HTNValueNode> IDNode;
-    ParseIdentifierNode(IDNode, CurrentPosition);
+    if (!ParseIdentifierNode(IDNode, CurrentPosition))
+    {
+        static constexpr bool IsIdentifier = true;
+        IDNode                             = std::make_shared<HTNValueNode>(HTNParserHelpers::kAnonymousNamespaceName, IsIdentifier);
+    }
 
     std::vector<std::shared_ptr<const HTNConstantNode>> ConstantNodes;
     std::shared_ptr<const HTNConstantNode>              ConstantNode;
@@ -608,7 +618,7 @@ bool HTNDomainParser::ParseArgument(HTNAtom& outArgument, unsigned int& inPositi
         }
     }
     else if (const HTNToken* TrueToken = ParseToken(HTNTokenType::TRUE, CurrentPosition))
-    {   
+    {
         Argument = TrueToken->GetValue();
     }
     else if (const HTNToken* FalseToken = ParseToken(HTNTokenType::FALSE, CurrentPosition))

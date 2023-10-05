@@ -77,7 +77,7 @@ TEST(HTNHierarchicalPlanner, HTNPlanning)
 }
 
 // called per thread to execute the planner top level method
-static void sParallelWork(HTNPlanningUnit& inPlanningUnit, const std::string& EntryPointName, size_t inIndex)
+static void sParallelWork(HTNPlanningUnit& inPlanningUnit, const std::string& EntryPointName, std::size_t inIndex)
 {
     HTNWorldState& WorldState = inPlanningUnit.GetWorldStateMutable();
     WorldState.AddFact("iteration_number", (int)inIndex);
@@ -125,7 +125,7 @@ TEST(HTNHierarchicalPlanner, DISABLED_MultiThreadingHTNPlanning)
     // parallel for
     std::for_each(std::execution::par, PlanningUnits.begin(), PlanningUnits.end(),
                   [&PlanningUnits, &EntryPointName](HTNPlanningUnit& inPlanningUnit) {
-                      size_t idx = &inPlanningUnit - &PlanningUnits[0];
+                      std::size_t idx = &inPlanningUnit - &PlanningUnits[0];
                       sParallelWork(inPlanningUnit, EntryPointName, idx);
                   });
 

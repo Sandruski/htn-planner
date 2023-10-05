@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WorldState/HTNWorldStateHelpers.h"
+#include "WorldState/HTNWorldState.h"
 
 #include <string>
 

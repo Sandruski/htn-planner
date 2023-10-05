@@ -9,24 +9,25 @@
 #include "Domain/AST/HTNMethodNode.h"
 #include "Domain/AST/HTNTaskNode.h"
 #include "Domain/AST/HTNValueNode.h"
-#include "HTNLog.h"
 #include "Domain/Interpreter/HTNConditionQuery.h"
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNNodeScope.h"
 #include "Domain/Interpreter/HTNTaskInstance.h"
 #include "Domain/Interpreter/HTNVariableScope.h"
+#include "HTNLog.h"
 #include "WorldState/HTNWorldState.h"
+#include "Domain/Interpreter/HTNDecompositionContext.h"
 
 HTNDomainInterpreter::HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointName,
-                               const HTNWorldState& inWorldState)
-    : mDomainNode(inDomainNode), mEntryPointName(inEntryPointName), mDecompositionContext(inWorldState)
+                                           HTNDecompositionContext& ioDecompositionContext)
+    : mDomainNode(inDomainNode), mEntryPointName(inEntryPointName), mDecompositionContext(ioDecompositionContext)
 {
 }
 
 HTNDomainInterpreter::~HTNDomainInterpreter() = default;
 
-bool HTNDomainInterpreter::Interpret(std::vector<HTNTaskResult>& outPlan)
+bool HTNDomainInterpreter::Interpret()
 {
     const HTNDomainNode* DomainNode = mDomainNode.get();
     if (!DomainNode)
@@ -41,16 +42,7 @@ bool HTNDomainInterpreter::Interpret(std::vector<HTNTaskResult>& outPlan)
         return false;
     }
 
-    const bool IsDomainNodeSuccessful = GetNodeValue(*DomainNode).GetValue<bool>();
-    if (!IsDomainNodeSuccessful)
-    {
-        return false;
-    }
-
-    const HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecomposition();
-    outPlan                                            = CurrentDecomposition.GetPlan();
-
-    return true;
+    return GetNodeValue(*DomainNode).GetValue<bool>();
 }
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode)
@@ -522,7 +514,7 @@ void HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
 
-    const std::string VariableID = inVariableValueNode.GetValue().GetValue<std::string>();
+    const std::string VariableID          = inVariableValueNode.GetValue().GetValue<std::string>();
     const std::string CurrentVariablePath = mDecompositionContext.MakeCurrentVariablePath(VariableID);
     Environment.SetVariable(CurrentVariablePath, inVariableValueNodeValue);
 }
@@ -534,7 +526,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueN
     const HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecomposition();
     const HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironment();
 
-    const std::string VariableID = inVariableValueNode.GetValue().GetValue<std::string>();
+    const std::string VariableID          = inVariableValueNode.GetValue().GetValue<std::string>();
     const std::string CurrentVariablePath = mDecompositionContext.MakeCurrentVariablePath(VariableID);
     return Environment.GetVariable(CurrentVariablePath);
 }

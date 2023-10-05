@@ -7,8 +7,15 @@ HTNNodeScope::HTNNodeScope(HTNDecompositionContext& ioDecompositionContext, cons
     : mDecompositionContext(ioDecompositionContext)
 {
     mResult = mDecompositionContext.PushNodeToCurrentNodePath(inNodeID);
+    if (!mResult)
+    {
+        return;
+    }
 
-    // TODO salvarez Call debugger to record decomposition
+#ifdef HTN_DEBUG
+    const std::string CurrentNodePath = mDecompositionContext.GetCurrentNodePath();
+    ioDecompositionContext.RecordNodeSnapshot(CurrentNodePath);
+#endif
 }
 
 HTNNodeScope::~HTNNodeScope()

@@ -1,15 +1,12 @@
 #pragma once
 
-#include <array>
-
-class HTNAtom;
-class HTNFactArgumentsTable;
+#include <cstddef>
 
 namespace HTNWorldStateHelpers
 {
 // Returns the number of fact arguments that are bound
-template<typename It>
-unsigned int CountFactArgumentsBound(const It& inFactArgumentsBegin, const It& inFactArgumentsEnd);
+template<typename T>
+unsigned int CountFactArgumentsBound(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd);
 
 // Maximum number of fact arguments
 constexpr std::size_t kMaxFactArgumentsNum = 10;
@@ -19,11 +16,8 @@ constexpr std::size_t kMaxFactArgumentsNum = 10;
 constexpr std::size_t kFactArgumentsContainerSize = kMaxFactArgumentsNum + 1;
 } // namespace HTNWorldStateHelpers
 
-using HTNFactArguments       = std::array<HTNAtom, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
-using HTNFactArgumentsTables = std::array<HTNFactArgumentsTable, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
-
-template<typename It>
-inline unsigned int HTNWorldStateHelpers::CountFactArgumentsBound(const It& inFactArgumentsBegin, const It& inFactArgumentsEnd)
+template<typename T>
+inline unsigned int HTNWorldStateHelpers::CountFactArgumentsBound(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd)
 {
     unsigned int FactArgumentsBoundNum = 0;
 

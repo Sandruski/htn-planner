@@ -14,6 +14,11 @@
 #include <format>
 #endif
 
+class HTNFactArgumentsTable;
+
+using HTNFactArguments       = std::array<HTNAtom, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
+using HTNFactArgumentsTables = std::array<HTNFactArgumentsTable, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
+
 /**
  * Table of fact arguments mapped to a fact ID in the world state
  * - The table has a fixed number of fact arguments
@@ -24,8 +29,8 @@ class HTNFactArgumentsTable
 {
 public:
     // Adds a unique row to the table
-    template<typename It>
-    bool AddUniqueFactArguments(const It& inFactArgumentsBegin, const It& inFactArgumentsEnd);
+    template<typename T>
+    bool AddUniqueFactArguments(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd);
 
     // Removes the row at the index from the table
     void RemoveFactArguments(const std::size_t inFactArgumentsIndex);
@@ -35,20 +40,20 @@ public:
 
     // Checks if the passed fact arguments match the ones of the row at the index in the table
     // Binds the passed fact arguments that are unbound
-    template<typename It>
-    bool Check(const std::size_t inFactArgumentsIndex, const It& ioFactArgumentsBegin, const It& ioFactArgumentsEnd) const;
+    template<typename T>
+    bool Check(const std::size_t inFactArgumentsIndex, const T& ioFactArgumentsBegin, const T& ioFactArgumentsEnd) const;
 
     // Checks if the passed arguments match the fact arguments of any row in the table
-    template<typename It>
-    bool ContainsFactArguments(const It& inFactArgumentsBegin, const It& inFactArgumentsEnd) const;
+    template<typename T>
+    bool ContainsFactArguments(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd) const;
 
     const std::vector<HTNFactArguments>& GetFactArguments() const;
     std::size_t                          GetFactArgumentsSize() const;
 
 private:
     // Adds a row to the table
-    template<typename It>
-    void AddFactArguments(const It& inFactArgumentsBegin, const It& inFactArgumentsEnd);
+    template<typename T>
+    void AddFactArguments(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd);
 
     std::vector<HTNFactArguments> mFactArguments;
 };
@@ -62,8 +67,8 @@ class HTNWorldState
 {
 public:
     // Adds a unique row to the table associated to the fact ID
-    template<typename It>
-    void AddFact(const std::string& inFactID, const It& inFactArgumentsBegin, const It& inFactArgumentsEnd);
+    template<typename T>
+    void AddFact(const std::string& inFactID, const T& inFactArgumentsBegin, const T& inFactArgumentsEnd);
 
     // Removes the row at the index from the table of the number of fact arguments associated to the fact ID
     void RemoveFact(const std::string& inFactID, const std::size_t inFactArgumentsSize, const std::size_t inFactArgumentsIndex);
@@ -73,19 +78,19 @@ public:
 
     // If all fact arguments are bound, returns 1
     // Otherwise, returns the number of rows of the table associated to the fact ID
-    template<typename It>
-    std::size_t Query(const std::string& inFactID, const It& inFactArgumentsBegin, const It& inFactArgumentsEnd) const;
+    template<typename T>
+    std::size_t Query(const std::string& inFactID, const T& inFactArgumentsBegin, const T& inFactArgumentsEnd) const;
 
     // If all fact arguments are bound, returns true
     // Otherwise, checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
-    template<typename It>
-    bool QueryIndex(const std::string& inFactID, const std::size_t inFactArgumentsIndex, const It& ioFactArgumentsBegin,
-                    const It& ioFactArgumentsEnd) const;
+    template<typename T>
+    bool QueryIndex(const std::string& inFactID, const std::size_t inFactArgumentsIndex, const T& ioFactArgumentsBegin,
+                    const T& ioFactArgumentsEnd) const;
 
     // Checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
-    template<typename It>
-    bool CheckIndex(const std::string& inFactID, const std::size_t inFactArgumentsIndex, const It& ioFactArgumentsBegin,
-                    const It& ioFactArgumentsEnd) const;
+    template<typename T>
+    bool CheckIndex(const std::string& inFactID, const std::size_t inFactArgumentsIndex, const T& ioFactArgumentsBegin,
+                    const T& ioFactArgumentsEnd) const;
 
     // Returns the number of tables associated to the fact ID
     std::size_t GetFactArgumentsTablesSize(const std::string& inFactID) const;
@@ -97,8 +102,8 @@ public:
     std::size_t GetFactArgumentsSize(const std::string& inFactID, const std::size_t inFactArgumentsSize) const;
 
     // Returns whether the fact arguments are contained by the fact ID
-    template<typename It>
-    bool ContainsFactArguments(const std::string& inFactID, const It& inFactArgumentsBegin, const It& inFactArgumentsEnd) const;
+    template<typename T>
+    bool ContainsFactArguments(const std::string& inFactID, const T& inFactArgumentsBegin, const T& inFactArgumentsEnd) const;
 
     const std::unordered_map<std::string, HTNFactArgumentsTables>& GetFacts() const;
 
@@ -107,8 +112,8 @@ private:
     std::unordered_map<std::string, HTNFactArgumentsTables> mFacts;
 };
 
-template<typename It>
-inline bool HTNFactArgumentsTable::AddUniqueFactArguments(const It& inFactArgumentsBegin, const It& inFactArgumentsEnd)
+template<typename T>
+inline bool HTNFactArgumentsTable::AddUniqueFactArguments(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd)
 {
     if (ContainsFactArguments(inFactArgumentsBegin, inFactArgumentsEnd))
     {
@@ -142,8 +147,8 @@ inline void HTNFactArgumentsTable::RemoveAllFactArguments()
     mFactArguments.clear();
 }
 
-template<typename It>
-inline bool HTNFactArgumentsTable::Check(const std::size_t inFactArgumentsIndex, const It& ioFactArgumentsBegin, const It& ioFactArgumentsEnd) const
+template<typename T>
+inline bool HTNFactArgumentsTable::Check(const std::size_t inFactArgumentsIndex, const T& ioFactArgumentsBegin, const T& ioFactArgumentsEnd) const
 {
     if (inFactArgumentsIndex >= mFactArguments.size())
     {
@@ -187,8 +192,8 @@ inline bool HTNFactArgumentsTable::Check(const std::size_t inFactArgumentsIndex,
     return true;
 }
 
-template<typename It>
-inline bool HTNFactArgumentsTable::ContainsFactArguments(const It& inFactArgumentsBegin, const It& inFactArgumentsEnd) const
+template<typename T>
+inline bool HTNFactArgumentsTable::ContainsFactArguments(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd) const
 {
     const std::size_t FactArgumentsSize = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
     assert(FactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
@@ -225,8 +230,8 @@ inline std::size_t HTNFactArgumentsTable::GetFactArgumentsSize() const
     return mFactArguments.size();
 }
 
-template<typename It>
-inline void HTNFactArgumentsTable::AddFactArguments(const It& inFactArgumentsBegin, const It& inFactArgumentsEnd)
+template<typename T>
+inline void HTNFactArgumentsTable::AddFactArguments(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd)
 {
     HTNFactArguments  FactArguments;
     const std::size_t FactArgumentsSize = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
@@ -239,8 +244,8 @@ inline void HTNFactArgumentsTable::AddFactArguments(const It& inFactArgumentsBeg
     mFactArguments.emplace_back(FactArguments);
 }
 
-template<typename It>
-inline void HTNWorldState::AddFact(const std::string& inFactID, const It& inFactArgumentsBegin, const It& inFactArgumentsEnd)
+template<typename T>
+inline void HTNWorldState::AddFact(const std::string& inFactID, const T& inFactArgumentsBegin, const T& inFactArgumentsEnd)
 {
     HTNFactArgumentsTables& FactArgumentsTables = mFacts[inFactID];
     const std::size_t       FactArgumentsSize   = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
@@ -254,8 +259,8 @@ inline void HTNWorldState::RemoveAllFacts()
     mFacts.clear();
 }
 
-template<typename It>
-inline std::size_t HTNWorldState::Query(const std::string& inFactID, const It& inFactArgumentsBegin, const It& inFactArgumentsEnd) const
+template<typename T>
+inline std::size_t HTNWorldState::Query(const std::string& inFactID, const T& inFactArgumentsBegin, const T& inFactArgumentsEnd) const
 {
     const unsigned int FactArgumentsBoundNum = HTNWorldStateHelpers::CountFactArgumentsBound(inFactArgumentsBegin, inFactArgumentsEnd);
     const std::size_t  FactArgumentsSize     = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
@@ -268,9 +273,9 @@ inline std::size_t HTNWorldState::Query(const std::string& inFactID, const It& i
     return GetFactArgumentsSize(inFactID, FactArgumentsSize);
 }
 
-template<typename It>
-inline bool HTNWorldState::QueryIndex(const std::string& inFactID, const std::size_t inFactArgumentsIndex, const It& ioFactArgumentsBegin,
-                                      const It& ioFactArgumentsEnd) const
+template<typename T>
+inline bool HTNWorldState::QueryIndex(const std::string& inFactID, const std::size_t inFactArgumentsIndex, const T& ioFactArgumentsBegin,
+                                      const T& ioFactArgumentsEnd) const
 {
     const unsigned int FactArgumentsBoundNum = CountFactArgumentsBound(ioFactArgumentsBegin, ioFactArgumentsEnd);
     const std::size_t  FactArgumentsSize     = std::distance(ioFactArgumentsBegin, ioFactArgumentsEnd);
@@ -283,9 +288,9 @@ inline bool HTNWorldState::QueryIndex(const std::string& inFactID, const std::si
     return CheckIndex(inFactID, inFactArgumentsIndex, ioFactArgumentsBegin, ioFactArgumentsEnd);
 }
 
-template<typename It>
-inline bool HTNWorldState::CheckIndex(const std::string& inFactID, const std::size_t inFactArgumentsIndex, const It& ioFactArgumentsBegin,
-                                      const It& ioFactArgumentsEnd) const
+template<typename T>
+inline bool HTNWorldState::CheckIndex(const std::string& inFactID, const std::size_t inFactArgumentsIndex, const T& ioFactArgumentsBegin,
+                                      const T& ioFactArgumentsEnd) const
 {
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.end())
@@ -301,8 +306,8 @@ inline bool HTNWorldState::CheckIndex(const std::string& inFactID, const std::si
     return FactArgumentsTable.Check(inFactArgumentsIndex, ioFactArgumentsBegin, ioFactArgumentsEnd);
 }
 
-template<typename It>
-inline bool HTNWorldState::ContainsFactArguments(const std::string& inFactID, const It& inFactArgumentsBegin, const It& inFactArgumentsEnd) const
+template<typename T>
+inline bool HTNWorldState::ContainsFactArguments(const std::string& inFactID, const T& inFactArgumentsBegin, const T& inFactArgumentsEnd) const
 {
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.end())

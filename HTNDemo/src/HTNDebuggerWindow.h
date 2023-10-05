@@ -11,8 +11,8 @@ public:
     void Render(bool& _IsOpen);
 
 private:
-    void RenderActivePlan();
     void RenderPlan();
+    void RenderDecomposition();
     void RenderDomain();
     void RenderWorldState();
 
