@@ -9,6 +9,7 @@
 #include "Domain/AST/HTNMethodNode.h"
 #include "Domain/AST/HTNTaskNode.h"
 #include "Domain/AST/HTNValueNode.h"
+#include "Domain/HTNDomainHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Interpreter/HTNNodeScope.h"
 #include "HTNLog.h"
@@ -74,7 +75,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode)
 
     // Dummy root task node
     // TODO salvarez
-    const HTNNodeScope CompoundTaskNodeScope = HTNNodeScope(mDecompositionContext, "entry_point");
+    const HTNNodeScope CompoundTaskNodeScope = HTNNodeScope(mDecompositionContext, HTNDomainHelpers::kDefaultTopLevelMethodName);
 
     const std::vector<std::shared_ptr<const HTNMethodNode>>& MethodNodes = inDomainNode.GetMethodNodes();
     for (const std::shared_ptr<const HTNMethodNode>& MethodNode : MethodNodes)

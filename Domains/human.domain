@@ -23,7 +23,7 @@
 		)
 	)
 
-    (:method (entry_point) top_level_method
+    (:method (behave) top_level_method
         (branch_eat
             (and    (#find_food @spanish ?food)
                     (not (#is_spoiled ?food))

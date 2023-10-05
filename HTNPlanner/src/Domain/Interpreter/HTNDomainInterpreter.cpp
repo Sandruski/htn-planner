@@ -17,7 +17,6 @@
 #include "Domain/Interpreter/HTNVariableScope.h"
 #include "HTNLog.h"
 #include "WorldState/HTNWorldState.h"
-#include "Domain/Interpreter/HTNDecompositionContext.h"
 
 HTNDomainInterpreter::HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointName,
                                            HTNDecompositionContext& ioDecompositionContext)
@@ -53,14 +52,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode)
 
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
 
-    // Dummy root task node
-    static constexpr bool                            IsIdentifier         = true;
-    static constexpr bool                            IsTopLevel           = true;
-    const std::shared_ptr<const HTNCompoundTaskNode> RootCompoundTaskNode = std::make_shared<HTNCompoundTaskNode>(
+    // Dummy top-level task node
+    static constexpr bool                            IsIdentifier             = true;
+    static constexpr bool                            IsTopLevel               = true;
+    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = std::make_shared<HTNCompoundTaskNode>(
         std::make_shared<const HTNValueNode>(mEntryPointName, IsIdentifier), std::vector<std::shared_ptr<const HTNValueNodeBase>>(), IsTopLevel);
-    const std::string&    CurrentVariableScopePath = mDecompositionContext.GetCurrentVariableScopePath();
-    const HTNTaskInstance RootCompoundTaskInstance = HTNTaskInstance(RootCompoundTaskNode, HTNEnvironment(), CurrentVariableScopePath);
-    CurrentDecomposition.PushPendingTaskInstance(RootCompoundTaskInstance);
+    const std::string&    CurrentVariableScopePath     = mDecompositionContext.GetCurrentVariableScopePath();
+    const HTNTaskInstance TopLevelCompoundTaskInstance = HTNTaskInstance(TopLevelCompoundTaskNode, HTNEnvironment(), CurrentVariableScopePath);
+    CurrentDecomposition.PushPendingTaskInstance(TopLevelCompoundTaskInstance);
 
     while (CurrentDecomposition.HasPendingTaskInstances())
     {
