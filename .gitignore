@@ -32,6 +32,7 @@ bld/
 [Ii]nt/
 [Ll]og/
 [Ll]ogs/
+!ThirdParty/premake/bin/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
