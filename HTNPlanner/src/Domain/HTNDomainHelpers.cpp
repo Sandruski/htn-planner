@@ -7,9 +7,9 @@ namespace HTNDomainHelpers
 {
 std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const std::string& inEntryPointID)
 {
-    static constexpr bool IsIdentifier = true;
-    static constexpr bool IsTopLevel   = true;
+    static constexpr bool         IsIdentifier           = true;
+    static constexpr bool         IsTopLevel             = true;
     return std::make_shared<HTNCompoundTaskNode>(std::make_shared<const HTNValueNode>(inEntryPointID, IsIdentifier),
-                                                 std::vector<std::shared_ptr<const HTNValueNodeBase>>(), IsTopLevel);
+                                                 std::vector<std::shared_ptr<const HTNValueNodeBase>>(), kTopLevelCompoundTaskNodeID, IsTopLevel);
 }
 } // namespace HTNDomainHelpers

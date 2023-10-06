@@ -25,10 +25,9 @@ void PrintKeyword(const std::string& inKeyword)
     ImGui::TextDisabled(inKeyword.c_str());
 }
 
-void PrintTopLevelKeyword()
+std::string MakeLabel(const std::string& inLabel, const std::string& inID)
 {
-    ImGui::SameLine();
-    PrintKeyword("top_level");
+    return std::format("{}##{}", inLabel, inID);
 }
 } // namespace
 
@@ -62,16 +61,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode)
     }
 
     // Print domain node
-    PrintKeyword("domain");
-
     const std::shared_ptr<const HTNValueNode>& IDNode = inDomainNode.GetIDNode();
-    ImGui::SameLine();
     GetNodeValue(*IDNode);
-
-    if (inDomainNode.IsTopLevel())
-    {
-        PrintTopLevelKeyword();
-    }
 
     // Call top-level compound task node
     ImGui::Indent();
@@ -94,6 +85,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConstantsNode& inConstantsNode)
         return false;
     }
 
+    // TODO salvarez
+    /*
     PrintKeyword("constants");
 
     if (const std::shared_ptr<const HTNValueNode>& IDNode = inConstantsNode.GetIDNode())
@@ -109,6 +102,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConstantsNode& inConstantsNode)
         GetNodeValue(*ConstantNode);
     }
     ImGui::Unindent();
+    */
 
     return true;
 }
@@ -124,12 +118,15 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConstantNode& inConstantNode)
         return false;
     }
 
+    // TODO salvarez
+    /*
     const std::shared_ptr<const HTNValueNode>& IDNode = inConstantNode.GetIDNode();
     GetNodeValue(*IDNode);
 
     const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode = inConstantNode.GetArgumentNode();
     ImGui::SameLine();
     GetNodeValue(*ArgumentNode);
+    */
 
     return true;
 }
@@ -145,25 +142,10 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode)
         return false;
     }
 
-    PrintKeyword("axiom");
-
-    const std::shared_ptr<const HTNValueNode>& IDNode = inAxiomNode.GetIDNode();
-    ImGui::SameLine();
-    GetNodeValue(*IDNode);
-
-    ImGui::Indent();
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inAxiomNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
-    {
-        ImGui::SameLine();
-        GetNodeValue(*ArgumentNode);
-    }
-
     if (const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode = inAxiomNode.GetConditionNode())
     {
         GetNodeValue(*ConditionNode);
     }
-    ImGui::Unindent();
 
     return true;
 }
@@ -179,31 +161,11 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode)
         return false;
     }
 
-    PrintKeyword("method");
-
-    const std::shared_ptr<const HTNValueNode>& IDNode = inMethodNode.GetIDNode();
-    ImGui::SameLine();
-    GetNodeValue(*IDNode);
-
-    if (inMethodNode.IsTopLevel())
-    {
-        PrintTopLevelKeyword();
-    }
-
-    ImGui::Indent();
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inMethodNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
-    {
-        ImGui::SameLine();
-        GetNodeValue(*ArgumentNode);
-    }
-
     const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes = inMethodNode.GetBranchNodes();
     for (const std::shared_ptr<const HTNBranchNode>& BranchNode : BranchNodes)
     {
         GetNodeValue(*BranchNode);
     }
-    ImGui::Unindent();
 
     return true;
 }
@@ -219,21 +181,23 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode)
         return false;
     }
 
-    const std::shared_ptr<const HTNValueNode>& IDNode = inBranchNode.GetIDNode();
-    GetNodeValue(*IDNode);
-
-    ImGui::Indent();
-    if (const std::shared_ptr<const HTNConditionNodeBase>& PreConditionNode = inBranchNode.GetPreConditionNode())
+    const std::string BranchNodeID = inBranchNode.GetID();
+    const std::string Label        = MakeLabel(BranchNodeID, BranchNodePath);
+    if (ImGui::TreeNode(Label.c_str()))
     {
-        GetNodeValue(*PreConditionNode);
-    }
+        if (const std::shared_ptr<const HTNConditionNodeBase>& PreConditionNode = inBranchNode.GetPreConditionNode())
+        {
+            GetNodeValue(*PreConditionNode);
+        }
 
-    const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = inBranchNode.GetTaskNodes();
-    for (const std::shared_ptr<const HTNTaskNodeBase>& TaskNode : TaskNodes)
-    {
-        GetNodeValue(*TaskNode);
+        const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = inBranchNode.GetTaskNodes();
+        for (const std::shared_ptr<const HTNTaskNodeBase>& TaskNode : TaskNodes)
+        {
+            GetNodeValue(*TaskNode);
+        }
+
+        ImGui::TreePop();
     }
-    ImGui::Unindent();
 
     return true;
 }
@@ -293,8 +257,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
 
     // Call axiom node
     const std::string& AxiomNodeID = inAxiomConditionNode.GetAxiomNodeID();
-    const std::string  TreeNodeID  = std::format("{}##{}", AxiomNodeID, AxiomConditionNodePath);
-    if (ImGui::TreeNode(TreeNodeID.c_str()))
+    const std::string  Label       = MakeLabel(AxiomNodeID, AxiomConditionNodePath);
+    if (ImGui::TreeNode(Label.c_str()))
     {
         const std::shared_ptr<const HTNAxiomNode> AxiomNode = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
         GetNodeValue(*AxiomNode);
@@ -315,20 +279,16 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndCondition
         return false;
     }
 
-    PrintKeyword("and");
-
-    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAndConditionNode.GetSubConditionNodes();
-    if (!SubConditionNodes.empty())
+    const std::string Label = MakeLabel("and", AndConditionNodePath);
+    if (ImGui::TreeNode(Label.c_str()))
     {
-        ImGui::SameLine();
-        const float CursorPosX = ImGui::GetCursorPosX();
+        const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAndConditionNode.GetSubConditionNodes();
         for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
         {
             GetNodeValue(*SubConditionNode);
-            ImGui::NewLine();
-            ImGui::SameLine(CursorPosX);
         }
-        ImGui::SameLine(0.f, 0.f);
+
+        ImGui::TreePop();
     }
 
     return true;
@@ -345,20 +305,16 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNo
         return false;
     }
 
-    PrintKeyword("or");
-
-    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inOrConditionNode.GetSubConditionNodes();
-    if (!SubConditionNodes.empty())
+    const std::string Label = MakeLabel("or", OrConditionNodePath);
+    if (ImGui::TreeNode(Label.c_str()))
     {
-        ImGui::SameLine();
-        const float CursorPosX = ImGui::GetCursorPosX();
+        const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inOrConditionNode.GetSubConditionNodes();
         for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
         {
             GetNodeValue(*SubConditionNode);
-            ImGui::NewLine();
-            ImGui::SameLine(CursorPosX);
         }
-        ImGui::SameLine(0.f, 0.f);
+
+        ImGui::TreePop();
     }
 
     return true;
@@ -375,20 +331,16 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltCondition
         return false;
     }
 
-    PrintKeyword("alt");
-
-    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAltConditionNode.GetSubConditionNodes();
-    if (!SubConditionNodes.empty())
+    const std::string Label = MakeLabel("alt", AltConditionNodePath);
+    if (ImGui::TreeNode(Label.c_str()))
     {
-        ImGui::SameLine();
-        const float CursorPosX = ImGui::GetCursorPosX();
+        const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAltConditionNode.GetSubConditionNodes();
         for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
         {
             GetNodeValue(*SubConditionNode);
-            ImGui::NewLine();
-            ImGui::SameLine(CursorPosX);
         }
-        ImGui::SameLine(0.f, 0.f);
+
+        ImGui::TreePop();
     }
 
     return true;
@@ -405,11 +357,13 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotCondition
         return false;
     }
 
-    PrintKeyword("not");
-
-    const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = inNotConditionNode.GetSubConditionNode();
-    ImGui::SameLine();
-    GetNodeValue(*SubConditionNode);
+    const std::string Label = MakeLabel("not", NotConditionNodePath);
+    if (ImGui::TreeNode(Label.c_str()))
+    {
+        const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = inNotConditionNode.GetSubConditionNode();
+        GetNodeValue(*SubConditionNode);
+        ImGui::TreePop();
+    }
 
     return true;
 }
@@ -440,8 +394,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
 
     // Call method node
     const std::string& MethodNodeID = inCompoundTaskNode.GetMethodNodeID();
-    const std::string  TreeNodeID   = std::format("{}##{}", MethodNodeID, CompoundTaskNodePath);
-    if (ImGui::TreeNode(TreeNodeID.c_str()))
+    const std::string  Label        = MakeLabel(MethodNodeID, CompoundTaskNodePath);
+    if (ImGui::TreeNode(Label.c_str()))
     {
         const std::shared_ptr<const HTNMethodNode> MethodNode = mDomainNode->FindMethodNodeByID(MethodNodeID);
         GetNodeValue(*MethodNode);

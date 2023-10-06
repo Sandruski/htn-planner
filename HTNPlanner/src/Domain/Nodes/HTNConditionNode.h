@@ -19,8 +19,7 @@ public:
     std::string GetID() const final;
 
 private:
-    // Generator of IDs
-    static inline unsigned int mIDGenerator = 0;
+    unsigned int GenerateID() const;
 
     // ID of the condition
     // - Globally unique
@@ -172,8 +171,14 @@ private:
     std::shared_ptr<const HTNConditionNodeBase> mSubConditionNode;
 };
 
-inline HTNConditionNodeBase::HTNConditionNodeBase() : mID(mIDGenerator++)
+inline HTNConditionNodeBase::HTNConditionNodeBase() : mID(GenerateID())
 {
+}
+
+inline unsigned int HTNConditionNodeBase::GenerateID() const
+{
+    static unsigned int mIDGenerator = 0;
+    return ++mIDGenerator;
 }
 
 inline const std::shared_ptr<const HTNValueNode>& HTNConditionNode::GetIDNode() const

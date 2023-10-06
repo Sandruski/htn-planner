@@ -1,22 +1,17 @@
 #include "Domain/Parser/HTNDomainParser.h"
 
-#include "Domain/AST/HTNAxiomNode.h"
-#include "Domain/AST/HTNBranchNode.h"
-#include "Domain/AST/HTNConditionNode.h"
-#include "Domain/AST/HTNConstantNode.h"
-#include "Domain/AST/HTNConstantsNode.h"
-#include "Domain/AST/HTNDomainNode.h"
-#include "Domain/AST/HTNMethodNode.h"
-#include "Domain/AST/HTNTaskNode.h"
-#include "Domain/AST/HTNValueNode.h"
+#include "Domain/Nodes/HTNAxiomNode.h"
+#include "Domain/Nodes/HTNBranchNode.h"
+#include "Domain/Nodes/HTNConditionNode.h"
+#include "Domain/Nodes/HTNConstantNode.h"
+#include "Domain/Nodes/HTNConstantsNode.h"
+#include "Domain/Nodes/HTNDomainNode.h"
+#include "Domain/Nodes/HTNMethodNode.h"
+#include "Domain/Nodes/HTNTaskNode.h"
+#include "Domain/Nodes/HTNValueNode.h"
 #include "HTNLog.h"
 #include "HTNToken.h"
 #include "Parser/HTNParserHelpers.h"
-
-namespace
-{
-    int A= 1;
-}
 
 /*
 Backus Naur Form (BNF):

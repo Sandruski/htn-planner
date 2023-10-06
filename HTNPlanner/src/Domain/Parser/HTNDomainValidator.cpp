@@ -29,7 +29,8 @@ bool HTNDomainValidator::Validate()
         return false;
     }
 
-    return GetNodeValue(*DomainNode).GetValue<bool>();
+    //return GetNodeValue(*DomainNode).GetValue<bool>();
+    return true;
 }
 
 HTNAtom HTNDomainValidator::Visit(const HTNDomainNode& inDomainNode)

@@ -5,7 +5,13 @@
 
 HTNTaskNodeBase::HTNTaskNodeBase(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
                                  const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
-    : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes)
+    : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mID(GenerateID())
+{
+}
+
+HTNTaskNodeBase::HTNTaskNodeBase(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+                                 const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes, const unsigned int inID)
+    : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mID(inID)
 {
 }
 
@@ -13,12 +19,19 @@ HTNTaskNodeBase::~HTNTaskNodeBase() = default;
 
 std::string HTNTaskNodeBase::GetID() const
 {
-    return mIDNode->ToString();
+    return std::to_string(mID);
 }
 
 HTNCompoundTaskNode::HTNCompoundTaskNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
                                          const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes, const bool inIsTopLevel)
     : HTNTaskNodeBase(inIDNode, inArgumentNodes), mIsTopLevel(inIsTopLevel)
+{
+}
+
+HTNCompoundTaskNode::HTNCompoundTaskNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+                                         const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes, const unsigned int inID,
+                                         const bool inIsTopLevel)
+    : HTNTaskNodeBase(inIDNode, inArgumentNodes, inID), mIsTopLevel(inIsTopLevel)
 {
 }
 
