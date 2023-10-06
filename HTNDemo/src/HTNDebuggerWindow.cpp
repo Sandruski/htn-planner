@@ -333,10 +333,32 @@ void HTNDebuggerWindow::RenderDecomposition()
     LastDecompositionsMutex.lock();
     for (const HTNDecomposition& LastDecomposition : LastDecompositions)
     {
+        const ImVec2 ContentRegionAvail = ImGui::GetContentRegionAvail();
+
+        // Decomposition window
+        const ImVec2 DecompositionChildSize = ImVec2(ContentRegionAvail.x, 350.f);
+        ImGui::BeginChild("DecompositionChild", DecompositionChildSize);
         const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = LastDecomposition.mDecompositionContext.GetDecompositionSnapshot();
         HTNDecompositionPrinter              DecompositionPrinter =
             HTNDecompositionPrinter(LastDecomposition.mDomainNode, LastDecomposition.mEntryPointID, LastDecompositionSnapshot);
         DecompositionPrinter.Print();
+        ImGui::EndChild();
+
+        // Watch window
+        const ImVec2 WatchChildSize = ImVec2(ContentRegionAvail.x, 150.f);
+        ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+        ImGui::BeginChild("WatchChild", WatchChildSize, true, ImGuiWindowFlags_MenuBar);
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu("Watch Window", false))
+            {
+                // TODO salvarez Watch window
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+        ImGui::EndChild();
+        ImGui::PopStyleVar();
     }
     // TODO salvarez Print last plan tasks in Plan window
     /*
