@@ -337,7 +337,7 @@ void HTNDebuggerWindow::RenderDecomposition()
 
         // Decomposition window
         const ImVec2 DecompositionChildSize = ImVec2(ContentRegionAvail.x, 350.f);
-        ImGui::BeginChild("DecompositionChild", DecompositionChildSize);
+        ImGui::BeginChild("DecompositionChild", DecompositionChildSize, false, ImGuiWindowFlags_HorizontalScrollbar);
         const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = LastDecomposition.mDecompositionContext.GetDecompositionSnapshot();
         HTNDecompositionPrinter              DecompositionPrinter =
             HTNDecompositionPrinter(LastDecomposition.mDomainNode, LastDecomposition.mEntryPointID, LastDecompositionSnapshot);
@@ -347,7 +347,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         // Watch window
         const ImVec2 WatchChildSize = ImVec2(ContentRegionAvail.x, 150.f);
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-        ImGui::BeginChild("WatchChild", WatchChildSize, true, ImGuiWindowFlags_MenuBar);
+        ImGui::BeginChild("WatchChild", WatchChildSize, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("Watch Window", false))
