@@ -1,6 +1,6 @@
-#include "Domain/AST/HTNValueNode.h"
+#include "Domain/Nodes/HTNValueNode.h"
 
-#include "Domain/AST/HTNNodeVisitorBase.h"
+#include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 std::string HTNValueNodeBase::ToString() const
 {
@@ -26,4 +26,9 @@ HTNAtom HTNVariableValueNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 HTNAtom HTNConstantValueNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {
     return ioNodeVisitor.Visit(*this);
+}
+
+const std::string& HTNConstantValueNode::GetConstantNodeID() const
+{
+    return mValue.GetValue<std::string>();
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Domain/AST/HTNNodeVisitorBase.h"
+#include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 #include <memory>
 

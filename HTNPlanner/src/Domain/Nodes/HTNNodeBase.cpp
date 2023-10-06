@@ -1,4 +1,4 @@
-#include "Domain/AST/HTNNodeBase.h"
+#include "Domain/Nodes/HTNNodeBase.h"
 
 #include "HTNAtom.h"
 #include "HTNMacros.h"

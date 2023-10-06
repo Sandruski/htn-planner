@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Domain/AST/HTNNodeVisitorBase.h"
+#include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 #include <memory>
 #include <string>
@@ -13,7 +13,7 @@ class HTNDomainNode;
 class HTNDomainInterpreter final : public HTNNodeVisitorBase
 {
 public:
-    explicit HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointName,
+    explicit HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                   HTNDecompositionContext& ioDecompositionContext);
     ~HTNDomainInterpreter();
 
@@ -39,6 +39,6 @@ public:
 
 private:
     std::shared_ptr<const HTNDomainNode> mDomainNode;
-    std::string                          mEntryPointName;
+    std::string                          mEntryPointID;
     HTNDecompositionContext& mDecompositionContext;
 };

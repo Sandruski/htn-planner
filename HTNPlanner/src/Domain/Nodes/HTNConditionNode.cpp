@@ -1,7 +1,7 @@
-#include "Domain/AST/HTNConditionNode.h"
+#include "Domain/Nodes/HTNConditionNode.h"
 
-#include "Domain/AST/HTNNodeVisitorBase.h"
-#include "Domain/AST/HTNValueNode.h"
+#include "Domain/Nodes/HTNNodeVisitorBase.h"
+#include "Domain/Nodes/HTNValueNode.h"
 
 std::string HTNConditionNodeBase::GetID() const
 {
@@ -28,6 +28,11 @@ HTNAxiomConditionNode::HTNAxiomConditionNode(const std::shared_ptr<const HTNValu
 HTNAtom HTNAxiomConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {
     return ioNodeVisitor.Visit(*this);
+}
+
+const std::string& HTNAxiomConditionNode::GetAxiomNodeID() const
+{
+    return mIDNode->GetValue().GetValue<std::string>();
 }
 
 HTNAndConditionNode::HTNAndConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes)

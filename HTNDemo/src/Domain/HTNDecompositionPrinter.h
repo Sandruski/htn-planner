@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Domain/AST/HTNNodeVisitorBase.h"
 #include "Domain/Interpreter/HTNDecompositionContext.h"
+#include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 #include <memory>
+#include <string>
 
 class HTNDecompositionSnapshotDebug;
 class HTNDomainNode;
@@ -14,9 +15,10 @@ class HTNDomainNode;
 class HTNDecompositionPrinter final : public HTNNodeVisitorBase
 {
 public:
-    explicit HTNDecompositionPrinter(const HTNDecompositionSnapshotDebug& inDecompositionSnapshot);
+    explicit HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
+                                     const HTNDecompositionSnapshotDebug& inDecompositionSnapshot);
 
-    bool Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
+    bool Print();
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
     HTNAtom Visit(const HTNConstantsNode& inConstantsNode) final;
@@ -37,12 +39,9 @@ public:
     HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
 
 private:
-    HTNDecompositionContext mDecompositionContext;
-
+    std::shared_ptr<const HTNDomainNode> mDomainNode;
+    std::string                          mEntryPointID;
     const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
-};
 
-inline HTNDecompositionPrinter::HTNDecompositionPrinter(const HTNDecompositionSnapshotDebug& inDecompositionSnapshot)
-    : mDecompositionSnapshot(inDecompositionSnapshot)
-{
-}
+    HTNDecompositionContext mDecompositionContext;
+};

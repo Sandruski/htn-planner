@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Domain/AST/HTNNodeVisitorBase.h"
 #include "Domain/Interpreter/HTNDecompositionContext.h"
+#include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 #include <memory>
 #include <vector>

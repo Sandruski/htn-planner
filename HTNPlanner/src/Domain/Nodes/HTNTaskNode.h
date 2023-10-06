@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Domain/AST/HTNNodeBase.h"
+#include "Domain/Nodes/HTNNodeBase.h"
 
 #include <memory>
 #include <vector>
@@ -23,7 +23,7 @@ public:
     const std::shared_ptr<const HTNValueNode>&                  GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetArgumentNodes() const;
 
-private:
+protected:
     // Node representing the ID of the task
     // - Not unique
     std::shared_ptr<const HTNValueNode> mIDNode;
@@ -42,6 +42,8 @@ public:
                                  const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes, const bool inIsTopLevel);
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+
+    const std::string& GetMethodNodeID() const;
 
     bool IsTopLevel() const;
 

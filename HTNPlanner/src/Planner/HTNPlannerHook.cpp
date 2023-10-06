@@ -1,7 +1,7 @@
 #include "Planner/HTNPlannerHook.h"
 
-#include "Domain/AST/HTNDomainNode.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
+#include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Parser/HTNDomainLexer.h"
 #include "Domain/Parser/HTNDomainParser.h"
 #include "Domain/Parser/HTNDomainValidator.h"

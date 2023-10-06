@@ -1,11 +1,11 @@
 #include "HTNDebuggerWindow.h"
 
-#include "Domain/AST/HTNDomainNode.h"
-#include "Domain/AST/HTNMethodNode.h"
 #include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
+#include "Domain/Nodes/HTNDomainNode.h"
+#include "Domain/Nodes/HTNMethodNode.h"
 #include "HTNAtom.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
@@ -333,13 +333,10 @@ void HTNDebuggerWindow::RenderDecomposition()
     LastDecompositionsMutex.lock();
     for (const HTNDecomposition& LastDecomposition : LastDecompositions)
     {
-        ImGui::Text(LastDecomposition.mEntryPointID.c_str());
-
-        ImGui::Indent();
         const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = LastDecomposition.mDecompositionContext.GetDecompositionSnapshot();
-        HTNDecompositionPrinter              DecompositionPrinter      = HTNDecompositionPrinter(LastDecompositionSnapshot);
-        DecompositionPrinter.Print(LastDecomposition.mDomainNode);
-        ImGui::Unindent();
+        HTNDecompositionPrinter              DecompositionPrinter =
+            HTNDecompositionPrinter(LastDecomposition.mDomainNode, LastDecomposition.mEntryPointID, LastDecompositionSnapshot);
+        DecompositionPrinter.Print();
     }
     // TODO salvarez Print last plan tasks in Plan window
     /*

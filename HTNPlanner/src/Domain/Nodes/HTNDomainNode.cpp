@@ -1,11 +1,11 @@
-#include "Domain/AST/HTNDomainNode.h"
+#include "Domain/Nodes/HTNDomainNode.h"
 
-#include "Domain/AST/HTNAxiomNode.h"
-#include "Domain/AST/HTNConstantNode.h"
-#include "Domain/AST/HTNConstantsNode.h"
-#include "Domain/AST/HTNMethodNode.h"
-#include "Domain/AST/HTNNodeVisitorBase.h"
-#include "Domain/AST/HTNValueNode.h"
+#include "Domain/Nodes/HTNAxiomNode.h"
+#include "Domain/Nodes/HTNConstantNode.h"
+#include "Domain/Nodes/HTNConstantsNode.h"
+#include "Domain/Nodes/HTNMethodNode.h"
+#include "Domain/Nodes/HTNNodeVisitorBase.h"
+#include "Domain/Nodes/HTNValueNode.h"
 
 HTNDomainNode::HTNDomainNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
                              const std::vector<std::shared_ptr<const HTNConstantsNode>>& inConstantNodes,

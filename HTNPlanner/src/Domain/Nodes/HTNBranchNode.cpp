@@ -1,9 +1,9 @@
-#include "Domain/AST/HTNBranchNode.h"
+#include "Domain/Nodes/HTNBranchNode.h"
 
-#include "Domain/AST/HTNConditionNode.h"
-#include "Domain/AST/HTNNodeVisitorBase.h"
-#include "Domain/AST/HTNTaskNode.h"
-#include "Domain/AST/HTNValueNode.h"
+#include "Domain/Nodes/HTNConditionNode.h"
+#include "Domain/Nodes/HTNNodeVisitorBase.h"
+#include "Domain/Nodes/HTNTaskNode.h"
+#include "Domain/Nodes/HTNValueNode.h"
 
 HTNBranchNode::HTNBranchNode(const std::shared_ptr<const HTNValueNode>&                 inIDNode,
                              const std::shared_ptr<const HTNConditionNodeBase>&         inPreConditionNode,

@@ -1,26 +1,27 @@
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 
-#include "Domain/AST/HTNAxiomNode.h"
-#include "Domain/AST/HTNBranchNode.h"
-#include "Domain/AST/HTNConditionNode.h"
-#include "Domain/AST/HTNConstantNode.h"
-#include "Domain/AST/HTNConstantsNode.h"
-#include "Domain/AST/HTNDomainNode.h"
-#include "Domain/AST/HTNMethodNode.h"
-#include "Domain/AST/HTNTaskNode.h"
-#include "Domain/AST/HTNValueNode.h"
+#include "Domain/HTNDomainHelpers.h"
 #include "Domain/Interpreter/HTNConditionQuery.h"
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNNodeScope.h"
 #include "Domain/Interpreter/HTNTaskInstance.h"
 #include "Domain/Interpreter/HTNVariableScope.h"
+#include "Domain/Nodes/HTNAxiomNode.h"
+#include "Domain/Nodes/HTNBranchNode.h"
+#include "Domain/Nodes/HTNConditionNode.h"
+#include "Domain/Nodes/HTNConstantNode.h"
+#include "Domain/Nodes/HTNConstantsNode.h"
+#include "Domain/Nodes/HTNDomainNode.h"
+#include "Domain/Nodes/HTNMethodNode.h"
+#include "Domain/Nodes/HTNTaskNode.h"
+#include "Domain/Nodes/HTNValueNode.h"
 #include "HTNLog.h"
 #include "WorldState/HTNWorldState.h"
 
-HTNDomainInterpreter::HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointName,
+HTNDomainInterpreter::HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                            HTNDecompositionContext& ioDecompositionContext)
-    : mDomainNode(inDomainNode), mEntryPointName(inEntryPointName), mDecompositionContext(ioDecompositionContext)
+    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionContext(ioDecompositionContext)
 {
 }
 
@@ -52,13 +53,12 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode)
 
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
 
-    // Dummy top-level task node
-    static constexpr bool                            IsIdentifier             = true;
-    static constexpr bool                            IsTopLevel               = true;
-    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = std::make_shared<HTNCompoundTaskNode>(
-        std::make_shared<const HTNValueNode>(mEntryPointName, IsIdentifier), std::vector<std::shared_ptr<const HTNValueNodeBase>>(), IsTopLevel);
-    const std::string&    CurrentVariableScopePath     = mDecompositionContext.GetCurrentVariableScopePath();
-    const HTNTaskInstance TopLevelCompoundTaskInstance = HTNTaskInstance(TopLevelCompoundTaskNode, HTNEnvironment(), CurrentVariableScopePath);
+    // Top-level compound task node
+    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDomainHelpers::MakeTopLevelCompoundTaskNode(mEntryPointID);
+    const std::string&                               CurrentNodePath          = mDecompositionContext.GetCurrentNodePath();
+    const std::string&                               CurrentVariableScopePath = mDecompositionContext.GetCurrentVariableScopePath();
+    const HTNTaskInstance                            TopLevelCompoundTaskInstance =
+        HTNTaskInstance(TopLevelCompoundTaskNode, HTNEnvironment(), CurrentNodePath, CurrentVariableScopePath);
     CurrentDecomposition.PushPendingTaskInstance(TopLevelCompoundTaskInstance);
 
     while (CurrentDecomposition.HasPendingTaskInstances())
@@ -67,6 +67,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode)
 
         // Initialize the state with that of the task instance
         CurrentDecomposition.SetEnvironment(TaskInstance.GetEnvironment());
+        mDecompositionContext.SetCurrentNodePath(TaskInstance.GetNodePath());
         mDecompositionContext.SetCurrentVariableScopePath(TaskInstance.GetVariableScopePath());
 
         const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskInstance.GetTaskNode();
@@ -119,16 +120,6 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode)
         const std::shared_ptr<const HTNBranchNode>& BranchNode = BranchNodes[BranchIndex];
         if (GetNodeValue(*BranchNode).GetValue<bool>())
         {
-            const std::string& CurrentVariableScopePath = mDecompositionContext.GetCurrentVariableScopePath();
-
-            const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = BranchNode->GetTaskNodes();
-            for (int i = static_cast<int>(TaskNodes.size()) - 1; i >= 0; --i)
-            {
-                const std::shared_ptr<const HTNTaskNodeBase>& TaskNode     = TaskNodes[i];
-                const HTNTaskInstance                         TaskInstance = HTNTaskInstance(TaskNode, Environment, CurrentVariableScopePath);
-                CurrentDecomposition.PushPendingTaskInstance(TaskInstance);
-            }
-
             return true;
         }
 
@@ -152,12 +143,29 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode)
     const HTNNodeScope BranchNodeScope = HTNNodeScope(mDecompositionContext, inBranchNode.GetID());
 
     const std::shared_ptr<const HTNConditionNodeBase>& CurrentPreConditionNode = inBranchNode.GetPreConditionNode();
-    if (!CurrentPreConditionNode)
+    if (CurrentPreConditionNode)
     {
-        return true;
+        if (!GetNodeValue(*CurrentPreConditionNode).GetValue<bool>())
+        {
+            return false;
+        }
     }
 
-    return GetNodeValue(*CurrentPreConditionNode).GetValue<bool>();
+    HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
+    HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
+
+    const std::string& CurrentNodePath          = mDecompositionContext.GetCurrentNodePath();
+    const std::string& CurrentVariableScopePath = mDecompositionContext.GetCurrentVariableScopePath();
+
+    const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = inBranchNode.GetTaskNodes();
+    for (int i = static_cast<int>(TaskNodes.size()) - 1; i >= 0; --i)
+    {
+        const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskNodes[i];
+        const HTNTaskInstance TaskInstance                     = HTNTaskInstance(TaskNode, Environment, CurrentNodePath, CurrentVariableScopePath);
+        CurrentDecomposition.PushPendingTaskInstance(TaskInstance);
+    }
+
+    return true;
 }
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
@@ -233,9 +241,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 {
     const HTNNodeScope AxiomConditionNodeScope = HTNNodeScope(mDecompositionContext, inAxiomConditionNode.GetID());
 
-    const std::shared_ptr<const HTNValueNode>& AxiomConditionNodeIDNode = inAxiomConditionNode.GetIDNode();
-    const std::string                          AxiomNodeID              = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
-    const std::shared_ptr<const HTNAxiomNode>  AxiomNode                = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
+    const std::string&                        AxiomNodeID = inAxiomConditionNode.GetAxiomNodeID();
+    const std::shared_ptr<const HTNAxiomNode> AxiomNode   = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
     if (!AxiomNode)
     {
         LOG_ERROR("Axiom node [{}] could not found", AxiomNodeID);
@@ -434,20 +441,19 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
 {
-    const std::string  CompoundTaskNodeID    = inCompoundTaskNode.GetID();
-    const HTNNodeScope CompoundTaskNodeScope = HTNNodeScope(mDecompositionContext, CompoundTaskNodeID);
+    const HTNNodeScope CompoundTaskNodeScope = HTNNodeScope(mDecompositionContext, inCompoundTaskNode.GetID());
 
-    // The ID of a compound task should match the ID of a method
-    const std::shared_ptr<const HTNMethodNode> MethodNode = mDomainNode->FindMethodNodeByID(CompoundTaskNodeID);
+    const std::string&                         MethodNodeID = inCompoundTaskNode.GetMethodNodeID();
+    const std::shared_ptr<const HTNMethodNode> MethodNode   = mDomainNode->FindMethodNodeByID(MethodNodeID);
     if (!MethodNode)
     {
-        LOG_ERROR("Method node [{}] could not be found", CompoundTaskNodeID);
+        LOG_ERROR("Method node [{}] could not be found", MethodNodeID);
         return false;
     }
 
     if (inCompoundTaskNode.IsTopLevel() && !MethodNode->IsTopLevel())
     {
-        LOG_ERROR("Method node [{}] is not top-level", CompoundTaskNodeID);
+        LOG_ERROR("Method node [{}] is not top-level", MethodNodeID);
         return false;
     }
 
@@ -460,7 +466,6 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
         CompoundTaskNodeArguments.emplace_back(CompoundTaskNodeArgument);
     }
 
-    const std::string      MethodNodeID        = MethodNode->GetID();
     const HTNVariableScope MethodVariableScope = HTNVariableScope(mDecompositionContext, MethodNodeID);
 
     // Initialize the input arguments of the method node with the arguments of the compound task node
@@ -534,7 +539,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantValueNode& inConstantValueN
 {
     const HTNNodeScope ConstantValueNodeScope = HTNNodeScope(mDecompositionContext, inConstantValueNode.GetID());
 
-    const std::string&                     ConstantNodeID = inConstantValueNode.GetValue().GetValue<std::string>();
+    const std::string&                     ConstantNodeID = inConstantValueNode.GetConstantNodeID();
     std::shared_ptr<const HTNConstantNode> ConstantNode   = mDomainNode->FindConstantNodeByID(ConstantNodeID);
     if (!ConstantNode)
     {

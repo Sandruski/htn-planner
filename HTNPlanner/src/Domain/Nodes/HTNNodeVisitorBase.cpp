@@ -1,7 +1,7 @@
-#include "Domain/AST/HTNNodeVisitorBase.h"
+#include "Domain/Nodes/HTNNodeVisitorBase.h"
 
+#include "Domain/Nodes/HTNNodeBase.h"
 #include "HTNAtom.h"
-#include "Domain/AST/HTNNodeBase.h"
 #include "HTNMacros.h"
 
 HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNDomainNode& inDomainNode)
@@ -79,8 +79,7 @@ HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNValueNode& inValueNode)
     return HTNAtom();
 }
 
-void HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNVariableValueNode& inVariableValueNode,
-                               MAYBE_UNUSED const HTNAtom&              inVariableValueNodeValue)
+void HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNVariableValueNode& inVariableValueNode, MAYBE_UNUSED const HTNAtom& inVariableValueNodeValue)
 {
 }
 

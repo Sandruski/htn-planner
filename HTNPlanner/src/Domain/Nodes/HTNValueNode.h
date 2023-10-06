@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Domain/AST/HTNNodeBase.h"
+#include "Domain/Nodes/HTNNodeBase.h"
 #include "HTNAtom.h"
 
 #include <string>
@@ -18,7 +18,7 @@ public:
     const HTNAtom& GetValue() const;
     std::string    ToString() const;
 
-private:
+protected:
     // Value
     HTNAtom mValue;
 };
@@ -61,6 +61,8 @@ public:
     explicit HTNConstantValueNode(const HTNAtom& inValue);
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+
+    const std::string& GetConstantNodeID() const;
 };
 
 inline HTNValueNodeBase::HTNValueNodeBase(const HTNAtom& inValue) : mValue(inValue)

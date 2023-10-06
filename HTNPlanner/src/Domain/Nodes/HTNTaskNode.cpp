@@ -1,7 +1,7 @@
-#include "Domain/AST/HTNTaskNode.h"
+#include "Domain/Nodes/HTNTaskNode.h"
 
-#include "Domain/AST/HTNNodeVisitorBase.h"
-#include "Domain/AST/HTNValueNode.h"
+#include "Domain/Nodes/HTNNodeVisitorBase.h"
+#include "Domain/Nodes/HTNValueNode.h"
 
 HTNTaskNodeBase::HTNTaskNodeBase(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
                                  const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
@@ -25,6 +25,11 @@ HTNCompoundTaskNode::HTNCompoundTaskNode(const std::shared_ptr<const HTNValueNod
 HTNAtom HTNCompoundTaskNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {
     return ioNodeVisitor.Visit(*this);
+}
+
+const std::string& HTNCompoundTaskNode::GetMethodNodeID() const
+{
+    return mIDNode->GetValue().GetValue<std::string>();
 }
 
 HTNPrimitiveTaskNode::HTNPrimitiveTaskNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
