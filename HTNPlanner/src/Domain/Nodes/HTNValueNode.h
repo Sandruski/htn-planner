@@ -61,8 +61,6 @@ public:
     explicit HTNConstantValueNode(const HTNAtom& inValue);
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
-
-    const std::string& GetConstantNodeID() const;
 };
 
 inline HTNValueNodeBase::HTNValueNodeBase(const HTNAtom& inValue) : mValue(inValue)

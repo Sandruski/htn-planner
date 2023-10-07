@@ -40,11 +40,6 @@ HTNAtom HTNCompoundTaskNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
     return ioNodeVisitor.Visit(*this);
 }
 
-const std::string& HTNCompoundTaskNode::GetMethodNodeID() const
-{
-    return mIDNode->GetValue().GetValue<std::string>();
-}
-
 HTNPrimitiveTaskNode::HTNPrimitiveTaskNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
                                            const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
     : HTNTaskNodeBase(inIDNode, inArgumentNodes)

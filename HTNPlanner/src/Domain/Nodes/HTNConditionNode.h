@@ -65,8 +65,6 @@ public:
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
-    const std::string& GetAxiomNodeID() const;
-
     const std::shared_ptr<const HTNValueNode>&                  GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetArgumentNodes() const;
 

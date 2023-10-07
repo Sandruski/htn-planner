@@ -27,8 +27,3 @@ HTNAtom HTNConstantValueNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {
     return ioNodeVisitor.Visit(*this);
 }
-
-const std::string& HTNConstantValueNode::GetConstantNodeID() const
-{
-    return mValue.GetValue<std::string>();
-}

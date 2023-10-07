@@ -55,8 +55,6 @@ public:
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
-    const std::string& GetMethodNodeID() const;
-
     bool IsTopLevel() const;
 
 private:

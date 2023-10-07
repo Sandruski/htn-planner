@@ -30,11 +30,6 @@ HTNAtom HTNAxiomConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
     return ioNodeVisitor.Visit(*this);
 }
 
-const std::string& HTNAxiomConditionNode::GetAxiomNodeID() const
-{
-    return mIDNode->GetValue().GetValue<std::string>();
-}
-
 HTNAndConditionNode::HTNAndConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes)
     : mSubConditionNodes(inSubConditionNodes)
 {

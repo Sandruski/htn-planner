@@ -113,7 +113,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode)
 
     const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes     = inMethodNode.GetBranchNodes();
     const std::size_t                                        BranchNodesSize = BranchNodes.size();
-    for (std::size_t BranchIndex = Environment.AddIndex(CurrentNodePath); BranchIndex >= 0 && BranchIndex < BranchNodesSize;
+    for (std::size_t BranchIndex = Environment.AddIndex(CurrentNodePath); BranchIndex < BranchNodesSize;
          BranchIndex             = Environment.GetIndex(CurrentNodePath))
     {
         // Check branch
@@ -241,8 +241,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 {
     const HTNNodeScope AxiomConditionNodeScope = HTNNodeScope(mDecompositionContext, inAxiomConditionNode.GetID());
 
-    const std::string&                        AxiomNodeID = inAxiomConditionNode.GetAxiomNodeID();
-    const std::shared_ptr<const HTNAxiomNode> AxiomNode   = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
+    const std::shared_ptr<const HTNValueNode>& AxiomConditionNodeIDNode = inAxiomConditionNode.GetIDNode();
+    const std::string                         AxiomNodeID              = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
+    const std::shared_ptr<const HTNAxiomNode>  AxiomNode                = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
     if (!AxiomNode)
     {
         LOG_ERROR("Axiom node [{}] could not found", AxiomNodeID);
@@ -307,7 +308,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes     = inAndConditionNode.GetSubConditionNodes();
     const std::size_t                                               SubConditionNodesSize = SubConditionNodes.size();
-    for (std::size_t SubConditionIndex = Environment.AddIndex(CurrentNodePath); SubConditionIndex >= 0 && SubConditionIndex < SubConditionNodesSize;
+    for (std::size_t SubConditionIndex = Environment.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
          SubConditionIndex             = Environment.GetIndex(CurrentNodePath))
     {
         // Check sub-condition
@@ -346,7 +347,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes     = inOrConditionNode.GetSubConditionNodes();
     const std::size_t                                               SubConditionNodesSize = SubConditionNodes.size();
-    for (std::size_t SubConditionIndex = Environment.AddIndex(CurrentNodePath); SubConditionIndex >= 0 && SubConditionIndex < SubConditionNodesSize;
+    for (std::size_t SubConditionIndex = Environment.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
          SubConditionIndex             = Environment.GetIndex(CurrentNodePath))
     {
         // Copy decomposition history
@@ -384,7 +385,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes     = inAltConditionNode.GetSubConditionNodes();
     const std::size_t                                               SubConditionNodesSize = SubConditionNodes.size();
-    for (std::size_t SubConditionIndex = Environment.AddIndex(CurrentNodePath); SubConditionIndex >= 0 && SubConditionIndex < SubConditionNodesSize;
+    for (std::size_t SubConditionIndex = Environment.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
          SubConditionIndex             = Environment.GetIndex(CurrentNodePath))
     {
         // Check sub-condition
@@ -443,8 +444,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
 {
     const HTNNodeScope CompoundTaskNodeScope = HTNNodeScope(mDecompositionContext, inCompoundTaskNode.GetID());
 
-    const std::string&                         MethodNodeID = inCompoundTaskNode.GetMethodNodeID();
-    const std::shared_ptr<const HTNMethodNode> MethodNode   = mDomainNode->FindMethodNodeByID(MethodNodeID);
+    const std::shared_ptr<const HTNValueNode>& CompoundTaskNodeIDNode = inCompoundTaskNode.GetIDNode();
+    const std::string                         MethodNodeID           = GetNodeValue(*CompoundTaskNodeIDNode).GetValue<std::string>();
+    const std::shared_ptr<const HTNMethodNode> MethodNode             = mDomainNode->FindMethodNodeByID(MethodNodeID);
     if (!MethodNode)
     {
         LOG_ERROR("Method node [{}] could not be found", MethodNodeID);
@@ -539,7 +541,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantValueNode& inConstantValueN
 {
     const HTNNodeScope ConstantValueNodeScope = HTNNodeScope(mDecompositionContext, inConstantValueNode.GetID());
 
-    const std::string&                     ConstantNodeID = inConstantValueNode.GetConstantNodeID();
+    const std::string&                     ConstantNodeID = inConstantValueNode.GetValue().GetValue<std::string>();
     std::shared_ptr<const HTNConstantNode> ConstantNode   = mDomainNode->FindConstantNodeByID(ConstantNodeID);
     if (!ConstantNode)
     {

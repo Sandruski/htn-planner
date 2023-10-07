@@ -13,6 +13,7 @@
 
     (:axiom (find_food ?inp_food_type ?out_food)
 		(and    (food ?inp_food_type ?out_food)
+                (not (has_mold ?out_food))
 		)
 	)
 
@@ -25,8 +26,8 @@
 
     (:method (behave) top_level_method
         (branch_eat
-            (and    (#find_food @spanish ?food)
-                    (not (#is_spoiled ?food))
+            (and    //(#find_food @spanish ?food)
+                    //(not (#is_spoiled ?food))
                     (#find_food @italian ?food2)
                     (not (#is_spoiled ?food2))
             )

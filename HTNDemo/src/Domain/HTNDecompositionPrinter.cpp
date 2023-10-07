@@ -16,6 +16,7 @@
 
 #include "imgui.h"
 
+#include <cassert>
 #include <format>
 
 namespace
@@ -25,9 +26,9 @@ void PrintKeyword(const std::string& inKeyword)
     ImGui::TextDisabled(inKeyword.c_str());
 }
 
-std::string MakeDecompositionStepID(const std::string& inID, const size_t inDecompositionStep)
+std::string MakeDecompositionStepLabel(const std::string& inLabel, const size_t inDecompositionStep)
 {
-    return std::format("{} {}", inDecompositionStep, inID);
+    return std::format("{} {}", inDecompositionStep, inLabel);
 }
 
 std::string MakeLabel(const std::string& inLabel, const std::string& inID)
@@ -65,16 +66,9 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode)
         return false;
     }
 
-    // Print domain node
-    const std::shared_ptr<const HTNValueNode>& IDNode = inDomainNode.GetIDNode();
-    GetNodeValue(*IDNode);
-
-    // Call top-level compound task node
-    ImGui::Indent();
     // Top-level compound task node
     const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDomainHelpers::MakeTopLevelCompoundTaskNode(mEntryPointID);
     GetNodeValue(*TopLevelCompoundTaskNode);
-    ImGui::Unindent();
 
     return true;
 }
@@ -142,10 +136,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode)
 
     const std::string&                 AxiomNodePath            = mDecompositionContext.GetCurrentNodePath();
     const HTNNodeSnapshotHistoryDebug* AxiomNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(AxiomNodePath);
-    if (!AxiomNodeSnapshotHistory)
-    {
-        return false;
-    }
+    assert(AxiomNodeSnapshotHistory);
 
     if (const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode = inAxiomNode.GetConditionNode())
     {
@@ -161,10 +152,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode)
 
     const std::string&                 MethodNodePath            = mDecompositionContext.GetCurrentNodePath();
     const HTNNodeSnapshotHistoryDebug* MethodNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(MethodNodePath);
-    if (!MethodNodeSnapshotHistory)
-    {
-        return false;
-    }
+    assert(MethodNodeSnapshotHistory);
 
     const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes = inMethodNode.GetBranchNodes();
     for (const std::shared_ptr<const HTNBranchNode>& BranchNode : BranchNodes)
@@ -186,22 +174,32 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode)
         return false;
     }
 
-    const std::string BranchNodeID = inBranchNode.GetID();
-    const std::string Label        = MakeLabel(BranchNodeID, BranchNodePath);
-    if (ImGui::TreeNode(Label.c_str()))
+    // Make branch node description
+    const std::shared_ptr<const HTNValueNode>& BranchNodeIDNode      = inBranchNode.GetIDNode();
+    const std::string                          BranchNodeID          = GetNodeValue(*BranchNodeIDNode).GetValue<std::string>();
+    const std::string                          BranchNodeDescription = BranchNodeID;
+
+    // Print branch node snapshot history
+    for (const std::pair<std::size_t, HTNNodeSnapshotDebug>& BranchNodeSnapshotPair : *BranchNodeSnapshotHistory)
     {
-        if (const std::shared_ptr<const HTNConditionNodeBase>& PreConditionNode = inBranchNode.GetPreConditionNode())
+        const std::size_t DecompositionStep      = BranchNodeSnapshotPair.first;
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(BranchNodeDescription, DecompositionStep);
+        const std::string Label                  = MakeLabel(DecompositionStepLabel, BranchNodePath);
+        if (ImGui::TreeNode(Label.c_str()))
         {
-            GetNodeValue(*PreConditionNode);
-        }
+            if (const std::shared_ptr<const HTNConditionNodeBase>& PreConditionNode = inBranchNode.GetPreConditionNode())
+            {
+                GetNodeValue(*PreConditionNode);
+            }
 
-        const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = inBranchNode.GetTaskNodes();
-        for (const std::shared_ptr<const HTNTaskNodeBase>& TaskNode : TaskNodes)
-        {
-            GetNodeValue(*TaskNode);
-        }
+            const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = inBranchNode.GetTaskNodes();
+            for (const std::shared_ptr<const HTNTaskNodeBase>& TaskNode : TaskNodes)
+            {
+                GetNodeValue(*TaskNode);
+            }
 
-        ImGui::TreePop();
+            ImGui::TreePop();
+        }
     }
 
     return true;
@@ -218,17 +216,28 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode)
         return false;
     }
 
-    std::string                                ConditionNodeDescription;
-    const std::shared_ptr<const HTNValueNode>& IDNode = inConditionNode.GetIDNode();
-    ConditionNodeDescription                          = GetNodeValue(*IDNode).GetValue<std::string>();
+    // Make condition node description
+    const std::shared_ptr<const HTNValueNode>& ConditionNodeIDNode      = inConditionNode.GetIDNode();
+    const std::string                          ConditionNodeID          = GetNodeValue(*ConditionNodeIDNode).GetValue<std::string>();
+    std::string                                ConditionNodeDescription = ConditionNodeID;
 
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inConditionNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ConditionNodeArgumentNodes = inConditionNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& ConditionNodeArgumentNode : ConditionNodeArgumentNodes)
     {
-        ConditionNodeDescription.append(std::format(" {}", GetNodeValue(*ArgumentNode).GetValue<std::string>()));
+        ConditionNodeDescription.append(std::format(" {}", GetNodeValue(*ConditionNodeArgumentNode).GetValue<std::string>()));
     }
 
-    ImGui::Text(ConditionNodeDescription.c_str());
+    // Print condition node snapshot history
+    for (const std::pair<std::size_t, HTNNodeSnapshotDebug>& ConditionNodeSnapshotPair : *ConditionNodeSnapshotHistory)
+    {
+        const std::size_t DecompositionStep      = ConditionNodeSnapshotPair.first;
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(ConditionNodeDescription, DecompositionStep);
+        const std::string Label                  = MakeLabel(DecompositionStepLabel, ConditionNodePath);
+        if (ImGui::TreeNodeEx(Label.c_str(), ImGuiTreeNodeFlags_Leaf))
+        {
+            ImGui::TreePop();
+        }
+    }
 
     return true;
 }
@@ -244,24 +253,23 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
         return false;
     }
 
-    // Print axiom condition node
-    std::string        AxiomConditionNodeDescription = "#";
-    const std::string& AxiomNodeID                   = inAxiomConditionNode.GetAxiomNodeID();
-    AxiomConditionNodeDescription.append(AxiomNodeID);
+    // Make axiom condition node description
+    const std::shared_ptr<const HTNValueNode>& AxiomConditionNodeIDNode      = inAxiomConditionNode.GetIDNode();
+    const std::string                          AxiomNodeID                   = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
+    std::string                                AxiomConditionNodeDescription = std::format("#{}", AxiomNodeID);
 
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& AxiomConditionNodeArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& AxiomConditionNodeArgumentNode : AxiomConditionNodeArgumentNodes)
     {
-        AxiomConditionNodeDescription.append(std::format(" {}", GetNodeValue(*ArgumentNode).GetValue<std::string>()));
+        AxiomConditionNodeDescription.append(std::format(" {}", GetNodeValue(*AxiomConditionNodeArgumentNode).GetValue<std::string>()));
     }
 
+    // Print axiom condition node snapshot history
     for (const std::pair<std::size_t, HTNNodeSnapshotDebug>& AxiomConditionNodeSnapshotPair : *AxiomConditionNodeSnapshotHistory)
     {
-        const std::size_t DecompositionStep = AxiomConditionNodeSnapshotPair.first;
-        // const HTNNodeSnapshotDebug& NodeSnapshotDebug = AndConditionNodeSnapshotPair.second;
-
-        const std::string DecompositionStepID = MakeDecompositionStepID(AxiomConditionNodeDescription, DecompositionStep);
-        const std::string Label               = MakeLabel(DecompositionStepID, AxiomConditionNodePath);
+        const std::size_t DecompositionStep      = AxiomConditionNodeSnapshotPair.first;
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(AxiomConditionNodeDescription, DecompositionStep);
+        const std::string Label                  = MakeLabel(DecompositionStepLabel, AxiomConditionNodePath);
         if (ImGui::TreeNode(Label.c_str()))
         {
             // Call axiom node
@@ -285,14 +293,16 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndCondition
         return false;
     }
 
+    // Make and condition node description
+    const std::string AndConditionNodeID          = "and";
+    const std::string AndConditionNodeDescription = AndConditionNodeID;
+
+    // Print and condition node snapshot history
     for (const std::pair<std::size_t, HTNNodeSnapshotDebug>& AndConditionNodeSnapshotPair : *AndConditionNodeSnapshotHistory)
     {
-        const std::size_t DecompositionStep = AndConditionNodeSnapshotPair.first;
-        // const HTNNodeSnapshotDebug& NodeSnapshotDebug = AndConditionNodeSnapshotPair.second;
-
-        const std::string AndConditionNodeID  = "and";
-        const std::string DecompositionStepID = MakeDecompositionStepID(AndConditionNodeID, DecompositionStep);
-        const std::string Label               = MakeLabel(DecompositionStepID, AndConditionNodePath);
+        const std::size_t DecompositionStep      = AndConditionNodeSnapshotPair.first;
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(AndConditionNodeDescription, DecompositionStep);
+        const std::string Label                  = MakeLabel(DecompositionStepLabel, AndConditionNodePath);
         if (ImGui::TreeNode(Label.c_str()))
         {
             const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAndConditionNode.GetSubConditionNodes();
@@ -319,14 +329,16 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNo
         return false;
     }
 
+    // Make or condition node description
+    const std::string OrConditionNodeID          = "or";
+    const std::string OrConditionNodeDescription = OrConditionNodeID;
+
+    // Print or condition node snapshot history
     for (const std::pair<std::size_t, HTNNodeSnapshotDebug>& OrConditionNodeSnapshotPair : *OrConditionNodeSnapshotHistory)
     {
-        const std::size_t DecompositionStep = OrConditionNodeSnapshotPair.first;
-        // const HTNNodeSnapshotDebug& NodeSnapshotDebug = AndConditionNodeSnapshotPair.second;
-
-        const std::string OrConditionNodeID   = "or";
-        const std::string DecompositionStepID = MakeDecompositionStepID(OrConditionNodeID, DecompositionStep);
-        const std::string Label               = MakeLabel(DecompositionStepID, OrConditionNodePath);
+        const std::size_t DecompositionStep      = OrConditionNodeSnapshotPair.first;
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(OrConditionNodeDescription, DecompositionStep);
+        const std::string Label                  = MakeLabel(DecompositionStepLabel, OrConditionNodePath);
         if (ImGui::TreeNode(Label.c_str()))
         {
             const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inOrConditionNode.GetSubConditionNodes();
@@ -353,14 +365,16 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltCondition
         return false;
     }
 
+    // Make alt condition node description
+    const std::string AltConditionNodeID          = "alt";
+    const std::string AltConditionNodeDescription = AltConditionNodeID;
+
+    // Print alt condition node snapshot history
     for (const std::pair<std::size_t, HTNNodeSnapshotDebug>& AltConditionNodeSnapshotPair : *AltConditionNodeSnapshotHistory)
     {
-        const std::size_t DecompositionStep = AltConditionNodeSnapshotPair.first;
-        // const HTNNodeSnapshotDebug& NodeSnapshotDebug = AndConditionNodeSnapshotPair.second;
-
-        const std::string AltConditionNodeID  = "alt";
-        const std::string DecompositionStepID = MakeDecompositionStepID(AltConditionNodeID, DecompositionStep);
-        const std::string Label               = MakeLabel(DecompositionStepID, AltConditionNodePath);
+        const std::size_t DecompositionStep      = AltConditionNodeSnapshotPair.first;
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(AltConditionNodeDescription, DecompositionStep);
+        const std::string Label                  = MakeLabel(DecompositionStepLabel, AltConditionNodePath);
         if (ImGui::TreeNode(Label.c_str()))
         {
             const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAltConditionNode.GetSubConditionNodes();
@@ -387,14 +401,16 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotCondition
         return false;
     }
 
+    // Make not condition node description
+    const std::string NotConditionNodeID          = "not";
+    const std::string NotConditionNodeDescription = NotConditionNodeID;
+
+    // Print not condition node snapshot history
     for (const std::pair<std::size_t, HTNNodeSnapshotDebug>& NotConditionNodeSnapshotPair : *NotConditionNodeSnapshotHistory)
     {
-        const std::size_t DecompositionStep = NotConditionNodeSnapshotPair.first;
-        // const HTNNodeSnapshotDebug& NodeSnapshotDebug = AndConditionNodeSnapshotPair.second;
-
-        const std::string NotConditionNodeID  = "not";
-        const std::string DecompositionStepID = MakeDecompositionStepID(NotConditionNodeID, DecompositionStep);
-        const std::string Label               = MakeLabel(DecompositionStepID, NotConditionNodePath);
+        const std::size_t DecompositionStep      = NotConditionNodeSnapshotPair.first;
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(NotConditionNodeDescription, DecompositionStep);
+        const std::string Label                  = MakeLabel(DecompositionStepLabel, NotConditionNodePath);
         if (ImGui::TreeNode(Label.c_str()))
         {
             const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = inNotConditionNode.GetSubConditionNode();
@@ -417,30 +433,30 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
         return false;
     }
 
-    // TODO salvarez
-    // Print compound task node
-    /*
-    const std::shared_ptr<const HTNValueNode>& IDNode = inCompoundTaskNode.GetIDNode();
-    GetNodeValue(*IDNode);
+    // Make compound task node description
+    const std::shared_ptr<const HTNValueNode>& CompoundTaskNodeIDNode      = inCompoundTaskNode.GetIDNode();
+    const std::string                          MethodNodeID                = GetNodeValue(*CompoundTaskNodeIDNode).GetValue<std::string>();
+    std::string                                CompoundTaskNodeDescription = MethodNodeID;
 
-    ImGui::Indent();
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& CompoundTaskNodeArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& CompoundTaskNodeArgumentNode : CompoundTaskNodeArgumentNodes)
     {
-        ImGui::SameLine();
-        GetNodeValue(*ArgumentNode);
+        CompoundTaskNodeDescription.append(std::format(" {}", GetNodeValue(*CompoundTaskNodeArgumentNode).GetValue<std::string>()));
     }
-    ImGui::Unindent();
-    */
 
-    // Call method node
-    const std::string& MethodNodeID = inCompoundTaskNode.GetMethodNodeID();
-    const std::string  Label        = MakeLabel(MethodNodeID, CompoundTaskNodePath);
-    if (ImGui::TreeNode(Label.c_str()))
+    // Print compound task node snapshot history
+    for (const std::pair<std::size_t, HTNNodeSnapshotDebug>& CompoundTaskNodeSnapshotPair : *CompoundTaskNodeSnapshotHistory)
     {
-        const std::shared_ptr<const HTNMethodNode> MethodNode = mDomainNode->FindMethodNodeByID(MethodNodeID);
-        GetNodeValue(*MethodNode);
-        ImGui::TreePop();
+        const std::size_t DecompositionStep      = CompoundTaskNodeSnapshotPair.first;
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(CompoundTaskNodeDescription, DecompositionStep);
+        const std::string Label                  = MakeLabel(DecompositionStepLabel, CompoundTaskNodePath);
+        if (ImGui::TreeNode(Label.c_str()))
+        {
+            // Call method node
+            const std::shared_ptr<const HTNMethodNode> MethodNode = mDomainNode->FindMethodNodeByID(MethodNodeID);
+            GetNodeValue(*MethodNode);
+            ImGui::TreePop();
+        }
     }
 
     return true;
@@ -457,17 +473,28 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
         return false;
     }
 
-    std::string                                PrimitiveTaskNodeDescription = "!";
-    const std::shared_ptr<const HTNValueNode>& IDNode                       = inPrimitiveTaskNode.GetIDNode();
-    PrimitiveTaskNodeDescription.append(GetNodeValue(*IDNode).GetValue<std::string>());
+    // Make primitive task node description
+    const std::shared_ptr<const HTNValueNode>& PrimitiveTaskNodeIDNode      = inPrimitiveTaskNode.GetIDNode();
+    const std::string                          PrimitiveTaskNodeID          = GetNodeValue(*PrimitiveTaskNodeIDNode).GetValue<std::string>();
+    std::string                                PrimitiveTaskNodeDescription = PrimitiveTaskNodeID;
 
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& PrimitiveTaskNodeArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& PrimitiveTaskNodeArgumentNode : PrimitiveTaskNodeArgumentNodes)
     {
-        PrimitiveTaskNodeDescription.append(std::format(" {}", GetNodeValue(*ArgumentNode).GetValue<std::string>()));
+        PrimitiveTaskNodeDescription.append(std::format(" {}", GetNodeValue(*PrimitiveTaskNodeArgumentNode).GetValue<std::string>()));
     }
 
-    ImGui::Text(PrimitiveTaskNodeDescription.c_str());
+    // Print primitive task node snapshot history
+    for (const std::pair<std::size_t, HTNNodeSnapshotDebug>& PrimitiveTaskNodeSnapshotPair : *PrimitiveTaskNodeSnapshotHistory)
+    {
+        const std::size_t DecompositionStep      = PrimitiveTaskNodeSnapshotPair.first;
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(PrimitiveTaskNodeDescription, DecompositionStep);
+        const std::string Label                  = MakeLabel(DecompositionStepLabel, PrimitiveTaskNodePath);
+        if (ImGui::TreeNodeEx(Label.c_str(), ImGuiTreeNodeFlags_Leaf))
+        {
+            ImGui::TreePop();
+        }
+    }
 
     return true;
 }

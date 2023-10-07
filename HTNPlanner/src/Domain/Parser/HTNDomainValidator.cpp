@@ -22,6 +22,7 @@ HTNDomainValidator::~HTNDomainValidator() = default;
 
 bool HTNDomainValidator::Validate()
 {
+    // TODO salvarez
     const HTNDomainNode* DomainNode = mDomainNode.get();
     if (!DomainNode)
     {

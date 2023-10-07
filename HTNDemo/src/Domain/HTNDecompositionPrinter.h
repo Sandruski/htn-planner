@@ -44,4 +44,6 @@ private:
     const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
 
     HTNDecompositionContext mDecompositionContext;
+
+    size_t mCurrentDecompositionStep = 0;
 };
