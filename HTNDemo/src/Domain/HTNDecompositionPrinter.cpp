@@ -35,6 +35,8 @@ std::string MakeLabel(const std::string& inLabel, const std::string& inID)
 {
     return std::format("{}##{}", inLabel, inID);
 }
+
+const ImGuiTreeNodeFlags DefaultTreeNodeFlags = ImGuiTreeNodeFlags_OpenOnArrow;
 } // namespace
 
 HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
@@ -43,7 +45,7 @@ HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTN
 {
 }
 
-bool HTNDecompositionPrinter::Print()
+bool HTNDecompositionPrinter::Print(const HTNNodeSnapshotDebug*& ioSelectedNodeSnapshot)
 {
     const HTNDomainNode* DomainNode = mDomainNode.get();
     if (!DomainNode)
@@ -52,7 +54,13 @@ bool HTNDecompositionPrinter::Print()
         return false;
     }
 
-    return GetNodeValue(*DomainNode).GetValue<bool>();
+    mSelectedNodeSnapshot = ioSelectedNodeSnapshot;
+
+    GetNodeValue(*DomainNode).GetValue<bool>();
+
+    ioSelectedNodeSnapshot = mSelectedNodeSnapshot;
+
+    return true;
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode)
@@ -298,12 +306,27 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndCondition
     const std::string AndConditionNodeDescription = AndConditionNodeID;
 
     // Print and condition node snapshot history
-    for (const std::pair<std::size_t, HTNNodeSnapshotDebug>& AndConditionNodeSnapshotPair : *AndConditionNodeSnapshotHistory)
+    for (auto It = AndConditionNodeSnapshotHistory->begin(); It != AndConditionNodeSnapshotHistory->end(); ++It)
     {
-        const std::size_t DecompositionStep      = AndConditionNodeSnapshotPair.first;
+        ImGuiTreeNodeFlags          TreeNodeFlags = DefaultTreeNodeFlags;
+        const HTNNodeSnapshotDebug& NodeSnapshot  = It->second;
+        const bool                  IsSelected    = mSelectedNodeSnapshot == &NodeSnapshot;
+        if (IsSelected)
+        {
+            TreeNodeFlags |= ImGuiTreeNodeFlags_Selected;
+        }
+
+        const std::size_t DecompositionStep      = It->first;
         const std::string DecompositionStepLabel = MakeDecompositionStepLabel(AndConditionNodeDescription, DecompositionStep);
         const std::string Label                  = MakeLabel(DecompositionStepLabel, AndConditionNodePath);
-        if (ImGui::TreeNode(Label.c_str()))
+        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
+
+        if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered(ImGuiHoveredFlags_None) && !ImGui::IsItemToggledOpen())
+        {
+            mSelectedNodeSnapshot = &NodeSnapshot;
+        }
+
+        if (IsOpen)
         {
             const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAndConditionNode.GetSubConditionNodes();
             for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)

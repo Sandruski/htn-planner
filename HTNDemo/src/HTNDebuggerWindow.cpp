@@ -1,6 +1,7 @@
 #include "HTNDebuggerWindow.h"
 
 #include "Domain/HTNDecompositionPrinter.h"
+#include "Domain/HTNDecompositionValuesPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
@@ -341,7 +342,8 @@ void HTNDebuggerWindow::RenderDecomposition()
         const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = LastDecomposition.mDecompositionContext.GetDecompositionSnapshot();
         HTNDecompositionPrinter              DecompositionPrinter =
             HTNDecompositionPrinter(LastDecomposition.mDomainNode, LastDecomposition.mEntryPointID, LastDecompositionSnapshot);
-        DecompositionPrinter.Print();
+        static const HTNNodeSnapshotDebug* SelectedNodeSnapshot = nullptr;
+        DecompositionPrinter.Print(SelectedNodeSnapshot);
         ImGui::EndChild();
 
         // Watch window
@@ -352,10 +354,15 @@ void HTNDebuggerWindow::RenderDecomposition()
         {
             if (ImGui::BeginMenu("Watch Window", false))
             {
-                // TODO salvarez Watch window
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
+        }
+
+        if (SelectedNodeSnapshot)
+        {
+            const HTNDecompositionValuesPrinter DecompositionValuesPrinter = HTNDecompositionValuesPrinter(*SelectedNodeSnapshot);
+            DecompositionValuesPrinter.Print();
         }
         ImGui::EndChild();
         ImGui::PopStyleVar();

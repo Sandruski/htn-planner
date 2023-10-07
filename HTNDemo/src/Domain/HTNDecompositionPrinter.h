@@ -8,6 +8,7 @@
 
 class HTNDecompositionSnapshotDebug;
 class HTNDomainNode;
+class HTNNodeSnapshotDebug;
 
 /**
  * Prints a decomposition
@@ -18,7 +19,7 @@ public:
     explicit HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                      const HTNDecompositionSnapshotDebug& inDecompositionSnapshot);
 
-    bool Print();
+    bool Print(const HTNNodeSnapshotDebug*& ioSelectedNodeSnapshot);
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
     HTNAtom Visit(const HTNConstantsNode& inConstantsNode) final;
@@ -42,8 +43,7 @@ private:
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointID;
     const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
+    const HTNNodeSnapshotDebug*          mSelectedNodeSnapshot = nullptr;
 
     HTNDecompositionContext mDecompositionContext;
-
-    size_t mCurrentDecompositionStep = 0;
 };

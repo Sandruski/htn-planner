@@ -3,13 +3,14 @@
 #ifdef HTN_DEBUG
 #include "Domain/Interpreter/HTNEnvironment.h"
 
+#include <map>
 #include <string>
 #include <unordered_map>
 
 class HTNNodeSnapshotDebug;
 
 // Decomposition step to node snapshot
-using HTNNodeSnapshotHistoryDebug = std::unordered_map<std::size_t, HTNNodeSnapshotDebug>;
+using HTNNodeSnapshotHistoryDebug = std::map<std::size_t, HTNNodeSnapshotDebug>;
 
 // Node path to node snapshot history
 using HTNNodeSnapshotHistoryCollectionDebug = std::unordered_map<std::string, HTNNodeSnapshotHistoryDebug>;
