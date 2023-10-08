@@ -1,13 +1,14 @@
 #include "HTNDebuggerWindow.h"
 
 #include "Domain/HTNDecompositionPrinter.h"
-#include "Domain/HTNDecompositionValuesPrinter.h"
+#include "Domain/HTNDecompositionVariablesPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "HTNAtom.h"
+#include "HTNImGuiHelpers.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
 #include "Planner/HTNPlanningUnit.h"
@@ -26,31 +27,13 @@
 
 namespace
 {
-enum OperationResult : unsigned int;
-
-void RenderFileSelector(const std::string& inDirectoryName, const std::string& inFileExtension, std::filesystem::path& ioSelectedFilePath);
-void RenderOperationResult(const OperationResult inOperationResult);
-
-enum OperationResult : unsigned int
+enum HTNOperationResult : unsigned int
 {
     FAILED    = 0,
     SUCCEEDED = 1,
     NONE,
 };
 
-const ImGuiWindowFlags     WindowFlags     = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
-const ImGuiTabBarFlags     TabBarFlags     = ImGuiTabBarFlags_None;
-const ImGuiComboFlags      ComboFlags      = ImGuiComboFlags_None;
-const ImGuiSelectableFlags SelectableFlags = ImGuiSelectableFlags_None;
-const ImGuiTableFlags      TableFlags      = ImGuiTableFlags_Resizable | ImGuiTableFlags_Borders;
-const ImGuiInputTextFlags  InputTextFlags  = ImGuiInputTextFlags_CharsNoBlank;
-
-const ImVec4 FailColor    = ImVec4(1.f, 0.f, 0.f, 1.f);
-const ImVec4 SuccessColor = ImVec4(0.f, 1.f, 0.f, 1.f);
-} // namespace
-
-namespace
-{
 void RenderFileSelector(const std::string& inDirectoryName, const std::string& inFileExtension, std::filesystem::path& ioSelectedFilePath)
 {
     std::vector<std::filesystem::path> FilePaths;
@@ -72,12 +55,12 @@ void RenderFileSelector(const std::string& inDirectoryName, const std::string& i
         FilePaths.emplace_back(FilePath);
     }
 
-    if (ImGui::BeginCombo("File", ioSelectedFilePath.filename().stem().string().c_str(), ComboFlags))
+    if (ImGui::BeginCombo("File", ioSelectedFilePath.filename().stem().string().c_str(), HTNImGuiHelpers::kDefaultComboFlags))
     {
         for (const std::filesystem::path& FilePath : FilePaths)
         {
             const bool IsFileSelected = (ioSelectedFilePath == FilePath);
-            if (ImGui::Selectable(FilePath.filename().stem().string().c_str(), IsFileSelected, SelectableFlags))
+            if (ImGui::Selectable(FilePath.filename().stem().string().c_str(), IsFileSelected, HTNImGuiHelpers::kDefaultSelectableFlags))
             {
                 ioSelectedFilePath = FilePath;
             }
@@ -92,26 +75,26 @@ void RenderFileSelector(const std::string& inDirectoryName, const std::string& i
     }
 }
 
-void RenderOperationResult(const OperationResult inOperationResult)
+void RenderOperationResult(const HTNOperationResult inOperationResult)
 {
-    if (inOperationResult == OperationResult::FAILED)
+    if (inOperationResult == HTNOperationResult::FAILED)
     {
         ImGui::SameLine();
-        ImGui::TextColored(FailColor, "FAILED");
+        ImGui::TextColored(HTNImGuiHelpers::kFailColor, "FAILED");
     }
-    else if (inOperationResult == OperationResult::SUCCEEDED)
+    else if (inOperationResult == HTNOperationResult::SUCCEEDED)
     {
         ImGui::SameLine();
-        ImGui::TextColored(SuccessColor, "SUCCEEDED");
+        ImGui::TextColored(HTNImGuiHelpers::kSuccessColor, "SUCCEEDED");
     }
 }
 } // namespace
 
 void HTNDebuggerWindow::Render(bool& _IsOpen)
 {
-    if (ImGui::Begin("HTN Debugger Window", &_IsOpen, WindowFlags))
+    if (ImGui::Begin("HTN Debugger Window", &_IsOpen, HTNImGuiHelpers::kDefaultWindowFlags))
     {
-        if (ImGui::BeginTabBar("Tab Bar", TabBarFlags))
+        if (ImGui::BeginTabBar("Tab Bar", HTNImGuiHelpers::kDefaultTabBarFlags))
         {
             if (ImGui::BeginTabItem("Plan"))
             {
@@ -230,7 +213,7 @@ void HTNDebuggerWindow::RenderDecomposition()
             }
         }
 
-        if (ImGui::BeginCombo(std::format("##Method{}", i).c_str(), EntryPoint.mID.c_str(), ComboFlags))
+        if (ImGui::BeginCombo(std::format("##Method{}", i).c_str(), EntryPoint.mID.c_str(), HTNImGuiHelpers::kDefaultComboFlags))
         {
             if (MethodNodes)
             {
@@ -248,7 +231,7 @@ void HTNDebuggerWindow::RenderDecomposition()
 
                     const std::string MethodNodeID = MethodNode->GetID();
                     const bool        IsSelected   = (EntryPoint.mID == MethodNodeID);
-                    if (ImGui::Selectable(MethodNodeID.c_str(), IsSelected, SelectableFlags))
+                    if (ImGui::Selectable(MethodNodeID.c_str(), IsSelected, HTNImGuiHelpers::kDefaultSelectableFlags))
                     {
                         EntryPoint.mID = MethodNodeID;
                     }
@@ -266,7 +249,8 @@ void HTNDebuggerWindow::RenderDecomposition()
         ImGui::SameLine();
 
         int Amount = EntryPoint.mAmount;
-        if (ImGui::InputInt(std::format("##Amount{}", i).c_str(), &Amount, 0, 0, InputTextFlags | ImGuiInputTextFlags_CharsDecimal))
+        if (ImGui::InputInt(std::format("##Amount{}", i).c_str(), &Amount, 0, 0,
+                            HTNImGuiHelpers::kDefaultInputTextFlags | ImGuiInputTextFlags_CharsDecimal))
         {
             EntryPoint.mAmount = std::max(0, Amount);
         }
@@ -293,7 +277,7 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     static std::mutex                    LastDecompositionsMutex;
     static std::vector<HTNDecomposition> LastDecompositions;
-    static OperationResult               LastDecompositionResult = OperationResult::NONE;
+    static HTNOperationResult            LastDecompositionResult = HTNOperationResult::NONE;
     if (ImGui::Button("Decompose"))
     {
         LastDecompositionsMutex.lock();
@@ -319,7 +303,7 @@ void HTNDebuggerWindow::RenderDecomposition()
             }
         });
 
-        LastDecompositionResult = static_cast<OperationResult>(!LastDecompositions.empty());
+        LastDecompositionResult = static_cast<HTNOperationResult>(!LastDecompositions.empty());
     }
 
     if (ImGui::IsItemHovered())
@@ -342,8 +326,9 @@ void HTNDebuggerWindow::RenderDecomposition()
         const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = LastDecomposition.mDecompositionContext.GetDecompositionSnapshot();
         HTNDecompositionPrinter              DecompositionPrinter =
             HTNDecompositionPrinter(LastDecomposition.mDomainNode, LastDecomposition.mEntryPointID, LastDecompositionSnapshot);
-        static const HTNNodeSnapshotDebug* SelectedNodeSnapshot = nullptr;
-        DecompositionPrinter.Print(SelectedNodeSnapshot);
+        static const HTNNodeSnapshotDebug*                          SelectedNodeSnapshot = nullptr;
+        static std::vector<std::shared_ptr<const HTNValueNodeBase>> SelectedNodeArguments;
+        DecompositionPrinter.Print(SelectedNodeSnapshot, SelectedNodeArguments);
         ImGui::EndChild();
 
         // Watch window
@@ -361,8 +346,9 @@ void HTNDebuggerWindow::RenderDecomposition()
 
         if (SelectedNodeSnapshot)
         {
-            const HTNDecompositionValuesPrinter DecompositionValuesPrinter = HTNDecompositionValuesPrinter(*SelectedNodeSnapshot);
-            DecompositionValuesPrinter.Print();
+            HTNDecompositionVariablesPrinter DecompositionVariablesPrinter;
+            const HTNVariables&              SelectedNodeVariables = SelectedNodeSnapshot->GetVariables();
+            DecompositionVariablesPrinter.Print(SelectedNodeVariables, SelectedNodeArguments);
         }
         ImGui::EndChild();
         ImGui::PopStyleVar();
@@ -400,10 +386,10 @@ void HTNDebuggerWindow::RenderDomain()
     static std::filesystem::path SelectedDomainFilePath;
     RenderFileSelector(DomainsDirectoryName, DomainFileExtension, SelectedDomainFilePath);
 
-    static OperationResult LastParseDomainResult = OperationResult::NONE;
+    static HTNOperationResult LastParseDomainResult = HTNOperationResult::NONE;
     if (ImGui::Button("Parse"))
     {
-        LastParseDomainResult = static_cast<OperationResult>(mPlannerHook->ParseDomainFile(SelectedDomainFilePath.string()));
+        LastParseDomainResult = static_cast<HTNOperationResult>(mPlannerHook->ParseDomainFile(SelectedDomainFilePath.string()));
     }
 
     if (ImGui::IsItemHovered())
@@ -432,10 +418,10 @@ void HTNDebuggerWindow::RenderWorldState()
     static std::filesystem::path SelectedWorldStateFilePath;
     RenderFileSelector(WorldStatesDirectoryName, WorldStateFileExtension, SelectedWorldStateFilePath);
 
-    static OperationResult LastImportWorldStateResult = OperationResult::NONE;
+    static HTNOperationResult LastImportWorldStateResult = HTNOperationResult::NONE;
     if (ImGui::Button("Parse"))
     {
-        LastImportWorldStateResult = static_cast<OperationResult>(mDatabaseHook->ParseWorldStateFile(SelectedWorldStateFilePath.string()));
+        LastImportWorldStateResult = static_cast<HTNOperationResult>(mDatabaseHook->ParseWorldStateFile(SelectedWorldStateFilePath.string()));
     }
 
     if (ImGui::IsItemHovered())

@@ -55,13 +55,13 @@ public:
     void                                       SetDecompositionHistory(const std::vector<HTNDecompositionRecord>& inDecompositionHistory);
     const std::vector<HTNDecompositionRecord>& GetDecompositionHistory() const;
 
-    bool               PushNodeToCurrentNodePath(const std::string& inNodeID);
-    bool               PopNodeFromCurrentNodePath();
+    bool               TryPushNodeToCurrentNodePath(const std::string& inNodeID);
+    bool               TryPopNodeFromCurrentNodePath();
     void               SetCurrentNodePath(const std::string& inCurrentNodePath);
     const std::string& GetCurrentNodePath() const;
 
-    bool               PushNodeToCurrentVariableScopePath(const std::string& inNodeID);
-    bool               PopNodeFromCurrentVariableScopePath();
+    bool               TryPushNodeToCurrentVariableScopePath(const std::string& inNodeID);
+    bool               TryPopNodeFromCurrentVariableScopePath();
     void               SetCurrentVariableScopePath(const std::string& inCurrentVariableScopePath);
     const std::string& GetCurrentVariableScopePath() const;
     std::string        MakeCurrentVariablePath(const std::string& inVariableID) const;

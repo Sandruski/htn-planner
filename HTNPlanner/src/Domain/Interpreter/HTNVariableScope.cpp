@@ -6,7 +6,7 @@
 HTNVariableScope::HTNVariableScope(HTNDecompositionContext& ioDecompositionContext, const std::string& inNodeID)
     : mDecompositionContext(ioDecompositionContext)
 {
-    mResult = mDecompositionContext.PushNodeToCurrentVariableScopePath(inNodeID);
+    mResult = mDecompositionContext.TryPushNodeToCurrentVariableScopePath(inNodeID);
 }
 
 HTNVariableScope::~HTNVariableScope()
@@ -23,5 +23,6 @@ HTNVariableScope::~HTNVariableScope()
     Environment.RemoveVariables(CurrentVariableScopePath);
 
     // Remove the current node from the path
-    mDecompositionContext.PopNodeFromCurrentVariableScopePath();
+    const bool Result = mDecompositionContext.TryPopNodeFromCurrentVariableScopePath();
+    assert(Result);
 }

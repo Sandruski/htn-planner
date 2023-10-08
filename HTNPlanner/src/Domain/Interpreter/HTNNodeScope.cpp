@@ -6,7 +6,7 @@
 HTNNodeScope::HTNNodeScope(HTNDecompositionContext& ioDecompositionContext, const std::string& inNodeID)
     : mDecompositionContext(ioDecompositionContext)
 {
-    mResult = mDecompositionContext.PushNodeToCurrentNodePath(inNodeID);
+    mResult = mDecompositionContext.TryPushNodeToCurrentNodePath(inNodeID);
     if (!mResult)
     {
         return;
@@ -32,7 +32,8 @@ HTNNodeScope::~HTNNodeScope()
     Environment.RemoveIndex(CurrentNodePath);
 
     // Remove the current node from the path
-    mDecompositionContext.PopNodeFromCurrentNodePath();
+    const bool Result = mDecompositionContext.TryPopNodeFromCurrentNodePath();
+    assert(Result);
 
     // TODO salvarez Call debugger to record decomposition
 }

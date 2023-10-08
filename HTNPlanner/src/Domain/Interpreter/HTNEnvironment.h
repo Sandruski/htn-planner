@@ -6,8 +6,14 @@
 #include <string>
 #include <unordered_map>
 
+// Variable path to value
 using HTNVariables = std::unordered_map<std::string, HTNAtom>;
-using HTNIndices   = std::unordered_map<std::string, std::size_t>;
+
+// Node path to index
+// - Method to branch
+// - And, or, and alt conditions to sub-condition
+// - Condition to fact entry
+using HTNIndices = std::unordered_map<std::string, std::size_t>;
 
 class HTNEnvironment
 {
@@ -43,14 +49,8 @@ public:
     std::size_t GetIndex(const std::string& inNodePath) const;
 
 private:
-    // Variable path to value
     HTNVariables mVariables;
-
-    // Node path to index
-    // - Method to branch
-    // - And, or, and alt conditions to sub-condition
-    // - Condition to fact entry
-    HTNIndices mIndices;
+    HTNIndices   mIndices;
 };
 
 inline void HTNEnvironment::SetVariable(const std::string& inVariablePath, const HTNAtom& inVariableValue)
