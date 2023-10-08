@@ -33,7 +33,8 @@ public:
     void                               AddNodeSnapshot(const std::string& inNodePath, const HTNNodeSnapshotDebug& inNodeSnapshot);
     const HTNNodeSnapshotHistoryDebug* FindNodeSnapshotHistory(const std::string& inNodePath) const;
 
-    void IncrementDecompositionStep();
+    void   IncrementDecompositionStep();
+    size_t GetDecompositionStep() const;
 
 private:
     HTNNodeSnapshotHistoryCollectionDebug mNodeSnapshotHistoryCollection;
@@ -68,5 +69,10 @@ inline const HTNNodeSnapshotHistoryDebug* HTNDecompositionSnapshotDebug::FindNod
 inline void HTNDecompositionSnapshotDebug::IncrementDecompositionStep()
 {
     ++mDecompositionStep;
+}
+
+inline size_t HTNDecompositionSnapshotDebug::GetDecompositionStep() const
+{
+    return mDecompositionStep;
 }
 #endif
