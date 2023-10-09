@@ -187,10 +187,18 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode)
     const std::string                          BranchNodeDescription = BranchNodeID;
 
     // Print branch node snapshot history
+    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
+    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+
     for (auto It = BranchNodeSnapshotHistory->begin(); It != BranchNodeSnapshotHistory->end(); ++It)
     {
-        const std::size_t           DecompositionStep = It->first;
-        const HTNNodeSnapshotDebug& NodeSnapshot      = It->second;
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
         if (IsNodeSelected(NodeSnapshot))
@@ -212,6 +220,13 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode)
             continue;
         }
 
+        const size_t CurrentMinDecompositionStep = DecompositionStep;
+        auto         NextIt                      = It;
+        ++NextIt;
+        const size_t CurrentMaxDecompositionStep =
+            (NextIt != BranchNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
+        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
+
         if (const std::shared_ptr<const HTNConditionNodeBase>& PreConditionNode = inBranchNode.GetPreConditionNode())
         {
             GetNodeValue(*PreConditionNode);
@@ -222,6 +237,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode)
         {
             GetNodeValue(*TaskNode);
         }
+
+        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
 
         ImGui::TreePop();
     }
@@ -254,8 +271,13 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode)
     // Print condition node snapshot history
     for (auto It = ConditionNodeSnapshotHistory->begin(); It != ConditionNodeSnapshotHistory->end(); ++It)
     {
-        const std::size_t           DecompositionStep = It->first;
-        const HTNNodeSnapshotDebug& NodeSnapshot      = It->second;
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags | ImGuiTreeNodeFlags_Leaf;
         if (IsNodeSelected(NodeSnapshot))
@@ -306,10 +328,18 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
     }
 
     // Print axiom condition node snapshot history
+    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
+    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+
     for (auto It = AxiomConditionNodeSnapshotHistory->begin(); It != AxiomConditionNodeSnapshotHistory->end(); ++It)
     {
-        const std::size_t           DecompositionStep = It->first;
-        const HTNNodeSnapshotDebug& NodeSnapshot      = It->second;
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
         if (IsNodeSelected(NodeSnapshot))
@@ -331,9 +361,18 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
             continue;
         }
 
+        const size_t CurrentMinDecompositionStep = DecompositionStep;
+        auto         NextIt                      = It;
+        ++NextIt;
+        const size_t CurrentMaxDecompositionStep =
+            (NextIt != AxiomConditionNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
+        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
+
         // Call axiom node
         const std::shared_ptr<const HTNAxiomNode> AxiomNode = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
         GetNodeValue(*AxiomNode);
+
+        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
 
         ImGui::TreePop();
     }
@@ -357,10 +396,18 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndCondition
     const std::string AndConditionNodeDescription = AndConditionNodeID;
 
     // Print and condition node snapshot history
+    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
+    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+
     for (auto It = AndConditionNodeSnapshotHistory->begin(); It != AndConditionNodeSnapshotHistory->end(); ++It)
     {
-        const std::size_t           DecompositionStep = It->first;
-        const HTNNodeSnapshotDebug& NodeSnapshot      = It->second;
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
         if (IsNodeSelected(NodeSnapshot))
@@ -382,11 +429,20 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndCondition
             continue;
         }
 
+        const size_t CurrentMinDecompositionStep = DecompositionStep;
+        auto         NextIt                      = It;
+        ++NextIt;
+        const size_t CurrentMaxDecompositionStep =
+            (NextIt != AndConditionNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
+        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
+
         const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAndConditionNode.GetSubConditionNodes();
         for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
         {
             GetNodeValue(*SubConditionNode);
         }
+
+        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
 
         ImGui::TreePop();
     }
@@ -410,10 +466,18 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNo
     const std::string OrConditionNodeDescription = OrConditionNodeID;
 
     // Print or condition node snapshot history
+    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
+    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+
     for (auto It = OrConditionNodeSnapshotHistory->begin(); It != OrConditionNodeSnapshotHistory->end(); ++It)
     {
-        const std::size_t           DecompositionStep = It->first;
-        const HTNNodeSnapshotDebug& NodeSnapshot      = It->second;
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
         if (IsNodeSelected(NodeSnapshot))
@@ -435,11 +499,20 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNo
             continue;
         }
 
+        const size_t CurrentMinDecompositionStep = DecompositionStep;
+        auto         NextIt                      = It;
+        ++NextIt;
+        const size_t CurrentMaxDecompositionStep =
+            (NextIt != OrConditionNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
+        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
+
         const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inOrConditionNode.GetSubConditionNodes();
         for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
         {
             GetNodeValue(*SubConditionNode);
         }
+
+        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
 
         ImGui::TreePop();
     }
@@ -463,10 +536,18 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltCondition
     const std::string AltConditionNodeDescription = AltConditionNodeID;
 
     // Print alt condition node snapshot history
+    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
+    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+
     for (auto It = AltConditionNodeSnapshotHistory->begin(); It != AltConditionNodeSnapshotHistory->end(); ++It)
     {
-        const std::size_t           DecompositionStep = It->first;
-        const HTNNodeSnapshotDebug& NodeSnapshot      = It->second;
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
         if (IsNodeSelected(NodeSnapshot))
@@ -488,11 +569,20 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltCondition
             continue;
         }
 
+        const size_t CurrentMinDecompositionStep = DecompositionStep;
+        auto         NextIt                      = It;
+        ++NextIt;
+        const size_t CurrentMaxDecompositionStep =
+            (NextIt != AltConditionNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
+        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
+
         const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAltConditionNode.GetSubConditionNodes();
         for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
         {
             GetNodeValue(*SubConditionNode);
         }
+
+        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
 
         ImGui::TreePop();
     }
@@ -516,10 +606,18 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotCondition
     const std::string NotConditionNodeDescription = NotConditionNodeID;
 
     // Print not condition node snapshot history
+    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
+    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+
     for (auto It = NotConditionNodeSnapshotHistory->begin(); It != NotConditionNodeSnapshotHistory->end(); ++It)
     {
-        const std::size_t           DecompositionStep = It->first;
-        const HTNNodeSnapshotDebug& NodeSnapshot      = It->second;
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
         if (IsNodeSelected(NodeSnapshot))
@@ -541,8 +639,17 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotCondition
             continue;
         }
 
+        const size_t CurrentMinDecompositionStep = DecompositionStep;
+        auto         NextIt                      = It;
+        ++NextIt;
+        const size_t CurrentMaxDecompositionStep =
+            (NextIt != NotConditionNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
+        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
+
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = inNotConditionNode.GetSubConditionNode();
         GetNodeValue(*SubConditionNode);
+
+        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
 
         ImGui::TreePop();
     }
@@ -573,10 +680,18 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
     }
 
     // Print compound task node snapshot history
+    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
+    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+
     for (auto It = CompoundTaskNodeSnapshotHistory->begin(); It != CompoundTaskNodeSnapshotHistory->end(); ++It)
     {
-        const std::size_t           DecompositionStep = It->first;
-        const HTNNodeSnapshotDebug& NodeSnapshot      = It->second;
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
         if (IsNodeSelected(NodeSnapshot))
@@ -598,9 +713,18 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
             continue;
         }
 
+        const size_t CurrentMinDecompositionStep = DecompositionStep;
+        auto         NextIt                      = It;
+        ++NextIt;
+        const size_t CurrentMaxDecompositionStep =
+            (NextIt != CompoundTaskNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
+        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
+
         // Call method node
         const std::shared_ptr<const HTNMethodNode> MethodNode = mDomainNode->FindMethodNodeByID(MethodNodeID);
         GetNodeValue(*MethodNode);
+
+        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
 
         ImGui::TreePop();
     }
@@ -633,8 +757,13 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
     // Print primitive task node snapshot history
     for (auto It = PrimitiveTaskNodeSnapshotHistory->begin(); It != PrimitiveTaskNodeSnapshotHistory->end(); ++It)
     {
-        const std::size_t           DecompositionStep = It->first;
-        const HTNNodeSnapshotDebug& NodeSnapshot      = It->second;
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags | ImGuiTreeNodeFlags_Leaf;
         if (IsNodeSelected(NodeSnapshot))
