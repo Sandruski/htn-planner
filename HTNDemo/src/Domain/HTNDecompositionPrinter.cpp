@@ -74,9 +74,6 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode)
     const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDomainHelpers::MakeTopLevelCompoundTaskNode(mEntryPointID);
     GetNodeValue(*TopLevelCompoundTaskNode);
 
-    // TODO salvarez Auto open ImGuiTreeNodeFlags_DefaultOpen the tree nodes of the last decomposition mDecompositionSnapshot.GetDecompositionStep()
-    // TODO salvarez Dont print all the nodes of all the decomposition steps everywhere
-
     return true;
 }
 
@@ -201,6 +198,11 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode)
         const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
+        if (It == --BranchNodeSnapshotHistory->end())
+        {
+            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
+        }
+
         if (IsNodeSelected(NodeSnapshot))
         {
             HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
@@ -342,6 +344,11 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
         const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
+        if (It == --AxiomConditionNodeSnapshotHistory->end())
+        {
+            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
+        }
+
         if (IsNodeSelected(NodeSnapshot))
         {
             HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
@@ -410,6 +417,11 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndCondition
         const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
+        if (It == --AndConditionNodeSnapshotHistory->end())
+        {
+            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
+        }
+
         if (IsNodeSelected(NodeSnapshot))
         {
             HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
@@ -480,6 +492,11 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNo
         const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
+        if (It == --OrConditionNodeSnapshotHistory->end())
+        {
+            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
+        }
+
         if (IsNodeSelected(NodeSnapshot))
         {
             HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
@@ -550,6 +567,11 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltCondition
         const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
+        if (It == --AltConditionNodeSnapshotHistory->end())
+        {
+            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
+        }
+
         if (IsNodeSelected(NodeSnapshot))
         {
             HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
@@ -620,6 +642,11 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotCondition
         const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
+        if (It == --NotConditionNodeSnapshotHistory->end())
+        {
+            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
+        }
+
         if (IsNodeSelected(NodeSnapshot))
         {
             HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
@@ -694,6 +721,11 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
         const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
+        if (It == --CompoundTaskNodeSnapshotHistory->end())
+        {
+            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
+        }
+
         if (IsNodeSelected(NodeSnapshot))
         {
             HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
