@@ -142,9 +142,71 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode)
     const HTNNodeSnapshotHistoryDebug* AxiomNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(AxiomNodePath);
     assert(AxiomNodeSnapshotHistory);
 
-    if (const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode = inAxiomNode.GetConditionNode())
+    // Make axiom node description
+    const std::shared_ptr<const HTNValueNode>& AxiomNodeIDNode      = inAxiomNode.GetIDNode();
+    const std::string                          AxiomNodeID          = GetNodeValue(*AxiomNodeIDNode).GetValue<std::string>();
+    std::string                                AxiomNodeDescription = AxiomNodeID;
+
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& AxiomNodeArgumentNodes = inAxiomNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& AxiomNodeArgumentNode : AxiomNodeArgumentNodes)
     {
-        GetNodeValue(*ConditionNode);
+        AxiomNodeDescription.append(std::format(" {}", GetNodeValue(*AxiomNodeArgumentNode).GetValue<std::string>()));
+    }
+
+    // Print axiom node snapshot history
+    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
+    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+
+    for (auto It = AxiomNodeSnapshotHistory->begin(); It != AxiomNodeSnapshotHistory->end(); ++It)
+    {
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
+
+        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
+        if (It == --AxiomNodeSnapshotHistory->end())
+        {
+            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
+        }
+
+        if (IsNodeSelected(NodeSnapshot))
+        {
+            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
+        }
+
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(AxiomNodeDescription, DecompositionStep);
+        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, AxiomNodePath);
+        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
+
+        if (HTNImGuiHelpers::IsCurrentItemSelected())
+        {
+            SelectNode(NodeSnapshot, AxiomNodeArgumentNodes);
+        }
+
+        if (!IsOpen)
+        {
+            continue;
+        }
+
+        const size_t CurrentMinDecompositionStep = DecompositionStep;
+        auto         NextIt                      = It;
+        ++NextIt;
+        const size_t CurrentMaxDecompositionStep =
+            (NextIt != AxiomNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
+        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
+
+        if (const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode = inAxiomNode.GetConditionNode())
+        {
+            GetNodeValue(*ConditionNode);
+        }
+
+        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
+
+        ImGui::TreePop();
     }
 
     return true;
@@ -158,10 +220,72 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode)
     const HTNNodeSnapshotHistoryDebug* MethodNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(MethodNodePath);
     assert(MethodNodeSnapshotHistory);
 
-    const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes = inMethodNode.GetBranchNodes();
-    for (const std::shared_ptr<const HTNBranchNode>& BranchNode : BranchNodes)
+    // Make method node description
+    const std::shared_ptr<const HTNValueNode>& MethodNodeIDNode      = inMethodNode.GetIDNode();
+    const std::string                          MethodNodeID          = GetNodeValue(*MethodNodeIDNode).GetValue<std::string>();
+    std::string                                MethodNodeDescription = MethodNodeID;
+
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& MethodNodeArgumentNodes = inMethodNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& MethodNodeArgumentNode : MethodNodeArgumentNodes)
     {
-        GetNodeValue(*BranchNode);
+        MethodNodeDescription.append(std::format(" {}", GetNodeValue(*MethodNodeArgumentNode).GetValue<std::string>()));
+    }
+
+    // Print method node snapshot history
+    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
+    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+
+    for (auto It = MethodNodeSnapshotHistory->begin(); It != MethodNodeSnapshotHistory->end(); ++It)
+    {
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
+
+        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
+        if (It == --MethodNodeSnapshotHistory->end())
+        {
+            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
+        }
+
+        if (IsNodeSelected(NodeSnapshot))
+        {
+            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
+        }
+
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(MethodNodeDescription, DecompositionStep);
+        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, MethodNodePath);
+        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
+
+        if (HTNImGuiHelpers::IsCurrentItemSelected())
+        {
+            SelectNode(NodeSnapshot, MethodNodeArgumentNodes);
+        }
+
+        if (!IsOpen)
+        {
+            continue;
+        }
+
+        const size_t CurrentMinDecompositionStep = DecompositionStep;
+        auto         NextIt                      = It;
+        ++NextIt;
+        const size_t CurrentMaxDecompositionStep =
+            (NextIt != MethodNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
+        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
+
+        const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes = inMethodNode.GetBranchNodes();
+        for (const std::shared_ptr<const HTNBranchNode>& BranchNode : BranchNodes)
+        {
+            GetNodeValue(*BranchNode);
+        }
+
+        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
+
+        ImGui::TreePop();
     }
 
     return true;
@@ -293,7 +417,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode)
 
         if (HTNImGuiHelpers::IsCurrentItemSelected())
         {
-            SelectNode(NodeSnapshot, inConditionNode.GetArgumentNodes());
+            SelectNode(NodeSnapshot, ConditionNodeArgumentNodes);
         }
 
         if (!IsOpen)
@@ -320,8 +444,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
 
     // Make axiom condition node description
     const std::shared_ptr<const HTNValueNode>& AxiomConditionNodeIDNode      = inAxiomConditionNode.GetIDNode();
-    const std::string                          AxiomNodeID                   = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
-    std::string                                AxiomConditionNodeDescription = std::format("#{}", AxiomNodeID);
+    const std::string                          AxiomConditionNodeID          = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
+    std::string                                AxiomConditionNodeDescription = std::format("#{}", AxiomConditionNodeID);
 
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& AxiomConditionNodeArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
     for (const std::shared_ptr<const HTNValueNodeBase>& AxiomConditionNodeArgumentNode : AxiomConditionNodeArgumentNodes)
@@ -360,7 +484,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
 
         if (HTNImGuiHelpers::IsCurrentItemSelected())
         {
-            SelectNode(NodeSnapshot, inAxiomConditionNode.GetArgumentNodes());
+            SelectNode(NodeSnapshot, AxiomConditionNodeArgumentNodes);
         }
 
         if (!IsOpen)
@@ -375,8 +499,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
             (NextIt != AxiomConditionNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
         SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
 
-        // Call axiom node
-        const std::shared_ptr<const HTNAxiomNode> AxiomNode = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
+        const std::shared_ptr<const HTNAxiomNode> AxiomNode = mDomainNode->FindAxiomNodeByID(AxiomConditionNodeID);
         GetNodeValue(*AxiomNode);
 
         SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
@@ -697,8 +820,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
 
     // Make compound task node description
     const std::shared_ptr<const HTNValueNode>& CompoundTaskNodeIDNode      = inCompoundTaskNode.GetIDNode();
-    const std::string                          MethodNodeID                = GetNodeValue(*CompoundTaskNodeIDNode).GetValue<std::string>();
-    std::string                                CompoundTaskNodeDescription = MethodNodeID;
+    const std::string                          CompoundTaskNodeID          = GetNodeValue(*CompoundTaskNodeIDNode).GetValue<std::string>();
+    std::string                                CompoundTaskNodeDescription = CompoundTaskNodeID;
 
     const std::vector<std::shared_ptr<const HTNValueNodeBase>>& CompoundTaskNodeArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
     for (const std::shared_ptr<const HTNValueNodeBase>& CompoundTaskNodeArgumentNode : CompoundTaskNodeArgumentNodes)
@@ -737,7 +860,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
 
         if (HTNImGuiHelpers::IsCurrentItemSelected())
         {
-            SelectNode(NodeSnapshot, inCompoundTaskNode.GetArgumentNodes());
+            SelectNode(NodeSnapshot, CompoundTaskNodeArgumentNodes);
         }
 
         if (!IsOpen)
@@ -752,8 +875,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
             (NextIt != CompoundTaskNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
         SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
 
-        // Call method node
-        const std::shared_ptr<const HTNMethodNode> MethodNode = mDomainNode->FindMethodNodeByID(MethodNodeID);
+        const std::shared_ptr<const HTNMethodNode> MethodNode = mDomainNode->FindMethodNodeByID(CompoundTaskNodeID);
         GetNodeValue(*MethodNode);
 
         SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
@@ -809,7 +931,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
 
         if (HTNImGuiHelpers::IsCurrentItemSelected())
         {
-            SelectNode(NodeSnapshot, inPrimitiveTaskNode.GetArgumentNodes());
+            SelectNode(NodeSnapshot, PrimitiveTaskNodeArgumentNodes);
         }
 
         if (!IsOpen)
