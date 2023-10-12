@@ -85,9 +85,11 @@ int main(int, char**)
     // IM_ASSERT(font != NULL);
 
     // Our state
-    bool   ShowDemoWindow        = true;
-    bool   ShowHTNDebuggerWindow = true;
-    ImVec4 clear_color           = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    bool ShowDemoWindow = true;
+#ifdef HTN_DEBUG
+    bool ShowHTNDebuggerWindow = true;
+#endif
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     HTNPlannerHook  PlannerHook;
     HTNDatabaseHook DatabaseHook;
@@ -122,11 +124,13 @@ int main(int, char**)
             ImGui::ShowDemoWindow();
         }
 
+#ifdef HTN_DEBUG
         if (ShowHTNDebuggerWindow)
         {
             static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlannerHook, DatabaseHook);
             sHTNDebuggerWindow.Render(ShowHTNDebuggerWindow);
         }
+#endif
 
         // Rendering
         ImGui::Render();

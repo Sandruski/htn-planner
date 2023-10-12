@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef HTN_DEBUG
 #include "Domain/Interpreter/HTNNodePath.h"
 
 #include <memory>
@@ -51,3 +52,4 @@ inline const HTNNodePath& HTNDecompositionNode::GetNodeVariableScopeNodePath() c
 {
     return mNodeVariableScopeNodePath;
 }
+#endif

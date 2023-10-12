@@ -1,5 +1,6 @@
 #include "Domain/HTNDecompositionPrinter.h"
 
+#ifdef HTN_DEBUG
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNNodeScope.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
@@ -432,3 +433,4 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
     return true;
 }
+#endif

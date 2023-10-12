@@ -1,5 +1,6 @@
 #include "Domain/HTNDecompositionNodeArgumentsIDsPrinter.h"
 
+#ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
@@ -88,3 +89,4 @@ HTNAtom HTNDecompositionNodeArgumentsIDsPrinter::Visit(const HTNConstantValueNod
     const std::string ConstantValueString = inConstantValueNode.ToString();
     return std::format("@{}", ConstantValueString);
 }
+#endif

@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
@@ -103,3 +104,4 @@ inline bool HTNDecompositionPrinter::IsNodeSelected(const HTNNodeSnapshotDebug& 
 {
     return mSelectedNode.GetNodeSnapshot() == &inNodeSnapshot;
 }
+#endif

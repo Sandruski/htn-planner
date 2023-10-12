@@ -1,5 +1,6 @@
 #include "HTNDebuggerWindow.h"
 
+#ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionNodeArgumentsIDsPrinter.h"
 #include "Domain/HTNDecompositionNodeArgumentsValuesPrinter.h"
@@ -450,3 +451,4 @@ void HTNDebuggerWindow::RenderWorldState()
     const HTNWorldState&              WorldState = mDatabaseHook->GetWorldState();
     WorldStatePrinter.Print(WorldState, TextFilter);
 }
+#endif

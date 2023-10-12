@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef HTN_DEBUG
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 #include <memory>
@@ -32,3 +33,4 @@ public:
     HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode) final;
     HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
 };
+#endif

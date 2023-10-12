@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef HTN_DEBUG
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 #include <memory>
@@ -30,3 +31,4 @@ private:
 
     std::vector<std::string> mNodeVariablesPaths;
 };
+#endif

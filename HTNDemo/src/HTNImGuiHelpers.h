@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef HTN_DEBUG
 #include "imgui.h"
 
 #include <format>
@@ -41,3 +42,4 @@ inline bool IsCurrentItemSelected()
     return ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered(ImGuiHoveredFlags_None) && !ImGui::IsItemToggledOpen();
 }
 } // namespace HTNImGuiHelpers
+#endif

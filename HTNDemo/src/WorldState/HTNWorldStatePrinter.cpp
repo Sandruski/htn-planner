@@ -1,5 +1,6 @@
 #include "WorldState/HTNWorldStatePrinter.h"
 
+#ifdef HTN_DEBUG
 #include "imgui.h"
 
 bool HTNWorldStatePrinter::Print(const HTNWorldState& inWorldState, const ImGuiTextFilter& inTextFilter) const
@@ -51,3 +52,4 @@ void HTNWorldStatePrinter::PrintFactArguments(const HTNFactArguments& inFactArgu
         ImGui::Text(FactArgumentString.c_str());
     }
 }
+#endif

@@ -1,5 +1,6 @@
 #include "Domain/HTNDecompositionNodeArgumentsValuesPrinter.h"
 
+#ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
@@ -98,3 +99,4 @@ HTNAtom HTNDecompositionNodeArgumentsValuesPrinter::Visit(const HTNConstantValue
     std::shared_ptr<const HTNConstantNode> ConstantNode   = mDomainNode->FindConstantNodeByID(ConstantNodeID);
     return GetNodeValue(*ConstantNode);
 }
+#endif

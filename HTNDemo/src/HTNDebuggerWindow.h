@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef HTN_DEBUG
 class HTNDatabaseHook;
 class HTNPlannerHook;
 
@@ -24,3 +25,4 @@ inline HTNDebuggerWindow::HTNDebuggerWindow(HTNPlannerHook& inPlannerHook, HTNDa
     : mPlannerHook(&inPlannerHook), mDatabaseHook(&inDatabaseHook)
 {
 }
+#endif

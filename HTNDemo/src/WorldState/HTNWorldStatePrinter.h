@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef HTN_DEBUG
 #include "WorldState/HTNWorldState.h"
 
 #include <string>
@@ -20,3 +21,4 @@ private:
     void PrintFactID(const std::string& inFactID) const;
     void PrintFactArguments(const HTNFactArguments& inFactArguments) const;
 };
+#endif

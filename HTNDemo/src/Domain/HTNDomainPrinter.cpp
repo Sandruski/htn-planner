@@ -1,5 +1,6 @@
 #include "Domain/HTNDomainPrinter.h"
 
+#ifdef HTN_DEBUG
 #include "Domain/Nodes/HTNAxiomNode.h"
 #include "Domain/Nodes/HTNBranchNode.h"
 #include "Domain/Nodes/HTNConditionNode.h"
@@ -361,3 +362,4 @@ HTNAtom HTNDomainPrinter::Visit(const HTNConstantValueNode& inConstantValueNode)
 
     return true;
 }
+#endif
