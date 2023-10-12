@@ -76,223 +76,81 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode)
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode)
 {
-    const HTNNodeScope AxiomNodeScope = HTNNodeScope(mCurrentNodePath, inAxiomNode.GetID());
+    std::string                                NodeDescription;
+    const std::shared_ptr<const HTNValueNode>& IDNode                    = inAxiomNode.GetIDNode();
+    const HTNAtom                              ID                        = GetNodeValue(*IDNode);
+    constexpr bool                             ShouldDoubleQuoteIDString = false;
+    const std::string                          IDString                  = ID.ToString(ShouldDoubleQuoteIDString);
+    NodeDescription                                                      = IDString;
 
-    const std::string&                 CurrentNodePath          = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* AxiomNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    assert(AxiomNodeSnapshotHistory);
-
-    // Make axiom node description
-    const std::shared_ptr<const HTNValueNode>& AxiomNodeIDNode      = inAxiomNode.GetIDNode();
-    const std::string                          AxiomNodeID          = GetNodeValue(*AxiomNodeIDNode).GetValue<std::string>();
-    std::string                                AxiomNodeDescription = AxiomNodeID;
-
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& AxiomNodeArgumentNodes = inAxiomNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& AxiomNodeArgumentNode : AxiomNodeArgumentNodes)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inAxiomNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
-        AxiomNodeDescription.append(std::format(" {}", GetNodeValue(*AxiomNodeArgumentNode).GetValue<std::string>()));
+        const HTNAtom     Argument                        = GetNodeValue(*ArgumentNode);
+        constexpr bool    ShouldDoubleQuoteArgumentString = true;
+        const std::string ArgumentString                  = Argument.ToString(ShouldDoubleQuoteArgumentString);
+        NodeDescription.append(std::format(" {}", ArgumentString));
     }
 
-    // Print axiom node snapshot history
-    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
-    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+    const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) {
+        SelectNode(inNodeSnapshot, ArgumentNodes);
+    };
 
-    for (auto It = AxiomNodeSnapshotHistory->begin(); It != AxiomNodeSnapshotHistory->end(); ++It)
-    {
-        const std::size_t DecompositionStep = It->first;
-        if (!IsDecompositionStepBetweenRange(DecompositionStep))
-        {
-            continue;
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
-
-        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
-        if (It == --AxiomNodeSnapshotHistory->end())
-        {
-            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
-        }
-
-        if (IsNodeSelected(NodeSnapshot))
-        {
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
-        }
-
-        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(AxiomNodeDescription, DecompositionStep);
-        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
-        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (HTNImGuiHelpers::IsCurrentItemSelected())
-        {
-            SelectNode(NodeSnapshot, AxiomNodeArgumentNodes);
-        }
-
-        if (!IsOpen)
-        {
-            continue;
-        }
-
-        const size_t CurrentMinDecompositionStep = DecompositionStep;
-        auto         NextIt                      = It;
-        ++NextIt;
-        const size_t CurrentMaxDecompositionStep =
-            (NextIt != AxiomNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
-        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
-
+    const HTNNodeBehaviorFunction NodeBehaviorFunction = [&]() {
         if (const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode = inAxiomNode.GetConditionNode())
         {
             GetNodeValue(*ConditionNode);
         }
+    };
 
-        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
-
-        ImGui::TreePop();
-    }
-
-    return true;
+    return PrintNodeSnapshotHistory(inAxiomNode, NodeDescription, NodeSelectionFunction, &NodeBehaviorFunction);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode)
 {
-    const HTNNodeScope MethodNodeScope = HTNNodeScope(mCurrentNodePath, inMethodNode.GetID());
+    std::string                                NodeDescription;
+    const std::shared_ptr<const HTNValueNode>& IDNode                    = inMethodNode.GetIDNode();
+    const HTNAtom                              ID                        = GetNodeValue(*IDNode);
+    constexpr bool                             ShouldDoubleQuoteIDString = false;
+    const std::string                          IDString                  = ID.ToString(ShouldDoubleQuoteIDString);
+    NodeDescription                                                      = IDString;
 
-    const std::string&                 CurrentNodePath           = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* MethodNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    assert(MethodNodeSnapshotHistory);
-
-    // Make method node description
-    const std::shared_ptr<const HTNValueNode>& MethodNodeIDNode      = inMethodNode.GetIDNode();
-    const std::string                          MethodNodeID          = GetNodeValue(*MethodNodeIDNode).GetValue<std::string>();
-    std::string                                MethodNodeDescription = MethodNodeID;
-
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& MethodNodeArgumentNodes = inMethodNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& MethodNodeArgumentNode : MethodNodeArgumentNodes)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inMethodNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
-        MethodNodeDescription.append(std::format(" {}", GetNodeValue(*MethodNodeArgumentNode).GetValue<std::string>()));
+        const HTNAtom     Argument                        = GetNodeValue(*ArgumentNode);
+        constexpr bool    ShouldDoubleQuoteArgumentString = true;
+        const std::string ArgumentString                  = Argument.ToString(ShouldDoubleQuoteArgumentString);
+        NodeDescription.append(std::format(" {}", ArgumentString));
     }
 
-    // Print method node snapshot history
-    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
-    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+    const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) {
+        SelectNode(inNodeSnapshot, ArgumentNodes);
+    };
 
-    for (auto It = MethodNodeSnapshotHistory->begin(); It != MethodNodeSnapshotHistory->end(); ++It)
-    {
-        const std::size_t DecompositionStep = It->first;
-        if (!IsDecompositionStepBetweenRange(DecompositionStep))
-        {
-            continue;
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
-
-        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
-        if (It == --MethodNodeSnapshotHistory->end())
-        {
-            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
-        }
-
-        if (IsNodeSelected(NodeSnapshot))
-        {
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
-        }
-
-        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(MethodNodeDescription, DecompositionStep);
-        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
-        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (HTNImGuiHelpers::IsCurrentItemSelected())
-        {
-            SelectNode(NodeSnapshot, MethodNodeArgumentNodes);
-        }
-
-        if (!IsOpen)
-        {
-            continue;
-        }
-
-        const size_t CurrentMinDecompositionStep = DecompositionStep;
-        auto         NextIt                      = It;
-        ++NextIt;
-        const size_t CurrentMaxDecompositionStep =
-            (NextIt != MethodNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
-        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
-
+    const HTNNodeBehaviorFunction NodeBehaviorFunction = [&]() {
         const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes = inMethodNode.GetBranchNodes();
         for (const std::shared_ptr<const HTNBranchNode>& BranchNode : BranchNodes)
         {
             GetNodeValue(*BranchNode);
         }
+    };
 
-        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
-
-        ImGui::TreePop();
-    }
-
-    return true;
+    return PrintNodeSnapshotHistory(inMethodNode, NodeDescription, NodeSelectionFunction, &NodeBehaviorFunction);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode)
 {
-    const HTNNodeScope BranchNodeScope = HTNNodeScope(mCurrentNodePath, inBranchNode.GetID());
+    std::string                                NodeDescription;
+    const std::shared_ptr<const HTNValueNode>& IDNode                    = inBranchNode.GetIDNode();
+    const HTNAtom                              ID                        = GetNodeValue(*IDNode);
+    constexpr bool                             ShouldDoubleQuoteIDString = false;
+    const std::string                          IDString                  = ID.ToString(ShouldDoubleQuoteIDString);
+    NodeDescription                                                      = IDString;
 
-    const std::string&                 CurrentNodePath           = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* BranchNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!BranchNodeSnapshotHistory)
-    {
-        return false;
-    }
+    const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) { SelectNode(inNodeSnapshot); };
 
-    // Make branch node description
-    const std::shared_ptr<const HTNValueNode>& BranchNodeIDNode      = inBranchNode.GetIDNode();
-    const std::string                          BranchNodeID          = GetNodeValue(*BranchNodeIDNode).GetValue<std::string>();
-    const std::string                          BranchNodeDescription = BranchNodeID;
-
-    // Print branch node snapshot history
-    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
-    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
-
-    for (auto It = BranchNodeSnapshotHistory->begin(); It != BranchNodeSnapshotHistory->end(); ++It)
-    {
-        const std::size_t DecompositionStep = It->first;
-        if (!IsDecompositionStepBetweenRange(DecompositionStep))
-        {
-            continue;
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
-
-        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
-        if (It == --BranchNodeSnapshotHistory->end())
-        {
-            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
-        }
-
-        if (IsNodeSelected(NodeSnapshot))
-        {
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
-        }
-
-        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(BranchNodeDescription, DecompositionStep);
-        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
-        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (HTNImGuiHelpers::IsCurrentItemSelected())
-        {
-            SelectNode(NodeSnapshot);
-        }
-
-        if (!IsOpen)
-        {
-            continue;
-        }
-
-        const size_t CurrentMinDecompositionStep = DecompositionStep;
-        auto         NextIt                      = It;
-        ++NextIt;
-        const size_t CurrentMaxDecompositionStep =
-            (NextIt != BranchNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
-        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
-
+    const HTNNodeBehaviorFunction NodeBehaviorFunction = [&]() {
         if (const std::shared_ptr<const HTNConditionNodeBase>& PreConditionNode = inBranchNode.GetPreConditionNode())
         {
             GetNodeValue(*PreConditionNode);
@@ -303,595 +161,203 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode)
         {
             GetNodeValue(*TaskNode);
         }
+    };
 
-        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
-
-        ImGui::TreePop();
-    }
-
-    return true;
+    return PrintNodeSnapshotHistory(inBranchNode, NodeDescription, NodeSelectionFunction, &NodeBehaviorFunction);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode)
 {
-    const HTNNodeScope ConditionNodeScope = HTNNodeScope(mCurrentNodePath, inConditionNode.GetID());
+    std::string                                NodeDescription;
+    const std::shared_ptr<const HTNValueNode>& IDNode                    = inConditionNode.GetIDNode();
+    const HTNAtom                              ID                        = GetNodeValue(*IDNode);
+    constexpr bool                             ShouldDoubleQuoteIDString = false;
+    const std::string                          IDString                  = ID.ToString(ShouldDoubleQuoteIDString);
+    NodeDescription                                                      = IDString;
 
-    const std::string&                 CurrentNodePath              = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* ConditionNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!ConditionNodeSnapshotHistory)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inConditionNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
-        return false;
+        const HTNAtom     Argument                        = GetNodeValue(*ArgumentNode);
+        constexpr bool    ShouldDoubleQuoteArgumentString = true;
+        const std::string ArgumentString                  = Argument.ToString(ShouldDoubleQuoteArgumentString);
+        NodeDescription.append(std::format(" {}", ArgumentString));
     }
 
-    // Make condition node description
-    const std::shared_ptr<const HTNValueNode>& ConditionNodeIDNode      = inConditionNode.GetIDNode();
-    const std::string                          ConditionNodeID          = GetNodeValue(*ConditionNodeIDNode).GetValue<std::string>();
-    std::string                                ConditionNodeDescription = ConditionNodeID;
+    const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) {
+        SelectNode(inNodeSnapshot, ArgumentNodes);
+    };
 
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ConditionNodeArgumentNodes = inConditionNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& ConditionNodeArgumentNode : ConditionNodeArgumentNodes)
-    {
-        ConditionNodeDescription.append(std::format(" {}", GetNodeValue(*ConditionNodeArgumentNode).GetValue<std::string>()));
-    }
-
-    // Print condition node snapshot history
-    for (auto It = ConditionNodeSnapshotHistory->begin(); It != ConditionNodeSnapshotHistory->end(); ++It)
-    {
-        const std::size_t DecompositionStep = It->first;
-        if (!IsDecompositionStepBetweenRange(DecompositionStep))
-        {
-            continue;
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
-
-        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags | ImGuiTreeNodeFlags_Leaf;
-        if (IsNodeSelected(NodeSnapshot))
-        {
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
-        }
-
-        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(ConditionNodeDescription, DecompositionStep);
-        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
-        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (HTNImGuiHelpers::IsCurrentItemSelected())
-        {
-            SelectNode(NodeSnapshot, ConditionNodeArgumentNodes);
-        }
-
-        if (!IsOpen)
-        {
-            continue;
-        }
-
-        ImGui::TreePop();
-    }
-
-    return true;
+    const HTNNodeBehaviorFunction* NodeBehaviorFunction = nullptr;
+    return PrintNodeSnapshotHistory(inConditionNode, NodeDescription, NodeSelectionFunction, NodeBehaviorFunction);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 {
-    const HTNNodeScope AxiomConditionNodeScope = HTNNodeScope(mCurrentNodePath, inAxiomConditionNode.GetID());
+    std::string                                NodeDescription;
+    const std::shared_ptr<const HTNValueNode>& IDNode                    = inAxiomConditionNode.GetIDNode();
+    const HTNAtom                              ID                        = GetNodeValue(*IDNode);
+    constexpr bool                             ShouldDoubleQuoteIDString = false;
+    const std::string                          IDString                  = ID.ToString(ShouldDoubleQuoteIDString);
+    NodeDescription                                                      = IDString;
 
-    const std::string&                 CurrentNodePath                   = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* AxiomConditionNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!AxiomConditionNodeSnapshotHistory)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
-        return false;
+        const HTNAtom     Argument                        = GetNodeValue(*ArgumentNode);
+        constexpr bool    ShouldDoubleQuoteArgumentString = true;
+        const std::string ArgumentString                  = Argument.ToString(ShouldDoubleQuoteArgumentString);
+        NodeDescription.append(std::format(" {}", ArgumentString));
     }
 
-    // Make axiom condition node description
-    const std::shared_ptr<const HTNValueNode>& AxiomConditionNodeIDNode      = inAxiomConditionNode.GetIDNode();
-    const std::string                          AxiomConditionNodeID          = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
-    std::string                                AxiomConditionNodeDescription = std::format("#{}", AxiomConditionNodeID);
+    const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) {
+        SelectNode(inNodeSnapshot, ArgumentNodes);
+    };
 
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& AxiomConditionNodeArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& AxiomConditionNodeArgumentNode : AxiomConditionNodeArgumentNodes)
-    {
-        AxiomConditionNodeDescription.append(std::format(" {}", GetNodeValue(*AxiomConditionNodeArgumentNode).GetValue<std::string>()));
-    }
+    const HTNNodeBehaviorFunction NodeBehaviorFunction = [&]() {
+        const std::shared_ptr<const HTNValueNode>& IDNode = inAxiomConditionNode.GetIDNode();
+        const HTNAtom                              ID     = GetNodeValue(*IDNode);
 
-    // Print axiom condition node snapshot history
-    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
-    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
-
-    for (auto It = AxiomConditionNodeSnapshotHistory->begin(); It != AxiomConditionNodeSnapshotHistory->end(); ++It)
-    {
-        const std::size_t DecompositionStep = It->first;
-        if (!IsDecompositionStepBetweenRange(DecompositionStep))
-        {
-            continue;
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
-
-        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
-        if (It == --AxiomConditionNodeSnapshotHistory->end())
-        {
-            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
-        }
-
-        if (IsNodeSelected(NodeSnapshot))
-        {
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
-        }
-
-        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(AxiomConditionNodeDescription, DecompositionStep);
-        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
-        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (HTNImGuiHelpers::IsCurrentItemSelected())
-        {
-            SelectNode(NodeSnapshot, AxiomConditionNodeArgumentNodes);
-        }
-
-        if (!IsOpen)
-        {
-            continue;
-        }
-
-        const size_t CurrentMinDecompositionStep = DecompositionStep;
-        auto         NextIt                      = It;
-        ++NextIt;
-        const size_t CurrentMaxDecompositionStep =
-            (NextIt != AxiomConditionNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
-        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
-
-        const std::shared_ptr<const HTNAxiomNode> AxiomNode = mDomainNode->FindAxiomNodeByID(AxiomConditionNodeID);
+        const std::string                         AxiomNodeID = ID.GetValue<std::string>();
+        const std::shared_ptr<const HTNAxiomNode> AxiomNode   = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
         GetNodeValue(*AxiomNode);
+    };
 
-        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
-
-        ImGui::TreePop();
-    }
-
-    return true;
+    return PrintNodeSnapshotHistory(inAxiomConditionNode, NodeDescription, NodeSelectionFunction, &NodeBehaviorFunction);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndConditionNode)
 {
-    const HTNNodeScope AndConditionNodeScope = HTNNodeScope(mCurrentNodePath, inAndConditionNode.GetID());
+    const std::string NodeDescription = "and";
 
-    const std::string&                 CurrentNodePath                 = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* AndConditionNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!AndConditionNodeSnapshotHistory)
-    {
-        return false;
-    }
+    const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) { SelectNode(inNodeSnapshot); };
 
-    // Make and condition node description
-    const std::string AndConditionNodeID          = "and";
-    const std::string AndConditionNodeDescription = AndConditionNodeID;
-
-    // Print and condition node snapshot history
-    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
-    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
-
-    for (auto It = AndConditionNodeSnapshotHistory->begin(); It != AndConditionNodeSnapshotHistory->end(); ++It)
-    {
-        const std::size_t DecompositionStep = It->first;
-        if (!IsDecompositionStepBetweenRange(DecompositionStep))
-        {
-            continue;
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
-
-        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
-        if (It == --AndConditionNodeSnapshotHistory->end())
-        {
-            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
-        }
-
-        if (IsNodeSelected(NodeSnapshot))
-        {
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
-        }
-
-        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(AndConditionNodeDescription, DecompositionStep);
-        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
-        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (HTNImGuiHelpers::IsCurrentItemSelected())
-        {
-            SelectNode(NodeSnapshot);
-        }
-
-        if (!IsOpen)
-        {
-            continue;
-        }
-
-        const size_t CurrentMinDecompositionStep = DecompositionStep;
-        auto         NextIt                      = It;
-        ++NextIt;
-        const size_t CurrentMaxDecompositionStep =
-            (NextIt != AndConditionNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
-        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
-
+    const HTNNodeBehaviorFunction NodeBehaviorFunction = [&]() {
         const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAndConditionNode.GetSubConditionNodes();
         for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
         {
             GetNodeValue(*SubConditionNode);
         }
+    };
 
-        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
-
-        ImGui::TreePop();
-    }
-
-    return true;
+    return PrintNodeSnapshotHistory(inAndConditionNode, NodeDescription, NodeSelectionFunction, &NodeBehaviorFunction);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNode)
 {
-    const HTNNodeScope OrConditionNodeScope = HTNNodeScope(mCurrentNodePath, inOrConditionNode.GetID());
+    const std::string NodeDescription = "or";
 
-    const std::string&                 CurrentNodePath                = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* OrConditionNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!OrConditionNodeSnapshotHistory)
-    {
-        return false;
-    }
+    const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) { SelectNode(inNodeSnapshot); };
 
-    // Make or condition node description
-    const std::string OrConditionNodeID          = "or";
-    const std::string OrConditionNodeDescription = OrConditionNodeID;
-
-    // Print or condition node snapshot history
-    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
-    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
-
-    for (auto It = OrConditionNodeSnapshotHistory->begin(); It != OrConditionNodeSnapshotHistory->end(); ++It)
-    {
-        const std::size_t DecompositionStep = It->first;
-        if (!IsDecompositionStepBetweenRange(DecompositionStep))
-        {
-            continue;
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
-
-        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
-        if (It == --OrConditionNodeSnapshotHistory->end())
-        {
-            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
-        }
-
-        if (IsNodeSelected(NodeSnapshot))
-        {
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
-        }
-
-        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(OrConditionNodeDescription, DecompositionStep);
-        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
-        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (HTNImGuiHelpers::IsCurrentItemSelected())
-        {
-            SelectNode(NodeSnapshot);
-        }
-
-        if (!IsOpen)
-        {
-            continue;
-        }
-
-        const size_t CurrentMinDecompositionStep = DecompositionStep;
-        auto         NextIt                      = It;
-        ++NextIt;
-        const size_t CurrentMaxDecompositionStep =
-            (NextIt != OrConditionNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
-        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
-
+    const HTNNodeBehaviorFunction NodeBehaviorFunction = [&]() {
         const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inOrConditionNode.GetSubConditionNodes();
         for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
         {
             GetNodeValue(*SubConditionNode);
         }
+    };
 
-        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
-
-        ImGui::TreePop();
-    }
-
-    return true;
+    return PrintNodeSnapshotHistory(inOrConditionNode, NodeDescription, NodeSelectionFunction, &NodeBehaviorFunction);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltConditionNode)
 {
-    const HTNNodeScope AltConditionNodeScope = HTNNodeScope(mCurrentNodePath, inAltConditionNode.GetID());
+    const std::string NodeDescription = "alt";
 
-    const std::string&                 CurrentNodePath                 = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* AltConditionNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!AltConditionNodeSnapshotHistory)
-    {
-        return false;
-    }
+    const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) { SelectNode(inNodeSnapshot); };
 
-    // Make alt condition node description
-    const std::string AltConditionNodeID          = "alt";
-    const std::string AltConditionNodeDescription = AltConditionNodeID;
-
-    // Print alt condition node snapshot history
-    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
-    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
-
-    for (auto It = AltConditionNodeSnapshotHistory->begin(); It != AltConditionNodeSnapshotHistory->end(); ++It)
-    {
-        const std::size_t DecompositionStep = It->first;
-        if (!IsDecompositionStepBetweenRange(DecompositionStep))
-        {
-            continue;
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
-
-        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
-        if (It == --AltConditionNodeSnapshotHistory->end())
-        {
-            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
-        }
-
-        if (IsNodeSelected(NodeSnapshot))
-        {
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
-        }
-
-        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(AltConditionNodeDescription, DecompositionStep);
-        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
-        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (HTNImGuiHelpers::IsCurrentItemSelected())
-        {
-            SelectNode(NodeSnapshot);
-        }
-
-        if (!IsOpen)
-        {
-            continue;
-        }
-
-        const size_t CurrentMinDecompositionStep = DecompositionStep;
-        auto         NextIt                      = It;
-        ++NextIt;
-        const size_t CurrentMaxDecompositionStep =
-            (NextIt != AltConditionNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
-        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
-
+    const HTNNodeBehaviorFunction NodeBehaviorFunction = [&]() {
         const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAltConditionNode.GetSubConditionNodes();
         for (const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode : SubConditionNodes)
         {
             GetNodeValue(*SubConditionNode);
         }
+    };
 
-        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
-
-        ImGui::TreePop();
-    }
-
-    return true;
+    return PrintNodeSnapshotHistory(inAltConditionNode, NodeDescription, NodeSelectionFunction, &NodeBehaviorFunction);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotConditionNode)
 {
-    const HTNNodeScope NotConditionNodeScope = HTNNodeScope(mCurrentNodePath, inNotConditionNode.GetID());
+    const std::string NodeDescription = "not";
 
-    const std::string&                 CurrentNodePath                 = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* NotConditionNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!NotConditionNodeSnapshotHistory)
-    {
-        return false;
-    }
+    const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) { SelectNode(inNodeSnapshot); };
 
-    // Make not condition node description
-    const std::string NotConditionNodeID          = "not";
-    const std::string NotConditionNodeDescription = NotConditionNodeID;
-
-    // Print not condition node snapshot history
-    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
-    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
-
-    for (auto It = NotConditionNodeSnapshotHistory->begin(); It != NotConditionNodeSnapshotHistory->end(); ++It)
-    {
-        const std::size_t DecompositionStep = It->first;
-        if (!IsDecompositionStepBetweenRange(DecompositionStep))
-        {
-            continue;
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
-
-        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
-        if (It == --NotConditionNodeSnapshotHistory->end())
-        {
-            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
-        }
-
-        if (IsNodeSelected(NodeSnapshot))
-        {
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
-        }
-
-        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(NotConditionNodeDescription, DecompositionStep);
-        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
-        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (HTNImGuiHelpers::IsCurrentItemSelected())
-        {
-            SelectNode(NodeSnapshot);
-        }
-
-        if (!IsOpen)
-        {
-            continue;
-        }
-
-        const size_t CurrentMinDecompositionStep = DecompositionStep;
-        auto         NextIt                      = It;
-        ++NextIt;
-        const size_t CurrentMaxDecompositionStep =
-            (NextIt != NotConditionNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
-        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
-
+    const HTNNodeBehaviorFunction NodeBehaviorFunction = [&]() {
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = inNotConditionNode.GetSubConditionNode();
         GetNodeValue(*SubConditionNode);
+    };
 
-        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
-
-        ImGui::TreePop();
-    }
-
-    return true;
+    return PrintNodeSnapshotHistory(inNotConditionNode, NodeDescription, NodeSelectionFunction, &NodeBehaviorFunction);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
 {
-    const HTNNodeScope CompoundTaskNodeScope = HTNNodeScope(mCurrentNodePath, inCompoundTaskNode.GetID());
+    std::string                                NodeDescription;
+    const std::shared_ptr<const HTNValueNode>& IDNode                    = inCompoundTaskNode.GetIDNode();
+    const HTNAtom                              ID                        = GetNodeValue(*IDNode);
+    constexpr bool                             ShouldDoubleQuoteIDString = false;
+    const std::string                          IDString                  = ID.ToString(ShouldDoubleQuoteIDString);
+    NodeDescription                                                      = IDString;
 
-    const std::string&                 CurrentNodePath                 = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* CompoundTaskNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!CompoundTaskNodeSnapshotHistory)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
-        return false;
+        const HTNAtom     Argument                        = GetNodeValue(*ArgumentNode);
+        constexpr bool    ShouldDoubleQuoteArgumentString = true;
+        const std::string ArgumentString                  = Argument.ToString(ShouldDoubleQuoteArgumentString);
+        NodeDescription.append(std::format(" {}", ArgumentString));
     }
 
-    // Make compound task node description
-    const std::shared_ptr<const HTNValueNode>& CompoundTaskNodeIDNode      = inCompoundTaskNode.GetIDNode();
-    const std::string                          CompoundTaskNodeID          = GetNodeValue(*CompoundTaskNodeIDNode).GetValue<std::string>();
-    std::string                                CompoundTaskNodeDescription = CompoundTaskNodeID;
+    const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) {
+        SelectNode(inNodeSnapshot, ArgumentNodes);
+    };
 
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& CompoundTaskNodeArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& CompoundTaskNodeArgumentNode : CompoundTaskNodeArgumentNodes)
-    {
-        CompoundTaskNodeDescription.append(std::format(" {}", GetNodeValue(*CompoundTaskNodeArgumentNode).GetValue<std::string>()));
-    }
+    const HTNNodeBehaviorFunction NodeBehaviorFunction = [&]() {
+        const std::shared_ptr<const HTNValueNode>& IDNode = inCompoundTaskNode.GetIDNode();
+        const HTNAtom                              ID     = GetNodeValue(*IDNode);
 
-    // Print compound task node snapshot history
-    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
-    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
-
-    for (auto It = CompoundTaskNodeSnapshotHistory->begin(); It != CompoundTaskNodeSnapshotHistory->end(); ++It)
-    {
-        const std::size_t DecompositionStep = It->first;
-        if (!IsDecompositionStepBetweenRange(DecompositionStep))
-        {
-            continue;
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
-
-        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
-        if (It == --CompoundTaskNodeSnapshotHistory->end())
-        {
-            HTNImGuiHelpers::DefaultOpenTreeNode(TreeNodeFlags);
-        }
-
-        if (IsNodeSelected(NodeSnapshot))
-        {
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
-        }
-
-        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(CompoundTaskNodeDescription, DecompositionStep);
-        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
-        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (HTNImGuiHelpers::IsCurrentItemSelected())
-        {
-            SelectNode(NodeSnapshot, CompoundTaskNodeArgumentNodes);
-        }
-
-        if (!IsOpen)
-        {
-            continue;
-        }
-
-        const size_t CurrentMinDecompositionStep = DecompositionStep;
-        auto         NextIt                      = It;
-        ++NextIt;
-        const size_t CurrentMaxDecompositionStep =
-            (NextIt != CompoundTaskNodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
-        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
-
-        const std::shared_ptr<const HTNMethodNode> MethodNode = mDomainNode->FindMethodNodeByID(CompoundTaskNodeID);
+        const std::string                          MethodNodeID = ID.GetValue<std::string>();
+        const std::shared_ptr<const HTNMethodNode> MethodNode   = mDomainNode->FindMethodNodeByID(MethodNodeID);
         GetNodeValue(*MethodNode);
+    };
 
-        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
-
-        ImGui::TreePop();
-    }
-
-    return true;
+    return PrintNodeSnapshotHistory(inCompoundTaskNode, NodeDescription, NodeSelectionFunction, &NodeBehaviorFunction);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
 {
-    const HTNNodeScope PrimitiveTaskNodeScope = HTNNodeScope(mCurrentNodePath, inPrimitiveTaskNode.GetID());
+    std::string                                NodeDescription;
+    const std::shared_ptr<const HTNValueNode>& IDNode                    = inPrimitiveTaskNode.GetIDNode();
+    const HTNAtom                              ID                        = GetNodeValue(*IDNode);
+    constexpr bool                             ShouldDoubleQuoteIDString = false;
+    const std::string                          IDString                  = ID.ToString(ShouldDoubleQuoteIDString);
+    NodeDescription                                                      = IDString;
 
-    const std::string&                 CurrentNodePath                  = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* PrimitiveTaskNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!PrimitiveTaskNodeSnapshotHistory)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
     {
-        return false;
+        const HTNAtom     Argument                        = GetNodeValue(*ArgumentNode);
+        constexpr bool    ShouldDoubleQuoteArgumentString = true;
+        const std::string ArgumentString                  = Argument.ToString(ShouldDoubleQuoteArgumentString);
+        NodeDescription.append(std::format(" {}", ArgumentString));
     }
 
-    // Make primitive task node description
-    const std::shared_ptr<const HTNValueNode>& PrimitiveTaskNodeIDNode      = inPrimitiveTaskNode.GetIDNode();
-    const std::string                          PrimitiveTaskNodeID          = GetNodeValue(*PrimitiveTaskNodeIDNode).GetValue<std::string>();
-    std::string                                PrimitiveTaskNodeDescription = PrimitiveTaskNodeID;
+    const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) {
+        SelectNode(inNodeSnapshot, ArgumentNodes);
+    };
 
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& PrimitiveTaskNodeArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& PrimitiveTaskNodeArgumentNode : PrimitiveTaskNodeArgumentNodes)
-    {
-        PrimitiveTaskNodeDescription.append(std::format(" {}", GetNodeValue(*PrimitiveTaskNodeArgumentNode).GetValue<std::string>()));
-    }
-
-    // Print primitive task node snapshot history
-    for (auto It = PrimitiveTaskNodeSnapshotHistory->begin(); It != PrimitiveTaskNodeSnapshotHistory->end(); ++It)
-    {
-        const std::size_t DecompositionStep = It->first;
-        if (!IsDecompositionStepBetweenRange(DecompositionStep))
-        {
-            continue;
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
-
-        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags | ImGuiTreeNodeFlags_Leaf;
-        if (IsNodeSelected(NodeSnapshot))
-        {
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
-        }
-
-        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(PrimitiveTaskNodeDescription, DecompositionStep);
-        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
-        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (HTNImGuiHelpers::IsCurrentItemSelected())
-        {
-            SelectNode(NodeSnapshot, PrimitiveTaskNodeArgumentNodes);
-        }
-
-        if (!IsOpen)
-        {
-            continue;
-        }
-
-        ImGui::TreePop();
-    }
-
-    return true;
+    const HTNNodeBehaviorFunction* NodeBehaviorFunction = nullptr;
+    return PrintNodeSnapshotHistory(inPrimitiveTaskNode, NodeDescription, NodeSelectionFunction, NodeBehaviorFunction);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNValueNode& inValueNode)
 {
-    const HTNNodeScope ValueNodeScope = HTNNodeScope(mCurrentNodePath, inValueNode.GetID());
+    const HTNNodeScope NodeScope = HTNNodeScope(mCurrentNodePath, inValueNode.GetID());
 
-    const std::string&                 CurrentNodePath          = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* ValueNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!ValueNodeSnapshotHistory)
+    const std::string&                 CurrentNodePath     = mCurrentNodePath.GetNodePath();
+    const HTNNodeSnapshotHistoryDebug* NodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
+    if (!NodeSnapshotHistory)
     {
         return "";
     }
@@ -903,11 +369,11 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNValueNode& inValueNode)
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
 {
-    const HTNNodeScope VariableValueNodeScope = HTNNodeScope(mCurrentNodePath, inVariableValueNode.GetID());
+    const HTNNodeScope NodeScope = HTNNodeScope(mCurrentNodePath, inVariableValueNode.GetID());
 
-    const std::string&                 CurrentNodePath                  = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* VariableValueNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!VariableValueNodeSnapshotHistory)
+    const std::string&                 CurrentNodePath     = mCurrentNodePath.GetNodePath();
+    const HTNNodeSnapshotHistoryDebug* NodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
+    if (!NodeSnapshotHistory)
     {
         return "";
     }
@@ -917,14 +383,92 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNVariableValueNode& inVariableVal
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNConstantValueNode& inConstantValueNode)
 {
-    const HTNNodeScope ConstantValueNodeScope = HTNNodeScope(mCurrentNodePath, inConstantValueNode.GetID());
+    const HTNNodeScope NodeScope = HTNNodeScope(mCurrentNodePath, inConstantValueNode.GetID());
 
-    const std::string&                 CurrentNodePath                  = mCurrentNodePath.GetNodePath();
-    const HTNNodeSnapshotHistoryDebug* ConstantValueNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
-    if (!ConstantValueNodeSnapshotHistory)
+    const std::string&                 CurrentNodePath     = mCurrentNodePath.GetNodePath();
+    const HTNNodeSnapshotHistoryDebug* NodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
+    if (!NodeSnapshotHistory)
     {
         return "";
     }
 
     return std::format("@{}", inConstantValueNode.ToString());
+}
+
+bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const std::string& inNodeDescription,
+                                                       const HTNNodeSelectionFunction& inNodeSelectionFunction,
+                                                       const HTNNodeBehaviorFunction*  inNodeBehaviorFunction)
+{
+    const HTNNodeScope NodeScope = HTNNodeScope(mCurrentNodePath, inNode.GetID());
+
+    const std::string&                 CurrentNodePath     = mCurrentNodePath.GetNodePath();
+    const HTNNodeSnapshotHistoryDebug* NodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(CurrentNodePath);
+    if (!NodeSnapshotHistory)
+    {
+        return false;
+    }
+
+    const size_t PreviousMinDecompositionStep = mMinDecompositionStep;
+    const size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
+
+    for (auto It = NodeSnapshotHistory->begin(); It != NodeSnapshotHistory->end(); ++It)
+    {
+        const std::size_t DecompositionStep = It->first;
+        if (!IsDecompositionStepBetweenRange(DecompositionStep))
+        {
+            continue;
+        }
+
+        const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
+
+        ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags;
+        if (!inNodeBehaviorFunction)
+        {
+            TreeNodeFlags |= ImGuiTreeNodeFlags_Leaf;
+        }
+
+        if (It == --NodeSnapshotHistory->end())
+        {
+            TreeNodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
+        }
+
+        if (IsNodeSelected(NodeSnapshot))
+        {
+            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
+        }
+
+        const std::string DecompositionStepLabel = MakeDecompositionStepLabel(inNodeDescription, DecompositionStep);
+        const std::string Label                  = HTNImGuiHelpers::MakeLabel(DecompositionStepLabel, CurrentNodePath);
+        const bool        IsOpen                 = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
+
+        if (HTNImGuiHelpers::IsCurrentItemSelected())
+        {
+            if (inNodeSelectionFunction)
+            {
+                inNodeSelectionFunction(NodeSnapshot);
+            }
+        }
+
+        if (!IsOpen)
+        {
+            continue;
+        }
+
+        const size_t CurrentMinDecompositionStep = DecompositionStep;
+        auto         NextIt                      = It;
+        ++NextIt;
+        const size_t CurrentMaxDecompositionStep = (NextIt != NodeSnapshotHistory->end()) ? NextIt->first : std::numeric_limits<std::size_t>::max();
+        SetDecompositionStepRange(CurrentMinDecompositionStep, CurrentMaxDecompositionStep);
+
+        if (inNodeBehaviorFunction)
+        {
+            (*inNodeBehaviorFunction)();
+        }
+
+        SetDecompositionStepRange(PreviousMinDecompositionStep, PreviousMaxDecompositionStep);
+
+        ImGui::TreePop();
+    }
+
+    return true;
 }

@@ -2,7 +2,8 @@
 
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionPrinter.h"
-#include "Domain/HTNDecompositionVariablesPrinter.h"
+#include "Domain/HTNDecompositionVariableConstantIDsPrinter.h"
+#include "Domain/HTNDecompositionVariableConstantValuesPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/HTNNodePath.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
@@ -336,6 +337,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         const ImVec2 WatchChildSize = ImVec2(ContentRegionAvail.x, 150.f);
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
         ImGui::BeginChild("WatchChild", WatchChildSize, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
+        
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("Watch Window", false))
@@ -345,9 +347,23 @@ void HTNDebuggerWindow::RenderDecomposition()
             ImGui::EndMenuBar();
         }
 
-        HTNDecompositionVariablesPrinter DecompositionVariablesPrinter =
-            HTNDecompositionVariablesPrinter(LastDecomposition.mDomainNode, SelectedNode);
-        DecompositionVariablesPrinter.Print();
+        if (ImGui::BeginTable("WatchWindow", 2, HTNImGuiHelpers::kDefaultTableFlags))
+        {
+            ImGui::TableNextRow();
+
+            ImGui::TableNextColumn();
+            HTNDecompositionVariableConstantIDsPrinter DecompositionVariableConstantIDsPrinter =
+                HTNDecompositionVariableConstantIDsPrinter(LastDecomposition.mDomainNode, SelectedNode);
+            DecompositionVariableConstantIDsPrinter.Print();
+
+            ImGui::TableNextColumn();
+            HTNDecompositionVariableConstantValuesPrinter DecompositionVariableConstantValuesPrinter =
+                HTNDecompositionVariableConstantValuesPrinter(LastDecomposition.mDomainNode, SelectedNode);
+            DecompositionVariableConstantValuesPrinter.Print();
+
+            ImGui::EndTable();
+        }
+
         ImGui::EndChild();
         ImGui::PopStyleVar();
     }

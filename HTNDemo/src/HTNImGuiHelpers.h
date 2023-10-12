@@ -9,7 +9,6 @@ namespace HTNImGuiHelpers
 {
 std::string MakeLabel(const std::string& inLabel, const std::string& inID);
 
-void DefaultOpenTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags);
 void SelectTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags);
 bool IsCurrentItemSelected();
 
@@ -30,11 +29,6 @@ namespace HTNImGuiHelpers
 inline std::string MakeLabel(const std::string& inLabel, const std::string& inID)
 {
     return std::format("{}##{}", inLabel, inID);
-}
-
-inline void DefaultOpenTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags)
-{
-    outTreeNodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
 }
 
 inline void SelectTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags)

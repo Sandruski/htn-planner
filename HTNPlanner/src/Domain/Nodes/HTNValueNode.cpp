@@ -4,7 +4,7 @@
 
 std::string HTNValueNodeBase::ToString() const
 {
-    static constexpr bool ShouldDoubleQuoteString = false;
+    constexpr bool ShouldDoubleQuoteString = false;
     return mValue.ToString(ShouldDoubleQuoteString);
 }
 

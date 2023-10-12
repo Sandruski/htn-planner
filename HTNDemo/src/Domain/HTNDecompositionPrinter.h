@@ -4,12 +4,16 @@
 #include "Domain/HTNNodePath.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
+#include <functional>
 #include <memory>
 #include <string>
 
 class HTNDecompositionSnapshotDebug;
 class HTNDomainNode;
 class HTNNodeSnapshotDebug;
+
+using HTNNodeSelectionFunction = std::function<void(const HTNNodeSnapshotDebug& inNodeSnapshot)>;
+using HTNNodeBehaviorFunction = std::function<void()>;
 
 /**
  * Prints a decomposition
@@ -40,6 +44,10 @@ public:
     HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
 
 private:
+    bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const std::string& inNodeDescription,
+                                  const HTNNodeSelectionFunction& inNodeSelectionFunction,
+                                  const HTNNodeBehaviorFunction* inNodeBehaviorFunction);
+
     void SetDecompositionStepRange(const size_t inMinDecompositionStep, const size_t inMaxDecompositionStep);
     bool IsDecompositionStepBetweenRange(const size_t inDecompositionStep) const;
 

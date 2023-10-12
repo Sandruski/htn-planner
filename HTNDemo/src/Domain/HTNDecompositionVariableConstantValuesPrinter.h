@@ -14,10 +14,11 @@ class HTNValueNodeBase;
 /**
  * Prints the variables of a decomposition
  */
-class HTNDecompositionVariablesPrinter final : public HTNNodeVisitorBase
+class HTNDecompositionVariableConstantValuesPrinter final : public HTNNodeVisitorBase
 {
 public:
-    explicit HTNDecompositionVariablesPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode);
+    explicit HTNDecompositionVariableConstantValuesPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
+                                                           const HTNDecompositionNode&                 inNode);
 
     void Print();
 
