@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+class HTNDomainNode;
 class HTNValueNodeBase;
 
 /**
@@ -16,12 +17,21 @@ class HTNValueNodeBase;
 class HTNDecompositionVariablesPrinter final : public HTNNodeVisitorBase
 {
 public:
-    void Print(const HTNVariables& inVariables, const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArguments);
+    explicit HTNDecompositionVariablesPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNVariables& inVariables,
+                                              const std::string& inVariableScopePath);
 
+    void Print(const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArguments);
+
+    HTNAtom Visit(const HTNConstantNode& inConstantNode) final;
     HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode) final;
+    HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
 
 private:
     bool IsArgument(const std::string& inVariableID, const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArguments);
+
+    std::shared_ptr<const HTNDomainNode> mDomainNode;
+    const HTNVariables&                  mVariables;
+    const std::string&                   mVariableScopePath;
 
     HTNDecompositionContext mDecompositionContext;
 };

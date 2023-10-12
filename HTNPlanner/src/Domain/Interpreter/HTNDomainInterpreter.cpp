@@ -242,7 +242,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     const HTNNodeScope AxiomConditionNodeScope = HTNNodeScope(mDecompositionContext, inAxiomConditionNode.GetID());
 
     const std::shared_ptr<const HTNValueNode>& AxiomConditionNodeIDNode = inAxiomConditionNode.GetIDNode();
-    const std::string                         AxiomNodeID              = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
+    const std::string                          AxiomNodeID              = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
     const std::shared_ptr<const HTNAxiomNode>  AxiomNode                = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
     if (!AxiomNode)
     {
@@ -445,7 +445,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     const HTNNodeScope CompoundTaskNodeScope = HTNNodeScope(mDecompositionContext, inCompoundTaskNode.GetID());
 
     const std::shared_ptr<const HTNValueNode>& CompoundTaskNodeIDNode = inCompoundTaskNode.GetIDNode();
-    const std::string                         MethodNodeID           = GetNodeValue(*CompoundTaskNodeIDNode).GetValue<std::string>();
+    const std::string                          MethodNodeID           = GetNodeValue(*CompoundTaskNodeIDNode).GetValue<std::string>();
     const std::shared_ptr<const HTNMethodNode> MethodNode             = mDomainNode->FindMethodNodeByID(MethodNodeID);
     if (!MethodNode)
     {
@@ -520,8 +520,14 @@ void HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
 
-    const std::string VariableID          = inVariableValueNode.GetValue().GetValue<std::string>();
-    const std::string CurrentVariablePath = mDecompositionContext.MakeCurrentVariablePath(VariableID);
+    const std::string VariableID = inVariableValueNode.GetValue().GetValue<std::string>();
+    std::string       CurrentVariablePath;
+    if (!mDecompositionContext.MakeCurrentVariablePath(VariableID, CurrentVariablePath))
+    {
+        LOG_ERROR("Path for variable [{}] could not be made", VariableID);
+        return;
+    }
+
     Environment.SetVariable(CurrentVariablePath, inVariableValueNodeValue);
 }
 
@@ -533,7 +539,13 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueN
     const HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironment();
 
     const std::string VariableID          = inVariableValueNode.GetValue().GetValue<std::string>();
-    const std::string CurrentVariablePath = mDecompositionContext.MakeCurrentVariablePath(VariableID);
+    std::string       CurrentVariablePath;
+    if (!mDecompositionContext.MakeCurrentVariablePath(VariableID, CurrentVariablePath))
+    {
+        LOG_ERROR("Path for variable [{}] could not be made", VariableID);
+        return HTNAtom();
+    }
+
     return Environment.GetVariable(CurrentVariablePath);
 }
 
@@ -546,7 +558,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantValueNode& inConstantValueN
     if (!ConstantNode)
     {
         LOG_ERROR("Constant node [{}] not found", ConstantNodeID);
-        return false;
+        return HTNAtom();
     }
 
     return GetNodeValue(*ConstantNode);

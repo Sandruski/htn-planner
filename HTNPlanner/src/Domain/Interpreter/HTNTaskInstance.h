@@ -3,8 +3,8 @@
 #include "Domain/Interpreter/HTNEnvironment.h"
 
 #include <memory>
+#include <string>
 
-class HTNEnvironment;
 class HTNTaskNodeBase;
 
 class HTNTaskInstance

@@ -2,46 +2,6 @@
 
 #include "Domain/Interpreter/HTNDecompositionContextHelpers.h"
 
-namespace
-{
-bool TryPushSegmentToPath(const std::string& inSegment, std::string& ioPath)
-{
-    if (inSegment.empty())
-    {
-        return false;
-    }
-
-    if (!ioPath.empty())
-    {
-        ioPath.append(HTNDecompositionContextHelpers::kPathSegmentSeparator);
-    }
-
-    ioPath.append(inSegment);
-
-    return true;
-}
-
-bool TryPopSegmentFromPath(std::string& ioPath)
-{
-    if (ioPath.empty())
-    {
-        return false;
-    }
-
-    const std::size_t Index = ioPath.find_last_of(HTNDecompositionContextHelpers::kPathSegmentSeparator);
-    if (Index != std::string::npos)
-    {
-        ioPath.erase(Index);
-    }
-    else
-    {
-        ioPath.clear();
-    }
-
-    return true;
-}
-} // namespace
-
 bool HTNDecompositionContext::RestoreDecomposition()
 {
     if (mDecompositionHistory.empty())
@@ -61,30 +21,27 @@ bool HTNDecompositionContext::RestoreDecomposition()
 
 bool HTNDecompositionContext::TryPushNodeToCurrentNodePath(const std::string& inNodeID)
 {
-    return TryPushSegmentToPath(inNodeID, mCurrentNodePath);
+    return HTNDecompositionContextHelpers::TryPushSegmentToPath(inNodeID, mCurrentNodePath);
 }
 
 bool HTNDecompositionContext::TryPopNodeFromCurrentNodePath()
 {
-    return TryPopSegmentFromPath(mCurrentNodePath);
+    return HTNDecompositionContextHelpers::TryPopSegmentFromPath(mCurrentNodePath);
 }
 
 bool HTNDecompositionContext::TryPushNodeToCurrentVariableScopePath(const std::string& inNodeID)
 {
-    return TryPushSegmentToPath(inNodeID, mCurrentVariableScopePath);
+    return HTNDecompositionContextHelpers::TryPushSegmentToPath(inNodeID, mCurrentVariableScopePath);
 }
 
 bool HTNDecompositionContext::TryPopNodeFromCurrentVariableScopePath()
 {
-    return TryPopSegmentFromPath(mCurrentVariableScopePath);
+    return HTNDecompositionContextHelpers::TryPopSegmentFromPath(mCurrentVariableScopePath);
 }
 
-std::string HTNDecompositionContext::MakeCurrentVariablePath(const std::string& inVariableID) const
+bool HTNDecompositionContext::MakeCurrentVariablePath(const std::string& inVariableID, std::string& outVariablePath) const
 {
-    std::string CurrentVariablePath = mCurrentVariableScopePath;
-    TryPushSegmentToPath(inVariableID, CurrentVariablePath);
-
-    return CurrentVariablePath;
+    return HTNDecompositionContextHelpers::MakeVariablePath(inVariableID, mCurrentVariableScopePath, outVariablePath);
 }
 
 #ifdef HTN_DEBUG

@@ -21,11 +21,11 @@ public:
     explicit HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                      const HTNDecompositionSnapshotDebug& inDecompositionSnapshot);
 
-    bool Print(const HTNNodeSnapshotDebug*& ioSelectedNodeSnapshot, std::vector<std::shared_ptr<const HTNValueNodeBase>>& ioSelectedNodeArguments);
+    bool Print(const HTNNodeSnapshotDebug*& ioSelectedNodeSnapshot, std::vector<std::shared_ptr<const HTNValueNodeBase>>& ioSelectedNodeArguments,
+               std::string& ioSelectedNodeVariableScopePath);
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
-    HTNAtom Visit(const HTNConstantsNode& inConstantsNode) final;
-    HTNAtom Visit(const HTNConstantNode& inConstantNode) final;
+
     HTNAtom Visit(const HTNAxiomNode& inAxiomNode) final;
     HTNAtom Visit(const HTNMethodNode& inMethodNode) final;
     HTNAtom Visit(const HTNBranchNode& inBranchNode) final;
@@ -58,6 +58,7 @@ private:
 
     const HTNNodeSnapshotDebug*                          mSelectedNodeSnapshot = nullptr;
     std::vector<std::shared_ptr<const HTNValueNodeBase>> mSelectedNodeArguments;
+    std::string                                          mSelectedNodeVariableScopePath;
 
     HTNDecompositionContext mDecompositionContext;
 };
@@ -84,6 +85,7 @@ inline void HTNDecompositionPrinter::SelectNode(const HTNNodeSnapshotDebug&     
 {
     mSelectedNodeSnapshot  = &inNodeSnapshot;
     mSelectedNodeArguments = inNodeArguments;
+    mSelectedNodeVariableScopePath = mDecompositionContext.GetCurrentVariableScopePath();
 }
 
 inline bool HTNDecompositionPrinter::IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const

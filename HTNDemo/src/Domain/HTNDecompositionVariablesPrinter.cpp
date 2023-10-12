@@ -1,15 +1,25 @@
 #include "Domain/HTNDecompositionVariablesPrinter.h"
 
 #include "Domain/Interpreter/HTNDecompositionContextHelpers.h"
+#include "Domain/Nodes/HTNConstantNode.h"
+#include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNValueNode.h"
 #include "HTNImGuiHelpers.h"
+#include "HTNLog.h"
 
 #include "imgui.h"
 
-void HTNDecompositionVariablesPrinter::Print(const HTNVariables& inVariables, const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArguments)
+HTNDecompositionVariablesPrinter::HTNDecompositionVariablesPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
+                                                                   const HTNVariables& inVariables, const std::string& inVariableScopePath)
+    : mDomainNode(inDomainNode), mVariables(inVariables), mVariableScopePath(inVariableScopePath)
+{
+}
+
+void HTNDecompositionVariablesPrinter::Print(const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArguments)
 {
     if (ImGui::BeginTable("Variables", 2, HTNImGuiHelpers::kDefaultTableFlags))
     {
+        /*
         for (const std::pair<std::string, HTNAtom>& VariablePair : inVariables)
         {
             ImGui::TableNextRow();
@@ -42,14 +52,50 @@ void HTNDecompositionVariablesPrinter::Print(const HTNVariables& inVariables, co
                 ImGui::TextDisabled(VariableValueString.c_str());
             }
         }
+        */
+
+        // TODO salvarez Print ID (with @ or ?, but no literals) + value
+        // TODO salvarez Rename this class to ArgumentsPrinter or something like that
+        for (const std::shared_ptr<const HTNValueNodeBase>& Argument : inArguments)
+        {
+            GetNodeValue(*Argument);
+        }
 
         ImGui::EndTable();
     }
 }
 
+HTNAtom HTNDecompositionVariablesPrinter::Visit(const HTNConstantNode& inConstantNode)
+{
+    const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode = inConstantNode.GetArgumentNode();
+    return GetNodeValue(*ArgumentNode);
+}
+
 HTNAtom HTNDecompositionVariablesPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
 {
-    return inVariableValueNode.GetValue();
+    const std::string VariableID          = inVariableValueNode.GetValue().GetValue<std::string>();
+    std::string       VariablePath;
+    if (!HTNDecompositionContextHelpers::MakeVariablePath(VariableID, mVariableScopePath, VariablePath))
+    {
+        LOG_ERROR("Path for variable [{}] could not be made", VariableID);
+        return HTNAtom();
+    }
+
+    // TODO salvarez Find variable in Variables (could be its own class with its own methods instead of environment)
+    return HTNAtom();
+}
+
+HTNAtom HTNDecompositionVariablesPrinter::Visit(const HTNConstantValueNode& inConstantValueNode)
+{
+    const std::string&                     ConstantNodeID = inConstantValueNode.GetValue().GetValue<std::string>();
+    std::shared_ptr<const HTNConstantNode> ConstantNode   = mDomainNode->FindConstantNodeByID(ConstantNodeID);
+    if (!ConstantNode)
+    {
+        LOG_ERROR("Constant node [{}] not found", ConstantNodeID);
+        return HTNAtom();
+    }
+
+    return GetNodeValue(*ConstantNode);
 }
 
 bool HTNDecompositionVariablesPrinter::IsArgument(const std::string&                                          inVariableID,

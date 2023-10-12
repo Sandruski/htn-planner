@@ -328,7 +328,8 @@ void HTNDebuggerWindow::RenderDecomposition()
             HTNDecompositionPrinter(LastDecomposition.mDomainNode, LastDecomposition.mEntryPointID, LastDecompositionSnapshot);
         static const HTNNodeSnapshotDebug*                          SelectedNodeSnapshot = nullptr;
         static std::vector<std::shared_ptr<const HTNValueNodeBase>> SelectedNodeArguments;
-        DecompositionPrinter.Print(SelectedNodeSnapshot, SelectedNodeArguments);
+        static std::string                                          SelectedNodeVariableScopePath;
+        DecompositionPrinter.Print(SelectedNodeSnapshot, SelectedNodeArguments, SelectedNodeVariableScopePath);
         ImGui::EndChild();
 
         // Watch window
@@ -346,9 +347,10 @@ void HTNDebuggerWindow::RenderDecomposition()
 
         if (SelectedNodeSnapshot)
         {
-            HTNDecompositionVariablesPrinter DecompositionVariablesPrinter;
             const HTNVariables&              SelectedNodeVariables = SelectedNodeSnapshot->GetVariables();
-            DecompositionVariablesPrinter.Print(SelectedNodeVariables, SelectedNodeArguments);
+            HTNDecompositionVariablesPrinter DecompositionVariablesPrinter =
+                HTNDecompositionVariablesPrinter(LastDecomposition.mDomainNode, SelectedNodeVariables, SelectedNodeVariableScopePath);
+            DecompositionVariablesPrinter.Print(SelectedNodeArguments);
         }
         ImGui::EndChild();
         ImGui::PopStyleVar();

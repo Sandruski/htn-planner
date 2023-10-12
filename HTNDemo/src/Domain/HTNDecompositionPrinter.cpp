@@ -39,7 +39,8 @@ HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTN
 }
 
 bool HTNDecompositionPrinter::Print(const HTNNodeSnapshotDebug*&                          ioSelectedNodeSnapshot,
-                                    std::vector<std::shared_ptr<const HTNValueNodeBase>>& ioSelectedNodeArguments)
+                                    std::vector<std::shared_ptr<const HTNValueNodeBase>>& ioSelectedNodeArguments,
+                                    std::string&                                          ioSelectedNodeVariableScopePath)
 {
     const HTNDomainNode* DomainNode = mDomainNode.get();
     if (!DomainNode)
@@ -48,13 +49,15 @@ bool HTNDecompositionPrinter::Print(const HTNNodeSnapshotDebug*&                
         return false;
     }
 
-    mSelectedNodeSnapshot  = ioSelectedNodeSnapshot;
-    mSelectedNodeArguments = ioSelectedNodeArguments;
+    mSelectedNodeSnapshot          = ioSelectedNodeSnapshot;
+    mSelectedNodeArguments         = ioSelectedNodeArguments;
+    mSelectedNodeVariableScopePath = ioSelectedNodeVariableScopePath;
 
     GetNodeValue(*DomainNode).GetValue<bool>();
 
-    ioSelectedNodeSnapshot  = mSelectedNodeSnapshot;
-    ioSelectedNodeArguments = mSelectedNodeArguments;
+    ioSelectedNodeSnapshot          = mSelectedNodeSnapshot;
+    ioSelectedNodeArguments         = mSelectedNodeArguments;
+    ioSelectedNodeVariableScopePath = mSelectedNodeVariableScopePath;
 
     return true;
 }
@@ -73,63 +76,6 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode)
     // Top-level compound task node
     const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDomainHelpers::MakeTopLevelCompoundTaskNode(mEntryPointID);
     GetNodeValue(*TopLevelCompoundTaskNode);
-
-    return true;
-}
-
-HTNAtom HTNDecompositionPrinter::Visit(const HTNConstantsNode& inConstantsNode)
-{
-    const HTNNodeScope ConstantsNodeScope = HTNNodeScope(mDecompositionContext, inConstantsNode.GetID());
-
-    const std::string&                 ConstantsNodePath            = mDecompositionContext.GetCurrentNodePath();
-    const HTNNodeSnapshotHistoryDebug* ConstantsNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(ConstantsNodePath);
-    if (!ConstantsNodeSnapshotHistory)
-    {
-        return false;
-    }
-
-    // TODO salvarez
-    /*
-    PrintKeyword("constants");
-
-    if (const std::shared_ptr<const HTNValueNode>& IDNode = inConstantsNode.GetIDNode())
-    {
-        ImGui::SameLine();
-        GetNodeValue(*IDNode);
-    }
-
-    ImGui::Indent();
-    const std::vector<std::shared_ptr<const HTNConstantNode>>& ConstantNodes = inConstantsNode.GetConstantNodes();
-    for (const std::shared_ptr<const HTNConstantNode>& ConstantNode : ConstantNodes)
-    {
-        GetNodeValue(*ConstantNode);
-    }
-    ImGui::Unindent();
-    */
-
-    return true;
-}
-
-HTNAtom HTNDecompositionPrinter::Visit(const HTNConstantNode& inConstantNode)
-{
-    const HTNNodeScope ConstantNodeScope = HTNNodeScope(mDecompositionContext, inConstantNode.GetID());
-
-    const std::string&                 ConstantNodePath            = mDecompositionContext.GetCurrentNodePath();
-    const HTNNodeSnapshotHistoryDebug* ConstantNodeSnapshotHistory = mDecompositionSnapshot.FindNodeSnapshotHistory(ConstantNodePath);
-    if (!ConstantNodeSnapshotHistory)
-    {
-        return false;
-    }
-
-    // TODO salvarez
-    /*
-    const std::shared_ptr<const HTNValueNode>& IDNode = inConstantNode.GetIDNode();
-    GetNodeValue(*IDNode);
-
-    const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode = inConstantNode.GetArgumentNode();
-    ImGui::SameLine();
-    GetNodeValue(*ArgumentNode);
-    */
 
     return true;
 }
@@ -987,17 +933,4 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConstantValueNode& inConstantVal
     }
 
     return std::format("@{}", inConstantValueNode.ToString());
-
-    // TODO salvarez
-    // Call constant node
-    /*
-    const std::string& ConstantNodeID = inConstantValueNode.GetConstantNodeID();
-    const std::string  TreeNodeID     = std::format("{}##{}", ConstantNodeID, ConstantValueNodePath);
-    if (ImGui::TreeNode(TreeNodeID.c_str()))
-    {
-        std::shared_ptr<const HTNConstantNode> ConstantNode = mDomainNode->FindConstantNodeByID(ConstantNodeID);
-        GetNodeValue(*ConstantNode);
-        ImGui::TreePop();
-    }
-    */
 }

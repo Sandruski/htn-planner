@@ -64,7 +64,7 @@ public:
     bool               TryPopNodeFromCurrentVariableScopePath();
     void               SetCurrentVariableScopePath(const std::string& inCurrentVariableScopePath);
     const std::string& GetCurrentVariableScopePath() const;
-    std::string        MakeCurrentVariablePath(const std::string& inVariableID) const;
+    bool               MakeCurrentVariablePath(const std::string& inVariableID, std::string& outVariablePath) const;
 
 private:
     // TODO salvarez Maybe move the world state to the interpreter too
