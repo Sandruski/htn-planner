@@ -11,14 +11,7 @@
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "Domain/Nodes/HTNTaskNode.h"
 #include "Domain/Nodes/HTNValueNode.h"
-#include "HTNLog.h"
 #include "HTNMacros.h"
-
-HTNDomainValidator::HTNDomainValidator(const std::shared_ptr<const HTNDomainNode>& inDomainNode) : mDomainNode(inDomainNode)
-{
-}
-
-HTNDomainValidator::~HTNDomainValidator() = default;
 
 bool HTNDomainValidator::Validate()
 {

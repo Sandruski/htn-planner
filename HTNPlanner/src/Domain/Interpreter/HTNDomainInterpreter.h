@@ -15,7 +15,6 @@ class HTNDomainInterpreter final : public HTNNodeVisitorBase
 public:
     explicit HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                   HTNDecompositionContext& ioDecompositionContext);
-    ~HTNDomainInterpreter();
 
     bool Interpret();
 
@@ -42,3 +41,9 @@ private:
     std::string                          mEntryPointID;
     HTNDecompositionContext& mDecompositionContext;
 };
+
+inline HTNDomainInterpreter::HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
+                                           HTNDecompositionContext& ioDecompositionContext)
+    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionContext(ioDecompositionContext)
+{
+}

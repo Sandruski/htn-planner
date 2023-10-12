@@ -17,14 +17,13 @@ class HTNBranchNode final : public HTNNodeBase
 public:
     explicit HTNBranchNode(const std::shared_ptr<const HTNValueNode>& inIDNode, const std::shared_ptr<const HTNConditionNodeBase>& inPreConditionNode,
                            const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& inTaskNodes);
-    ~HTNBranchNode();
 
-    HTNAtom     Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
     std::string GetID() const final;
 
-    const std::shared_ptr<const HTNValueNode>&             GetIDNode() const;
-    const std::shared_ptr<const HTNConditionNodeBase>&     GetPreConditionNode() const;
+    const std::shared_ptr<const HTNValueNode>&                 GetIDNode() const;
+    const std::shared_ptr<const HTNConditionNodeBase>&         GetPreConditionNode() const;
     const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& GetTaskNodes() const;
 
 private:
@@ -38,6 +37,13 @@ private:
     // Nodes representing the tasks of the branch
     std::vector<std::shared_ptr<const HTNTaskNodeBase>> mTaskNodes;
 };
+
+inline HTNBranchNode::HTNBranchNode(const std::shared_ptr<const HTNValueNode>&                 inIDNode,
+                                    const std::shared_ptr<const HTNConditionNodeBase>&         inPreConditionNode,
+                                    const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& inTaskNodes)
+    : mIDNode(inIDNode), mPreConditionNode(inPreConditionNode), mTaskNodes(inTaskNodes)
+{
+}
 
 inline const std::shared_ptr<const HTNValueNode>& HTNBranchNode::GetIDNode() const
 {

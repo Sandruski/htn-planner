@@ -1,8 +1,6 @@
 #include "Parser/HTNLexerBase.h"
 
-#include "HTNAtom.h"
 #include "HTNLexerHelpers.h"
-#include "HTNLog.h"
 #include "HTNToken.h"
 
 #if HTN_DEBUG

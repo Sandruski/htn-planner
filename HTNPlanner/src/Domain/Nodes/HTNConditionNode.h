@@ -179,6 +179,12 @@ inline unsigned int HTNConditionNodeBase::GenerateID() const
     return ++mIDGenerator;
 }
 
+inline HTNConditionNode::HTNConditionNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+                                          const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
+    : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes)
+{
+}
+
 inline const std::shared_ptr<const HTNValueNode>& HTNConditionNode::GetIDNode() const
 {
     return mIDNode;
@@ -187,6 +193,12 @@ inline const std::shared_ptr<const HTNValueNode>& HTNConditionNode::GetIDNode() 
 inline const std::vector<std::shared_ptr<const HTNValueNodeBase>>& HTNConditionNode::GetArgumentNodes() const
 {
     return mArgumentNodes;
+}
+
+inline HTNAxiomConditionNode::HTNAxiomConditionNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+                                                    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
+    : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes)
+{
 }
 
 inline const std::shared_ptr<const HTNValueNode>& HTNAxiomConditionNode::GetIDNode() const
@@ -199,9 +211,19 @@ inline const std::vector<std::shared_ptr<const HTNValueNodeBase>>& HTNAxiomCondi
     return mArgumentNodes;
 }
 
+inline HTNAndConditionNode::HTNAndConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes)
+    : mSubConditionNodes(inSubConditionNodes)
+{
+}
+
 inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNAndConditionNode::GetSubConditionNodes() const
 {
     return mSubConditionNodes;
+}
+
+inline HTNOrConditionNode::HTNOrConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes)
+    : mSubConditionNodes(inSubConditionNodes)
+{
 }
 
 inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNOrConditionNode::GetSubConditionNodes() const
@@ -209,9 +231,19 @@ inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNOrCond
     return mSubConditionNodes;
 }
 
+inline HTNAltConditionNode::HTNAltConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes)
+    : mSubConditionNodes(inSubConditionNodes)
+{
+}
+
 inline const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& HTNAltConditionNode::GetSubConditionNodes() const
 {
     return mSubConditionNodes;
+}
+
+inline HTNNotConditionNode::HTNNotConditionNode(const std::shared_ptr<const HTNConditionNodeBase>& inSubConditionNode)
+    : mSubConditionNode(inSubConditionNode)
+{
 }
 
 inline const std::shared_ptr<const HTNConditionNodeBase>& HTNNotConditionNode::GetSubConditionNode() const

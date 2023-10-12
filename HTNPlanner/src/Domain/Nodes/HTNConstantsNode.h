@@ -16,9 +16,8 @@ class HTNConstantsNode final : public HTNNodeBase
 public:
     explicit HTNConstantsNode(const std::shared_ptr<const HTNValueNode>&                 inIDNode,
                               const std::vector<std::shared_ptr<const HTNConstantNode>>& inConstantNodes);
-    ~HTNConstantsNode();
 
-    HTNAtom     Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
     std::string GetID() const final;
 
@@ -33,6 +32,12 @@ private:
     // Nodes representing a group of constants
     std::vector<std::shared_ptr<const HTNConstantNode>> mConstantNodes;
 };
+
+inline HTNConstantsNode::HTNConstantsNode(const std::shared_ptr<const HTNValueNode>&                 inIDNode,
+                                          const std::vector<std::shared_ptr<const HTNConstantNode>>& inConstantNodes)
+    : mIDNode(inIDNode), mConstantNodes(inConstantNodes)
+{
+}
 
 inline const std::shared_ptr<const HTNValueNode>& HTNConstantsNode::GetIDNode() const
 {

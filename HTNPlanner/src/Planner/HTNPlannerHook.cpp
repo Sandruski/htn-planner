@@ -6,7 +6,6 @@
 #include "Domain/Parser/HTNDomainParser.h"
 #include "Domain/Parser/HTNDomainValidator.h"
 #include "HTNFileHandler.h"
-#include "HTNLog.h"
 #include "HTNToken.h"
 
 bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)

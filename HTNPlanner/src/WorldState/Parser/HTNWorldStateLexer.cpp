@@ -2,8 +2,6 @@
 
 #include "Parser/HTNLexerHelpers.h"
 #include "HTNToken.h"
-#include "HTNAtom.h"
-#include "HTNLog.h"
 
 bool HTNWorldStateLexer::Lex(std::vector<HTNToken>& outTokens)
 {

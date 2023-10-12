@@ -14,13 +14,12 @@ class HTNConstantNode final : public HTNNodeBase
 {
 public:
     explicit HTNConstantNode(const std::shared_ptr<const HTNValueNode>& inIDNode, const std::shared_ptr<const HTNValueNodeBase>& inArgumentNode);
-    ~HTNConstantNode();
 
-    HTNAtom     Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
     std::string GetID() const final;
 
-    const std::shared_ptr<const HTNValueNode>& GetIDNode() const;
+    const std::shared_ptr<const HTNValueNode>&     GetIDNode() const;
     const std::shared_ptr<const HTNValueNodeBase>& GetArgumentNode() const;
 
 private:
@@ -31,6 +30,12 @@ private:
     // Node representing the argument of the constant
     std::shared_ptr<const HTNValueNodeBase> mArgumentNode;
 };
+
+inline HTNConstantNode::HTNConstantNode(const std::shared_ptr<const HTNValueNode>&     inIDNode,
+                                        const std::shared_ptr<const HTNValueNodeBase>& inArgumentNode)
+    : mIDNode(inIDNode), mArgumentNode(inArgumentNode)
+{
+}
 
 inline const std::shared_ptr<const HTNValueNode>& HTNConstantNode::GetIDNode() const
 {

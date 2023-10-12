@@ -13,7 +13,6 @@ class HTNDomainValidator final : public HTNNodeVisitorBase
 {
 public:
     explicit HTNDomainValidator(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
-    ~HTNDomainValidator();
 
     bool Validate();
 
@@ -40,3 +39,7 @@ private:
 
     HTNDecompositionContext mDecompositionContext;
 };
+
+inline HTNDomainValidator::HTNDomainValidator(const std::shared_ptr<const HTNDomainNode>& inDomainNode) : mDomainNode(inDomainNode)
+{
+}

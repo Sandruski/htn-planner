@@ -1,7 +1,6 @@
 #include "Planner/HTNDatabaseHook.h"
 
 #include "HTNFileHandler.h"
-#include "HTNLog.h"
 #include "HTNToken.h"
 #include "WorldState/Parser/HTNWorldStateLexer.h"
 #include "WorldState/Parser/HTNWorldStateParser.h"

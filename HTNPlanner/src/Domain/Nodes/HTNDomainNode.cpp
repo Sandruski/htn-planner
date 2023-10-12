@@ -7,16 +7,6 @@
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 #include "Domain/Nodes/HTNValueNode.h"
 
-HTNDomainNode::HTNDomainNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
-                             const std::vector<std::shared_ptr<const HTNConstantsNode>>& inConstantNodes,
-                             const std::vector<std::shared_ptr<const HTNAxiomNode>>&     inAxiomNodes,
-                             const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel)
-    : mIDNode(inIDNode), mConstantNodes(inConstantNodes), mAxiomNodes(inAxiomNodes), mMethodNodes(inMethodNodes), mIsTopLevel(inIsTopLevel)
-{
-}
-
-HTNDomainNode::~HTNDomainNode() = default;
-
 HTNAtom HTNDomainNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {
     return ioNodeVisitor.Visit(*this);

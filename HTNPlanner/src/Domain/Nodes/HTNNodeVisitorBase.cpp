@@ -1,8 +1,6 @@
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 #include "Domain/Nodes/HTNNodeBase.h"
-#include "HTNAtom.h"
-#include "HTNMacros.h"
 
 HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNDomainNode& inDomainNode)
 {

@@ -18,7 +18,6 @@ public:
     explicit HTNMethodNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
                            const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes,
                            const std::vector<std::shared_ptr<const HTNBranchNode>>& inBranchNodes, const bool inIsTopLevel);
-    ~HTNMethodNode();
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
@@ -43,6 +42,13 @@ private:
     // Whether the method serves as an entry point for a decomposition
     bool mIsTopLevel = false;
 };
+
+inline HTNMethodNode::HTNMethodNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+                                    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes,
+                                    const std::vector<std::shared_ptr<const HTNBranchNode>>& inBranchNodes, const bool inIsTopLevel)
+    : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mBranchNodes(inBranchNodes), mIsTopLevel(inIsTopLevel)
+{
+}
 
 inline const std::shared_ptr<const HTNValueNode>& HTNMethodNode::GetIDNode() const
 {

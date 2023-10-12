@@ -10,7 +10,6 @@
 #include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
-#include "HTNAtom.h"
 #include "HTNImGuiHelpers.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"

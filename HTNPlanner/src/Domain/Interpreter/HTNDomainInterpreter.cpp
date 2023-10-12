@@ -16,16 +16,7 @@
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "Domain/Nodes/HTNTaskNode.h"
 #include "Domain/Nodes/HTNValueNode.h"
-#include "HTNLog.h"
 #include "WorldState/HTNWorldState.h"
-
-HTNDomainInterpreter::HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                                           HTNDecompositionContext& ioDecompositionContext)
-    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionContext(ioDecompositionContext)
-{
-}
-
-HTNDomainInterpreter::~HTNDomainInterpreter() = default;
 
 bool HTNDomainInterpreter::Interpret()
 {

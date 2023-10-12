@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
+#include "Domain/Interpreter/HTNNodePath.h"
 
 #include <memory>
 
@@ -12,7 +12,6 @@ class HTNTaskInstance
 public:
     explicit HTNTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode, const HTNEnvironment& inEnvironment,
                              const HTNNodePath& inNodePath, const HTNNodePath& inVariableScopeNodePath);
-    ~HTNTaskInstance();
 
     const std::shared_ptr<const HTNTaskNodeBase>& GetTaskNode() const;
     const HTNEnvironment&                         GetEnvironment() const;
@@ -25,6 +24,12 @@ private:
     HTNNodePath                            mNodePath;
     HTNNodePath                            mVariableScopeNodePath;
 };
+
+inline HTNTaskInstance::HTNTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode, const HTNEnvironment& inEnvironment,
+                                        const HTNNodePath& inNodePath, const HTNNodePath& inVariableScopeNodePath)
+    : mTaskNode(inTaskNode), mEnvironment(inEnvironment), mNodePath(inNodePath), mVariableScopeNodePath(inVariableScopeNodePath)
+{
+}
 
 inline const std::shared_ptr<const HTNTaskNodeBase>& HTNTaskInstance::GetTaskNode() const
 {

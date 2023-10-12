@@ -1,7 +1,5 @@
 #include "Domain/Parser/HTNDomainLexer.h"
 
-#include "HTNAtom.h"
-#include "HTNLog.h"
 #include "HTNToken.h"
 #include "Parser/HTNLexerHelpers.h"
 

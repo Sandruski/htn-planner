@@ -1,7 +1,5 @@
 #include "HTNFileHandler.h"
 
-#include "HTNLog.h"
-
 #include <sstream>
 
 HTNFileHandler::HTNFileHandler(const std::string& inFilePath)

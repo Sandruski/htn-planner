@@ -9,7 +9,6 @@
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "Domain/Nodes/HTNTaskNode.h"
 #include "Domain/Nodes/HTNValueNode.h"
-#include "HTNLog.h"
 #include "HTNToken.h"
 #include "Parser/HTNParserHelpers.h"
 

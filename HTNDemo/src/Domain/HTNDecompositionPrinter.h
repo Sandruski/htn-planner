@@ -71,6 +71,12 @@ private:
     size_t mMaxDecompositionStep = std::numeric_limits<std::size_t>::max();
 };
 
+inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
+                                                        const HTNDecompositionSnapshotDebug& inDecompositionSnapshot)
+    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot)
+{
+}
+
 inline void HTNDecompositionPrinter::SetDecompositionStepRange(const size_t inMinDecompositionStep, const size_t inMaxDecompositionStep)
 {
     mMinDecompositionStep = inMinDecompositionStep;

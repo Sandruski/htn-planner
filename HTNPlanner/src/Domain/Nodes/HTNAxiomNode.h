@@ -18,7 +18,6 @@ public:
     explicit HTNAxiomNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
                           const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes,
                           const std::shared_ptr<const HTNConditionNodeBase>&          inConditionNode);
-    ~HTNAxiomNode();
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
@@ -39,6 +38,13 @@ private:
     // Node representing the condition of the axiom
     std::shared_ptr<const HTNConditionNodeBase> mConditionNode;
 };
+
+inline HTNAxiomNode::HTNAxiomNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+                                  const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes,
+                                  const std::shared_ptr<const HTNConditionNodeBase>&          inConditionNode)
+    : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mConditionNode(inConditionNode)
+{
+}
 
 inline const std::shared_ptr<const HTNValueNode>& HTNAxiomNode::GetIDNode() const
 {

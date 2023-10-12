@@ -1,7 +1,5 @@
 #include "WorldState/Parser/HTNWorldStateParser.h"
 
-#include "HTNAtom.h"
-#include "HTNLog.h"
 #include "HTNToken.h"
 #include "WorldState/HTNWorldState.h"
 

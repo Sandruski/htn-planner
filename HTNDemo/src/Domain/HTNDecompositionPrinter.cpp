@@ -13,7 +13,6 @@
 #include "Domain/Nodes/HTNTaskNode.h"
 #include "Domain/Nodes/HTNValueNode.h"
 #include "HTNImGuiHelpers.h"
-#include "HTNLog.h"
 
 #include "imgui.h"
 
@@ -29,12 +28,6 @@ std::string MakeDecompositionStepLabel(const std::string& inLabel, const size_t 
     return std::format("{} {}", inDecompositionStep, inLabel);
 }
 } // namespace
-
-HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                                                 const HTNDecompositionSnapshotDebug& inDecompositionSnapshot)
-    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot)
-{
-}
 
 bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode)
 {
