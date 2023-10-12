@@ -5,7 +5,7 @@
 #include "Domain/HTNDecompositionNodeArgumentsValuesPrinter.h"
 #include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
-#include "Domain/HTNNodePath.h"
+#include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Nodes/HTNDomainNode.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Domain/HTNNodePath.h"
+#include "Domain/Interpreter/HTNNodePath.h"
 
 #include <memory>
 #include <vector>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Domain/HTNNodeScope.h"
+#include "Domain/Interpreter/HTNNodeScope.h"
 
 #include <string>
 

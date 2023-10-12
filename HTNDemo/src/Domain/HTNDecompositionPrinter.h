@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Domain/HTNDecompositionNode.h"
-#include "Domain/HTNNodePath.h"
+#include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 #include <functional>

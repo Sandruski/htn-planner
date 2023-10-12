@@ -1,6 +1,6 @@
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 
-#include "Domain/HTNDomainHelpers.h"
+#include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNConditionQuery.h"
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Domain/Interpreter/HTNDecompositionNodeScope.h"
@@ -55,7 +55,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode)
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
 
     // Top-level compound task node
-    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode     = HTNDomainHelpers::MakeTopLevelCompoundTaskNode(mEntryPointID);
+    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDecompositionHelpers::MakeTopLevelCompoundTaskNode(mEntryPointID);
     const HTNNodePath&                               CurrentNodePath              = mDecompositionContext.GetCurrentNodePath();
     const HTNNodePath&                               CurrentVariableScopeNodePath = mDecompositionContext.GetCurrentVariableScopeNodePath();
     const HTNTaskInstance                            TopLevelCompoundTaskInstance =
@@ -530,7 +530,7 @@ void HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode
     const std::string  VariableID                   = inVariableValueNode.GetValue().GetValue<std::string>();
     const std::string& CurrentVariableScopeNodePath = mDecompositionContext.GetCurrentVariableScopeNodePath().GetNodePath();
     std::string        CurrentVariablePath;
-    if (!HTNDomainHelpers::MakeVariablePath(VariableID, CurrentVariableScopeNodePath, CurrentVariablePath))
+    if (!HTNDecompositionHelpers::MakeVariablePath(VariableID, CurrentVariableScopeNodePath, CurrentVariablePath))
     {
         LOG_ERROR("Path for variable [{}] could not be made", VariableID);
         return;
@@ -549,7 +549,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueN
     const std::string  VariableID                   = inVariableValueNode.GetValue().GetValue<std::string>();
     const std::string& CurrentVariableScopeNodePath = mDecompositionContext.GetCurrentVariableScopeNodePath().GetNodePath();
     std::string        CurrentVariablePath;
-    if (!HTNDomainHelpers::MakeVariablePath(VariableID, CurrentVariableScopeNodePath, CurrentVariablePath))
+    if (!HTNDecompositionHelpers::MakeVariablePath(VariableID, CurrentVariableScopeNodePath, CurrentVariablePath))
     {
         LOG_ERROR("Path for variable [{}] could not be made", VariableID);
         return HTNAtom();

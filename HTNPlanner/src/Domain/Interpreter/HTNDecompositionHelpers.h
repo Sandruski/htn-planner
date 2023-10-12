@@ -5,7 +5,7 @@
 
 class HTNCompoundTaskNode;
 
-namespace HTNDomainHelpers
+namespace HTNDecompositionHelpers
 {
 std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const std::string& inEntryPointID);
 
@@ -17,7 +17,7 @@ bool TryPopSegmentFromPath(std::string& ioPath);
 bool FindVariableID(const std::string& inVariablePath, std::string& outVariableID);
 
 // Name of the default top-level method of a top-level domain
-const std::string kDefaultTopLevelMethodName = "behave";
+const std::string kDefaultTopLevelMethodID = "behave";
 
 // ID of the top-level compound task node
 constexpr unsigned int kTopLevelCompoundTaskNodeID = 0;

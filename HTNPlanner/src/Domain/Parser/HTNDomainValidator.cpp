@@ -1,6 +1,6 @@
 #include "Domain/Parser/HTNDomainValidator.h"
 
-#include "Domain/HTNDomainHelpers.h"
+#include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionVariableScopeNodeScope.h"
 #include "Domain/Nodes/HTNAxiomNode.h"
 #include "Domain/Nodes/HTNBranchNode.h"
@@ -36,15 +36,13 @@ bool HTNDomainValidator::Validate()
 
 HTNAtom HTNDomainValidator::Visit(const HTNDomainNode& inDomainNode)
 {
-    const std::string      DomainNodeID        = inDomainNode.GetID();
-    const HTNDecompositionVariableScopeNodeScope DomainVariableScopeNodeScope = HTNDecompositionVariableScopeNodeScope(mDecompositionContext, DomainNodeID);
+    const std::string                            DomainNodeID = inDomainNode.GetID();
+    const HTNDecompositionVariableScopeNodeScope DomainVariableScopeNodeScope =
+        HTNDecompositionVariableScopeNodeScope(mDecompositionContext, DomainNodeID);
 
     // Dummy top-level task node
-    static const std::string&                        EntryPointName           = HTNDomainHelpers::kDefaultTopLevelMethodName;
-    static constexpr bool                            IsIdentifier             = true;
-    static constexpr bool                            IsTopLevel               = true;
-    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = std::make_shared<HTNCompoundTaskNode>(
-        std::make_shared<const HTNValueNode>(EntryPointName, IsIdentifier), std::vector<std::shared_ptr<const HTNValueNodeBase>>(), IsTopLevel);
+    static const std::string&                        EntryPointID             = HTNDecompositionHelpers::kDefaultTopLevelMethodID;
+    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDecompositionHelpers::MakeTopLevelCompoundTaskNode(EntryPointID);
     return GetNodeValue(*TopLevelCompoundTaskNode).GetValue<bool>();
 }
 

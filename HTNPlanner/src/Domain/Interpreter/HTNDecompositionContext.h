@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Domain/HTNNodePath.h"
+#include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNTaskInstance.h"
 #include "Domain/Interpreter/HTNTaskResult.h"

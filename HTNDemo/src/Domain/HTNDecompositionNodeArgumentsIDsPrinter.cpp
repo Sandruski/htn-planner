@@ -1,7 +1,7 @@
 #include "Domain/HTNDecompositionNodeArgumentsIDsPrinter.h"
 
 #include "Domain/HTNDecompositionNode.h"
-#include "Domain/HTNDomainHelpers.h"
+#include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Interpreter/HTNVariables.h"
 #include "Domain/Nodes/HTNValueNode.h"
@@ -51,7 +51,7 @@ void HTNDecompositionNodeArgumentsIDsPrinter::Print()
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
             std::string VariableID;
-            const bool  Result = HTNDomainHelpers::FindVariableID(VariablePath, VariableID);
+            const bool  Result = HTNDecompositionHelpers::FindVariableID(VariablePath, VariableID);
             assert(Result);
             ImGui::TextDisabled(VariableID.c_str());
         }
@@ -75,7 +75,7 @@ HTNAtom HTNDecompositionNodeArgumentsIDsPrinter::Visit(const HTNVariableValueNod
     const std::string& VariableID                = inVariableValueNode.GetValue().GetValue<std::string>();
     const std::string& NodeVariableScopeNodePath = mNode.GetNodeVariableScopeNodePath().GetNodePath();
     std::string        VariablePath;
-    const bool         Result = HTNDomainHelpers::MakeVariablePath(VariableID, NodeVariableScopeNodePath, VariablePath);
+    const bool         Result = HTNDecompositionHelpers::MakeVariablePath(VariableID, NodeVariableScopeNodePath, VariablePath);
     assert(Result);
     mNodeVariablesPaths.emplace_back(VariablePath);
 

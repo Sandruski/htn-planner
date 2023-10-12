@@ -1,7 +1,7 @@
 #include "Domain/HTNDecompositionNodeArgumentsValuesPrinter.h"
 
 #include "Domain/HTNDecompositionNode.h"
-#include "Domain/HTNDomainHelpers.h"
+#include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Interpreter/HTNVariables.h"
 #include "Domain/Nodes/HTNConstantNode.h"
@@ -84,7 +84,7 @@ HTNAtom HTNDecompositionNodeArgumentsValuesPrinter::Visit(const HTNVariableValue
     const std::string& VariableID                = inVariableValueNode.GetValue().GetValue<std::string>();
     const std::string& NodeVariableScopeNodePath = mNode.GetNodeVariableScopeNodePath().GetNodePath();
     std::string        VariablePath;
-    const bool         Result = HTNDomainHelpers::MakeVariablePath(VariableID, NodeVariableScopeNodePath, VariablePath);
+    const bool         Result = HTNDecompositionHelpers::MakeVariablePath(VariableID, NodeVariableScopeNodePath, VariablePath);
     assert(Result);
     mNodeVariablesPaths.emplace_back(VariablePath);
 

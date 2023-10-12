@@ -1,7 +1,7 @@
 #include "Domain/HTNDecompositionPrinter.h"
 
-#include "Domain/HTNDomainHelpers.h"
-#include "Domain/HTNNodeScope.h"
+#include "Domain/Interpreter/HTNDecompositionHelpers.h"
+#include "Domain/Interpreter/HTNNodeScope.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Nodes/HTNAxiomNode.h"
 #include "Domain/Nodes/HTNBranchNode.h"
@@ -61,7 +61,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode)
     const HTNNodeScope DomainVariableScopeNodeScope = HTNNodeScope(mCurrentVariableScopeNodePath, DomainNodeID);
 
     // Top-level compound task node
-    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDomainHelpers::MakeTopLevelCompoundTaskNode(mEntryPointID);
+    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDecompositionHelpers::MakeTopLevelCompoundTaskNode(mEntryPointID);
     GetNodeValue(*TopLevelCompoundTaskNode);
 
     return true;
