@@ -13,19 +13,6 @@ std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const st
                                                  std::vector<std::shared_ptr<const HTNValueNodeBase>>(), kTopLevelCompoundTaskNodeID, IsTopLevel);
 }
 
-bool FindVariableID(const std::string& inVariablePath, std::string& outVariableID)
-{
-    const std::size_t Index = inVariablePath.find_last_of(kPathSegmentSeparator);
-    if (Index == std::string::npos)
-    {
-        return false;
-    }
-
-    outVariableID = inVariablePath.substr(Index + 1);
-
-    return true;
-}
-
 bool MakeVariablePath(const std::string& inVariableID, const std::string& inVariableScopeNodePath, std::string& outVariablePath)
 {
     std::string VariablePath = inVariableScopeNodePath;
@@ -72,6 +59,19 @@ bool TryPopSegmentFromPath(std::string& ioPath)
     {
         ioPath.clear();
     }
+
+    return true;
+}
+
+bool FindVariableID(const std::string& inVariablePath, std::string& outVariableID)
+{
+    const std::size_t Index = inVariablePath.find_last_of(kPathSegmentSeparator);
+    if (Index == std::string::npos)
+    {
+        return false;
+    }
+
+    outVariableID = inVariablePath.substr(Index + 1);
 
     return true;
 }

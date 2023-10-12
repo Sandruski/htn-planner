@@ -22,6 +22,8 @@ public:
     // Returns an existing index or an invalid one if not existing
     std::size_t GetIndex(const std::string& inNodePath) const;
 
+    const std::unordered_map<std::string, std::size_t>& GetIndices() const;
+
 private:
     // Node path to index
     // - Method to branch
@@ -65,4 +67,9 @@ inline std::size_t HTNIndices::GetIndex(const std::string& inNodePath) const
     }
 
     return It->second;
+}
+
+inline const std::unordered_map<std::string, std::size_t>& HTNIndices::GetIndices() const
+{
+    return mIndices;
 }

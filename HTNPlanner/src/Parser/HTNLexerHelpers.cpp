@@ -1,7 +1,5 @@
 #include "Parser/HTNLexerHelpers.h"
 
-#include <unordered_map>
-
 namespace HTNLexerHelpers
 {
 bool IsValidCharacter(const char inCharacter)

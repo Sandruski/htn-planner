@@ -72,9 +72,9 @@ project "HTNDemo"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("int/" .. outputdir .. "/%{prj.name}")
 
-    --pchheader "pch.h"
-    --pchsource "%{prj.name}/src/pch.cpp"
-    --forceincludes "pch.h"
+    pchheader "pch.h"
+    pchsource "%{prj.name}/src/pch.cpp"
+    forceincludes "pch.h"
 
     files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h", 
 				-- imgui includes --

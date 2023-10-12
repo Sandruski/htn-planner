@@ -16,7 +16,7 @@ const ImGuiWindowFlags     kDefaultWindowFlags     = ImGuiWindowFlags_NoCollapse
 const ImGuiTabBarFlags     kDefaultTabBarFlags     = ImGuiTabBarFlags_None;
 const ImGuiComboFlags      kDefaultComboFlags      = ImGuiComboFlags_None;
 const ImGuiSelectableFlags kDefaultSelectableFlags = ImGuiSelectableFlags_None;
-const ImGuiTableFlags      kDefaultTableFlags      = ImGuiTableFlags_RowBg | ImGuiTableFlags_NoBordersInBody;
+const ImGuiTableFlags      kDefaultTableFlags      = ImGuiTableFlags_RowBg;
 const ImGuiInputTextFlags  kDefaultInputTextFlags  = ImGuiInputTextFlags_CharsNoBlank;
 const ImGuiTreeNodeFlags   kDefaultTreeNodeFlags   = ImGuiTreeNodeFlags_OpenOnArrow;
 

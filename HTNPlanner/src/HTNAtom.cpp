@@ -1,6 +1,5 @@
 #include "HTNAtom.h"
 
-#include <format>
 #include <iomanip>
 #include <ios>
 #include <sstream>

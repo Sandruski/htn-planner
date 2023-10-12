@@ -2,8 +2,6 @@
 
 #include "imgui.h"
 
-#include <format>
-
 bool HTNWorldStatePrinter::Print(const HTNWorldState& inWorldState, const ImGuiTextFilter& inTextFilter) const
 {
     const std::unordered_map<std::string, HTNFactArgumentsTables>& Facts = inWorldState.GetFacts();

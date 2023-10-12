@@ -9,8 +9,6 @@
 #include "HTNLog.h"
 #include "HTNToken.h"
 
-#include <vector>
-
 bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
 {
     const HTNFileHandler DomainFileHandler = HTNFileHandler(inDomainFilePath);

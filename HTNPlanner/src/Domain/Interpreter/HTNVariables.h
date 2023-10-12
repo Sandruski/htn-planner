@@ -20,6 +20,8 @@ public:
     // Removes all existing variables under the scope path
     void RemoveVariables(const std::string& inVariableScopePath);
 
+    const std::unordered_map<std::string, HTNAtom>& GetVariables() const;
+
 private:
     // Variable path to value
     std::unordered_map<std::string, HTNAtom> mVariables;
@@ -44,4 +46,9 @@ inline HTNAtom HTNVariables::GetVariable(const std::string& inVariablePath) cons
 inline void HTNVariables::RemoveVariable(const std::string& inVariablePath)
 {
     mVariables.erase(inVariablePath);
+}
+
+inline const std::unordered_map<std::string, HTNAtom>& HTNVariables::GetVariables() const
+{
+    return mVariables;
 }

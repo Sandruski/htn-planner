@@ -1,9 +1,9 @@
 #include "HTNDebuggerWindow.h"
 
 #include "Domain/HTNDecompositionNode.h"
+#include "Domain/HTNDecompositionNodeArgumentsIDsPrinter.h"
+#include "Domain/HTNDecompositionNodeArgumentsValuesPrinter.h"
 #include "Domain/HTNDecompositionPrinter.h"
-#include "Domain/HTNDecompositionVariableConstantIDsPrinter.h"
-#include "Domain/HTNDecompositionVariableConstantValuesPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/HTNNodePath.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
@@ -20,13 +20,9 @@
 #include "imgui.h"
 #include "imgui_stdlib.h"
 
-#include <algorithm>
 #include <execution>
 #include <filesystem>
-#include <format>
 #include <mutex>
-#include <string>
-#include <vector>
 
 namespace
 {
@@ -326,18 +322,20 @@ void HTNDebuggerWindow::RenderDecomposition()
         // Decomposition window
         const ImVec2 DecompositionChildSize = ImVec2(ContentRegionAvail.x, 350.f);
         ImGui::BeginChild("DecompositionChild", DecompositionChildSize, false, ImGuiWindowFlags_HorizontalScrollbar);
+
         const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = LastDecomposition.mDecompositionContext.GetDecompositionSnapshot();
         HTNDecompositionPrinter              DecompositionPrinter =
             HTNDecompositionPrinter(LastDecomposition.mDomainNode, LastDecomposition.mEntryPointID, LastDecompositionSnapshot);
         static HTNDecompositionNode SelectedNode;
         DecompositionPrinter.Print(SelectedNode);
+
         ImGui::EndChild();
 
         // Watch window
-        const ImVec2 WatchChildSize = ImVec2(ContentRegionAvail.x, 150.f);
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+        const ImVec2 WatchChildSize = ImVec2(ContentRegionAvail.x, 150.f);
         ImGui::BeginChild("WatchChild", WatchChildSize, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
-        
+
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("Watch Window", false))
@@ -352,14 +350,13 @@ void HTNDebuggerWindow::RenderDecomposition()
             ImGui::TableNextRow();
 
             ImGui::TableNextColumn();
-            HTNDecompositionVariableConstantIDsPrinter DecompositionVariableConstantIDsPrinter =
-                HTNDecompositionVariableConstantIDsPrinter(LastDecomposition.mDomainNode, SelectedNode);
-            DecompositionVariableConstantIDsPrinter.Print();
+            HTNDecompositionNodeArgumentsIDsPrinter NodeArgumentsIDsPrinter = HTNDecompositionNodeArgumentsIDsPrinter(SelectedNode);
+            NodeArgumentsIDsPrinter.Print();
 
             ImGui::TableNextColumn();
-            HTNDecompositionVariableConstantValuesPrinter DecompositionVariableConstantValuesPrinter =
-                HTNDecompositionVariableConstantValuesPrinter(LastDecomposition.mDomainNode, SelectedNode);
-            DecompositionVariableConstantValuesPrinter.Print();
+            HTNDecompositionNodeArgumentsValuesPrinter NodeArgumentsValuesPrinter =
+                HTNDecompositionNodeArgumentsValuesPrinter(LastDecomposition.mDomainNode, SelectedNode);
+            NodeArgumentsValuesPrinter.Print();
 
             ImGui::EndTable();
         }

@@ -21,8 +21,6 @@ public:
     const HTNNodePath&                                          GetNodeVariableScopeNodePath() const;
 
 private:
-    // TODO salvarez Store variables but still select node
-    // TODO salvarez And rename class HTNSelectedNode?
     const HTNNodeSnapshotDebug*                          mNodeSnapshot = nullptr;
     std::vector<std::shared_ptr<const HTNValueNodeBase>> mNodeArguments;
     HTNNodePath                                          mNodeVariableScopeNodePath;
