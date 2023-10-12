@@ -1,6 +1,6 @@
-#include "Domain/Interpreter/HTNEnvironment.h"
+#include "Domain/Interpreter/HTNVariables.h"
 
-void HTNEnvironment::RemoveVariables(const std::string& inVariableScopePath)
+void HTNVariables::RemoveVariables(const std::string& inVariableScopePath)
 {
     for (auto It = mVariables.begin(); It != mVariables.end();)
     {

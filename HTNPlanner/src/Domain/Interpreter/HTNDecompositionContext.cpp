@@ -1,7 +1,5 @@
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 
-#include "Domain/Interpreter/HTNDecompositionContextHelpers.h"
-
 bool HTNDecompositionContext::RestoreDecomposition()
 {
     if (mDecompositionHistory.empty())
@@ -17,31 +15,6 @@ bool HTNDecompositionContext::RestoreDecomposition()
 #endif
 
     return true;
-}
-
-bool HTNDecompositionContext::TryPushNodeToCurrentNodePath(const std::string& inNodeID)
-{
-    return HTNDecompositionContextHelpers::TryPushSegmentToPath(inNodeID, mCurrentNodePath);
-}
-
-bool HTNDecompositionContext::TryPopNodeFromCurrentNodePath()
-{
-    return HTNDecompositionContextHelpers::TryPopSegmentFromPath(mCurrentNodePath);
-}
-
-bool HTNDecompositionContext::TryPushNodeToCurrentVariableScopePath(const std::string& inNodeID)
-{
-    return HTNDecompositionContextHelpers::TryPushSegmentToPath(inNodeID, mCurrentVariableScopePath);
-}
-
-bool HTNDecompositionContext::TryPopNodeFromCurrentVariableScopePath()
-{
-    return HTNDecompositionContextHelpers::TryPopSegmentFromPath(mCurrentVariableScopePath);
-}
-
-bool HTNDecompositionContext::MakeCurrentVariablePath(const std::string& inVariableID, std::string& outVariablePath) const
-{
-    return HTNDecompositionContextHelpers::MakeVariablePath(inVariableID, mCurrentVariableScopePath, outVariablePath);
 }
 
 #ifdef HTN_DEBUG

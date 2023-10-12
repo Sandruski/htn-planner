@@ -1,7 +1,7 @@
 #include "Domain/Parser/HTNDomainValidator.h"
 
 #include "Domain/HTNDomainHelpers.h"
-#include "Domain/Interpreter/HTNVariableScope.h"
+#include "Domain/Interpreter/HTNDecompositionVariableScopeNodeScope.h"
 #include "Domain/Nodes/HTNAxiomNode.h"
 #include "Domain/Nodes/HTNBranchNode.h"
 #include "Domain/Nodes/HTNConditionNode.h"
@@ -30,14 +30,14 @@ bool HTNDomainValidator::Validate()
         return false;
     }
 
-    //return GetNodeValue(*DomainNode).GetValue<bool>();
+    // return GetNodeValue(*DomainNode).GetValue<bool>();
     return true;
 }
 
 HTNAtom HTNDomainValidator::Visit(const HTNDomainNode& inDomainNode)
 {
     const std::string      DomainNodeID        = inDomainNode.GetID();
-    const HTNVariableScope DomainVariableScope = HTNVariableScope(mDecompositionContext, DomainNodeID);
+    const HTNDecompositionVariableScopeNodeScope DomainVariableScopeNodeScope = HTNDecompositionVariableScopeNodeScope(mDecompositionContext, DomainNodeID);
 
     // Dummy top-level task node
     static const std::string&                        EntryPointName           = HTNDomainHelpers::kDefaultTopLevelMethodName;

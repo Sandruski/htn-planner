@@ -1,16 +1,15 @@
 #pragma once
 
-#include "Domain/Interpreter/HTNDecompositionContext.h"
+#include "Domain/HTNDecompositionNode.h"
+#include "Domain/HTNNodePath.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 #include <memory>
 #include <string>
-#include <vector>
 
 class HTNDecompositionSnapshotDebug;
 class HTNDomainNode;
 class HTNNodeSnapshotDebug;
-class HTNValueNodeBase;
 
 /**
  * Prints a decomposition
@@ -21,8 +20,7 @@ public:
     explicit HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                      const HTNDecompositionSnapshotDebug& inDecompositionSnapshot);
 
-    bool Print(const HTNNodeSnapshotDebug*& ioSelectedNodeSnapshot, std::vector<std::shared_ptr<const HTNValueNodeBase>>& ioSelectedNodeArguments,
-               std::string& ioSelectedNodeVariableScopePath);
+    bool Print(HTNDecompositionNode& ioSelectedNode);
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
 
@@ -53,14 +51,16 @@ private:
     std::string                          mEntryPointID;
     const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
 
+    HTNDecompositionNode mSelectedNode;
+
+    // Path from the root node to the current node being processed
+    HTNNodePath mCurrentNodePath;
+
+    // Path from the root node to the current node determining the scope of the variables
+    HTNNodePath mCurrentVariableScopeNodePath;
+
     size_t mMinDecompositionStep = 0;
     size_t mMaxDecompositionStep = std::numeric_limits<std::size_t>::max();
-
-    const HTNNodeSnapshotDebug*                          mSelectedNodeSnapshot = nullptr;
-    std::vector<std::shared_ptr<const HTNValueNodeBase>> mSelectedNodeArguments;
-    std::string                                          mSelectedNodeVariableScopePath;
-
-    HTNDecompositionContext mDecompositionContext;
 };
 
 inline void HTNDecompositionPrinter::SetDecompositionStepRange(const size_t inMinDecompositionStep, const size_t inMaxDecompositionStep)
@@ -76,19 +76,16 @@ inline bool HTNDecompositionPrinter::IsDecompositionStepBetweenRange(const size_
 
 inline void HTNDecompositionPrinter::SelectNode(const HTNNodeSnapshotDebug& inNodeSnapshot)
 {
-    mSelectedNodeSnapshot = &inNodeSnapshot;
-    mSelectedNodeArguments.clear();
+    mSelectedNode = HTNDecompositionNode(inNodeSnapshot);
 }
 
 inline void HTNDecompositionPrinter::SelectNode(const HTNNodeSnapshotDebug&                                 inNodeSnapshot,
                                                 const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inNodeArguments)
 {
-    mSelectedNodeSnapshot  = &inNodeSnapshot;
-    mSelectedNodeArguments = inNodeArguments;
-    mSelectedNodeVariableScopePath = mDecompositionContext.GetCurrentVariableScopePath();
+    mSelectedNode = HTNDecompositionNode(inNodeSnapshot, inNodeArguments, mCurrentVariableScopeNodePath);
 }
 
 inline bool HTNDecompositionPrinter::IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const
 {
-    return mSelectedNodeSnapshot == &inNodeSnapshot;
+    return mSelectedNode.GetNodeSnapshot() == &inNodeSnapshot;
 }

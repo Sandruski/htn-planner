@@ -1,6 +1,7 @@
 #include "Domain/HTNDecompositionVariablesPrinter.h"
 
-#include "Domain/Interpreter/HTNDecompositionContextHelpers.h"
+#include "Domain/HTNDomainHelpers.h"
+#include "Domain/Interpreter/HTNVariables.h"
 #include "Domain/Nodes/HTNConstantNode.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNValueNode.h"
@@ -10,12 +11,12 @@
 #include "imgui.h"
 
 HTNDecompositionVariablesPrinter::HTNDecompositionVariablesPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                                   const HTNVariables& inVariables, const std::string& inVariableScopePath)
-    : mDomainNode(inDomainNode), mVariables(inVariables), mVariableScopePath(inVariableScopePath)
+                                                                   const HTNDecompositionNode&                 inNode)
+    : mDomainNode(inDomainNode), mNode(inNode)
 {
 }
 
-void HTNDecompositionVariablesPrinter::Print(const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArguments)
+void HTNDecompositionVariablesPrinter::Print()
 {
     if (ImGui::BeginTable("Variables", 2, HTNImGuiHelpers::kDefaultTableFlags))
     {
@@ -56,10 +57,11 @@ void HTNDecompositionVariablesPrinter::Print(const std::vector<std::shared_ptr<c
 
         // TODO salvarez Print ID (with @ or ?, but no literals) + value
         // TODO salvarez Rename this class to ArgumentsPrinter or something like that
+        /*
         for (const std::shared_ptr<const HTNValueNodeBase>& Argument : inArguments)
         {
             GetNodeValue(*Argument);
-        }
+        }*/
 
         ImGui::EndTable();
     }
@@ -73,9 +75,10 @@ HTNAtom HTNDecompositionVariablesPrinter::Visit(const HTNConstantNode& inConstan
 
 HTNAtom HTNDecompositionVariablesPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
 {
-    const std::string VariableID          = inVariableValueNode.GetValue().GetValue<std::string>();
-    std::string       VariablePath;
-    if (!HTNDecompositionContextHelpers::MakeVariablePath(VariableID, mVariableScopePath, VariablePath))
+    const std::string  VariableID                = inVariableValueNode.GetValue().GetValue<std::string>();
+    const std::string& NodeVariableScopeNodePath = mNode.GetNodeVariableScopeNodePath().GetNodePath();
+    std::string        VariablePath;
+    if (!HTNDomainHelpers::MakeVariablePath(VariableID, NodeVariableScopeNodePath, VariablePath))
     {
         LOG_ERROR("Path for variable [{}] could not be made", VariableID);
         return HTNAtom();

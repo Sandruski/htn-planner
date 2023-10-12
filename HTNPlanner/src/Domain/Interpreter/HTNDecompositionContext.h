@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Domain/HTNNodePath.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNTaskInstance.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
 
-#include <string>
 #include <vector>
 
 #ifdef HTN_DEBUG
@@ -55,16 +55,13 @@ public:
     void                                       SetDecompositionHistory(const std::vector<HTNDecompositionRecord>& inDecompositionHistory);
     const std::vector<HTNDecompositionRecord>& GetDecompositionHistory() const;
 
-    bool               TryPushNodeToCurrentNodePath(const std::string& inNodeID);
-    bool               TryPopNodeFromCurrentNodePath();
-    void               SetCurrentNodePath(const std::string& inCurrentNodePath);
-    const std::string& GetCurrentNodePath() const;
+    void               SetCurrentNodePath(const HTNNodePath& inCurrentNodePath);
+    const HTNNodePath& GetCurrentNodePath() const;
+    HTNNodePath&       GetCurrentNodePathMutable();
 
-    bool               TryPushNodeToCurrentVariableScopePath(const std::string& inNodeID);
-    bool               TryPopNodeFromCurrentVariableScopePath();
-    void               SetCurrentVariableScopePath(const std::string& inCurrentVariableScopePath);
-    const std::string& GetCurrentVariableScopePath() const;
-    bool               MakeCurrentVariablePath(const std::string& inVariableID, std::string& outVariablePath) const;
+    void               SetCurrentVariableScopeNodePath(const HTNNodePath& inCurrentVariableScopeNodePath);
+    const HTNNodePath& GetCurrentVariableScopeNodePath() const;
+    HTNNodePath&       GetCurrentVariableScopeNodePathMutable();
 
 private:
     // TODO salvarez Maybe move the world state to the interpreter too
@@ -78,10 +75,10 @@ private:
     std::vector<HTNDecompositionRecord> mDecompositionHistory;
 
     // Path from the root node to the current node being processed
-    std::string mCurrentNodePath;
+    HTNNodePath mCurrentNodePath;
 
-    // Path from the root node to the node that determines the scope of variables
-    std::string mCurrentVariableScopePath;
+    // Path from the root node to the current node determining the scope of the variables
+    HTNNodePath mCurrentVariableScopeNodePath;
 
 #ifdef HTN_DEBUG
 public:
@@ -171,27 +168,39 @@ inline const std::vector<HTNDecompositionRecord>& HTNDecompositionContext::GetDe
     return mDecompositionHistory;
 }
 
-inline void HTNDecompositionContext::SetCurrentNodePath(const std::string& inCurrentNodePath)
+inline void HTNDecompositionContext::SetCurrentNodePath(const HTNNodePath& inCurrentNodePath)
 {
     mCurrentNodePath = inCurrentNodePath;
 }
 
-inline const std::string& HTNDecompositionContext::GetCurrentNodePath() const
+inline const HTNNodePath& HTNDecompositionContext::GetCurrentNodePath() const
 {
     return mCurrentNodePath;
 }
 
-inline void HTNDecompositionContext::SetCurrentVariableScopePath(const std::string& inCurrentVariableScopePath)
+inline HTNNodePath& HTNDecompositionContext::GetCurrentNodePathMutable()
 {
-    mCurrentVariableScopePath = inCurrentVariableScopePath;
+    return mCurrentNodePath;
 }
 
-inline const std::string& HTNDecompositionContext::GetCurrentVariableScopePath() const
+inline void HTNDecompositionContext::SetCurrentVariableScopeNodePath(const HTNNodePath& inCurrentVariableScopeNodePath)
 {
-    return mCurrentVariableScopePath;
+    mCurrentVariableScopeNodePath = inCurrentVariableScopeNodePath;
 }
 
+inline const HTNNodePath& HTNDecompositionContext::GetCurrentVariableScopeNodePath() const
+{
+    return mCurrentVariableScopeNodePath;
+}
+
+inline HTNNodePath& HTNDecompositionContext::GetCurrentVariableScopeNodePathMutable()
+{
+    return mCurrentVariableScopeNodePath;
+}
+
+#ifdef HTN_DEBUG
 inline const HTNDecompositionSnapshotDebug& HTNDecompositionContext::GetDecompositionSnapshot() const
 {
     return mDecompositionSnapshot;
 }
+#endif

@@ -1,8 +1,10 @@
 #include "HTNDebuggerWindow.h"
 
+#include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/HTNDecompositionVariablesPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
+#include "Domain/HTNNodePath.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Nodes/HTNDomainNode.h"
@@ -326,10 +328,8 @@ void HTNDebuggerWindow::RenderDecomposition()
         const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = LastDecomposition.mDecompositionContext.GetDecompositionSnapshot();
         HTNDecompositionPrinter              DecompositionPrinter =
             HTNDecompositionPrinter(LastDecomposition.mDomainNode, LastDecomposition.mEntryPointID, LastDecompositionSnapshot);
-        static const HTNNodeSnapshotDebug*                          SelectedNodeSnapshot = nullptr;
-        static std::vector<std::shared_ptr<const HTNValueNodeBase>> SelectedNodeArguments;
-        static std::string                                          SelectedNodeVariableScopePath;
-        DecompositionPrinter.Print(SelectedNodeSnapshot, SelectedNodeArguments, SelectedNodeVariableScopePath);
+        static HTNDecompositionNode SelectedNode;
+        DecompositionPrinter.Print(SelectedNode);
         ImGui::EndChild();
 
         // Watch window
@@ -345,13 +345,9 @@ void HTNDebuggerWindow::RenderDecomposition()
             ImGui::EndMenuBar();
         }
 
-        if (SelectedNodeSnapshot)
-        {
-            const HTNVariables&              SelectedNodeVariables = SelectedNodeSnapshot->GetVariables();
-            HTNDecompositionVariablesPrinter DecompositionVariablesPrinter =
-                HTNDecompositionVariablesPrinter(LastDecomposition.mDomainNode, SelectedNodeVariables, SelectedNodeVariableScopePath);
-            DecompositionVariablesPrinter.Print(SelectedNodeArguments);
-        }
+        HTNDecompositionVariablesPrinter DecompositionVariablesPrinter =
+            HTNDecompositionVariablesPrinter(LastDecomposition.mDomainNode, SelectedNode);
+        DecompositionVariablesPrinter.Print();
         ImGui::EndChild();
         ImGui::PopStyleVar();
     }
