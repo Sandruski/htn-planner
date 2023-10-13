@@ -8,15 +8,6 @@ HTNDecompositionNodeScope::HTNDecompositionNodeScope(HTNDecompositionContext& ou
     : HTNNodeScope(outDecompositionContext.GetCurrentNodePathMutable(), inNodeID),
       mIndices(outDecompositionContext.GetCurrentDecompositionMutable().GetEnvironmentMutable().GetIndicesMutable())
 {
-    if (!mResult)
-    {
-        return;
-    }
-
-#ifdef HTN_DEBUG
-    const std::string& NodePath = mNodePath.GetNodePath();
-    outDecompositionContext.RecordNodeSnapshot(NodePath);
-#endif
 }
 
 HTNDecompositionNodeScope::~HTNDecompositionNodeScope()

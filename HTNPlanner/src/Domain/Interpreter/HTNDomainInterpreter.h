@@ -39,11 +39,16 @@ public:
 private:
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointID;
-    HTNDecompositionContext& mDecompositionContext;
+    HTNDecompositionContext&             mDecompositionContext;
+
+#ifdef HTN_DEBUG
+private:
+    void RecordCurrentNodeSnapshot(const bool inResult);
+#endif
 };
 
 inline HTNDomainInterpreter::HTNDomainInterpreter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                                           HTNDecompositionContext& ioDecompositionContext)
+                                                  HTNDecompositionContext& ioDecompositionContext)
     : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionContext(ioDecompositionContext)
 {
 }

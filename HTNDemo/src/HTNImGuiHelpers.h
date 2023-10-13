@@ -23,13 +23,15 @@ const ImGuiTreeNodeFlags   kDefaultTreeNodeFlags   = ImGuiTreeNodeFlags_OpenOnAr
 
 const ImVec4 kFailColor    = ImVec4(1.f, 0.f, 0.f, 1.f);
 const ImVec4 kSuccessColor = ImVec4(0.f, 1.f, 0.f, 1.f);
+const ImVec4 kParametersColor = ImVec4(1.f, 0.5f, 0.f, 1.f);
+const ImVec4 kArgumentsColor = ImVec4(1.f, 1.f, 0.f, 1.f);
 } // namespace HTNImGuiHelpers
 
 namespace HTNImGuiHelpers
 {
 inline std::string MakeLabel(const std::string& inLabel, const std::string& inID)
 {
-    return std::format("{}##{}", inLabel, inID);
+    return std::format("##{}{}", inLabel, inID);
 }
 
 inline void SelectTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags)

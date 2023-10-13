@@ -14,7 +14,8 @@ class HTNDomainNode;
 class HTNNodeSnapshotDebug;
 
 using HTNNodeSelectionFunction = std::function<void(const HTNNodeSnapshotDebug& inNodeSnapshot)>;
-using HTNNodeBehaviorFunction = std::function<void()>;
+using HTNNodeTitleFunction     = std::function<void(const HTNNodeSnapshotDebug& inNodeSnapshot)>;
+using HTNNodeBehaviorFunction  = std::function<void()>;
 
 /**
  * Prints a decomposition
@@ -45,9 +46,8 @@ public:
     HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
 
 private:
-    bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const std::string& inNodeDescription,
-                                  const HTNNodeSelectionFunction& inNodeSelectionFunction,
-                                  const HTNNodeBehaviorFunction* inNodeBehaviorFunction);
+    bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const std::string& inNodeDescription, const HTNNodeTitleFunction& inNodeTitleFunction,
+                                  const HTNNodeSelectionFunction& inNodeSelectionFunction, const HTNNodeBehaviorFunction* inNodeBehaviorFunction);
 
     void SetDecompositionStepRange(const size_t inMinDecompositionStep, const size_t inMaxDecompositionStep);
     bool IsDecompositionStepBetweenRange(const size_t inDecompositionStep) const;
@@ -86,6 +86,7 @@ inline void HTNDecompositionPrinter::SetDecompositionStepRange(const size_t inMi
 
 inline bool HTNDecompositionPrinter::IsDecompositionStepBetweenRange(const size_t inDecompositionStep) const
 {
+    // TODO salvarez Fix this
     return (inDecompositionStep >= mMinDecompositionStep) && (inDecompositionStep < mMaxDecompositionStep);
 }
 

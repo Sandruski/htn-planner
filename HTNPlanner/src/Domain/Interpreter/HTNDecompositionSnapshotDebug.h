@@ -19,11 +19,13 @@ class HTNNodeSnapshotDebug
 {
 public:
     HTNNodeSnapshotDebug() = default;
-    explicit HTNNodeSnapshotDebug(const HTNVariables& inVariables);
+    explicit HTNNodeSnapshotDebug(const bool inResult, const HTNVariables& inVariables);
 
+    bool                GetResult() const;
     const HTNVariables& GetVariables() const;
 
 private:
+    bool         mResult = false;
     HTNVariables mVariables;
 };
 
@@ -41,8 +43,13 @@ private:
     size_t                                mDecompositionStep = 0;
 };
 
-inline HTNNodeSnapshotDebug::HTNNodeSnapshotDebug(const HTNVariables& inVariables) : mVariables(inVariables)
+inline HTNNodeSnapshotDebug::HTNNodeSnapshotDebug(const bool inResult, const HTNVariables& inVariables) : mResult(inResult), mVariables(inVariables)
 {
+}
+
+inline bool HTNNodeSnapshotDebug::GetResult() const
+{
+    return mResult;
 }
 
 inline const HTNVariables& HTNNodeSnapshotDebug::GetVariables() const
