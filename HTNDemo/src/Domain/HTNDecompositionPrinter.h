@@ -54,8 +54,10 @@ private:
     bool IsDecompositionStepBetweenRange(const size_t inDecompositionStep) const;
 
     void SelectNode(const HTNNodeSnapshotDebug& inNodeSnapshot);
+    void SelectNode(const HTNNodeSnapshotDebug&                                          inNodeSnapshot,
+                    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters);
     void SelectNode(const HTNNodeSnapshotDebug&                                           inNodeSnapshot,
-                    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeParametersArguments);
+                    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments);
     bool IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const;
 
     std::shared_ptr<const HTNDomainNode> mDomainNode;
@@ -97,10 +99,16 @@ inline void HTNDecompositionPrinter::SelectNode(const HTNNodeSnapshotDebug& inNo
     mSelectedNode = HTNDecompositionNode(inNodeSnapshot);
 }
 
-inline void HTNDecompositionPrinter::SelectNode(const HTNNodeSnapshotDebug&                                           inNodeSnapshot,
-                                                const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeParametersArguments)
+inline void HTNDecompositionPrinter::SelectNode(const HTNNodeSnapshotDebug&                                          inNodeSnapshot,
+                                                const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters)
 {
-    mSelectedNode = HTNDecompositionNode(inNodeSnapshot, inNodeParametersArguments, mCurrentVariableScopeNodePath);
+    mSelectedNode = HTNDecompositionNode(inNodeSnapshot, inNodeParameters, mCurrentVariableScopeNodePath);
+}
+
+inline void HTNDecompositionPrinter::SelectNode(const HTNNodeSnapshotDebug&                                           inNodeSnapshot,
+                                                const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments)
+{
+    mSelectedNode = HTNDecompositionNode(inNodeSnapshot, inNodeArguments, mCurrentVariableScopeNodePath);
 }
 
 inline bool HTNDecompositionPrinter::IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const

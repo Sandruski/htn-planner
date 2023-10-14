@@ -41,7 +41,7 @@
         (branch_eat
             (
             )
-            (   (!eat ?inp_food)
+            (   (!eat ?inp_food ?potato)
             )
         )
     )

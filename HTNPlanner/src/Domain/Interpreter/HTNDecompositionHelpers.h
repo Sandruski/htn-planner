@@ -25,4 +25,8 @@ const std::string kDefaultTopLevelMethodID = "behave";
 constexpr unsigned int kTopLevelCompoundTaskNodeID = 0;
 
 const std::string kPathSegmentSeparator = " ";
-} // namespace HTNDomainHelpers
+
+const std::string kInputPrefix       = "inp_";
+const std::string kOutputPrefix      = "out_";
+const std::string kInputOutputPrefix = "io_";
+} // namespace HTNDecompositionHelpers

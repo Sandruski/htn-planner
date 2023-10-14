@@ -73,13 +73,10 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode)
     NodeDescription                                                                   = IDString;
 
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& ParameterNodes = inAxiomNode.GetParameterNodes();
-    std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>       ParameterArgumentNodes;
-    ParameterArgumentNodes.reserve(ParameterNodes.size());
-    std::vector<std::string> ParameterStrings;
+    std::vector<std::string>                                             ParameterStrings;
     ParameterStrings.reserve(ParameterNodes.size());
     for (const std::shared_ptr<const HTNVariableExpressionNode>& ParameterNode : ParameterNodes)
     {
-        ParameterArgumentNodes.emplace_back(ParameterNode);
         const HTNAtom     Parameter       = GetNodeValue(*ParameterNode);
         const std::string ParameterString = Parameter.ToString(ShouldDoubleQuoteString);
         ParameterStrings.emplace_back(ParameterString);
@@ -99,7 +96,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode)
     };
 
     const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) {
-        SelectNode(inNodeSnapshot, ParameterArgumentNodes);
+        SelectNode(inNodeSnapshot, ParameterNodes);
     };
 
     const HTNNodeBehaviorFunction NodeBehaviorFunction = [&]() {
@@ -124,13 +121,10 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode)
     NodeDescription                                                                   = IDString;
 
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& ParameterNodes = inMethodNode.GetParameterNodes();
-    std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>       ParameterArgumentNodes;
-    ParameterArgumentNodes.reserve(ParameterNodes.size());
-    std::vector<std::string> ParameterStrings;
+    std::vector<std::string>                                             ParameterStrings;
     ParameterStrings.reserve(ParameterNodes.size());
     for (const std::shared_ptr<const HTNVariableExpressionNode>& ParameterNode : ParameterNodes)
     {
-        ParameterArgumentNodes.emplace_back(ParameterNode);
         const HTNAtom     Parameter       = GetNodeValue(*ParameterNode);
         const std::string ParameterString = Parameter.ToString(ShouldDoubleQuoteString);
         ParameterStrings.emplace_back(ParameterString);
@@ -149,7 +143,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode)
     };
 
     const HTNNodeSelectionFunction NodeSelectionFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) {
-        SelectNode(inNodeSnapshot, ParameterArgumentNodes);
+        SelectNode(inNodeSnapshot, ParameterNodes);
     };
 
     const HTNNodeBehaviorFunction NodeBehaviorFunction = [&]() {
@@ -223,7 +217,9 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode)
         for (const std::string& ArgumentString : ArgumentStrings)
         {
             ImGui::SameLine();
-            ImGui::TextColored(HTNImGuiHelpers::kArgumentsColor, ArgumentString.c_str());
+            const ImVec4 ArgumentColor =
+                HTNDecompositionHelpers::IsParameter(ArgumentString) ? HTNImGuiHelpers::kParametersColor : HTNImGuiHelpers::kArgumentsColor;
+            ImGui::TextColored(ArgumentColor, ArgumentString.c_str());
         }
     };
 
@@ -263,7 +259,9 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
         for (const std::string& ArgumentString : ArgumentStrings)
         {
             ImGui::SameLine();
-            ImGui::TextColored(HTNImGuiHelpers::kArgumentsColor, ArgumentString.c_str());
+            const ImVec4 ArgumentColor =
+                HTNDecompositionHelpers::IsParameter(ArgumentString) ? HTNImGuiHelpers::kParametersColor : HTNImGuiHelpers::kArgumentsColor;
+            ImGui::TextColored(ArgumentColor, ArgumentString.c_str());
         }
     };
 
@@ -399,7 +397,9 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
         for (const std::string& ArgumentString : ArgumentStrings)
         {
             ImGui::SameLine();
-            ImGui::TextColored(HTNImGuiHelpers::kArgumentsColor, ArgumentString.c_str());
+            const ImVec4 ArgumentColor =
+                HTNDecompositionHelpers::IsParameter(ArgumentString) ? HTNImGuiHelpers::kParametersColor : HTNImGuiHelpers::kArgumentsColor;
+            ImGui::TextColored(ArgumentColor, ArgumentString.c_str());
         }
     };
 
@@ -446,7 +446,9 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
         for (const std::string& ArgumentString : ArgumentStrings)
         {
             ImGui::SameLine();
-            ImGui::TextColored(HTNImGuiHelpers::kArgumentsColor, ArgumentString.c_str());
+            const ImVec4 ArgumentColor =
+                HTNDecompositionHelpers::IsParameter(ArgumentString) ? HTNImGuiHelpers::kParametersColor : HTNImGuiHelpers::kArgumentsColor;
+            ImGui::TextColored(ArgumentColor, ArgumentString.c_str());
         }
     };
 

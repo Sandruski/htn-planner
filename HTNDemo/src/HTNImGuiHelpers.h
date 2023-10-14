@@ -21,10 +21,10 @@ const ImGuiTableFlags      kDefaultTableFlags      = ImGuiTableFlags_RowBg;
 const ImGuiInputTextFlags  kDefaultInputTextFlags  = ImGuiInputTextFlags_CharsNoBlank;
 const ImGuiTreeNodeFlags   kDefaultTreeNodeFlags   = ImGuiTreeNodeFlags_OpenOnArrow;
 
-const ImVec4 kFailColor    = ImVec4(1.f, 0.f, 0.f, 1.f);
-const ImVec4 kSuccessColor = ImVec4(0.f, 1.f, 0.f, 1.f);
-const ImVec4 kParametersColor = ImVec4(1.f, 0.5f, 0.f, 1.f);
-const ImVec4 kArgumentsColor = ImVec4(1.f, 1.f, 0.f, 1.f);
+constexpr ImVec4 kFailColor       = ImVec4(1.f, 0.f, 0.f, 1.f);
+constexpr ImVec4 kSuccessColor    = ImVec4(0.f, 1.f, 0.f, 1.f);
+constexpr ImVec4 kParametersColor = ImVec4(1.f, 0.5f, 0.f, 1.f);
+constexpr ImVec4 kArgumentsColor  = ImVec4(1.f, 1.f, 0.f, 1.f);
 } // namespace HTNImGuiHelpers
 
 namespace HTNImGuiHelpers
