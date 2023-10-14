@@ -10,12 +10,14 @@ class HTNBranchNode;
 class HTNConditionNodeBase;
 class HTNConstantNode;
 class HTNConstantsNode;
+class HTNConstantValueNode;
 class HTNDomainNode;
 class HTNMethodNode;
 class HTNTaskNodeBase;
 class HTNToken;
 class HTNValueNode;
 class HTNValueNodeBase;
+class HTNVariableValueNode;
 
 // Syntactic analysis
 // Recursive descent parser
@@ -37,11 +39,13 @@ private:
     bool ParseBranchNode(std::shared_ptr<const HTNBranchNode>& outBranchNode, unsigned int& ioPosition);
     bool ParseConditionNode(std::shared_ptr<const HTNConditionNodeBase>& outConditionNode, unsigned int& ioPosition);
     bool ParseSubConditionNode(std::shared_ptr<const HTNConditionNodeBase>& outSubConditionNode, unsigned int& ioPosition);
-    // HTNPrimitiveTaskNode or HTNCompoundTaskNode
     bool ParseTaskNode(std::shared_ptr<const HTNTaskNodeBase>& outTaskNode, unsigned int& ioPosition);
     bool ParseIdentifierNode(std::shared_ptr<const HTNValueNode>& outIdentifierNode, unsigned int& ioPosition);
-    // HTNValueNode, HTNVariableValueNode, or HTNConstantValueNode
+    bool ParseParameterNode(std::shared_ptr<const HTNValueNodeBase>& outParameterNode, unsigned int& ioPosition);
     bool ParseArgumentNode(std::shared_ptr<const HTNValueNodeBase>& outArgumentNode, unsigned int& ioPosition);
+    bool ParseValueNode(std::shared_ptr<const HTNValueNodeBase>& outValueNode, unsigned int& ioPosition);
+    bool ParseVariableNode(std::shared_ptr<const HTNVariableValueNode>& outVariableValueNode, unsigned int& ioPosition);
+    bool ParseConstantExpressionNode(std::shared_ptr<const HTNConstantValueNode>& outConstantValueNode, unsigned int& ioPosition);
     bool ParseLiteralNode(std::shared_ptr<const HTNValueNodeBase>& outLiteralNode, unsigned int& ioPosition);
 
     bool ParseLiteral(HTNAtom& outLiteral, unsigned int& inPosition);

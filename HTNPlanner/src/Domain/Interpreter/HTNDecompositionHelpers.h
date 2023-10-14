@@ -16,6 +16,8 @@ bool TryPopSegmentFromPath(std::string& ioPath);
 
 bool FindVariableID(const std::string& inVariablePath, std::string& outVariableID);
 
+bool IsParameter(const std::string& inVariableID);
+
 // Name of the default top-level method of a top-level domain
 const std::string kDefaultTopLevelMethodID = "behave";
 

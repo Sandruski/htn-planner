@@ -101,9 +101,9 @@ HTNAtom HTNDomainPrinter::Visit(const HTNConstantNode& inConstantNode)
     const std::shared_ptr<const HTNValueNode>& IDNode = inConstantNode.GetIDNode();
     GetNodeValue(*IDNode);
 
-    const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode = inConstantNode.GetArgumentNode();
+    const std::shared_ptr<const HTNValueNodeBase>& ValueNode = inConstantNode.GetValueNode();
     ImGui::SameLine();
-    GetNodeValue(*ArgumentNode);
+    GetNodeValue(*ValueNode);
 
     return true;
 }
@@ -117,11 +117,11 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAxiomNode& inAxiomNode)
     GetNodeValue(*IDNode);
 
     ImGui::Indent();
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inAxiomNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ParameterNodes = inAxiomNode.GetParameterNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& ParameterNode : ParameterNodes)
     {
         ImGui::SameLine();
-        GetNodeValue(*ArgumentNode);
+        GetNodeValue(*ParameterNode);
     }
 
     if (const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode = inAxiomNode.GetConditionNode())
@@ -147,11 +147,11 @@ HTNAtom HTNDomainPrinter::Visit(const HTNMethodNode& inMethodNode)
     }
 
     ImGui::Indent();
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inMethodNode.GetArgumentNodes();
-    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ParameterNodes = inMethodNode.GetParameterNodes();
+    for (const std::shared_ptr<const HTNValueNodeBase>& ParameterNode : ParameterNodes)
     {
         ImGui::SameLine();
-        GetNodeValue(*ArgumentNode);
+        GetNodeValue(*ParameterNode);
     }
 
     const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes = inMethodNode.GetBranchNodes();

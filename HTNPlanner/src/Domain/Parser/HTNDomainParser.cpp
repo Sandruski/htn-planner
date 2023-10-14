@@ -16,15 +16,19 @@
 Backus Naur Form (BNF):
 <domain node> ::= '(' ':' 'domain' <identifier node> 'top_level_domain'? <axiom node>* <method node>* ')'
 <constants node> ::= '(' ':' 'constants' <identifier node>? <constant node>* ')'
-<constant node> ::= '(' <identifier node> <literal node>* ')'
-<axiom node> ::= '(' ':' 'axiom' '(' <identifier node> <argument node>* ')' <condition node>? ')'
-<method node> ::= '(' ':' 'method' '(' <identifier node> <argument node>* 'top_level_method'? ')' <branch node>* ')'
+<constant node> ::= '(' <identifier node> <value node>* ')'
+<axiom node> ::= '(' ':' 'axiom' '(' <identifier node> <parameter node>* ')' <condition node>? ')'
+<method node> ::= '(' ':' 'method' '(' <identifier node> <parameter node>* 'top_level_method'? ')' <branch node>* ')'
 <branch node> ::= '(' <identifier node> '(' <condition node>? ')' '(' <task node>* ')' ')'
 <condition node> ::= '(' (('and' | 'or' | 'alt') <sub-condition node>)* ')'
 <sub-condition node> ::= <condition node> | ('(' ('not' <sub-condition node>)* ')') | ('(' ('#'? <identifier node> <argument node>*)* ')')
 <task node> ::= '(' '!'? <identifier node> <argument node>* ')'
 <identifier node> ::= 'identifier'
-<argument node> ::= ('?' <identifier node>) | ('@' <identifier node>) | <literal node>
+<parameter node> ::= <variable node>
+<argument node> ::= <variable node> | <constant expression node> | <literal node>
+<value node> ::= <literal node>
+<variable node> ::= '?' <identifier node>
+<constant expression node> ::= '@' <identifier node>
 <literal node> ::= <literal>
 <literal> ::= ('(' <literal>+ ')') | 'true' | 'false' | 'number' | 'string'
 */
@@ -168,8 +172,8 @@ bool HTNDomainParser::ParseConstantNode(std::shared_ptr<const HTNConstantNode>& 
         return false;
     }
 
-    std::shared_ptr<const HTNValueNodeBase> ArgumentNode;
-    if (!ParseLiteralNode(ArgumentNode, CurrentPosition))
+    std::shared_ptr<const HTNValueNodeBase> ValueNode;
+    if (!ParseValueNode(ValueNode, CurrentPosition))
     {
         return false;
     }
@@ -179,7 +183,7 @@ bool HTNDomainParser::ParseConstantNode(std::shared_ptr<const HTNConstantNode>& 
         return false;
     }
 
-    outConstantNode = std::make_shared<HTNConstantNode>(IDNode, ArgumentNode);
+    outConstantNode = std::make_shared<HTNConstantNode>(IDNode, ValueNode);
     ioPosition      = CurrentPosition;
 
     return true;
@@ -215,11 +219,11 @@ bool HTNDomainParser::ParseAxiomNode(std::shared_ptr<const HTNAxiomNode>& outAxi
         return false;
     }
 
-    std::vector<std::shared_ptr<const HTNValueNodeBase>> ArgumentNodes;
-    std::shared_ptr<const HTNValueNodeBase>              ArgumentNode;
-    while (ParseArgumentNode(ArgumentNode, CurrentPosition))
+    std::vector<std::shared_ptr<const HTNValueNodeBase>> ParameterNodes;
+    std::shared_ptr<const HTNValueNodeBase>              ParameterNode;
+    while (ParseArgumentNode(ParameterNode, CurrentPosition))
     {
-        ArgumentNodes.emplace_back(ArgumentNode);
+        ParameterNodes.emplace_back(ParameterNode);
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
@@ -235,7 +239,7 @@ bool HTNDomainParser::ParseAxiomNode(std::shared_ptr<const HTNAxiomNode>& outAxi
         return false;
     }
 
-    outAxiomNode = std::make_shared<HTNAxiomNode>(IDNode, ArgumentNodes, ConditionNode);
+    outAxiomNode = std::make_shared<HTNAxiomNode>(IDNode, ParameterNodes, ConditionNode);
     ioPosition   = CurrentPosition;
 
     return true;
@@ -271,11 +275,11 @@ bool HTNDomainParser::ParseMethodNode(std::shared_ptr<const HTNMethodNode>& outM
         return false;
     }
 
-    std::vector<std::shared_ptr<const HTNValueNodeBase>> ArgumentNodes;
-    std::shared_ptr<const HTNValueNodeBase>              ArgumentNode;
-    while (ParseArgumentNode(ArgumentNode, CurrentPosition))
+    std::vector<std::shared_ptr<const HTNValueNodeBase>> ParameterNodes;
+    std::shared_ptr<const HTNValueNodeBase>              ParameterNode;
+    while (ParseParameterNode(ParameterNode, CurrentPosition))
     {
-        ArgumentNodes.emplace_back(ArgumentNode);
+        ParameterNodes.emplace_back(ParameterNode);
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
@@ -297,7 +301,7 @@ bool HTNDomainParser::ParseMethodNode(std::shared_ptr<const HTNMethodNode>& outM
         return false;
     }
 
-    outMethodNode = std::make_shared<HTNMethodNode>(IDNode, ArgumentNodes, BranchNodes, IsTopLevelMethod);
+    outMethodNode = std::make_shared<HTNMethodNode>(IDNode, ParameterNodes, BranchNodes, IsTopLevelMethod);
     ioPosition    = CurrentPosition;
 
     return true;
@@ -542,31 +546,43 @@ bool HTNDomainParser::ParseIdentifierNode(std::shared_ptr<const HTNValueNode>& o
     return true;
 }
 
+bool HTNDomainParser::ParseParameterNode(std::shared_ptr<const HTNValueNodeBase>& outParameterNode, unsigned int& ioPosition)
+{
+    unsigned int CurrentPosition = ioPosition;
+
+    std::shared_ptr<const HTNValueNodeBase> ParameterNode;
+
+    std::shared_ptr<const HTNVariableValueNode> VariableNode;
+    if (ParseVariableNode(VariableNode, CurrentPosition))
+    {
+        ParameterNode = VariableNode;
+    }
+    else
+    {
+        return false;
+    }
+
+    outParameterNode = ParameterNode;
+    ioPosition       = CurrentPosition;
+
+    return true;
+}
+
 bool HTNDomainParser::ParseArgumentNode(std::shared_ptr<const HTNValueNodeBase>& outArgumentNode, unsigned int& ioPosition)
 {
     unsigned int CurrentPosition = ioPosition;
 
     std::shared_ptr<const HTNValueNodeBase> ArgumentNode;
 
-    if (ParseToken(HTNTokenType::QUESTION_MARK, CurrentPosition))
+    std::shared_ptr<const HTNVariableValueNode> VariableNode;
+    std::shared_ptr<const HTNConstantValueNode> ConstantNode;
+    if (ParseVariableNode(VariableNode, CurrentPosition))
     {
-        const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
-        if (!IdentifierToken)
-        {
-            return false;
-        }
-
-        ArgumentNode = std::make_shared<HTNVariableValueNode>(IdentifierToken->GetValue());
+        ArgumentNode = VariableNode;
     }
-    else if (ParseToken(HTNTokenType::AT, CurrentPosition))
+    else if (ParseConstantExpressionNode(ConstantNode, CurrentPosition))
     {
-        const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
-        if (!IdentifierToken)
-        {
-            return false;
-        }
-
-        ArgumentNode = std::make_shared<HTNConstantValueNode>(IdentifierToken->GetValue());
+        ArgumentNode = ConstantNode;
     }
     else if (!ParseLiteralNode(ArgumentNode, CurrentPosition))
     {
@@ -575,6 +591,70 @@ bool HTNDomainParser::ParseArgumentNode(std::shared_ptr<const HTNValueNodeBase>&
 
     outArgumentNode = ArgumentNode;
     ioPosition      = CurrentPosition;
+
+    return true;
+}
+
+bool HTNDomainParser::ParseValueNode(std::shared_ptr<const HTNValueNodeBase>& outValueNode, unsigned int& ioPosition)
+{
+    unsigned int CurrentPosition = ioPosition;
+
+    std::shared_ptr<const HTNValueNodeBase> ValueNode;
+
+    std::shared_ptr<const HTNValueNodeBase> LiteralNode;
+    if (ParseLiteralNode(LiteralNode, CurrentPosition))
+    {
+        ValueNode = LiteralNode;
+    }
+    else
+    {
+        return false;
+    }
+
+    outValueNode = ValueNode;
+    ioPosition   = CurrentPosition;
+
+    return true;
+}
+
+bool HTNDomainParser::ParseVariableNode(std::shared_ptr<const HTNVariableValueNode>& outVariableValueNode, unsigned int& ioPosition)
+{
+    unsigned int CurrentPosition = ioPosition;
+
+    if (!ParseToken(HTNTokenType::QUESTION_MARK, CurrentPosition))
+    {
+        return false;
+    }
+
+    const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
+    if (!IdentifierToken)
+    {
+        return false;
+    }
+
+    outVariableValueNode = std::make_shared<HTNVariableValueNode>(IdentifierToken->GetValue());
+    ioPosition           = CurrentPosition;
+
+    return true;
+}
+
+bool HTNDomainParser::ParseConstantExpressionNode(std::shared_ptr<const HTNConstantValueNode>& outConstantValueNode, unsigned int& ioPosition)
+{
+    unsigned int CurrentPosition = ioPosition;
+
+    if (!ParseToken(HTNTokenType::AT, CurrentPosition))
+    {
+        return false;
+    }
+
+    const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
+    if (!IdentifierToken)
+    {
+        return false;
+    }
+
+    outConstantValueNode = std::make_shared<HTNConstantValueNode>(IdentifierToken->GetValue());
+    ioPosition           = CurrentPosition;
 
     return true;
 }

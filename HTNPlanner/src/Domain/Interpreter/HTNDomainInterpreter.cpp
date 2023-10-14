@@ -89,8 +89,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode)
 {
     const HTNDecompositionNodeScope ConstantNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inConstantNode.GetID());
 
-    const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode = inConstantNode.GetArgumentNode();
-    return GetNodeValue(*ArgumentNode);
+    const std::shared_ptr<const HTNValueNodeBase>& ValueNode = inConstantNode.GetValueNode();
+    return GetNodeValue(*ValueNode);
 }
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode)
@@ -269,18 +269,18 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         AxiomConditionNodeArguments.emplace_back(AxiomConditionNodeArgument);
     }
 
-    std::vector<HTNAtom> AxiomNodeArguments;
+    std::vector<HTNAtom> AxiomNodeParameters;
     {
         const HTNDecompositionVariableScopeNodeScope AxiomVariableScopeNodeScope =
             HTNDecompositionVariableScopeNodeScope(mDecompositionContext, AxiomNodeID);
 
-        // Initialize the input arguments of the axiom node with the arguments of the condition node
-        const std::vector<std::shared_ptr<const HTNValueNodeBase>>& AxiomNodeArgumentNodes = AxiomNode->GetArgumentNodes();
-        for (std::size_t i = 0; i < AxiomNodeArgumentNodes.size(); ++i)
+        // Initialize the input parameters of the axiom node with the arguments of the condition node
+        const std::vector<std::shared_ptr<const HTNValueNodeBase>>& AxiomNodeParameterNodes = AxiomNode->GetParameterNodes();
+        for (std::size_t i = 0; i < AxiomNodeParameterNodes.size(); ++i)
         {
-            const std::shared_ptr<const HTNValueNodeBase>& AxiomNodeArgumentNode      = AxiomNodeArgumentNodes[i];
+            const std::shared_ptr<const HTNValueNodeBase>& AxiomNodeParameterNode    = AxiomNodeParameterNodes[i];
             const HTNAtom&                                 AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
-            SetNodeValue(*AxiomNodeArgumentNode, AxiomConditionNodeArgument);
+            SetNodeValue(*AxiomNodeParameterNode, AxiomConditionNodeArgument);
         }
 
         if (!GetNodeValue(*AxiomNode).GetValue<bool>())
@@ -288,19 +288,19 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
             HTN_RETURN(*this, false);
         }
 
-        AxiomNodeArguments.reserve(AxiomNodeArgumentNodes.size());
-        for (const std::shared_ptr<const HTNValueNodeBase>& AxiomNodeArgumentNode : AxiomNodeArgumentNodes)
+        AxiomNodeParameters.reserve(AxiomNodeParameterNodes.size());
+        for (const std::shared_ptr<const HTNValueNodeBase>& AxiomNodeParameterNode : AxiomNodeParameterNodes)
         {
-            const HTNAtom AxiomNodeArgument = GetNodeValue(*AxiomNodeArgumentNode);
-            AxiomNodeArguments.emplace_back(AxiomNodeArgument);
+            const HTNAtom AxiomNodeParameter = GetNodeValue(*AxiomNodeParameterNode);
+            AxiomNodeParameters.emplace_back(AxiomNodeParameter);
         }
     }
 
-    // Initialize the arguments of the condition node with the output arguments of the axiom node
+    // Initialize the arguments of the condition node with the output parameters of the axiom node
     for (std::size_t i = 0; i < AxiomConditionNodeArgumentNodes.size(); ++i)
     {
         const std::shared_ptr<const HTNValueNodeBase>& AxiomConditionNodeArgumentNode = AxiomConditionNodeArgumentNodes[i];
-        const HTNAtom&                                 AxiomNodeArgument              = AxiomNodeArguments[i];
+        const HTNAtom&                                 AxiomNodeArgument              = AxiomNodeParameters[i];
         SetNodeValue(*AxiomConditionNodeArgumentNode, AxiomNodeArgument);
     }
 
@@ -485,13 +485,13 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     const HTNDecompositionVariableScopeNodeScope MethodVariableScopeNodeScope =
         HTNDecompositionVariableScopeNodeScope(mDecompositionContext, MethodNodeID);
 
-    // Initialize the input arguments of the method node with the arguments of the compound task node
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& MethodNodeArgumentNodes = MethodNode->GetArgumentNodes();
-    for (std::size_t i = 0; i < MethodNodeArgumentNodes.size(); ++i)
+    // Initialize the input parameters of the method node with the arguments of the compound task node
+    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& MethodNodeParameterNodes = MethodNode->GetParameterNodes();
+    for (std::size_t i = 0; i < MethodNodeParameterNodes.size(); ++i)
     {
-        const std::shared_ptr<const HTNValueNodeBase>& MethodNodeArgumentNode   = MethodNodeArgumentNodes[i];
+        const std::shared_ptr<const HTNValueNodeBase>& MethodNodeParameterNode = MethodNodeParameterNodes[i];
         const HTNAtom&                                 CompoundTaskNodeArgument = CompoundTaskNodeArguments[i];
-        SetNodeValue(*MethodNodeArgumentNode, CompoundTaskNodeArgument);
+        SetNodeValue(*MethodNodeParameterNode, CompoundTaskNodeArgument);
     }
 
     HTN_RETURN(*this, GetNodeValue(*MethodNode).GetValue<bool>());

@@ -66,8 +66,8 @@ void HTNDecompositionNodeArgumentsValuesPrinter::Print()
 
 HTNAtom HTNDecompositionNodeArgumentsValuesPrinter::Visit(const HTNConstantNode& inConstantNode)
 {
-    const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode = inConstantNode.GetArgumentNode();
-    return GetNodeValue(*ArgumentNode);
+    const std::shared_ptr<const HTNValueNodeBase>& ValueNode = inConstantNode.GetValueNode();
+    return GetNodeValue(*ValueNode);
 }
 
 HTNAtom HTNDecompositionNodeArgumentsValuesPrinter::Visit(const HTNValueNode& inValueNode)
