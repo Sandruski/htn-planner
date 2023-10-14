@@ -21,8 +21,8 @@ const ImGuiTableFlags      kDefaultTableFlags      = ImGuiTableFlags_RowBg;
 const ImGuiInputTextFlags  kDefaultInputTextFlags  = ImGuiInputTextFlags_CharsNoBlank;
 const ImGuiTreeNodeFlags   kDefaultTreeNodeFlags   = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-constexpr ImVec4 kFailColor       = ImVec4(1.f, 0.f, 0.f, 1.f);
-constexpr ImVec4 kSuccessColor    = ImVec4(0.f, 1.f, 0.f, 1.f);
+constexpr ImVec4 kFailColor      = ImVec4(1.f, 0.5f, 0.5f, 1.f);
+constexpr ImVec4 kSuccessColor   = ImVec4(0.f, 1.f, 0.f, 1.f);
 constexpr ImVec4 kParameterColor = ImVec4(1.f, 0.5f, 0.f, 1.f);
 constexpr ImVec4 kArgumentColor  = ImVec4(1.f, 1.f, 0.f, 1.f);
 } // namespace HTNImGuiHelpers
