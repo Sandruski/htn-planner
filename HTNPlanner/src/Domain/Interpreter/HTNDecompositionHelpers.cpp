@@ -1,16 +1,16 @@
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 
 #include "Domain/Nodes/HTNTaskNode.h"
-#include "Domain/Nodes/HTNValueNode.h"
+#include "Domain/Nodes/HTNValueExpressionNode.h"
 
 namespace HTNDecompositionHelpers
 {
 std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const std::string& inEntryPointID)
 {
-    static constexpr bool IsIdentifier = true;
-    static constexpr bool IsTopLevel   = true;
-    return std::make_shared<HTNCompoundTaskNode>(std::make_shared<const HTNValueNode>(inEntryPointID, IsIdentifier),
-                                                 std::vector<std::shared_ptr<const HTNValueNodeBase>>(), kTopLevelCompoundTaskNodeID, IsTopLevel);
+    static constexpr bool IsTopLevel = true;
+    return std::make_shared<HTNCompoundTaskNode>(std::make_shared<const HTNIdentifierExpressionNode>(inEntryPointID),
+                                                 std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>(), kTopLevelCompoundTaskNodeID,
+                                                 IsTopLevel);
 }
 
 bool MakeVariablePath(const std::string& inVariableID, const std::string& inVariableScopeNodePath, std::string& outVariablePath)

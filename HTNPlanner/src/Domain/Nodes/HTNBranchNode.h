@@ -6,8 +6,8 @@
 #include <vector>
 
 class HTNConditionNodeBase;
+class HTNIdentifierExpressionNode;
 class HTNTaskNodeBase;
-class HTNValueNode;
 
 /**
  * Node representing a branch
@@ -15,21 +15,22 @@ class HTNValueNode;
 class HTNBranchNode final : public HTNNodeBase
 {
 public:
-    explicit HTNBranchNode(const std::shared_ptr<const HTNValueNode>& inIDNode, const std::shared_ptr<const HTNConditionNodeBase>& inPreConditionNode,
+    explicit HTNBranchNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&  inIDNode,
+                           const std::shared_ptr<const HTNConditionNodeBase>&         inPreConditionNode,
                            const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& inTaskNodes);
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
     std::string GetID() const final;
 
-    const std::shared_ptr<const HTNValueNode>&                 GetIDNode() const;
+    const std::shared_ptr<const HTNIdentifierExpressionNode>&  GetIDNode() const;
     const std::shared_ptr<const HTNConditionNodeBase>&         GetPreConditionNode() const;
     const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& GetTaskNodes() const;
 
 private:
     // Node representing the ID of the branch
     // - Unique within its method
-    std::shared_ptr<const HTNValueNode> mIDNode;
+    std::shared_ptr<const HTNIdentifierExpressionNode> mIDNode;
 
     // Node representing the pre-condition of the branch
     std::shared_ptr<const HTNConditionNodeBase> mPreConditionNode;
@@ -38,14 +39,14 @@ private:
     std::vector<std::shared_ptr<const HTNTaskNodeBase>> mTaskNodes;
 };
 
-inline HTNBranchNode::HTNBranchNode(const std::shared_ptr<const HTNValueNode>&                 inIDNode,
+inline HTNBranchNode::HTNBranchNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&  inIDNode,
                                     const std::shared_ptr<const HTNConditionNodeBase>&         inPreConditionNode,
                                     const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& inTaskNodes)
     : mIDNode(inIDNode), mPreConditionNode(inPreConditionNode), mTaskNodes(inTaskNodes)
 {
 }
 
-inline const std::shared_ptr<const HTNValueNode>& HTNBranchNode::GetIDNode() const
+inline const std::shared_ptr<const HTNIdentifierExpressionNode>& HTNBranchNode::GetIDNode() const
 {
     return mIDNode;
 }

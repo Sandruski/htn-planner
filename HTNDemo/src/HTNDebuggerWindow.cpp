@@ -2,8 +2,8 @@
 
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
-#include "Domain/HTNDecompositionNodeArgumentsIDsPrinter.h"
-#include "Domain/HTNDecompositionNodeArgumentsValuesPrinter.h"
+#include "Domain/HTNDecompositionNodeParameterArgumentIDsPrinter.h"
+#include "Domain/HTNDecompositionNodeParameterArgumentValuesPrinter.h"
 #include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/Interpreter/HTNNodePath.h"
@@ -350,13 +350,14 @@ void HTNDebuggerWindow::RenderDecomposition()
             ImGui::TableNextRow();
 
             ImGui::TableNextColumn();
-            HTNDecompositionNodeArgumentsIDsPrinter NodeArgumentsIDsPrinter = HTNDecompositionNodeArgumentsIDsPrinter(SelectedNode);
-            NodeArgumentsIDsPrinter.Print();
+            HTNDecompositionNodeParameterArgumentIDsPrinter NodeParameterArgumentIDsPrinter =
+                HTNDecompositionNodeParameterArgumentIDsPrinter(SelectedNode);
+            NodeParameterArgumentIDsPrinter.Print();
 
             ImGui::TableNextColumn();
-            HTNDecompositionNodeArgumentsValuesPrinter NodeArgumentsValuesPrinter =
-                HTNDecompositionNodeArgumentsValuesPrinter(LastDecomposition.mDomainNode, SelectedNode);
-            NodeArgumentsValuesPrinter.Print();
+            HTNDecompositionNodeParameterArgumentValuesPrinter NodeParameterArgumentValuesPrinter =
+                HTNDecompositionNodeParameterArgumentValuesPrinter(LastDecomposition.mDomainNode, SelectedNode);
+            NodeParameterArgumentValuesPrinter.Print();
 
             ImGui::EndTable();
         }

@@ -41,9 +41,10 @@ public:
     HTNAtom Visit(const HTNNotConditionNode& inNotConditionNode) final;
     HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode) final;
     HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode) final;
-    HTNAtom Visit(const HTNValueNode& inValueNode) final;
-    HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode) final;
-    HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
+    HTNAtom Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode) final;
+    HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode) final;
+    HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode) final;
+    HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode) final;
 
 private:
     bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const std::string& inNodeDescription, const HTNNodeTitleFunction& inNodeTitleFunction,
@@ -53,7 +54,8 @@ private:
     bool IsDecompositionStepBetweenRange(const size_t inDecompositionStep) const;
 
     void SelectNode(const HTNNodeSnapshotDebug& inNodeSnapshot);
-    void SelectNode(const HTNNodeSnapshotDebug& inNodeSnapshot, const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inNodeArguments);
+    void SelectNode(const HTNNodeSnapshotDebug&                                           inNodeSnapshot,
+                    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeParametersArguments);
     bool IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const;
 
     std::shared_ptr<const HTNDomainNode> mDomainNode;
@@ -95,10 +97,10 @@ inline void HTNDecompositionPrinter::SelectNode(const HTNNodeSnapshotDebug& inNo
     mSelectedNode = HTNDecompositionNode(inNodeSnapshot);
 }
 
-inline void HTNDecompositionPrinter::SelectNode(const HTNNodeSnapshotDebug&                                 inNodeSnapshot,
-                                                const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inNodeArguments)
+inline void HTNDecompositionPrinter::SelectNode(const HTNNodeSnapshotDebug&                                           inNodeSnapshot,
+                                                const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeParametersArguments)
 {
-    mSelectedNode = HTNDecompositionNode(inNodeSnapshot, inNodeArguments, mCurrentVariableScopeNodePath);
+    mSelectedNode = HTNDecompositionNode(inNodeSnapshot, inNodeParametersArguments, mCurrentVariableScopeNodePath);
 }
 
 inline bool HTNDecompositionPrinter::IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const

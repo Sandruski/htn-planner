@@ -15,7 +15,7 @@
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "Domain/Nodes/HTNTaskNode.h"
-#include "Domain/Nodes/HTNValueNode.h"
+#include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "WorldState/HTNWorldState.h"
 
 #ifdef HTN_DEBUG
@@ -89,7 +89,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode)
 {
     const HTNDecompositionNodeScope ConstantNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inConstantNode.GetID());
 
-    const std::shared_ptr<const HTNValueNodeBase>& ValueNode = inConstantNode.GetValueNode();
+    const std::shared_ptr<const HTNValueExpressionNodeBase>& ValueNode = inConstantNode.GetValueNode();
     return GetNodeValue(*ValueNode);
 }
 
@@ -185,11 +185,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
     const HTNWorldState* WorldState = mDecompositionContext.GetWorldState();
 
     // Gather fact arguments
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inConditionNode.GetArgumentNodes();
-    std::vector<HTNAtom>                                        FactArguments;
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inConditionNode.GetArgumentNodes();
+    std::vector<HTNAtom>                                                  FactArguments;
     FactArguments.reserve(ArgumentNodes.size());
     bool ShouldBindFactArguments = false;
-    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
+    for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
     {
         const HTNAtom Argument  = GetNodeValue(*ArgumentNode);
         ShouldBindFactArguments = ShouldBindFactArguments || !Argument.IsSet();
@@ -197,9 +197,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
     }
 
     // Check fact
-    const std::shared_ptr<const HTNValueNode>& ConditionNodeIDNode = inConditionNode.GetIDNode();
-    const std::string                          FactID              = GetNodeValue(*ConditionNodeIDNode).GetValue<std::string>();
-    const std::size_t                          FactArgumentsSize   = WorldState->GetFactArgumentsSize(FactID, FactArguments.size());
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& ConditionNodeIDNode = inConditionNode.GetIDNode();
+    const std::string                                         FactID              = GetNodeValue(*ConditionNodeIDNode).GetValue<std::string>();
+    const std::size_t                                         FactArgumentsSize   = WorldState->GetFactArgumentsSize(FactID, FactArguments.size());
     for (std::size_t FactArgumentsIndex = Indices.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsSize;
          FactArgumentsIndex             = Indices.AddOrIncrementIndex(CurrentNodePath))
     {
@@ -222,8 +222,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
         // Update variables
         for (std::size_t i = 0; i < ArgumentNodes.size(); ++i)
         {
-            const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode = ArgumentNodes[i];
-            const HTNAtom                                  FactArgument = FactArguments[i];
+            const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode = ArgumentNodes[i];
+            const HTNAtom                                            FactArgument = FactArguments[i];
             SetNodeValue(*ArgumentNode, FactArgument);
         }
 
@@ -251,19 +251,19 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 {
     const HTNDecompositionNodeScope AxiomConditionNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inAxiomConditionNode.GetID());
 
-    const std::shared_ptr<const HTNValueNode>& AxiomConditionNodeIDNode = inAxiomConditionNode.GetIDNode();
-    const std::string                          AxiomNodeID              = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
-    const std::shared_ptr<const HTNAxiomNode>  AxiomNode                = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& AxiomConditionNodeIDNode = inAxiomConditionNode.GetIDNode();
+    const std::string                                         AxiomNodeID = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
+    const std::shared_ptr<const HTNAxiomNode>                 AxiomNode   = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
     if (!AxiomNode)
     {
         LOG_ERROR("Axiom node [{}] could not be found", AxiomNodeID);
         HTN_RETURN(*this, false);
     }
 
-    std::vector<HTNAtom>                                        AxiomConditionNodeArguments;
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& AxiomConditionNodeArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
+    std::vector<HTNAtom>                                                  AxiomConditionNodeArguments;
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& AxiomConditionNodeArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
     AxiomConditionNodeArguments.reserve(AxiomConditionNodeArgumentNodes.size());
-    for (const std::shared_ptr<const HTNValueNodeBase>& AxiomConditionNodeArgumentNode : AxiomConditionNodeArgumentNodes)
+    for (const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomConditionNodeArgumentNode : AxiomConditionNodeArgumentNodes)
     {
         const HTNAtom AxiomConditionNodeArgument = GetNodeValue(*AxiomConditionNodeArgumentNode);
         AxiomConditionNodeArguments.emplace_back(AxiomConditionNodeArgument);
@@ -275,11 +275,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
             HTNDecompositionVariableScopeNodeScope(mDecompositionContext, AxiomNodeID);
 
         // Initialize the input parameters of the axiom node with the arguments of the condition node
-        const std::vector<std::shared_ptr<const HTNValueNodeBase>>& AxiomNodeParameterNodes = AxiomNode->GetParameterNodes();
+        const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& AxiomNodeParameterNodes = AxiomNode->GetParameterNodes();
         for (std::size_t i = 0; i < AxiomNodeParameterNodes.size(); ++i)
         {
-            const std::shared_ptr<const HTNValueNodeBase>& AxiomNodeParameterNode    = AxiomNodeParameterNodes[i];
-            const HTNAtom&                                 AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
+            const std::shared_ptr<const HTNVariableExpressionNode>& AxiomNodeParameterNode     = AxiomNodeParameterNodes[i];
+            const HTNAtom&                                          AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
             SetNodeValue(*AxiomNodeParameterNode, AxiomConditionNodeArgument);
         }
 
@@ -289,7 +289,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         }
 
         AxiomNodeParameters.reserve(AxiomNodeParameterNodes.size());
-        for (const std::shared_ptr<const HTNValueNodeBase>& AxiomNodeParameterNode : AxiomNodeParameterNodes)
+        for (const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomNodeParameterNode : AxiomNodeParameterNodes)
         {
             const HTNAtom AxiomNodeParameter = GetNodeValue(*AxiomNodeParameterNode);
             AxiomNodeParameters.emplace_back(AxiomNodeParameter);
@@ -299,8 +299,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     // Initialize the arguments of the condition node with the output parameters of the axiom node
     for (std::size_t i = 0; i < AxiomConditionNodeArgumentNodes.size(); ++i)
     {
-        const std::shared_ptr<const HTNValueNodeBase>& AxiomConditionNodeArgumentNode = AxiomConditionNodeArgumentNodes[i];
-        const HTNAtom&                                 AxiomNodeArgument              = AxiomNodeParameters[i];
+        const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomConditionNodeArgumentNode = AxiomConditionNodeArgumentNodes[i];
+        const HTNAtom&                                           AxiomNodeArgument              = AxiomNodeParameters[i];
         SetNodeValue(*AxiomConditionNodeArgumentNode, AxiomNodeArgument);
     }
 
@@ -458,9 +458,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
 {
     const HTNDecompositionNodeScope CompoundTaskNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inCompoundTaskNode.GetID());
 
-    const std::shared_ptr<const HTNValueNode>& CompoundTaskNodeIDNode = inCompoundTaskNode.GetIDNode();
-    const std::string                          MethodNodeID           = GetNodeValue(*CompoundTaskNodeIDNode).GetValue<std::string>();
-    const std::shared_ptr<const HTNMethodNode> MethodNode             = mDomainNode->FindMethodNodeByID(MethodNodeID);
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& CompoundTaskNodeIDNode = inCompoundTaskNode.GetIDNode();
+    const std::string                                         MethodNodeID           = GetNodeValue(*CompoundTaskNodeIDNode).GetValue<std::string>();
+    const std::shared_ptr<const HTNMethodNode>                MethodNode             = mDomainNode->FindMethodNodeByID(MethodNodeID);
     if (!MethodNode)
     {
         LOG_ERROR("Method node [{}] could not be found", MethodNodeID);
@@ -473,10 +473,10 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
         HTN_RETURN(*this, false);
     }
 
-    std::vector<HTNAtom>                                        CompoundTaskNodeArguments;
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& CompoundTaskNodeArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
+    std::vector<HTNAtom>                                                  CompoundTaskNodeArguments;
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& CompoundTaskNodeArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
     CompoundTaskNodeArguments.reserve(CompoundTaskNodeArgumentNodes.size());
-    for (const std::shared_ptr<const HTNValueNodeBase>& CompoundTaskNodeArgumentNode : CompoundTaskNodeArgumentNodes)
+    for (const std::shared_ptr<const HTNValueExpressionNodeBase>& CompoundTaskNodeArgumentNode : CompoundTaskNodeArgumentNodes)
     {
         const HTNAtom CompoundTaskNodeArgument = GetNodeValue(*CompoundTaskNodeArgumentNode);
         CompoundTaskNodeArguments.emplace_back(CompoundTaskNodeArgument);
@@ -486,11 +486,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
         HTNDecompositionVariableScopeNodeScope(mDecompositionContext, MethodNodeID);
 
     // Initialize the input parameters of the method node with the arguments of the compound task node
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& MethodNodeParameterNodes = MethodNode->GetParameterNodes();
+    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& MethodNodeParameterNodes = MethodNode->GetParameterNodes();
     for (std::size_t i = 0; i < MethodNodeParameterNodes.size(); ++i)
     {
-        const std::shared_ptr<const HTNValueNodeBase>& MethodNodeParameterNode = MethodNodeParameterNodes[i];
-        const HTNAtom&                                 CompoundTaskNodeArgument = CompoundTaskNodeArguments[i];
+        const std::shared_ptr<const HTNVariableExpressionNode>& MethodNodeParameterNode  = MethodNodeParameterNodes[i];
+        const HTNAtom&                                          CompoundTaskNodeArgument = CompoundTaskNodeArguments[i];
         SetNodeValue(*MethodNodeParameterNode, CompoundTaskNodeArgument);
     }
 
@@ -503,13 +503,13 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
 
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
 
-    const std::shared_ptr<const HTNValueNode>& IDNode = inPrimitiveTaskNode.GetIDNode();
-    const std::string                          ID     = GetNodeValue(*IDNode).GetValue<std::string>();
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inPrimitiveTaskNode.GetIDNode();
+    const std::string                                         ID     = GetNodeValue(*IDNode).GetValue<std::string>();
 
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& ArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
-    std::vector<HTNAtom>                                        Arguments;
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
+    std::vector<HTNAtom>                                                  Arguments;
     Arguments.reserve(ArgumentNodes.size());
-    for (const std::shared_ptr<const HTNValueNodeBase>& ArgumentNode : ArgumentNodes)
+    for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
     {
         const HTNAtom Argument = GetNodeValue(*ArgumentNode);
         Arguments.emplace_back(Argument);
@@ -521,18 +521,26 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
     HTN_RETURN(*this, true);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNValueNode& inValueNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode)
 {
-    const HTNDecompositionNodeScope ValueNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inValueNode.GetID());
+    const HTNDecompositionNodeScope IdentifierExpressionNodeScope =
+        HTNDecompositionNodeScope(mDecompositionContext, inIdentifierExpressionNode.GetID());
 
-    return inValueNode.GetValue();
+    return inIdentifierExpressionNode.GetValue();
 }
 
-void HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode, const HTNAtom& inVariableValueNodeValue)
+HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode)
 {
-    const HTNDecompositionNodeScope VariableValueNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inVariableValueNode.GetID());
+    const HTNDecompositionNodeScope LiteralExpressionNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inLiteralExpressionNode.GetID());
 
-    const std::string  VariableID                   = inVariableValueNode.GetValue().GetValue<std::string>();
+    return inLiteralExpressionNode.GetValue();
+}
+
+void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, const HTNAtom& inVariableExpressionNodeValue)
+{
+    const HTNDecompositionNodeScope VariableExpressionNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inVariableExpressionNode.GetID());
+
+    const std::string  VariableID                   = inVariableExpressionNode.GetValue().GetValue<std::string>();
     const std::string& CurrentVariableScopeNodePath = mDecompositionContext.GetCurrentVariableScopeNodePath().GetNodePath();
     std::string        CurrentVariablePath;
     if (!HTNDecompositionHelpers::MakeVariablePath(VariableID, CurrentVariableScopeNodePath, CurrentVariablePath))
@@ -544,14 +552,14 @@ void HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
     HTNVariables&           Variables            = Environment.GetVariablesMutable();
-    Variables.SetVariable(CurrentVariablePath, inVariableValueNodeValue);
+    Variables.SetVariable(CurrentVariablePath, inVariableExpressionNodeValue);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode)
 {
-    const HTNDecompositionNodeScope VariableValueNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inVariableValueNode.GetID());
+    const HTNDecompositionNodeScope VariableExpressionNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inVariableExpressionNode.GetID());
 
-    const std::string  VariableID                   = inVariableValueNode.GetValue().GetValue<std::string>();
+    const std::string  VariableID                   = inVariableExpressionNode.GetValue().GetValue<std::string>();
     const std::string& CurrentVariableScopeNodePath = mDecompositionContext.GetCurrentVariableScopeNodePath().GetNodePath();
     std::string        CurrentVariablePath;
     if (!HTNDecompositionHelpers::MakeVariablePath(VariableID, CurrentVariableScopeNodePath, CurrentVariablePath))
@@ -566,11 +574,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableValueNode& inVariableValueN
     return Variables.GetVariable(CurrentVariablePath);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNConstantValueNode& inConstantValueNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode)
 {
-    const HTNDecompositionNodeScope ConstantValueNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inConstantValueNode.GetID());
+    const HTNDecompositionNodeScope ConstantExpressionNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inConstantExpressionNode.GetID());
 
-    const std::string&                     ConstantNodeID = inConstantValueNode.GetValue().GetValue<std::string>();
+    const std::string&                     ConstantNodeID = inConstantExpressionNode.GetValue().GetValue<std::string>();
     std::shared_ptr<const HTNConstantNode> ConstantNode   = mDomainNode->FindConstantNodeByID(ConstantNodeID);
     if (!ConstantNode)
     {

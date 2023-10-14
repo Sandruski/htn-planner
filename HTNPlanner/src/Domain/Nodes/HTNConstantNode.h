@@ -4,8 +4,8 @@
 
 #include <memory>
 
-class HTNValueNode;
-class HTNValueNodeBase;
+class HTNIdentifierExpressionNode;
+class HTNLiteralExpressionNode;
 
 /**
  * Node representing a constant
@@ -13,36 +13,37 @@ class HTNValueNodeBase;
 class HTNConstantNode final : public HTNNodeBase
 {
 public:
-    explicit HTNConstantNode(const std::shared_ptr<const HTNValueNode>& inIDNode, const std::shared_ptr<const HTNValueNodeBase>& inValueNode);
+    explicit HTNConstantNode(const std::shared_ptr<const HTNIdentifierExpressionNode>& inIDNode,
+                             const std::shared_ptr<const HTNLiteralExpressionNode>& inValueNode);
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
     std::string GetID() const final;
 
-    const std::shared_ptr<const HTNValueNode>&     GetIDNode() const;
-    const std::shared_ptr<const HTNValueNodeBase>& GetValueNode() const;
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& GetIDNode() const;
+    const std::shared_ptr<const HTNLiteralExpressionNode>& GetValueNode() const;
 
 private:
     // Node representing the ID of the constant
     // - Unique within its group of constants
-    std::shared_ptr<const HTNValueNode> mIDNode;
+    std::shared_ptr<const HTNIdentifierExpressionNode> mIDNode;
 
     // Node representing the value of the constant
-    std::shared_ptr<const HTNValueNodeBase> mValueNode;
+    std::shared_ptr<const HTNLiteralExpressionNode> mValueNode;
 };
 
-inline HTNConstantNode::HTNConstantNode(const std::shared_ptr<const HTNValueNode>&     inIDNode,
-                                        const std::shared_ptr<const HTNValueNodeBase>& inValueNode)
+inline HTNConstantNode::HTNConstantNode(const std::shared_ptr<const HTNIdentifierExpressionNode>& inIDNode,
+                                        const std::shared_ptr<const HTNLiteralExpressionNode>& inValueNode)
     : mIDNode(inIDNode), mValueNode(inValueNode)
 {
 }
 
-inline const std::shared_ptr<const HTNValueNode>& HTNConstantNode::GetIDNode() const
+inline const std::shared_ptr<const HTNIdentifierExpressionNode>& HTNConstantNode::GetIDNode() const
 {
     return mIDNode;
 }
 
-inline const std::shared_ptr<const HTNValueNodeBase>& HTNConstantNode::GetValueNode() const
+inline const std::shared_ptr<const HTNLiteralExpressionNode>& HTNConstantNode::GetValueNode() const
 {
     return mValueNode;
 }

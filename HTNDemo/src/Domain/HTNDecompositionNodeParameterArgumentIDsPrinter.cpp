@@ -1,22 +1,22 @@
-#include "Domain/HTNDecompositionNodeArgumentsIDsPrinter.h"
+#include "Domain/HTNDecompositionNodeParameterArgumentIDsPrinter.h"
 
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Interpreter/HTNVariables.h"
-#include "Domain/Nodes/HTNValueNode.h"
+#include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "HTNImGuiHelpers.h"
 
 #include "imgui.h"
 
-HTNDecompositionNodeArgumentsIDsPrinter::HTNDecompositionNodeArgumentsIDsPrinter(const HTNDecompositionNode& inNode) : mNode(inNode)
+HTNDecompositionNodeParameterArgumentIDsPrinter::HTNDecompositionNodeParameterArgumentIDsPrinter(const HTNDecompositionNode& inNode) : mNode(inNode)
 {
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& NodeArguments = mNode.GetNodeArguments();
-    mNodeVariablesPaths.reserve(NodeArguments.size());
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeParametersArguments = mNode.GetNodeParametersArguments();
+    mNodeVariablesPaths.reserve(NodeParametersArguments.size());
 }
 
-void HTNDecompositionNodeArgumentsIDsPrinter::Print()
+void HTNDecompositionNodeParameterArgumentIDsPrinter::Print()
 {
     const HTNNodeSnapshotDebug* NodeSnapshot = mNode.GetNodeSnapshot();
     if (!NodeSnapshot)
@@ -26,16 +26,16 @@ void HTNDecompositionNodeArgumentsIDsPrinter::Print()
 
     if (ImGui::BeginTable("NodeArgumentsIDs", 1, HTNImGuiHelpers::kDefaultTableFlags))
     {
-        // Print node arguments
-        const std::vector<std::shared_ptr<const HTNValueNodeBase>>& NodeArguments = mNode.GetNodeArguments();
-        for (const std::shared_ptr<const HTNValueNodeBase>& NodeArgument : NodeArguments)
+        // Print node parameters or arguments
+        const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeParametersArguments = mNode.GetNodeParametersArguments();
+        for (const std::shared_ptr<const HTNValueExpressionNodeBase>& NodeParametersArgument : NodeParametersArguments)
         {
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
-            const HTNAtom     Argument                = GetNodeValue(*NodeArgument);
+            const HTNAtom     Value                = GetNodeValue(*NodeParametersArgument);
             constexpr bool    ShouldDoubleQuoteString = false;
-            const std::string ArgumentString          = Argument.ToString(ShouldDoubleQuoteString);
-            ImGui::Text(ArgumentString.c_str());
+            const std::string ValueString             = Value.ToString(ShouldDoubleQuoteString);
+            ImGui::Text(ValueString.c_str());
         }
 
         // Print remaining variables
@@ -61,32 +61,30 @@ void HTNDecompositionNodeArgumentsIDsPrinter::Print()
     }
 }
 
-HTNAtom HTNDecompositionNodeArgumentsIDsPrinter::Visit(const HTNValueNode& inValueNode)
+HTNAtom HTNDecompositionNodeParameterArgumentIDsPrinter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode)
 {
-    assert(!inValueNode.IsIdentifier());
-
-    const HTNAtom&     Value                   = inValueNode.GetValue();
+    const HTNAtom&     Value                   = inLiteralExpressionNode.GetValue();
     const bool         ShouldDoubleQuoteString = false;
     const std::string& ValueString             = Value.ToString(ShouldDoubleQuoteString);
     return ValueString;
 }
 
-HTNAtom HTNDecompositionNodeArgumentsIDsPrinter::Visit(const HTNVariableValueNode& inVariableValueNode)
+HTNAtom HTNDecompositionNodeParameterArgumentIDsPrinter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode)
 {
-    const std::string& VariableID                = inVariableValueNode.GetValue().GetValue<std::string>();
+    const std::string& VariableID                = inVariableExpressionNode.GetValue().GetValue<std::string>();
     const std::string& NodeVariableScopeNodePath = mNode.GetNodeVariableScopeNodePath().GetNodePath();
     std::string        VariablePath;
     const bool         Result = HTNDecompositionHelpers::MakeVariablePath(VariableID, NodeVariableScopeNodePath, VariablePath);
     assert(Result);
     mNodeVariablesPaths.emplace_back(VariablePath);
 
-    const std::string VariableValueString = inVariableValueNode.ToString();
+    const std::string VariableValueString = inVariableExpressionNode.ToString();
     return std::format("?{}", VariableValueString);
 }
 
-HTNAtom HTNDecompositionNodeArgumentsIDsPrinter::Visit(const HTNConstantValueNode& inConstantValueNode)
+HTNAtom HTNDecompositionNodeParameterArgumentIDsPrinter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode)
 {
-    const std::string ConstantValueString = inConstantValueNode.ToString();
+    const std::string ConstantValueString = inConstantExpressionNode.ToString();
     return std::format("@{}", ConstantValueString);
 }
 #endif

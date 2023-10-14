@@ -72,21 +72,27 @@ HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNPrimitiveTaskNode& inPri
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNValueNode& inValueNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNIdentifierExpressionNode& inIdentifierExpressionNode)
 {
     return HTNAtom();
 }
 
-void HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNVariableValueNode& inVariableValueNode, MAYBE_UNUSED const HTNAtom& inVariableValueNodeValue)
-{
-}
-
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNVariableValueNode& inVariableValueNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNLiteralExpressionNode& inLiteralExpressionNode)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNConstantValueNode& inConstantValueNode)
+void HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNVariableExpressionNode& inVariableExpressionNode,
+                               MAYBE_UNUSED const HTNAtom&                   inVariableExpressionNodeValue)
+{
+}
+
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNVariableExpressionNode& inVariableExpressionNode)
+{
+    return HTNAtom();
+}
+
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNConstantExpressionNode& inConstantExpressionNode)
 {
     return HTNAtom();
 }

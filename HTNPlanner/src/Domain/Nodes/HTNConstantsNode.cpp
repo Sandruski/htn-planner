@@ -1,7 +1,7 @@
 #include "Domain/Nodes/HTNConstantsNode.h"
 
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
-#include "Domain/Nodes/HTNValueNode.h"
+#include "Domain/Nodes/HTNValueExpressionNode.h"
 
 HTNAtom HTNConstantsNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {

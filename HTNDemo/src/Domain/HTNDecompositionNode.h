@@ -7,34 +7,34 @@
 #include <vector>
 
 class HTNNodeSnapshotDebug;
-class HTNValueNodeBase;
+class HTNValueExpressionNodeBase;
 
 class HTNDecompositionNode
 {
 public:
     HTNDecompositionNode() = default;
     explicit HTNDecompositionNode(const HTNNodeSnapshotDebug& inNodeSnapshot);
-    explicit HTNDecompositionNode(const HTNNodeSnapshotDebug&                                 inNodeSnapshot,
-                                  const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inNodeArguments,
-                                  const HTNNodePath&                                          inNodeVariableScopeNodePath);
-    const HTNNodeSnapshotDebug*                                 GetNodeSnapshot() const;
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetNodeArguments() const;
-    const HTNNodePath&                                          GetNodeVariableScopeNodePath() const;
+    explicit HTNDecompositionNode(const HTNNodeSnapshotDebug&                                           inNodeSnapshot,
+                                  const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeParametersArguments,
+                                  const HTNNodePath&                                                    inNodeVariableScopeNodePath);
+    const HTNNodeSnapshotDebug*                                           GetNodeSnapshot() const;
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetNodeParametersArguments() const;
+    const HTNNodePath&                                                    GetNodeVariableScopeNodePath() const;
 
 private:
-    const HTNNodeSnapshotDebug*                          mNodeSnapshot = nullptr;
-    std::vector<std::shared_ptr<const HTNValueNodeBase>> mNodeArguments;
-    HTNNodePath                                          mNodeVariableScopeNodePath;
+    const HTNNodeSnapshotDebug*                                    mNodeSnapshot = nullptr;
+    std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> mNodeParametersArguments;
+    HTNNodePath                                                    mNodeVariableScopeNodePath;
 };
 
 inline HTNDecompositionNode::HTNDecompositionNode(const HTNNodeSnapshotDebug& inNodeSnapshot) : mNodeSnapshot(&inNodeSnapshot)
 {
 }
 
-inline HTNDecompositionNode::HTNDecompositionNode(const HTNNodeSnapshotDebug&                                 inNodeSnapshot,
-                                                  const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inNodeArguments,
-                                                  const HTNNodePath&                                          inNodeVariableScopeNodePath)
-    : mNodeSnapshot(&inNodeSnapshot), mNodeArguments(inNodeArguments), mNodeVariableScopeNodePath(inNodeVariableScopeNodePath)
+inline HTNDecompositionNode::HTNDecompositionNode(const HTNNodeSnapshotDebug&                                           inNodeSnapshot,
+                                                  const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeParametersArguments,
+                                                  const HTNNodePath&                                                    inNodeVariableScopeNodePath)
+    : mNodeSnapshot(&inNodeSnapshot), mNodeParametersArguments(inNodeParametersArguments), mNodeVariableScopeNodePath(inNodeVariableScopeNodePath)
 {
 }
 
@@ -43,9 +43,9 @@ inline const HTNNodeSnapshotDebug* HTNDecompositionNode::GetNodeSnapshot() const
     return mNodeSnapshot;
 }
 
-inline const std::vector<std::shared_ptr<const HTNValueNodeBase>>& HTNDecompositionNode::GetNodeArguments() const
+inline const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& HTNDecompositionNode::GetNodeParametersArguments() const
 {
-    return mNodeArguments;
+    return mNodeParametersArguments;
 }
 
 inline const HTNNodePath& HTNDecompositionNode::GetNodeVariableScopeNodePath() const

@@ -1,7 +1,7 @@
 #include "Domain/Nodes/HTNMethodNode.h"
 
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
-#include "Domain/Nodes/HTNValueNode.h"
+#include "Domain/Nodes/HTNValueExpressionNode.h"
 
 HTNAtom HTNMethodNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
 {

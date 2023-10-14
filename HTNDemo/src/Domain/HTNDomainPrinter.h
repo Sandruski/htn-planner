@@ -29,8 +29,9 @@ public:
     HTNAtom Visit(const HTNNotConditionNode& inNotConditionNode) final;
     HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode) final;
     HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode) final;
-    HTNAtom Visit(const HTNValueNode& inValueNode) final;
-    HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode) final;
-    HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode) final;
+    HTNAtom Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode) final;
+    HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode) final;
+    HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode) final;
+    HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode) final;
 };
 #endif

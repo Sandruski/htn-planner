@@ -5,11 +5,11 @@
 #include <memory>
 #include <vector>
 
-class HTNMethodNode;
-class HTNValueNode;
 class HTNAxiomNode;
 class HTNConstantNode;
 class HTNConstantsNode;
+class HTNIdentifierExpressionNode;
+class HTNMethodNode;
 
 /**
  * Node representing a domain
@@ -17,7 +17,7 @@ class HTNConstantsNode;
 class HTNDomainNode final : public HTNNodeBase
 {
 public:
-    explicit HTNDomainNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+    explicit HTNDomainNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&   inIDNode,
                            const std::vector<std::shared_ptr<const HTNConstantsNode>>& inConstantNodes,
                            const std::vector<std::shared_ptr<const HTNAxiomNode>>&     inAxiomNodes,
                            const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel);
@@ -30,7 +30,7 @@ public:
     std::shared_ptr<const HTNAxiomNode>    FindAxiomNodeByID(const std::string& inAxiomNodeID) const;
     std::shared_ptr<const HTNMethodNode>   FindMethodNodeByID(const std::string& inMethodNodeID) const;
 
-    const std::shared_ptr<const HTNValueNode>&                  GetIDNode() const;
+    const std::shared_ptr<const HTNIdentifierExpressionNode>&   GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNConstantsNode>>& GetConstantNodes() const;
     const std::vector<std::shared_ptr<const HTNAxiomNode>>&     GetAxiomNodes() const;
     const std::vector<std::shared_ptr<const HTNMethodNode>>&    GetMethodNodes() const;
@@ -39,7 +39,7 @@ public:
 private:
     // Node representing the ID of the domain
     // - Globally unique // TODO salvarez Unique within its project
-    std::shared_ptr<const HTNValueNode> mIDNode;
+    std::shared_ptr<const HTNIdentifierExpressionNode> mIDNode;
 
     // TODO salvarez mIncludes with HTNIncludeNode
     // TODO salvarez HTNProjectStructure node to store all domains
@@ -57,7 +57,7 @@ private:
     bool mIsTopLevel = false;
 };
 
-inline HTNDomainNode::HTNDomainNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
+inline HTNDomainNode::HTNDomainNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&   inIDNode,
                                     const std::vector<std::shared_ptr<const HTNConstantsNode>>& inConstantNodes,
                                     const std::vector<std::shared_ptr<const HTNAxiomNode>>&     inAxiomNodes,
                                     const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel)
@@ -65,7 +65,7 @@ inline HTNDomainNode::HTNDomainNode(const std::shared_ptr<const HTNValueNode>&  
 {
 }
 
-inline const std::shared_ptr<const HTNValueNode>& HTNDomainNode::GetIDNode() const
+inline const std::shared_ptr<const HTNIdentifierExpressionNode>& HTNDomainNode::GetIDNode() const
 {
     return mIDNode;
 }

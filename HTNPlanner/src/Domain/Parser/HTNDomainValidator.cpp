@@ -10,7 +10,7 @@
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "Domain/Nodes/HTNTaskNode.h"
-#include "Domain/Nodes/HTNValueNode.h"
+#include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "HTNMacros.h"
 
 bool HTNDomainValidator::Validate()
@@ -69,29 +69,21 @@ HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNAxiomConditionNode& inAx
     return true;
 }
 
-// YES bindings
-// YES backtracking
 HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNAndConditionNode& inAndConditionNode)
 {
     return true;
 }
 
-// YES bindings
-// NO backtracking
 HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNOrConditionNode& inOrConditionNode)
 {
     return true;
 }
 
-// YES bindings
-// YES backtracking
 HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNAltConditionNode& inAltConditionNode)
 {
     return true;
 }
 
-// NO bindings
-// NO backtracking
 HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNNotConditionNode& inNotConditionNode)
 {
     return true;
@@ -107,21 +99,22 @@ HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNPrimitiveTaskNode& inPri
     return true;
 }
 
-HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNValueNode& inValueNode)
+HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNIdentifierExpressionNode& inIdentifierExpressionNode)
 {
     return true;
 }
 
-void HTNDomainValidator::Visit(MAYBE_UNUSED const HTNVariableValueNode& inVariableValueNode, MAYBE_UNUSED const HTNAtom& inVariableValueNodeValue)
-{
-}
-
-HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNVariableValueNode& inVariableValueNode)
+HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNLiteralExpressionNode& inLiteralExpressionNode)
 {
     return true;
 }
 
-HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNConstantValueNode& inConstantValueNode)
+HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNVariableExpressionNode& inVariableExpressionNode)
+{
+    return true;
+}
+
+HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNConstantExpressionNode& inConstantExpressionNode)
 {
     return true;
 }

@@ -5,8 +5,8 @@
 #include <memory>
 #include <vector>
 
-class HTNValueNode;
-class HTNValueNodeBase;
+class HTNIdentifierExpressionNode;
+class HTNValueExpressionNodeBase;
 
 /**
  * Base node representing a condition
@@ -34,23 +34,23 @@ private:
 class HTNConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNConditionNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
-                              const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes);
+    explicit HTNConditionNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
+                              const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes);
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
-    const std::shared_ptr<const HTNValueNode>&                  GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetArgumentNodes() const;
+    const std::shared_ptr<const HTNIdentifierExpressionNode>&             GetIDNode() const;
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetArgumentNodes() const;
 
 private:
     // Node representing the ID of the condition
     // - ID of the fact in the world state
     // - Not unique
-    std::shared_ptr<const HTNValueNode> mIDNode;
+    std::shared_ptr<const HTNIdentifierExpressionNode> mIDNode;
 
     // Nodes representing the arguments of the condition
     // - Arguments of the fact in the world state
-    std::vector<std::shared_ptr<const HTNValueNodeBase>> mArgumentNodes;
+    std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> mArgumentNodes;
 };
 
 /**
@@ -60,23 +60,23 @@ private:
 class HTNAxiomConditionNode final : public HTNConditionNodeBase
 {
 public:
-    explicit HTNAxiomConditionNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
-                                   const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes);
+    explicit HTNAxiomConditionNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
+                                   const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes);
 
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 
-    const std::shared_ptr<const HTNValueNode>&                  GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& GetArgumentNodes() const;
+    const std::shared_ptr<const HTNIdentifierExpressionNode>&             GetIDNode() const;
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetArgumentNodes() const;
 
 private:
     // Node representing the ID of the condition
     // - ID of the axiom node in the domain node
     // - Not unique
-    std::shared_ptr<const HTNValueNode> mIDNode;
+    std::shared_ptr<const HTNIdentifierExpressionNode> mIDNode;
 
     // Nodes representing the arguments of the condition
     // - Arguments of the axiom node
-    std::vector<std::shared_ptr<const HTNValueNodeBase>> mArgumentNodes;
+    std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> mArgumentNodes;
 };
 
 /**
@@ -179,34 +179,34 @@ inline unsigned int HTNConditionNodeBase::GenerateID() const
     return ++mIDGenerator;
 }
 
-inline HTNConditionNode::HTNConditionNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
-                                          const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
+inline HTNConditionNode::HTNConditionNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
+                                          const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes)
 {
 }
 
-inline const std::shared_ptr<const HTNValueNode>& HTNConditionNode::GetIDNode() const
+inline const std::shared_ptr<const HTNIdentifierExpressionNode>& HTNConditionNode::GetIDNode() const
 {
     return mIDNode;
 }
 
-inline const std::vector<std::shared_ptr<const HTNValueNodeBase>>& HTNConditionNode::GetArgumentNodes() const
+inline const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& HTNConditionNode::GetArgumentNodes() const
 {
     return mArgumentNodes;
 }
 
-inline HTNAxiomConditionNode::HTNAxiomConditionNode(const std::shared_ptr<const HTNValueNode>&                  inIDNode,
-                                                    const std::vector<std::shared_ptr<const HTNValueNodeBase>>& inArgumentNodes)
+inline HTNAxiomConditionNode::HTNAxiomConditionNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
+                                                    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes)
 {
 }
 
-inline const std::shared_ptr<const HTNValueNode>& HTNAxiomConditionNode::GetIDNode() const
+inline const std::shared_ptr<const HTNIdentifierExpressionNode>& HTNAxiomConditionNode::GetIDNode() const
 {
     return mIDNode;
 }
 
-inline const std::vector<std::shared_ptr<const HTNValueNodeBase>>& HTNAxiomConditionNode::GetArgumentNodes() const
+inline const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& HTNAxiomConditionNode::GetArgumentNodes() const
 {
     return mArgumentNodes;
 }

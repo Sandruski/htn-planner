@@ -8,28 +8,26 @@
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "Domain/Nodes/HTNTaskNode.h"
-#include "Domain/Nodes/HTNValueNode.h"
+#include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "HTNToken.h"
 #include "Parser/HTNParserHelpers.h"
 
 /*
 Backus Naur Form (BNF):
-<domain node> ::= '(' ':' 'domain' <identifier node> 'top_level_domain'? <axiom node>* <method node>* ')'
-<constants node> ::= '(' ':' 'constants' <identifier node>? <constant node>* ')'
-<constant node> ::= '(' <identifier node> <value node>* ')'
-<axiom node> ::= '(' ':' 'axiom' '(' <identifier node> <parameter node>* ')' <condition node>? ')'
-<method node> ::= '(' ':' 'method' '(' <identifier node> <parameter node>* 'top_level_method'? ')' <branch node>* ')'
-<branch node> ::= '(' <identifier node> '(' <condition node>? ')' '(' <task node>* ')' ')'
+<domain node> ::= '(' ':' 'domain' <identifier expression node> 'top_level_domain'? <axiom node>* <method node>* ')'
+<constants node> ::= '(' ':' 'constants' <identifier expression node>? <constant node>* ')'
+<constant node> ::= '(' <identifier expression node> <value node>* ')'
+<axiom node> ::= '(' ':' 'axiom' '(' <identifier expression node> <parameter node>* ')' <condition node>? ')'
+<method node> ::= '(' ':' 'method' '(' <identifier expression node> <parameter node>* 'top_level_method'? ')' <branch node>* ')'
+<branch node> ::= '(' <identifier expression node> '(' <condition node>? ')' '(' <task node>* ')' ')'
 <condition node> ::= '(' (('and' | 'or' | 'alt') <sub-condition node>)* ')'
-<sub-condition node> ::= <condition node> | ('(' ('not' <sub-condition node>)* ')') | ('(' ('#'? <identifier node> <argument node>*)* ')')
-<task node> ::= '(' '!'? <identifier node> <argument node>* ')'
-<identifier node> ::= 'identifier'
-<parameter node> ::= <variable node>
-<argument node> ::= <variable node> | <constant expression node> | <literal node>
-<value node> ::= <literal node>
-<variable node> ::= '?' <identifier node>
-<constant expression node> ::= '@' <identifier node>
-<literal node> ::= <literal>
+<sub-condition node> ::= <condition node> | ('(' ('not' <sub-condition node>)* ')') | ('(' ('#'? <identifier expression node> <argument node>*)* ')')
+<task node> ::= '(' '!'? <identifier expression node> <argument node>* ')'
+<argument node> ::= <variable expression node> | <constant expression node> | <literal expression node>
+<variable expression node> ::= '?' <identifier expression node>
+<constant expression node> ::= '@' <identifier expression node>
+<identifier expression node> ::= 'identifier'
+<literal expression node> ::= <literal>
 <literal> ::= ('(' <literal>+ ')') | 'true' | 'false' | 'number' | 'string'
 */
 
@@ -73,8 +71,8 @@ bool HTNDomainParser::ParseDomainNode(std::shared_ptr<const HTNDomainNode>& outD
         return false;
     }
 
-    std::shared_ptr<const HTNValueNode> IDNode;
-    if (!ParseIdentifierNode(IDNode, CurrentPosition))
+    std::shared_ptr<const HTNIdentifierExpressionNode> IDNode;
+    if (!ParseIdentifierExpressionNode(IDNode, CurrentPosition))
     {
         return false;
     }
@@ -132,11 +130,10 @@ bool HTNDomainParser::ParseConstantsNode(std::shared_ptr<const HTNConstantsNode>
         return false;
     }
 
-    std::shared_ptr<const HTNValueNode> IDNode;
-    if (!ParseIdentifierNode(IDNode, CurrentPosition))
+    std::shared_ptr<const HTNIdentifierExpressionNode> IDNode;
+    if (!ParseIdentifierExpressionNode(IDNode, CurrentPosition))
     {
-        static constexpr bool IsIdentifier = true;
-        IDNode                             = std::make_shared<HTNValueNode>(HTNParserHelpers::kAnonymousNamespaceName, IsIdentifier);
+        IDNode = std::make_shared<HTNIdentifierExpressionNode>(HTNParserHelpers::kAnonymousNamespaceName);
     }
 
     std::vector<std::shared_ptr<const HTNConstantNode>> ConstantNodes;
@@ -166,14 +163,14 @@ bool HTNDomainParser::ParseConstantNode(std::shared_ptr<const HTNConstantNode>& 
         return false;
     }
 
-    std::shared_ptr<const HTNValueNode> IDNode;
-    if (!ParseIdentifierNode(IDNode, CurrentPosition))
+    std::shared_ptr<const HTNIdentifierExpressionNode> IDNode;
+    if (!ParseIdentifierExpressionNode(IDNode, CurrentPosition))
     {
         return false;
     }
 
-    std::shared_ptr<const HTNValueNodeBase> ValueNode;
-    if (!ParseValueNode(ValueNode, CurrentPosition))
+    std::shared_ptr<const HTNLiteralExpressionNode> ValueNode;
+    if (!ParseLiteralExpressionNode(ValueNode, CurrentPosition))
     {
         return false;
     }
@@ -213,15 +210,15 @@ bool HTNDomainParser::ParseAxiomNode(std::shared_ptr<const HTNAxiomNode>& outAxi
         return false;
     }
 
-    std::shared_ptr<const HTNValueNode> IDNode;
-    if (!ParseIdentifierNode(IDNode, CurrentPosition))
+    std::shared_ptr<const HTNIdentifierExpressionNode> IDNode;
+    if (!ParseIdentifierExpressionNode(IDNode, CurrentPosition))
     {
         return false;
     }
 
-    std::vector<std::shared_ptr<const HTNValueNodeBase>> ParameterNodes;
-    std::shared_ptr<const HTNValueNodeBase>              ParameterNode;
-    while (ParseArgumentNode(ParameterNode, CurrentPosition))
+    std::vector<std::shared_ptr<const HTNVariableExpressionNode>> ParameterNodes;
+    std::shared_ptr<const HTNVariableExpressionNode>              ParameterNode;
+    while (ParseVariableExpressionNode(ParameterNode, CurrentPosition))
     {
         ParameterNodes.emplace_back(ParameterNode);
     }
@@ -269,15 +266,15 @@ bool HTNDomainParser::ParseMethodNode(std::shared_ptr<const HTNMethodNode>& outM
         return false;
     }
 
-    std::shared_ptr<const HTNValueNode> IDNode;
-    if (!ParseIdentifierNode(IDNode, CurrentPosition))
+    std::shared_ptr<const HTNIdentifierExpressionNode> IDNode;
+    if (!ParseIdentifierExpressionNode(IDNode, CurrentPosition))
     {
         return false;
     }
 
-    std::vector<std::shared_ptr<const HTNValueNodeBase>> ParameterNodes;
-    std::shared_ptr<const HTNValueNodeBase>              ParameterNode;
-    while (ParseParameterNode(ParameterNode, CurrentPosition))
+    std::vector<std::shared_ptr<const HTNVariableExpressionNode>> ParameterNodes;
+    std::shared_ptr<const HTNVariableExpressionNode>              ParameterNode;
+    while (ParseVariableExpressionNode(ParameterNode, CurrentPosition))
     {
         ParameterNodes.emplace_back(ParameterNode);
     }
@@ -316,8 +313,8 @@ bool HTNDomainParser::ParseBranchNode(std::shared_ptr<const HTNBranchNode>& outB
         return false;
     }
 
-    std::shared_ptr<const HTNValueNode> IDNode;
-    if (!ParseIdentifierNode(IDNode, CurrentPosition))
+    std::shared_ptr<const HTNIdentifierExpressionNode> IDNode;
+    if (!ParseIdentifierExpressionNode(IDNode, CurrentPosition))
     {
         return false;
     }
@@ -450,14 +447,14 @@ bool HTNDomainParser::ParseSubConditionNode(std::shared_ptr<const HTNConditionNo
         {
             const bool IsAxiomConditionNode = ParseToken(HTNTokenType::HASH, CurrentPosition);
 
-            std::shared_ptr<const HTNValueNode> IDNode;
-            if (!ParseIdentifierNode(IDNode, CurrentPosition))
+            std::shared_ptr<const HTNIdentifierExpressionNode> IDNode;
+            if (!ParseIdentifierExpressionNode(IDNode, CurrentPosition))
             {
                 return false;
             }
 
-            std::vector<std::shared_ptr<const HTNValueNodeBase>> ArgumentNodes;
-            std::shared_ptr<const HTNValueNodeBase>              ArgumentNode;
+            std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> ArgumentNodes;
+            std::shared_ptr<const HTNValueExpressionNodeBase>              ArgumentNode;
             while (ParseArgumentNode(ArgumentNode, CurrentPosition))
             {
                 ArgumentNodes.emplace_back(ArgumentNode);
@@ -496,14 +493,14 @@ bool HTNDomainParser::ParseTaskNode(std::shared_ptr<const HTNTaskNodeBase>& outT
 
     const bool IsPrimitiveTaskNode = ParseToken(HTNTokenType::EXCLAMATION_MARK, CurrentPosition);
 
-    std::shared_ptr<const HTNValueNode> IDNode;
-    if (!ParseIdentifierNode(IDNode, CurrentPosition))
+    std::shared_ptr<const HTNIdentifierExpressionNode> IDNode;
+    if (!ParseIdentifierExpressionNode(IDNode, CurrentPosition))
     {
         return false;
     }
 
-    std::vector<std::shared_ptr<const HTNValueNodeBase>> ArgumentNodes;
-    std::shared_ptr<const HTNValueNodeBase>              ArgumentNode;
+    std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> ArgumentNodes;
+    std::shared_ptr<const HTNValueExpressionNodeBase>              ArgumentNode;
     while (ParseArgumentNode(ArgumentNode, CurrentPosition))
     {
         ArgumentNodes.emplace_back(ArgumentNode);
@@ -529,62 +526,28 @@ bool HTNDomainParser::ParseTaskNode(std::shared_ptr<const HTNTaskNodeBase>& outT
     return true;
 }
 
-bool HTNDomainParser::ParseIdentifierNode(std::shared_ptr<const HTNValueNode>& outIdentifierNode, unsigned int& ioPosition)
+bool HTNDomainParser::ParseArgumentNode(std::shared_ptr<const HTNValueExpressionNodeBase>& outArgumentNode, unsigned int& ioPosition)
 {
     unsigned int CurrentPosition = ioPosition;
 
-    const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
-    if (!IdentifierToken)
+    std::shared_ptr<const HTNValueExpressionNodeBase> ArgumentNode;
+
+    std::shared_ptr<const HTNVariableExpressionNode> VariableExpressionNode;
+    std::shared_ptr<const HTNConstantExpressionNode> ConstantExpressionNode;
+    std::shared_ptr<const HTNLiteralExpressionNode>  LiteralExpressionNode;
+    if (ParseVariableExpressionNode(VariableExpressionNode, CurrentPosition))
     {
-        return false;
+        ArgumentNode = VariableExpressionNode;
     }
-
-    static constexpr bool IsIdentifier = true;
-    outIdentifierNode                  = std::make_shared<HTNValueNode>(IdentifierToken->GetValue(), IsIdentifier);
-    ioPosition                         = CurrentPosition;
-
-    return true;
-}
-
-bool HTNDomainParser::ParseParameterNode(std::shared_ptr<const HTNValueNodeBase>& outParameterNode, unsigned int& ioPosition)
-{
-    unsigned int CurrentPosition = ioPosition;
-
-    std::shared_ptr<const HTNValueNodeBase> ParameterNode;
-
-    std::shared_ptr<const HTNVariableValueNode> VariableNode;
-    if (ParseVariableNode(VariableNode, CurrentPosition))
+    else if (ParseConstantExpressionNode(ConstantExpressionNode, CurrentPosition))
     {
-        ParameterNode = VariableNode;
+        ArgumentNode = ConstantExpressionNode;
+    }
+    else if (ParseLiteralExpressionNode(LiteralExpressionNode, CurrentPosition))
+    {
+        ArgumentNode = LiteralExpressionNode;
     }
     else
-    {
-        return false;
-    }
-
-    outParameterNode = ParameterNode;
-    ioPosition       = CurrentPosition;
-
-    return true;
-}
-
-bool HTNDomainParser::ParseArgumentNode(std::shared_ptr<const HTNValueNodeBase>& outArgumentNode, unsigned int& ioPosition)
-{
-    unsigned int CurrentPosition = ioPosition;
-
-    std::shared_ptr<const HTNValueNodeBase> ArgumentNode;
-
-    std::shared_ptr<const HTNVariableValueNode> VariableNode;
-    std::shared_ptr<const HTNConstantValueNode> ConstantNode;
-    if (ParseVariableNode(VariableNode, CurrentPosition))
-    {
-        ArgumentNode = VariableNode;
-    }
-    else if (ParseConstantExpressionNode(ConstantNode, CurrentPosition))
-    {
-        ArgumentNode = ConstantNode;
-    }
-    else if (!ParseLiteralNode(ArgumentNode, CurrentPosition))
     {
         return false;
     }
@@ -595,29 +558,8 @@ bool HTNDomainParser::ParseArgumentNode(std::shared_ptr<const HTNValueNodeBase>&
     return true;
 }
 
-bool HTNDomainParser::ParseValueNode(std::shared_ptr<const HTNValueNodeBase>& outValueNode, unsigned int& ioPosition)
-{
-    unsigned int CurrentPosition = ioPosition;
-
-    std::shared_ptr<const HTNValueNodeBase> ValueNode;
-
-    std::shared_ptr<const HTNValueNodeBase> LiteralNode;
-    if (ParseLiteralNode(LiteralNode, CurrentPosition))
-    {
-        ValueNode = LiteralNode;
-    }
-    else
-    {
-        return false;
-    }
-
-    outValueNode = ValueNode;
-    ioPosition   = CurrentPosition;
-
-    return true;
-}
-
-bool HTNDomainParser::ParseVariableNode(std::shared_ptr<const HTNVariableValueNode>& outVariableValueNode, unsigned int& ioPosition)
+bool HTNDomainParser::ParseVariableExpressionNode(std::shared_ptr<const HTNVariableExpressionNode>& outVariableExpressionNode,
+                                                  unsigned int&                                     ioPosition)
 {
     unsigned int CurrentPosition = ioPosition;
 
@@ -632,13 +574,14 @@ bool HTNDomainParser::ParseVariableNode(std::shared_ptr<const HTNVariableValueNo
         return false;
     }
 
-    outVariableValueNode = std::make_shared<HTNVariableValueNode>(IdentifierToken->GetValue());
-    ioPosition           = CurrentPosition;
+    outVariableExpressionNode = std::make_shared<HTNVariableExpressionNode>(IdentifierToken->GetValue());
+    ioPosition                = CurrentPosition;
 
     return true;
 }
 
-bool HTNDomainParser::ParseConstantExpressionNode(std::shared_ptr<const HTNConstantValueNode>& outConstantValueNode, unsigned int& ioPosition)
+bool HTNDomainParser::ParseConstantExpressionNode(std::shared_ptr<const HTNConstantExpressionNode>& outConstantExpressionNode,
+                                                  unsigned int&                                     ioPosition)
 {
     unsigned int CurrentPosition = ioPosition;
 
@@ -653,13 +596,30 @@ bool HTNDomainParser::ParseConstantExpressionNode(std::shared_ptr<const HTNConst
         return false;
     }
 
-    outConstantValueNode = std::make_shared<HTNConstantValueNode>(IdentifierToken->GetValue());
-    ioPosition           = CurrentPosition;
+    outConstantExpressionNode = std::make_shared<HTNConstantExpressionNode>(IdentifierToken->GetValue());
+    ioPosition                = CurrentPosition;
 
     return true;
 }
 
-bool HTNDomainParser::ParseLiteralNode(std::shared_ptr<const HTNValueNodeBase>& outLiteralNode, unsigned int& ioPosition)
+bool HTNDomainParser::ParseIdentifierExpressionNode(std::shared_ptr<const HTNIdentifierExpressionNode>& outIdentifierExpressionNode,
+                                                    unsigned int&                                       ioPosition)
+{
+    unsigned int CurrentPosition = ioPosition;
+
+    const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
+    if (!IdentifierToken)
+    {
+        return false;
+    }
+
+    outIdentifierExpressionNode = std::make_shared<HTNIdentifierExpressionNode>(IdentifierToken->GetValue());
+    ioPosition                  = CurrentPosition;
+
+    return true;
+}
+
+bool HTNDomainParser::ParseLiteralExpressionNode(std::shared_ptr<const HTNLiteralExpressionNode>& outLiteralExpressionNode, unsigned int& ioPosition)
 {
     unsigned int CurrentPosition = ioPosition;
 
@@ -669,9 +629,8 @@ bool HTNDomainParser::ParseLiteralNode(std::shared_ptr<const HTNValueNodeBase>& 
         return false;
     }
 
-    static constexpr bool IsIdentifier = false;
-    outLiteralNode                     = std::make_shared<HTNValueNode>(Literal, IsIdentifier);
-    ioPosition                         = CurrentPosition;
+    outLiteralExpressionNode = std::make_shared<HTNLiteralExpressionNode>(Literal);
+    ioPosition               = CurrentPosition;
 
     return true;
 }

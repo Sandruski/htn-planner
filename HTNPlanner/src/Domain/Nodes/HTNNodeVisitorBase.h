@@ -8,17 +8,18 @@ class HTNAxiomConditionNode;
 class HTNBranchNode;
 class HTNCompoundTaskNode;
 class HTNConditionNode;
+class HTNConstantExpressionNode;
 class HTNConstantNode;
 class HTNConstantsNode;
-class HTNConstantValueNode;
 class HTNDomainNode;
+class HTNIdentifierExpressionNode;
+class HTNLiteralExpressionNode;
 class HTNMethodNode;
 class HTNNodeBase;
 class HTNNotConditionNode;
 class HTNOrConditionNode;
 class HTNPrimitiveTaskNode;
-class HTNValueNode;
-class HTNVariableValueNode;
+class HTNVariableExpressionNode;
 
 class HTNNodeVisitorBase
 {
@@ -39,10 +40,11 @@ public:
     virtual HTNAtom Visit(const HTNNotConditionNode& inNotConditionNode);
     virtual HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode);
     virtual HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode);
-    virtual HTNAtom Visit(const HTNValueNode& inValueNode);
-    virtual void    Visit(const HTNVariableValueNode& inVariableValueNode, const HTNAtom& inVariableValueNodeValue);
-    virtual HTNAtom Visit(const HTNVariableValueNode& inVariableValueNode);
-    virtual HTNAtom Visit(const HTNConstantValueNode& inConstantValueNode);
+    virtual HTNAtom Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode);
+    virtual HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode);
+    virtual void    Visit(const HTNVariableExpressionNode& inVariableExpressionNode, const HTNAtom& inVariableExpressionNodeValue);
+    virtual HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode);
+    virtual HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode);
 
 protected:
     void    SetNodeValue(const HTNNodeBase& inNode, const HTNAtom& inNodeValue);
