@@ -17,7 +17,7 @@ HTNDecompositionNodeParameterArgumentValuesPrinter::HTNDecompositionNodeParamete
     : mDomainNode(inDomainNode), mNode(inNode)
 {
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  NodeParameters = mNode.GetNodeParameters();
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments = mNode.GetNodeArguments();
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments  = mNode.GetNodeArguments();
     mNodeVariablesPaths.reserve(std::max(NodeParameters.size(), NodeArguments.size()));
 }
 
@@ -29,7 +29,7 @@ void HTNDecompositionNodeParameterArgumentValuesPrinter::Print()
         return;
     }
 
-    if (ImGui::BeginTable("NodeArgumentsValues", 1, HTNImGuiHelpers::kDefaultTableFlags))
+    if (ImGui::BeginTable("NodeParameterArgumentValues", 1, HTNImGuiHelpers::kDefaultTableFlags))
     {
         // Print node parameters
         const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters = mNode.GetNodeParameters();
@@ -38,9 +38,9 @@ void HTNDecompositionNodeParameterArgumentValuesPrinter::Print()
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
             const HTNAtom     Parameter               = GetNodeValue(*NodeParameter);
-            constexpr bool    ShouldDoubleQuoteString = false;
+            constexpr bool    ShouldDoubleQuoteString = true;
             const std::string ParameterString         = Parameter.ToString(ShouldDoubleQuoteString);
-            constexpr ImVec4  ParameterColor          = HTNImGuiHelpers::kParametersColor;
+            constexpr ImVec4  ParameterColor          = ImVec4(1.f, 1.f, 1.f, 1.f);
             ImGui::TextColored(ParameterColor, ParameterString.c_str());
         }
 
@@ -51,9 +51,9 @@ void HTNDecompositionNodeParameterArgumentValuesPrinter::Print()
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
             const HTNAtom     Argument                = GetNodeValue(*NodeArgument);
-            constexpr bool    ShouldDoubleQuoteString = false;
+            constexpr bool    ShouldDoubleQuoteString = true;
             const std::string ArgumentString          = Argument.ToString(ShouldDoubleQuoteString);
-            constexpr ImVec4  ArgumentColor           = HTNImGuiHelpers::kArgumentsColor;
+            constexpr ImVec4  ArgumentColor           = ImVec4(1.f, 1.f, 1.f, 1.f);
             ImGui::TextColored(ArgumentColor, ArgumentString.c_str());
         }
 
@@ -71,13 +71,9 @@ void HTNDecompositionNodeParameterArgumentValuesPrinter::Print()
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
             const HTNAtom&    Variable                = VariablePair.second;
-            constexpr bool    ShouldDoubleQuoteString = false;
+            constexpr bool    ShouldDoubleQuoteString = true;
             const std::string VariableString          = Variable.ToString(ShouldDoubleQuoteString);
-            std::string       VariableID;
-            const bool        Result = HTNDecompositionHelpers::FindVariableID(VariablePath, VariableID);
-            assert(Result);
-            const ImVec4 VariableColor =
-                HTNDecompositionHelpers::IsParameter(VariableID) ? HTNImGuiHelpers::kParametersColor : HTNImGuiHelpers::kArgumentsColor;
+            const ImVec4      VariableColor           = ImVec4(1.f, 1.f, 1.f, 1.f);
             ImGui::TextColored(VariableColor, VariableString.c_str());
         }
 
@@ -94,7 +90,7 @@ HTNAtom HTNDecompositionNodeParameterArgumentValuesPrinter::Visit(const HTNConst
 HTNAtom HTNDecompositionNodeParameterArgumentValuesPrinter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode)
 {
     const HTNAtom&     Value                   = inLiteralExpressionNode.GetValue();
-    const bool         ShouldDoubleQuoteString = true;
+    const bool         ShouldDoubleQuoteString = false;
     const std::string& ValueString             = Value.ToString(ShouldDoubleQuoteString);
     return ValueString;
 }

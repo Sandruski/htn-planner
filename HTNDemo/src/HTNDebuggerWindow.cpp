@@ -95,9 +95,9 @@ void HTNDebuggerWindow::Render(bool& _IsOpen)
     {
         if (ImGui::BeginTabBar("Tab Bar", HTNImGuiHelpers::kDefaultTabBarFlags))
         {
-            if (ImGui::BeginTabItem("Plan"))
+            if (ImGui::BeginTabItem("Active Plan"))
             {
-                RenderPlan();
+                RenderActivePlan();
                 ImGui::EndTabItem();
             }
 
@@ -126,7 +126,7 @@ void HTNDebuggerWindow::Render(bool& _IsOpen)
     }
 }
 
-void HTNDebuggerWindow::RenderPlan()
+void HTNDebuggerWindow::RenderActivePlan()
 {
     // TODO salvarez
 }

@@ -25,7 +25,7 @@ void HTNDecompositionNodeParameterArgumentIDsPrinter::Print()
         return;
     }
 
-    if (ImGui::BeginTable("NodeArgumentsIDs", 1, HTNImGuiHelpers::kDefaultTableFlags))
+    if (ImGui::BeginTable("NodeParameterArgumentIDs", 1, HTNImGuiHelpers::kDefaultTableFlags))
     {
         // Print node parameters
         const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters = mNode.GetNodeParameters();
@@ -35,9 +35,9 @@ void HTNDecompositionNodeParameterArgumentIDsPrinter::Print()
             ImGui::TableNextColumn();
             const HTNAtom     Parameter               = GetNodeValue(*NodeParameter);
             constexpr bool    ShouldDoubleQuoteString = false;
-            const std::string ParametertString        = Parameter.ToString(ShouldDoubleQuoteString);
-            constexpr ImVec4  ParameterColor          = HTNImGuiHelpers::kParametersColor;
-            ImGui::TextColored(ParameterColor, ParametertString.c_str());
+            const std::string ParameterString         = Parameter.ToString(ShouldDoubleQuoteString);
+            constexpr ImVec4  ParameterColor          = HTNImGuiHelpers::kParameterColor;
+            ImGui::TextColored(ParameterColor, ParameterString.c_str());
         }
 
         // Print node arguments
@@ -49,7 +49,8 @@ void HTNDecompositionNodeParameterArgumentIDsPrinter::Print()
             const HTNAtom     Argument                = GetNodeValue(*NodeArgument);
             constexpr bool    ShouldDoubleQuoteString = false;
             const std::string ArgumentString          = Argument.ToString(ShouldDoubleQuoteString);
-            constexpr ImVec4  ArgumentColor           = HTNImGuiHelpers::kArgumentsColor;
+            const ImVec4      ArgumentColor =
+                HTNDecompositionHelpers::IsParameter(ArgumentString) ? HTNImGuiHelpers::kParameterColor : HTNImGuiHelpers::kArgumentColor;
             ImGui::TextColored(ArgumentColor, ArgumentString.c_str());
         }
 
@@ -69,9 +70,10 @@ void HTNDecompositionNodeParameterArgumentIDsPrinter::Print()
             std::string VariableID;
             const bool  Result = HTNDecompositionHelpers::FindVariableID(VariablePath, VariableID);
             assert(Result);
-            const ImVec4 VariableColor =
-                HTNDecompositionHelpers::IsParameter(VariableID) ? HTNImGuiHelpers::kParametersColor : HTNImGuiHelpers::kArgumentsColor;
-            ImGui::TextColored(VariableColor, VariableID.c_str());
+            const std::string VariableString = std::format("?{}", VariableID);
+            const ImVec4      VariableColor =
+                HTNDecompositionHelpers::IsParameter(VariableID) ? HTNImGuiHelpers::kParameterColor : HTNImGuiHelpers::kArgumentColor;
+            ImGui::TextColored(VariableColor, VariableString.c_str());
         }
 
         ImGui::EndTable();
@@ -95,13 +97,13 @@ HTNAtom HTNDecompositionNodeParameterArgumentIDsPrinter::Visit(const HTNVariable
     assert(Result);
     mNodeVariablesPaths.emplace_back(VariablePath);
 
-    const std::string VariableValueString = inVariableExpressionNode.ToString();
-    return std::format("?{}", VariableValueString);
+    const std::string VariableString = inVariableExpressionNode.ToString();
+    return std::format("?{}", VariableString);
 }
 
 HTNAtom HTNDecompositionNodeParameterArgumentIDsPrinter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode)
 {
-    const std::string ConstantValueString = inConstantExpressionNode.ToString();
-    return std::format("@{}", ConstantValueString);
+    const std::string ConstantString = inConstantExpressionNode.ToString();
+    return std::format("@{}", ConstantString);
 }
 #endif

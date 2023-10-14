@@ -50,8 +50,8 @@ private:
     bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const std::string& inNodeDescription, const HTNNodeTitleFunction& inNodeTitleFunction,
                                   const HTNNodeSelectionFunction& inNodeSelectionFunction, const HTNNodeBehaviorFunction* inNodeBehaviorFunction);
 
-    void SetDecompositionStepRange(const size_t inMinDecompositionStep, const size_t inMaxDecompositionStep);
-    bool IsDecompositionStepBetweenRange(const size_t inDecompositionStep) const;
+    void SetDecompositionStepRange(const int inMinDecompositionStep, const std::size_t inMaxDecompositionStep);
+    bool IsDecompositionStepBetweenRange(const std::size_t inDecompositionStep) const;
 
     void SelectNode(const HTNNodeSnapshotDebug& inNodeSnapshot);
     void SelectNode(const HTNNodeSnapshotDebug&                                          inNodeSnapshot,
@@ -72,8 +72,8 @@ private:
     // Path from the root node to the current node determining the scope of the variables
     HTNNodePath mCurrentVariableScopeNodePath;
 
-    size_t mMinDecompositionStep = 0;
-    size_t mMaxDecompositionStep = std::numeric_limits<std::size_t>::max();
+    int         mMinDecompositionStep = -1;
+    std::size_t mMaxDecompositionStep = std::numeric_limits<std::size_t>::max();
 };
 
 inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
@@ -82,16 +82,15 @@ inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<co
 {
 }
 
-inline void HTNDecompositionPrinter::SetDecompositionStepRange(const size_t inMinDecompositionStep, const size_t inMaxDecompositionStep)
+inline void HTNDecompositionPrinter::SetDecompositionStepRange(const int inMinDecompositionStep, const std::size_t inMaxDecompositionStep)
 {
     mMinDecompositionStep = inMinDecompositionStep;
     mMaxDecompositionStep = inMaxDecompositionStep;
 }
 
-inline bool HTNDecompositionPrinter::IsDecompositionStepBetweenRange(const size_t inDecompositionStep) const
+inline bool HTNDecompositionPrinter::IsDecompositionStepBetweenRange(const std::size_t inDecompositionStep) const
 {
-    // TODO salvarez Fix this
-    return (inDecompositionStep >= mMinDecompositionStep) && (inDecompositionStep < mMaxDecompositionStep);
+    return (static_cast<int>(inDecompositionStep) > mMinDecompositionStep) && (inDecompositionStep <= mMaxDecompositionStep);
 }
 
 inline void HTNDecompositionPrinter::SelectNode(const HTNNodeSnapshotDebug& inNodeSnapshot)

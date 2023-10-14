@@ -12,7 +12,7 @@ public:
     void Render(bool& _IsOpen);
 
 private:
-    void RenderPlan();
+    void RenderActivePlan();
     void RenderDecomposition();
     void RenderDomain();
     void RenderWorldState();
