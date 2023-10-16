@@ -17,6 +17,8 @@ using HTNNodeSelectionFunction = std::function<void(const HTNNodeSnapshotDebug& 
 using HTNNodeTitleFunction     = std::function<void(const HTNNodeSnapshotDebug& inNodeSnapshot)>;
 using HTNNodeBehaviorFunction  = std::function<void()>;
 
+typedef int ImGuiTreeNodeFlags;
+
 /**
  * Prints a decomposition
  */
@@ -47,8 +49,9 @@ public:
     HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode) final;
 
 private:
-    bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const std::string& inNodeDescription, const HTNNodeTitleFunction& inNodeTitleFunction,
-                                  const HTNNodeSelectionFunction& inNodeSelectionFunction, const HTNNodeBehaviorFunction* inNodeBehaviorFunction);
+    bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const HTNNodeTitleFunction& inNodeTitleFunction,
+                                  const HTNNodeSelectionFunction& inNodeSelectionFunction, const HTNNodeBehaviorFunction* inNodeBehaviorFunction,
+                                  const ImGuiTreeNodeFlags inTreeNodeFlags);
 
     void SetDecompositionStepRange(const int inMinDecompositionStep, const std::size_t inMaxDecompositionStep);
     bool IsDecompositionStepBetweenRange(const std::size_t inDecompositionStep) const;

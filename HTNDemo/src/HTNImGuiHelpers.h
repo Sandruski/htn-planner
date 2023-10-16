@@ -8,8 +8,6 @@
 
 namespace HTNImGuiHelpers
 {
-std::string MakeLabel(const std::string& inLabel, const std::string& inID);
-
 void SelectTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags);
 bool IsCurrentItemSelected();
 
@@ -29,11 +27,6 @@ constexpr ImVec4 kArgumentColor  = ImVec4(1.f, 1.f, 0.f, 1.f);
 
 namespace HTNImGuiHelpers
 {
-inline std::string MakeLabel(const std::string& inLabel, const std::string& inID)
-{
-    return std::format("##{}{}", inLabel, inID);
-}
-
 inline void SelectTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags)
 {
     outTreeNodeFlags |= ImGuiTreeNodeFlags_Selected;
