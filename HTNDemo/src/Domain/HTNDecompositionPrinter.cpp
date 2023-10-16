@@ -281,7 +281,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndCondition
         }
     };
 
-    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
+    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_None;
     return PrintNodeSnapshotHistory(inAndConditionNode, NodeTitleFunction, NodeSelectionFunction, &NodeBehaviorFunction, TreeNodeFlags);
 }
 
@@ -305,7 +305,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNo
         }
     };
 
-    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
+    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_None;
     return PrintNodeSnapshotHistory(inOrConditionNode, NodeTitleFunction, NodeSelectionFunction, &NodeBehaviorFunction, TreeNodeFlags);
 }
 
@@ -329,7 +329,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltCondition
         }
     };
 
-    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
+    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_None;
     return PrintNodeSnapshotHistory(inAltConditionNode, NodeTitleFunction, NodeSelectionFunction, &NodeBehaviorFunction, TreeNodeFlags);
 }
 
@@ -350,7 +350,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotCondition
         GetNodeValue(*SubConditionNode);
     };
 
-    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
+    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_None;
     return PrintNodeSnapshotHistory(inNotConditionNode, NodeTitleFunction, NodeSelectionFunction, &NodeBehaviorFunction, TreeNodeFlags);
 }
 
@@ -497,11 +497,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         const HTNNodeSnapshotDebug& NodeSnapshot = It->second;
 
         ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags | inTreeNodeFlags;
-        if (!inNodeBehaviorFunction)
-        {
-            TreeNodeFlags |= ImGuiTreeNodeFlags_Leaf;
-        }
-
         if (It == --NodeSnapshotHistory->end())
         {
             TreeNodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
