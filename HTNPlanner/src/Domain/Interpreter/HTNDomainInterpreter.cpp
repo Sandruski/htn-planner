@@ -131,7 +131,10 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode)
         if (BranchIndex == BranchNodesSize - 1) // Last branch
         {
             // Restore state: unbound variables but updated indices
-            mDecompositionContext.RestoreDecomposition();
+            if (!mDecompositionContext.RestoreDecomposition())
+            {
+                break;
+            }
         }
         else
         {
@@ -334,7 +337,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
             else
             {
                 // Restore state: unbound variables but updated indices
-                mDecompositionContext.RestoreDecomposition();
+                if (!mDecompositionContext.RestoreDecomposition())
+                {
+                    break;
+                }
+
                 continue;
             }
         }
@@ -412,7 +419,10 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
         if (SubConditionIndex == SubConditionNodesSize - 1) // Last sub-condition
         {
             // Restore state: unbound variables but updated indices
-            mDecompositionContext.RestoreDecomposition();
+            if (!mDecompositionContext.RestoreDecomposition())
+            {
+                break;
+            }
         }
         else
         {
