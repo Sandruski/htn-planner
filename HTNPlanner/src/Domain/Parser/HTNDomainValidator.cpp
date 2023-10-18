@@ -33,10 +33,13 @@ HTNAtom HTNDomainValidator::Visit(const HTNDomainNode& inDomainNode)
     const HTNDecompositionVariableScopeNodeScope DomainVariableScopeNodeScope =
         HTNDecompositionVariableScopeNodeScope(mDecompositionContext, DomainNodeID);
 
+    // TODO salvarez
     // Dummy top-level task node
-    static const std::string&                        EntryPointID             = HTNDecompositionHelpers::kDefaultTopLevelMethodID;
-    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDecompositionHelpers::MakeTopLevelCompoundTaskNode(EntryPointID);
-    return GetNodeValue(*TopLevelCompoundTaskNode).GetValue<bool>();
+    //static const std::string&                        EntryPointID             = HTNDecompositionHelpers::kDefaultTopLevelMethodID;
+    //const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDecompositionHelpers::MakeTopLevelCompoundTaskNode(EntryPointID);
+    //return GetNodeValue(*TopLevelCompoundTaskNode).GetValue<bool>();
+
+    return true;
 }
 
 HTNAtom HTNDomainValidator::Visit(MAYBE_UNUSED const HTNConstantNode& inConstantNode)

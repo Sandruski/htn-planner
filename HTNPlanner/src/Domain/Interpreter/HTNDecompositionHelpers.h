@@ -18,9 +18,6 @@ bool FindVariableID(const std::string& inVariablePath, std::string& outVariableI
 
 bool IsParameter(const std::string& inVariableID);
 
-// Name of the default top-level method of a top-level domain
-const std::string kDefaultTopLevelMethodID = "behave";
-
 // ID of the top-level compound task node
 constexpr unsigned int kTopLevelCompoundTaskNodeID = 0;
 
