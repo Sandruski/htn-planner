@@ -10,6 +10,7 @@
 #include "HTNDebuggerWindow.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
+#include "Planner/HTNPlanningUnit.h"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer.h"
@@ -93,6 +94,8 @@ int main(int, char**)
 
     HTNPlannerHook  PlannerHook;
     HTNDatabaseHook DatabaseHook;
+    HTNPlanningUnit MainPlanningUnit      = HTNPlanningUnit("Main", PlannerHook, DatabaseHook);
+    HTNPlanningUnit UpperBodyPlanningUnit = HTNPlanningUnit("Upper Body", PlannerHook, DatabaseHook);
 
     // Main loop
     bool done = false;
@@ -127,7 +130,7 @@ int main(int, char**)
 #ifdef HTN_DEBUG
         if (ShowHTNDebuggerWindow)
         {
-            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlannerHook, DatabaseHook);
+            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlannerHook, DatabaseHook, MainPlanningUnit, UpperBodyPlanningUnit);
             sHTNDebuggerWindow.Render(ShowHTNDebuggerWindow);
         }
 #endif

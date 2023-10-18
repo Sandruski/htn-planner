@@ -6,8 +6,8 @@
 #include "Domain/HTNDecompositionNodeParameterArgumentValuesPrinter.h"
 #include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
-#include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
+#include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
@@ -128,7 +128,29 @@ void HTNDebuggerWindow::Render(bool& _IsOpen)
 
 void HTNDebuggerWindow::RenderActivePlan()
 {
-    // TODO salvarez
+    // TODO salvarez Print last plan tasks in Plan window
+    /*
+    for (const HTNDecomposition& LastDecomposition : LastDecompositions)
+    {
+        ImGui::Text(LastDecomposition.mEntryPointID.c_str());
+
+        ImGui::Indent();
+        const std::vector<HTNTaskResult>&  LastPlan = LastDecomposition.mDecompositionContext.GetCurrentDecomposition().GetPlan();
+        for (const HTNTaskResult& Task : LastPlan)
+        {
+            ImGui::Text(Task.GetID().c_str());
+
+            const std::vector<HTNAtom>& Arguments = Task.GetArguments();
+            for (const HTNAtom& Argument : Arguments)
+            {
+                ImGui::SameLine();
+                static constexpr bool ShouldDoubleQuoteString = true;
+                ImGui::Text(Argument.ToString(ShouldDoubleQuoteString).c_str());
+            }
+        }
+        ImGui::Unindent();
+    }
+    */
 }
 
 void HTNDebuggerWindow::RenderDecomposition()
@@ -143,76 +165,66 @@ void HTNDebuggerWindow::RenderDecomposition()
         }
     }
 
-    struct HTNEntryPoint
-    {
-        std::string  mID;
-        unsigned int mAmount = 0;
-    };
-
-    static std::vector<HTNEntryPoint> EntryPoints;
     ImGui::Text("Entry Points");
 
-    ImGui::SameLine();
-
-    if (ImGui::Button("+"))
+    struct HTNPlanningQuery
     {
-        const std::string      DefaultEntryPointID     = (MethodNodes && !MethodNodes->empty()) ? (*MethodNodes)[0]->GetID() : "";
-        constexpr unsigned int DefaultEntryPointAmount = 1;
-        EntryPoints.emplace_back(DefaultEntryPointID, DefaultEntryPointAmount);
-    }
-
-    if (ImGui::IsItemHovered())
-    {
-        ImGui::SetTooltip("Add Entry Point");
-    }
-
-    ImGui::SameLine();
-
-    if (ImGui::Button("-"))
-    {
-        EntryPoints.clear();
-    }
-
-    if (ImGui::IsItemHovered())
-    {
-        ImGui::SetTooltip("Remove All Entry Points");
-    }
-
-    for (std::size_t i = 0; i < EntryPoints.size(); ++i)
-    {
-        HTNEntryPoint& EntryPoint = EntryPoints[i];
-
-        if (!EntryPoint.mID.empty())
+        explicit HTNPlanningQuery(HTNPlanningUnit* inPlanningUnit) : mPlanningUnit(inPlanningUnit)
         {
-            if (MethodNodes)
-            {
-                const auto MethodNode =
-                    std::find_if(MethodNodes->begin(), MethodNodes->end(), [&EntryPoint](const std::shared_ptr<const HTNMethodNode>& inMethodNode) {
-                        if (!inMethodNode)
-                        {
-                            return false;
-                        }
-
-                        if (!inMethodNode->IsTopLevel())
-                        {
-                            return false;
-                        }
-
-                        return (EntryPoint.mID == inMethodNode->GetID());
-                    });
-
-                if (MethodNode == MethodNodes->end())
-                {
-                    EntryPoint.mID.clear();
-                }
-            }
-            else
-            {
-                EntryPoint.mID.clear();
-            }
         }
 
-        if (ImGui::BeginCombo(std::format("##Method{}", i).c_str(), EntryPoint.mID.c_str(), HTNImGuiHelpers::kDefaultComboFlags))
+        HTNPlanningUnit*   mPlanningUnit = nullptr;
+        std::string        mEntryPointID;
+        HTNOperationResult mLastDecompositionResult = HTNOperationResult::NONE;
+    };
+
+    static HTNPlanningQuery sMainPlanningQuery = HTNPlanningQuery(mMainPlanningUnit);
+
+    if (sMainPlanningQuery.mEntryPointID.empty())
+    {
+        if (MethodNodes)
+        {
+            if (!MethodNodes->empty())
+            {
+                sMainPlanningQuery.mEntryPointID = (*MethodNodes)[0]->GetID();
+            }
+        }
+    };
+
+    static HTNPlanningQuery              sUpperBodyPlanningQuery = HTNPlanningQuery(mUpperBodyPlanningUnit);
+    static std::vector<HTNPlanningQuery> sPlanningQueries        = {sMainPlanningQuery, sUpperBodyPlanningQuery};
+
+    for (HTNPlanningQuery& PlanningQuery : sPlanningQueries)
+    {
+        if (MethodNodes)
+        {
+            const auto MethodNode =
+                std::find_if(MethodNodes->begin(), MethodNodes->end(), [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) {
+                    if (!inMethodNode)
+                    {
+                        return false;
+                    }
+
+                    if (!inMethodNode->IsTopLevel())
+                    {
+                        return false;
+                    }
+
+                    return (PlanningQuery.mEntryPointID == inMethodNode->GetID());
+                });
+
+            if (MethodNode == MethodNodes->end())
+            {
+                PlanningQuery.mEntryPointID.clear();
+            }
+        }
+        else
+        {
+            PlanningQuery.mEntryPointID.clear();
+        }
+
+        const std::string& PlanningUnitID = PlanningQuery.mPlanningUnit->GetID();
+        if (ImGui::BeginCombo(PlanningUnitID.c_str(), PlanningQuery.mEntryPointID.c_str(), HTNImGuiHelpers::kDefaultComboFlags))
         {
             if (MethodNodes)
             {
@@ -229,10 +241,10 @@ void HTNDebuggerWindow::RenderDecomposition()
                     }
 
                     const std::string MethodNodeID = MethodNode->GetID();
-                    const bool        IsSelected   = (EntryPoint.mID == MethodNodeID);
+                    const bool        IsSelected   = (PlanningQuery.mEntryPointID == MethodNodeID);
                     if (ImGui::Selectable(MethodNodeID.c_str(), IsSelected, HTNImGuiHelpers::kDefaultSelectableFlags))
                     {
-                        EntryPoint.mID = MethodNodeID;
+                        PlanningQuery.mEntryPointID = MethodNodeID;
                     }
 
                     if (IsSelected)
@@ -245,64 +257,15 @@ void HTNDebuggerWindow::RenderDecomposition()
             ImGui::EndCombo();
         }
 
-        ImGui::SameLine();
-
-        int Amount = EntryPoint.mAmount;
-        if (ImGui::InputInt(std::format("##Amount{}", i).c_str(), &Amount, 0, 0,
-                            HTNImGuiHelpers::kDefaultInputTextFlags | ImGuiInputTextFlags_CharsDecimal))
-        {
-            EntryPoint.mAmount = std::max(0, Amount);
-        }
-
-        ImGui::SameLine();
-
-        if (ImGui::Button(std::format("-##{}", i).c_str()))
-        {
-            EntryPoints.erase(EntryPoints.begin() + i);
-        }
-
-        if (ImGui::IsItemHovered())
-        {
-            ImGui::SetTooltip("Remove Entry Point");
-        }
+        RenderOperationResult(PlanningQuery.mLastDecompositionResult);
     }
 
-    struct HTNDecomposition
-    {
-        std::string                          mEntryPointID;
-        std::shared_ptr<const HTNDomainNode> mDomainNode;
-        HTNDecompositionContext              mDecompositionContext;
-    };
-
-    static std::mutex                    LastDecompositionsMutex;
-    static std::vector<HTNDecomposition> LastDecompositions;
-    static HTNOperationResult            LastDecompositionResult = HTNOperationResult::NONE;
     if (ImGui::Button("Decompose"))
     {
-        LastDecompositionsMutex.lock();
-        LastDecompositions.clear();
-        LastDecompositionsMutex.unlock();
-
-        std::for_each(std::execution::par, EntryPoints.begin(), EntryPoints.end(), [this](HTNEntryPoint& inEntryPoint) {
-            for (unsigned int i = 0; i < inEntryPoint.mAmount; ++i)
-            {
-                // AI has upper-body planning unit and lower-body planning unit
-                HTNPlanningUnit PlanningUnit = HTNPlanningUnit(*mPlannerHook, *mDatabaseHook);
-                if (!PlanningUnit.ExecuteTopLevelMethod(inEntryPoint.mID))
-                {
-                    continue;
-                }
-
-                // TODO salvarez Just add it once per entry point since it should be the same result
-                LastDecompositionsMutex.lock();
-                const std::shared_ptr<const HTNDomainNode>& LastDomainNode           = mPlannerHook->GetDomainNode();
-                const HTNDecompositionContext&              LastDecompositionContext = PlanningUnit.GetLastDecompositionContext();
-                LastDecompositions.emplace_back(inEntryPoint.mID, LastDomainNode, LastDecompositionContext);
-                LastDecompositionsMutex.unlock();
-            }
+        std::for_each(std::execution::par, sPlanningQueries.begin(), sPlanningQueries.end(), [this](HTNPlanningQuery& inPlanningQuery) {
+            inPlanningQuery.mLastDecompositionResult =
+                static_cast<HTNOperationResult>(inPlanningQuery.mPlanningUnit->ExecuteTopLevelMethod(inPlanningQuery.mEntryPointID));
         });
-
-        LastDecompositionResult = static_cast<HTNOperationResult>(!LastDecompositions.empty());
     }
 
     if (ImGui::IsItemHovered())
@@ -310,22 +273,30 @@ void HTNDebuggerWindow::RenderDecomposition()
         ImGui::SetTooltip("Decompose the selected entry points of the parsed domain using the parsed world state");
     }
 
-    RenderOperationResult(LastDecompositionResult);
-
     ImGui::Separator();
 
-    LastDecompositionsMutex.lock();
-    for (const HTNDecomposition& LastDecomposition : LastDecompositions)
+    for (const HTNPlanningQuery& PlanningQuery : sPlanningQueries)
     {
+        if (HTNOperationResult::SUCCEEDED != PlanningQuery.mLastDecompositionResult)
+        {
+            continue;
+        }
+
+        const std::string PlanningUnitID = PlanningQuery.mPlanningUnit->GetID();
+        ImGui::Text(PlanningUnitID.c_str());
+        ImGui::Spacing();
+
         const ImVec2 ContentRegionAvail = ImGui::GetContentRegionAvail();
 
         // Decomposition window
         const ImVec2 DecompositionChildSize = ImVec2(ContentRegionAvail.x, 350.f);
         ImGui::BeginChild("DecompositionChild", DecompositionChildSize, false, ImGuiWindowFlags_HorizontalScrollbar);
 
-        const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = LastDecomposition.mDecompositionContext.GetDecompositionSnapshot();
-        HTNDecompositionPrinter              DecompositionPrinter =
-            HTNDecompositionPrinter(LastDecomposition.mDomainNode, LastDecomposition.mEntryPointID, LastDecompositionSnapshot);
+        const std::shared_ptr<const HTNDomainNode>& LastDomainNode   = PlanningQuery.mPlanningUnit->GetLastDomainNode();
+        const std::string&                          LastEntryPointID = PlanningQuery.mPlanningUnit->GetLastEntryPointID();
+        const HTNDecompositionSnapshotDebug&        LastDecompositionSnapshot =
+            PlanningQuery.mPlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
+        HTNDecompositionPrinter     DecompositionPrinter = HTNDecompositionPrinter(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot);
         static HTNDecompositionNode SelectedNode;
         DecompositionPrinter.Print(SelectedNode);
 
@@ -356,7 +327,7 @@ void HTNDebuggerWindow::RenderDecomposition()
 
             ImGui::TableNextColumn();
             HTNDecompositionNodeParameterArgumentValuesPrinter NodeParameterArgumentValuesPrinter =
-                HTNDecompositionNodeParameterArgumentValuesPrinter(LastDecomposition.mDomainNode, SelectedNode);
+                HTNDecompositionNodeParameterArgumentValuesPrinter(LastDomainNode, SelectedNode);
             NodeParameterArgumentValuesPrinter.Print();
 
             ImGui::EndTable();
@@ -365,30 +336,6 @@ void HTNDebuggerWindow::RenderDecomposition()
         ImGui::EndChild();
         ImGui::PopStyleVar();
     }
-    // TODO salvarez Print last plan tasks in Plan window
-    /*
-    for (const HTNDecomposition& LastDecomposition : LastDecompositions)
-    {
-        ImGui::Text(LastDecomposition.mEntryPointID.c_str());
-
-        ImGui::Indent();
-        const std::vector<HTNTaskResult>&  LastPlan = LastDecomposition.mDecompositionContext.GetCurrentDecomposition().GetPlan();
-        for (const HTNTaskResult& Task : LastPlan)
-        {
-            ImGui::Text(Task.GetID().c_str());
-
-            const std::vector<HTNAtom>& Arguments = Task.GetArguments();
-            for (const HTNAtom& Argument : Arguments)
-            {
-                ImGui::SameLine();
-                static constexpr bool ShouldDoubleQuoteString = true;
-                ImGui::Text(Argument.ToString(ShouldDoubleQuoteString).c_str());
-            }
-        }
-        ImGui::Unindent();
-    }
-    */
-    LastDecompositionsMutex.unlock();
 }
 
 void HTNDebuggerWindow::RenderDomain()
