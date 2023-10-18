@@ -18,7 +18,6 @@
 #include "WorldState/HTNWorldStatePrinter.h"
 
 #include "imgui.h"
-#include "imgui_stdlib.h"
 
 #include <execution>
 #include <filesystem>
