@@ -205,10 +205,8 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
         return;
     }
 
-    const ImVec2 ContentRegionAvail = ImGui::GetContentRegionAvail();
-
     // Decomposition window
-    const ImVec2 DecompositionChildSize = ImVec2(ContentRegionAvail.x, 350.f);
+    const ImVec2 DecompositionChildSize = ImVec2(500.f, 350.f);
     ImGui::BeginChild("DecompositionChild", DecompositionChildSize, false, ImGuiWindowFlags_HorizontalScrollbar);
 
     const std::shared_ptr<const HTNDomainNode>& LastDomainNode   = inPlanningQuery.mPlanningUnit->GetLastDomainNode();
@@ -223,7 +221,7 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
 
     // Watch window
     ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-    const ImVec2 WatchChildSize = ImVec2(ContentRegionAvail.x, 150.f);
+    const ImVec2 WatchChildSize = ImVec2(500.f, 150.f);
     ImGui::BeginChild("WatchChild", WatchChildSize, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
 
     if (ImGui::BeginMenuBar())

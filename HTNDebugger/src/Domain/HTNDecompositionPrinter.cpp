@@ -209,7 +209,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode)
     };
 
     const HTNNodeBehaviorFunction* NodeBehaviorFunction = nullptr;
-    constexpr ImGuiTreeNodeFlags   TreeNodeFlags        = ImGuiTreeNodeFlags_None;
+    constexpr ImGuiTreeNodeFlags   TreeNodeFlags        = ImGuiTreeNodeFlags_Leaf;
     return PrintNodeSnapshotHistory(inConditionNode, NodeTitleFunction, NodeSelectionFunction, NodeBehaviorFunction, TreeNodeFlags);
 }
 
@@ -263,6 +263,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndConditionNode)
 {
+    // TODO salvarez If open, only print that one and the children of that decomposition step. If closed, print all of them but closed. SAME FOR ALT
     const std::string IDString = "and";
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot) {
@@ -305,7 +306,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNo
         }
     };
 
-    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_None;
+    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
     return PrintNodeSnapshotHistory(inOrConditionNode, NodeTitleFunction, NodeSelectionFunction, &NodeBehaviorFunction, TreeNodeFlags);
 }
 
@@ -350,7 +351,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotCondition
         GetNodeValue(*SubConditionNode);
     };
 
-    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_None;
+    constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
     return PrintNodeSnapshotHistory(inNotConditionNode, NodeTitleFunction, NodeSelectionFunction, &NodeBehaviorFunction, TreeNodeFlags);
 }
 
@@ -435,7 +436,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
         SelectNode(inNodeSnapshot, ArgumentNodes);
     };
 
-    constexpr ImGuiTreeNodeFlags   TreeNodeFlags        = ImGuiTreeNodeFlags_None;
+    constexpr ImGuiTreeNodeFlags   TreeNodeFlags        = ImGuiTreeNodeFlags_Leaf;
     const HTNNodeBehaviorFunction* NodeBehaviorFunction = nullptr;
     return PrintNodeSnapshotHistory(inPrimitiveTaskNode, NodeTitleFunction, NodeSelectionFunction, NodeBehaviorFunction, TreeNodeFlags);
 }
