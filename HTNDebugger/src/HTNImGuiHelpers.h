@@ -32,9 +32,14 @@ inline void SelectTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags)
     outTreeNodeFlags |= ImGuiTreeNodeFlags_Selected;
 }
 
+inline bool IsCurrentItemHovered()
+{
+    return ImGui::IsItemHovered();
+}
+
 inline bool IsCurrentItemSelected()
 {
-    return ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered(ImGuiHoveredFlags_None) && !ImGui::IsItemToggledOpen();
+    return IsCurrentItemHovered() && ImGui::IsMouseDoubleClicked(0);
 }
 } // namespace HTNImGuiHelpers
 #endif

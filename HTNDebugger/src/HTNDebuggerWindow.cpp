@@ -204,6 +204,13 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
         return;
     }
 
+    static bool ShouldPrintFullTooltip = false;
+    ImGui::Checkbox("Full Tooltip", &ShouldPrintFullTooltip);
+    if (HTNImGuiHelpers::IsCurrentItemHovered())
+    {
+        ImGui::SetTooltip("Whether to display all variables or only the parameters or arguments in the tooltip of the hovered line");
+    }
+
     // Decomposition
     const ImVec2 DecompositionChildSize = ImVec2(500.f, 350.f);
     ImGui::BeginChild("DecompositionChild", DecompositionChildSize, false, ImGuiWindowFlags_HorizontalScrollbar);
@@ -212,7 +219,8 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
     const std::string&                          LastEntryPointID = inPlanningQuery.mPlanningUnit->GetLastEntryPointID();
     const HTNDecompositionSnapshotDebug&        LastDecompositionSnapshot =
         inPlanningQuery.mPlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
-    HTNDecompositionPrinter     DecompositionPrinter = HTNDecompositionPrinter(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot);
+    HTNDecompositionPrinter DecompositionPrinter =
+        HTNDecompositionPrinter(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, ShouldPrintFullTooltip);
     static HTNDecompositionNode SelectedNode;
     DecompositionPrinter.Print(SelectedNode);
 
