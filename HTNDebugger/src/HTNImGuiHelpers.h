@@ -21,7 +21,7 @@ const ImGuiTreeNodeFlags   kDefaultTreeNodeFlags   = ImGuiTreeNodeFlags_OpenOnAr
 
 constexpr ImVec4 kFailColor      = ImVec4(1.f, 0.5f, 0.5f, 1.f);
 constexpr ImVec4 kSuccessColor   = ImVec4(0.f, 1.f, 0.f, 1.f);
-constexpr ImVec4 kParameterColor = ImVec4(1.f, 0.5f, 0.f, 1.f);
+constexpr ImVec4 kParameterColor = ImVec4(1.f, 0.6f, 0.f, 1.f);
 constexpr ImVec4 kArgumentColor  = ImVec4(1.f, 1.f, 0.f, 1.f);
 } // namespace HTNImGuiHelpers
 

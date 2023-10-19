@@ -184,10 +184,13 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
         ImGui::EndCombo();
     }
 
+    static HTNDecompositionNode SelectedNode;
     if (ImGui::Button("Decompose"))
     {
         inPlanningQuery.mLastDecompositionResult =
             static_cast<HTNOperationResult>(inPlanningQuery.mPlanningUnit->ExecuteTopLevelMethod(inPlanningQuery.mEntryPointID));
+
+        SelectedNode = HTNDecompositionNode();
     }
 
     if (ImGui::IsItemHovered())
@@ -199,11 +202,6 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
 
     ImGui::Separator();
 
-    if (HTNOperationResult::SUCCEEDED != inPlanningQuery.mLastDecompositionResult)
-    {
-        return;
-    }
-
     static bool ShouldPrintFullTooltip = false;
     ImGui::Checkbox("Full Tooltip", &ShouldPrintFullTooltip);
     if (HTNImGuiHelpers::IsCurrentItemHovered())
@@ -211,7 +209,11 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
         ImGui::SetTooltip("Whether to display all variables or only the parameters or arguments in the tooltip of the hovered line");
     }
 
-    // Decomposition
+    if (HTNOperationResult::SUCCEEDED != inPlanningQuery.mLastDecompositionResult)
+    {
+        return;
+    }
+
     const ImVec2 DecompositionChildSize = ImVec2(500.f, 350.f);
     ImGui::BeginChild("DecompositionChild", DecompositionChildSize, false, ImGuiWindowFlags_HorizontalScrollbar);
 
@@ -221,7 +223,6 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
         inPlanningQuery.mPlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
     HTNDecompositionPrinter DecompositionPrinter =
         HTNDecompositionPrinter(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, ShouldPrintFullTooltip);
-    static HTNDecompositionNode SelectedNode;
     DecompositionPrinter.Print(SelectedNode);
 
     ImGui::EndChild();
@@ -400,13 +401,13 @@ void HTNDebuggerWindow::RenderDomain()
 
     ImGui::Separator();
 
-    const std::shared_ptr<const HTNDomainNode>& DomainNode = mPlannerHook->GetDomainNode();
-    if (!DomainNode)
+    if (HTNOperationResult::SUCCEEDED != LastParseDomainResult)
     {
         return;
     }
 
-    static HTNDomainPrinter DomainPrinter;
+    static HTNDomainPrinter                     DomainPrinter;
+    const std::shared_ptr<const HTNDomainNode>& DomainNode = mPlannerHook->GetDomainNode();
     DomainPrinter.Print(DomainNode);
 }
 
@@ -434,6 +435,11 @@ void HTNDebuggerWindow::RenderWorldState()
 
     static ImGuiTextFilter TextFilter;
     TextFilter.Draw("##");
+
+    if (HTNOperationResult::SUCCEEDED != LastImportWorldStateResult)
+    {
+        return;
+    }
 
     static const HTNWorldStatePrinter WorldStatePrinter;
     const HTNWorldState&              WorldState = mDatabaseHook->GetWorldState();
