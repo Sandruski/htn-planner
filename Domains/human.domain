@@ -28,7 +28,7 @@
         (branch_eat
             (and    //(#find_food @spanish ?food)
                     //(not (#is_spoiled ?food))
-                    (#find_food "italian" ?food2)
+                    (#find_food @italian ?food2)
                     (not (#is_spoiled ?food2))
             )
             (   //(eat ?food)

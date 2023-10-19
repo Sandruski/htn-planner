@@ -12,7 +12,7 @@ public:
     void SetVariable(const std::string& inVariablePath, const HTNAtom& inVariableValue);
 
     // Returns an existing variable or an unset HTNAtom if not existing
-    HTNAtom GetVariable(const std::string& inVariablePath) const;
+    HTNAtom FindVariable(const std::string& inVariablePath) const;
 
     // Removes an existing variable
     void RemoveVariable(const std::string& inVariablePath);
@@ -32,7 +32,7 @@ inline void HTNVariables::SetVariable(const std::string& inVariablePath, const H
     mVariables[inVariablePath] = inVariableValue;
 }
 
-inline HTNAtom HTNVariables::GetVariable(const std::string& inVariablePath) const
+inline HTNAtom HTNVariables::FindVariable(const std::string& inVariablePath) const
 {
     const auto It = mVariables.find(inVariablePath);
     if (It == mVariables.end())

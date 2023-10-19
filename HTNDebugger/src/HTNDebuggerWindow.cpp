@@ -2,9 +2,8 @@
 
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
-#include "Domain/HTNDecompositionNodeParameterArgumentIDsPrinter.h"
-#include "Domain/HTNDecompositionNodeParameterArgumentValuesPrinter.h"
 #include "Domain/HTNDecompositionPrinter.h"
+#include "Domain/HTNDecompositionWatchWindowPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Interpreter/HTNNodePath.h"
@@ -205,7 +204,7 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
         return;
     }
 
-    // Decomposition window
+    // Decomposition
     const ImVec2 DecompositionChildSize = ImVec2(500.f, 350.f);
     ImGui::BeginChild("DecompositionChild", DecompositionChildSize, false, ImGuiWindowFlags_HorizontalScrollbar);
 
@@ -221,8 +220,8 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
 
     // Watch window
     ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-    const ImVec2 WatchChildSize = ImVec2(500.f, 150.f);
-    ImGui::BeginChild("WatchChild", WatchChildSize, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
+    const ImVec2 WatchWindowChildSize = ImVec2(500.f, 150.f);
+    ImGui::BeginChild("WatchWindowChild", WatchWindowChildSize, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
 
     if (ImGui::BeginMenuBar())
     {
@@ -233,22 +232,8 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
         ImGui::EndMenuBar();
     }
 
-    if (ImGui::BeginTable("WatchWindow", 2, HTNImGuiHelpers::kDefaultTableFlags))
-    {
-        ImGui::TableNextRow();
-
-        ImGui::TableNextColumn();
-        HTNDecompositionNodeParameterArgumentIDsPrinter NodeParameterArgumentIDsPrinter =
-            HTNDecompositionNodeParameterArgumentIDsPrinter(SelectedNode);
-        NodeParameterArgumentIDsPrinter.Print();
-
-        ImGui::TableNextColumn();
-        HTNDecompositionNodeParameterArgumentValuesPrinter NodeParameterArgumentValuesPrinter =
-            HTNDecompositionNodeParameterArgumentValuesPrinter(LastDomainNode, SelectedNode);
-        NodeParameterArgumentValuesPrinter.Print();
-
-        ImGui::EndTable();
-    }
+    HTNDecompositionWatchWindowPrinter DecompositionWatchWindowPrinter = HTNDecompositionWatchWindowPrinter(LastDomainNode, SelectedNode);
+    DecompositionWatchWindowPrinter.Print();
 
     ImGui::EndChild();
     ImGui::PopStyleVar();

@@ -86,7 +86,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode)
 {
     const HTNDecompositionNodeScope ConstantNodeScope = HTNDecompositionNodeScope(mDecompositionContext, inConstantNode.GetID());
 
-    const std::shared_ptr<const HTNValueExpressionNodeBase>& ValueNode = inConstantNode.GetValueNode();
+    const std::shared_ptr<const HTNLiteralExpressionNode>& ValueNode = inConstantNode.GetValueNode();
     return GetNodeValue(*ValueNode);
 }
 
@@ -676,7 +676,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableE
     const HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext.GetCurrentDecomposition();
     const HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironment();
     const HTNVariables&           Variables            = Environment.GetVariables();
-    return Variables.GetVariable(CurrentVariablePath);
+    return Variables.FindVariable(CurrentVariablePath);
 }
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode)

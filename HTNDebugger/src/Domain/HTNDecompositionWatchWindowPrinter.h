@@ -4,20 +4,19 @@
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
 
 class HTNDecompositionNode;
 class HTNDomainNode;
 
 /**
- * Prints the values of the node's parameters or arguments
+ * Prints the watch window for the selected node
  */
-class HTNDecompositionNodeParameterArgumentValuesPrinter final : public HTNNodeVisitorBase
+class HTNDecompositionWatchWindowPrinter final : public HTNNodeVisitorBase
 {
 public:
-    explicit HTNDecompositionNodeParameterArgumentValuesPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                                const HTNDecompositionNode&                 inNode);
+    explicit HTNDecompositionWatchWindowPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode);
 
     void Print();
 
@@ -30,6 +29,6 @@ private:
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     const HTNDecompositionNode&          mNode;
 
-    std::vector<std::string> mNodeVariablesPaths;
+    std::vector<std::string> mNodeVariablePaths;
 };
 #endif
