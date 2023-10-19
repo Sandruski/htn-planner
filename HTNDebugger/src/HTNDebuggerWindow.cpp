@@ -136,7 +136,8 @@ std::vector<std::shared_ptr<const HTNMethodNode>>::const_iterator FindTopLevelMe
     });
 }
 
-void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const std::vector<std::shared_ptr<const HTNMethodNode>>* inMethodNodes)
+void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const std::vector<std::shared_ptr<const HTNMethodNode>>* inMethodNodes,
+                                        HTNDecompositionNode& ioSelectedNode, bool& ioShouldPrintFullTooltip)
 {
     if (inMethodNodes)
     {
@@ -184,13 +185,12 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
         ImGui::EndCombo();
     }
 
-    static HTNDecompositionNode SelectedNode;
     if (ImGui::Button("Decompose"))
     {
         inPlanningQuery.mLastDecompositionResult =
             static_cast<HTNOperationResult>(inPlanningQuery.mPlanningUnit->ExecuteTopLevelMethod(inPlanningQuery.mEntryPointID));
 
-        SelectedNode = HTNDecompositionNode();
+        ioSelectedNode = HTNDecompositionNode();
     }
 
     if (ImGui::IsItemHovered())
@@ -202,8 +202,7 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
 
     ImGui::Separator();
 
-    static bool ShouldPrintFullTooltip = false;
-    ImGui::Checkbox("Full Tooltip", &ShouldPrintFullTooltip);
+    ImGui::Checkbox("Full Tooltip", &ioShouldPrintFullTooltip);
     if (HTNImGuiHelpers::IsCurrentItemHovered())
     {
         ImGui::SetTooltip("Whether to display all variables or only the parameters or arguments in the tooltip of the hovered line");
@@ -222,8 +221,8 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
     const HTNDecompositionSnapshotDebug&        LastDecompositionSnapshot =
         inPlanningQuery.mPlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
     HTNDecompositionPrinter DecompositionPrinter =
-        HTNDecompositionPrinter(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, ShouldPrintFullTooltip);
-    DecompositionPrinter.Print(SelectedNode);
+        HTNDecompositionPrinter(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, ioShouldPrintFullTooltip);
+    DecompositionPrinter.Print(ioSelectedNode);
 
     ImGui::EndChild();
 
@@ -241,7 +240,7 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
         ImGui::EndMenuBar();
     }
 
-    HTNDecompositionWatchWindowPrinter DecompositionWatchWindowPrinter = HTNDecompositionWatchWindowPrinter(LastDomainNode, SelectedNode);
+    HTNDecompositionWatchWindowPrinter DecompositionWatchWindowPrinter = HTNDecompositionWatchWindowPrinter(LastDomainNode, ioSelectedNode);
     DecompositionWatchWindowPrinter.Print();
 
     ImGui::EndChild();
@@ -348,12 +347,18 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     static std::vector<HTNPlanningQuery*> sPlanningQueries = {&sMainPlanningQuery, &sUpperBodyPlanningQuery};
 
+    static HTNDecompositionNode MainSelectedNode;
+    static HTNDecompositionNode UpperBodySelectedNode;
+
     if (ImGui::Button("Decompose"))
     {
         std::for_each(std::execution::par, sPlanningQueries.begin(), sPlanningQueries.end(), [this](HTNPlanningQuery* inPlanningQuery) {
             inPlanningQuery->mLastDecompositionResult =
                 static_cast<HTNOperationResult>(inPlanningQuery->mPlanningUnit->ExecuteTopLevelMethod(inPlanningQuery->mEntryPointID));
         });
+
+        MainSelectedNode      = HTNDecompositionNode();
+        UpperBodySelectedNode = HTNDecompositionNode();
     }
 
     if (ImGui::IsItemHovered())
@@ -363,15 +368,17 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     if (ImGui::BeginTabBar("Decomposition", HTNImGuiHelpers::kDefaultTabBarFlags))
     {
+        static bool ShouldPrintFullTooltip = false;
+
         if (ImGui::BeginTabItem("Main"))
         {
-            RenderDecompositionByPlanningQuery(sMainPlanningQuery, MethodNodes);
+            RenderDecompositionByPlanningQuery(sMainPlanningQuery, MethodNodes, MainSelectedNode, ShouldPrintFullTooltip);
             ImGui::EndTabItem();
         }
 
         if (ImGui::BeginTabItem("Upper Body"))
         {
-            RenderDecompositionByPlanningQuery(sUpperBodyPlanningQuery, MethodNodes);
+            RenderDecompositionByPlanningQuery(sUpperBodyPlanningQuery, MethodNodes, UpperBodySelectedNode, ShouldPrintFullTooltip);
             ImGui::EndTabItem();
         }
 
