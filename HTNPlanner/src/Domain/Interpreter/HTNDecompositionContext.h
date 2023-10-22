@@ -82,7 +82,7 @@ private:
 
 #ifdef HTN_DEBUG
 public:
-    void RecordNodeSnapshot(const std::string& inNodePath, const bool inResult);
+    void RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const bool inIsChoicePoint);
 
     const HTNDecompositionSnapshotDebug& GetDecompositionSnapshot() const;
 

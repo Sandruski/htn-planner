@@ -8,6 +8,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 class HTNDecompositionSnapshotDebug;
 class HTNDomainNode;
@@ -53,8 +54,9 @@ private:
                                   const HTNNodeBehaviorFunction* inNodeBehaviorFunction, const HTNNodeFunction& inNodeFunction,
                                   const ImGuiTreeNodeFlags inTreeNodeFlags);
 
-    void SetDecompositionStepRange(const int inMinDecompositionStep, const std::size_t inMaxDecompositionStep);
-    bool IsDecompositionStepBetweenRange(const std::size_t inDecompositionStep) const;
+    void SetCurrentDecompositionStep(const int inCurrentDecompositionStep);
+    void SetMaxDecompositionStep(const std::size_t inMaxDecompositionStep);
+    bool IsValidDecompositionStep(const int inDecompositionStep) const;
 
     void SelectNode(const HTNDecompositionNode& inNode);
     bool IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const;
@@ -62,7 +64,7 @@ private:
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointID;
     const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
-    bool                 mShouldPrintFullTooltip = false;
+    bool                                 mShouldPrintFullTooltip = false;
 
     HTNDecompositionNode mSelectedNode;
 
@@ -72,26 +74,34 @@ private:
     // Path from the root node to the current node determining the scope of the variables
     HTNNodePath mCurrentVariableScopeNodePath;
 
-    int         mMinDecompositionStep = -1;
-    std::size_t mMaxDecompositionStep = std::numeric_limits<std::size_t>::max();
+    int         mCurrentDecompositionStep = -1;
+    std::size_t mMaxDecompositionStep     = std::numeric_limits<std::size_t>::max();
+
+    static std::unordered_map<std::string, int> mCurrentDecompositionSteps;
 };
 
 inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                                         const HTNDecompositionSnapshotDebug& inDecompositionSnapshot,
                                                         const bool                           inShouldPrintFullTooltip)
-    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot), mShouldPrintFullTooltip(inShouldPrintFullTooltip)
+    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot),
+      mShouldPrintFullTooltip(inShouldPrintFullTooltip)
 {
 }
 
-inline void HTNDecompositionPrinter::SetDecompositionStepRange(const int inMinDecompositionStep, const std::size_t inMaxDecompositionStep)
+inline void HTNDecompositionPrinter::SetCurrentDecompositionStep(const int inCurrentDecompositionStep)
 {
-    mMinDecompositionStep = inMinDecompositionStep;
+    mCurrentDecompositionStep = inCurrentDecompositionStep;
+}
+
+inline void HTNDecompositionPrinter::SetMaxDecompositionStep(const std::size_t inMaxDecompositionStep)
+{
     mMaxDecompositionStep = inMaxDecompositionStep;
 }
 
-inline bool HTNDecompositionPrinter::IsDecompositionStepBetweenRange(const std::size_t inDecompositionStep) const
+inline bool HTNDecompositionPrinter::IsValidDecompositionStep(const int inDecompositionStep) const
 {
-    return (static_cast<int>(inDecompositionStep) > mMinDecompositionStep) && (inDecompositionStep <= mMaxDecompositionStep);
+    return (inDecompositionStep <= mMaxDecompositionStep) &&
+           ((mCurrentDecompositionStep == -1) || (inDecompositionStep == mCurrentDecompositionStep));
 }
 
 inline void HTNDecompositionPrinter::SelectNode(const HTNDecompositionNode& inNode)

@@ -17,13 +17,15 @@ bool TryPopSegmentFromPath(std::string& ioPath);
 bool FindVariableID(const std::string& inVariablePath, std::string& outVariableID);
 
 bool IsParameter(const std::string& inVariableID);
+bool IsAnyArgument(const std::string& inVariableID);
 
 // ID of the top-level compound task node
 constexpr unsigned int kTopLevelCompoundTaskNodeID = 0;
 
 const std::string kPathSegmentSeparator = " ";
 
-const std::string kInputPrefix       = "inp_";
-const std::string kOutputPrefix      = "out_";
-const std::string kInputOutputPrefix = "io_";
+const std::string kInputParameterPrefix       = "inp_";
+const std::string kOutputParameterPrefix      = "out_";
+const std::string kInputOutputParameterPrefix = "io_";
+const std::string kAnyArgumentPrefix          = "any_";
 } // namespace HTNDecompositionHelpers

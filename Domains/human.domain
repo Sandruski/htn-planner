@@ -29,7 +29,7 @@
             (and    //(#find_food @spanish ?food)
                     //(not (#is_spoiled ?food))
                     (#find_food @italian ?food2)
-                    (not (#is_spoiled ?food2))
+                    (not (#is_spoiled ?any_food))
             )
             (   //(eat ?food)
                 (eat ?food2)

@@ -78,7 +78,12 @@ bool FindVariableID(const std::string& inVariablePath, std::string& outVariableI
 
 bool IsParameter(const std::string& inVariableID)
 {
-    return (inVariableID.find(kInputPrefix) != std::string::npos) || (inVariableID.find(kOutputPrefix) != std::string::npos) ||
-           (inVariableID.find(kInputOutputPrefix) != std::string::npos);
+    return (inVariableID.find(kInputParameterPrefix) != std::string::npos) || (inVariableID.find(kOutputParameterPrefix) != std::string::npos) ||
+           (inVariableID.find(kInputOutputParameterPrefix) != std::string::npos);
+}
+
+bool IsAnyArgument(const std::string& inVariableID)
+{
+    return (inVariableID.find(kAnyArgumentPrefix) != std::string::npos);
 }
 } // namespace HTNDecompositionHelpers

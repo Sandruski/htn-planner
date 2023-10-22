@@ -87,13 +87,17 @@ void RenderOperationResult(const HTNOperationResult inOperationResult)
 {
     if (inOperationResult == HTNOperationResult::FAILED)
     {
+        const bool   Result = static_cast<bool>(inOperationResult);
+        const ImVec4 Color  = HTNImGuiHelpers::GetResultColor(Result);
         ImGui::SameLine();
-        ImGui::TextColored(HTNImGuiHelpers::kFailColor, "FAILED");
+        ImGui::TextColored(Color, "FAILED");
     }
     else if (inOperationResult == HTNOperationResult::SUCCEEDED)
     {
+        const bool   Result = static_cast<bool>(inOperationResult);
+        const ImVec4 Color  = HTNImGuiHelpers::GetResultColor(Result);
         ImGui::SameLine();
-        ImGui::TextColored(HTNImGuiHelpers::kSuccessColor, "SUCCEEDED");
+        ImGui::TextColored(Color, "SUCCEEDED");
     }
 }
 

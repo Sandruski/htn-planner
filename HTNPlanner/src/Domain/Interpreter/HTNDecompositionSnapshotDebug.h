@@ -19,13 +19,15 @@ class HTNNodeSnapshotDebug
 {
 public:
     HTNNodeSnapshotDebug() = default;
-    explicit HTNNodeSnapshotDebug(const bool inResult, const HTNVariables& inVariables);
+    explicit HTNNodeSnapshotDebug(const bool inResult, const bool inIsChoicePoint, const HTNVariables& inVariables);
 
     bool                GetResult() const;
+    bool                IsChoicePoint() const;
     const HTNVariables& GetVariables() const;
 
 private:
-    bool         mResult = false;
+    bool         mResult        = false;
+    bool         mIsChoicePoint = false;
     HTNVariables mVariables;
 };
 
@@ -43,13 +45,19 @@ private:
     size_t                                mDecompositionStep = 0;
 };
 
-inline HTNNodeSnapshotDebug::HTNNodeSnapshotDebug(const bool inResult, const HTNVariables& inVariables) : mResult(inResult), mVariables(inVariables)
+inline HTNNodeSnapshotDebug::HTNNodeSnapshotDebug(const bool inResult, const bool inIsChoicePoint, const HTNVariables& inVariables)
+    : mResult(inResult), mIsChoicePoint(inIsChoicePoint), mVariables(inVariables)
 {
 }
 
 inline bool HTNNodeSnapshotDebug::GetResult() const
 {
     return mResult;
+}
+
+inline bool HTNNodeSnapshotDebug::IsChoicePoint() const
+{
+    return mIsChoicePoint;
 }
 
 inline const HTNVariables& HTNNodeSnapshotDebug::GetVariables() const

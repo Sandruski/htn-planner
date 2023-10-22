@@ -18,11 +18,11 @@ bool HTNDecompositionContext::RestoreDecomposition()
 }
 
 #ifdef HTN_DEBUG
-void HTNDecompositionContext::RecordNodeSnapshot(const std::string& inNodePath, const bool inResult)
+void HTNDecompositionContext::RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const bool inIsChoicePoint)
 {
     const HTNEnvironment&      Environment  = mCurrentDecomposition.GetEnvironment();
     const HTNVariables&        Variables    = Environment.GetVariables();
-    const HTNNodeSnapshotDebug NodeSnapshot = HTNNodeSnapshotDebug(inResult, Variables);
+    const HTNNodeSnapshotDebug NodeSnapshot = HTNNodeSnapshotDebug(inResult, inIsChoicePoint, Variables);
     mDecompositionSnapshot.AddNodeSnapshot(inNodePath, NodeSnapshot);
 }
 #endif

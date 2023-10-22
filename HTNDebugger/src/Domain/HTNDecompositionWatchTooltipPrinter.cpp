@@ -81,8 +81,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(const bool inShouldPrintFullTool
                 // Argument ID
                 const HTNAtom&    ArgumentID       = *Argument.FindListElement(0);
                 const std::string ArgumentIDString = ArgumentID.ToString(ShouldDoubleQuoteString);
-                const ImVec4      ArgumentIDColor =
-                    HTNDecompositionHelpers::IsParameter(ArgumentIDString) ? HTNImGuiHelpers::kParameterColor : HTNImGuiHelpers::kArgumentColor;
+                const ImVec4      ArgumentIDColor  = HTNImGuiHelpers::GetArgumentColor(ArgumentIDString);
                 ImGui::TextColored(ArgumentIDColor, ArgumentIDString.c_str());
 
                 // Argument value
@@ -116,8 +115,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(const bool inShouldPrintFullTool
                     const bool  FindVariableIDResult = HTNDecompositionHelpers::FindVariableID(VariablePath, VariableID);
                     assert(FindVariableIDResult);
                     const std::string VariableIDString = std::format("?{}", VariableID);
-                    const ImVec4      VariableIDColor =
-                        HTNDecompositionHelpers::IsParameter(VariableID) ? HTNImGuiHelpers::kParameterColor : HTNImGuiHelpers::kArgumentColor;
+                    const ImVec4      VariableIDColor  = HTNImGuiHelpers::GetArgumentColor(VariableID);
                     ImGui::TextColored(VariableIDColor, VariableIDString.c_str());
 
                     // Variable value
