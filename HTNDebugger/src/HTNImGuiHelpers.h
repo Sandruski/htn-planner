@@ -9,8 +9,9 @@
 namespace HTNImGuiHelpers
 {
 void SelectTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags);
+bool IsTreeNodeOpen(const std::string& inLabel, const ImGuiTreeNodeFlags inTreeNodeFlags);
 bool IsCurrentItemHovered();
-bool        IsCurrentItemSelected();
+bool IsCurrentItemSelected();
 
 ImVec4 GetResultColor(const bool inResult);
 ImVec4 GetArgumentColor(const std::string& inArgumentID);

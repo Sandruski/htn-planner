@@ -5,8 +5,17 @@
 
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 
+#include "imgui_internal.h"
+
 namespace HTNImGuiHelpers
 {
+bool IsTreeNodeOpen(const std::string& inLabel, const ImGuiTreeNodeFlags inTreeNodeFlags)
+{
+    ImGuiWindow*  CurrentWindow = ImGui::GetCurrentWindow();
+    const ImGuiID ID            = CurrentWindow->GetID(inLabel.c_str());
+    return ImGui::TreeNodeUpdateNextOpen(ID, inTreeNodeFlags);
+}
+
 ImVec4 GetArgumentColor(const std::string& inArgumentID)
 {
     if (HTNDecompositionHelpers::IsParameter(inArgumentID))

@@ -44,7 +44,7 @@ private:
 
 #ifdef HTN_DEBUG
 private:
-    void RecordCurrentNodeSnapshot(const bool inResult);
+    void RecordCurrentNodeSnapshot(const bool inResult, const bool inIsChoicePoint);
 #endif
 };
 

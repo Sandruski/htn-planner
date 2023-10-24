@@ -8,7 +8,6 @@
 #include <functional>
 #include <memory>
 #include <string>
-#include <unordered_map>
 
 class HTNDecompositionSnapshotDebug;
 class HTNDomainNode;
@@ -76,8 +75,6 @@ private:
 
     int         mCurrentDecompositionStep = -1;
     std::size_t mMaxDecompositionStep     = std::numeric_limits<std::size_t>::max();
-
-    static std::unordered_map<std::string, int> mCurrentDecompositionSteps;
 };
 
 inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
