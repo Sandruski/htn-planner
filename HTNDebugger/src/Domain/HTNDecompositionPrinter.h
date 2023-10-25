@@ -54,8 +54,9 @@ private:
                                   const ImGuiTreeNodeFlags inTreeNodeFlags);
 
     void SetCurrentDecompositionStep(const int inCurrentDecompositionStep);
+    void SetMinDecompositionStep(const int inMinDecompositionStep);
     void SetMaxDecompositionStep(const std::size_t inMaxDecompositionStep);
-    bool IsValidDecompositionStep(const int inDecompositionStep) const;
+    bool IsValidDecompositionStep(const int inDecompositionStep, const bool inIsChoicePoint) const;
 
     void SelectNode(const HTNDecompositionNode& inNode);
     bool IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const;
@@ -74,6 +75,7 @@ private:
     HTNNodePath mCurrentVariableScopeNodePath;
 
     int         mCurrentDecompositionStep = -1;
+    int         mMinDecompositionStep     = -1;
     std::size_t mMaxDecompositionStep     = std::numeric_limits<std::size_t>::max();
 };
 
@@ -90,15 +92,22 @@ inline void HTNDecompositionPrinter::SetCurrentDecompositionStep(const int inCur
     mCurrentDecompositionStep = inCurrentDecompositionStep;
 }
 
+inline void HTNDecompositionPrinter::SetMinDecompositionStep(const int inMinDecompositionStep)
+{
+    mMinDecompositionStep = inMinDecompositionStep;
+}
+
 inline void HTNDecompositionPrinter::SetMaxDecompositionStep(const std::size_t inMaxDecompositionStep)
 {
     mMaxDecompositionStep = inMaxDecompositionStep;
 }
 
-inline bool HTNDecompositionPrinter::IsValidDecompositionStep(const int inDecompositionStep) const
+inline bool HTNDecompositionPrinter::IsValidDecompositionStep(const int inDecompositionStep, const bool inIsChoicePoint) const
 {
+    // TODO salvarez Only choice points need to look at the range
     return (inDecompositionStep <= mMaxDecompositionStep) &&
-           ((mCurrentDecompositionStep == -1) || (inDecompositionStep == mCurrentDecompositionStep));
+           (inDecompositionStep > mMinDecompositionStep) &&
+           (((mCurrentDecompositionStep == -1) && inIsChoicePoint) || (inDecompositionStep == mCurrentDecompositionStep));
 }
 
 inline void HTNDecompositionPrinter::SelectNode(const HTNDecompositionNode& inNode)
