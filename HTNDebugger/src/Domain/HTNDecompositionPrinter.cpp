@@ -496,12 +496,31 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         return false;
     }
 
+    const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection = NodeSnapshotHistory->GetNodeSnapshotCollection();
+
     // const int         PreviousCurrentDecompositionStep = mCurrentDecompositionStep;
     // const std::size_t PreviousMaxDecompositionStep     = mMaxDecompositionStep;
 
     const bool IsChoicePoint = NodeSnapshotHistory->IsChoicePoint();
     if (IsChoicePoint)
     {
+        bool IsChoicePointOpen = false;
+        for (auto It = NodeSnapshotCollection.begin(); It != NodeSnapshotCollection.end(); ++It)
+        {
+            const std::size_t DecompositionStep = It->first;
+            const std::string Label             = std::format("##{}{}", CurrentNodePath, DecompositionStep);
+
+            ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags | inTreeNodeFlags;
+            if (It == --NodeSnapshotCollection.end())
+            {
+                TreeNodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
+            }
+
+            IsChoicePointOpen = IsChoicePointOpen || HTNImGuiHelpers::IsTreeNodeOpen(Label.c_str(), TreeNodeFlags);
+        }
+
+
+
         /*
     int        CurrentDecompositionStep = -1;
     const auto It                       = mChoicePointDecompositionSteps.find(CurrentNodePath);
@@ -524,8 +543,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
     bool AreAnyOpen = false;
 
-    const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection     = NodeSnapshotHistory->GetNodeSnapshotCollection();
-    const std::size_t                     NodeSnapshotCollectionSize = NodeSnapshotCollection.size();
+    const std::size_t NodeSnapshotCollectionSize = NodeSnapshotCollection.size();
     for (auto It = NodeSnapshotCollection.begin(); It != NodeSnapshotCollection.end(); ++It)
     {
         const std::size_t DecompositionStep = It->first;

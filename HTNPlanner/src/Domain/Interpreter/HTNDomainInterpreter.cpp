@@ -146,10 +146,6 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode)
 
         if (BranchIndex == BranchNodesSize - 1) // Last branch
         {
-#ifdef HTN_DEBUG
-            constexpr bool IsChoicePoint = false;
-            RecordCurrentNodeSnapshot(Result, IsChoicePoint);
-#endif
             // Restore state: unbound variables but updated indices
             if (!mDecompositionContext.RestoreDecomposition())
             {
@@ -272,8 +268,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
         {
             constexpr bool Result = true;
 #ifdef HTN_DEBUG
-            // TODO salvarez Fix this crash
-            constexpr bool IsChoicePoint = false;
+            constexpr bool IsChoicePoint = true;
             RecordCurrentNodeSnapshot(Result, IsChoicePoint);
 #endif
             return Result;
@@ -409,10 +404,6 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
             }
             else
             {
-#ifdef HTN_DEBUG
-                constexpr bool IsChoicePoint = false;
-                RecordCurrentNodeSnapshot(Result, IsChoicePoint);
-#endif
                 // Restore state: unbound variables but updated indices
                 if (!mDecompositionContext.RestoreDecomposition())
                 {
@@ -513,10 +504,6 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
 
         if (SubConditionIndex == SubConditionNodesSize - 1) // Last sub-condition
         {
-#ifdef HTN_DEBUG
-            constexpr bool IsChoicePoint = false;
-            RecordCurrentNodeSnapshot(Result, IsChoicePoint);
-#endif
             // Restore state: unbound variables but updated indices
             if (!mDecompositionContext.RestoreDecomposition())
             {
