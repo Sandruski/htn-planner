@@ -104,10 +104,9 @@ inline void HTNDecompositionPrinter::SetMaxDecompositionStep(const std::size_t i
 
 inline bool HTNDecompositionPrinter::IsValidDecompositionStep(const int inDecompositionStep, const bool inIsChoicePoint) const
 {
-    // TODO salvarez Only choice points need to look at the range
-    return (inDecompositionStep <= mMaxDecompositionStep) &&
-           (inDecompositionStep > mMinDecompositionStep) &&
-           (((mCurrentDecompositionStep == -1) && inIsChoicePoint) || (inDecompositionStep == mCurrentDecompositionStep));
+    return (inDecompositionStep == mCurrentDecompositionStep) ||
+           (inIsChoicePoint && (mCurrentDecompositionStep == -1) && (inDecompositionStep <= mMaxDecompositionStep) &&
+            (inDecompositionStep > mMinDecompositionStep));
 }
 
 inline void HTNDecompositionPrinter::SelectNode(const HTNDecompositionNode& inNode)

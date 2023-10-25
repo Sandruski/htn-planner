@@ -268,7 +268,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
         {
             constexpr bool Result = true;
 #ifdef HTN_DEBUG
-            const bool IsChoicePoint = FactArgumentsSize > 1;
+            const bool IsChoicePoint = true;
             RecordCurrentNodeSnapshot(Result, IsChoicePoint);
 #endif
             return Result;
@@ -284,7 +284,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
 
         constexpr bool Result = true;
 #ifdef HTN_DEBUG
-        const bool IsChoicePoint = FactArgumentsSize > 1;
+        const bool IsChoicePoint = true;
         RecordCurrentNodeSnapshot(Result, IsChoicePoint);
 #endif
         return Result;
