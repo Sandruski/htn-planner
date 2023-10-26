@@ -26,7 +26,8 @@ class HTNDecompositionPrinter final : public HTNNodeVisitorBase
 {
 public:
     explicit HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                                     const HTNDecompositionSnapshotDebug& inDecompositionSnapshot, const bool inShouldPrintFullTooltip);
+                                     const HTNDecompositionSnapshotDebug& inDecompositionSnapshot, const bool inShouldPrintFullTooltip,
+                                     const bool inShouldResetView);
 
     bool Print(HTNDecompositionNode& ioSelectedNode);
 
@@ -61,10 +62,13 @@ private:
     void SelectNode(const HTNDecompositionNode& inNode);
     bool IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const;
 
+    std::size_t GetSuccessfulDecompositionStep() const;
+
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointID;
     const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
     bool                                 mShouldPrintFullTooltip = false;
+    bool                                 mShouldResetView        = false;
 
     HTNDecompositionNode mSelectedNode;
 
@@ -81,9 +85,9 @@ private:
 
 inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                                         const HTNDecompositionSnapshotDebug& inDecompositionSnapshot,
-                                                        const bool                           inShouldPrintFullTooltip)
+                                                        const bool inShouldPrintFullTooltip, const bool inShouldResetView)
     : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot),
-      mShouldPrintFullTooltip(inShouldPrintFullTooltip)
+      mShouldPrintFullTooltip(inShouldPrintFullTooltip), mShouldResetView(inShouldResetView)
 {
 }
 
@@ -106,7 +110,7 @@ inline bool HTNDecompositionPrinter::IsValidDecompositionStep(const int inDecomp
 {
     return (inDecompositionStep == mCurrentDecompositionStep) ||
            (inIsChoicePoint && (mCurrentDecompositionStep == -1)); // && (inDecompositionStep <= mMaxDecompositionStep) &&
-            //(inDecompositionStep > mMinDecompositionStep));
+                                                                   //(inDecompositionStep > mMinDecompositionStep));
 }
 
 inline void HTNDecompositionPrinter::SelectNode(const HTNDecompositionNode& inNode)

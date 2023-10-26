@@ -9,12 +9,15 @@
 namespace HTNImGuiHelpers
 {
 void SelectTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags);
+
+void SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen);
 bool IsTreeNodeOpen(const std::string& inLabel, const ImGuiTreeNodeFlags inTreeNodeFlags);
+
 bool IsCurrentItemHovered();
 bool IsCurrentItemSelected();
 
 ImVec4 GetResultColor(const bool inResult);
-ImVec4 GetArgumentColor(const std::string& inArgumentID);
+ImVec4 GetVariableColor(const std::string& inVariableID);
 
 const ImGuiWindowFlags     kDefaultWindowFlags     = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
 const ImGuiTabBarFlags     kDefaultTabBarFlags     = ImGuiTabBarFlags_None;

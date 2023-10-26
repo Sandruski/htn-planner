@@ -40,13 +40,16 @@ void HTNDecompositionWatchWindowPrinter::Print()
 
             const HTNAtom&    ParameterID       = *Parameter.FindListElement(0);
             const std::string ParameterIDString = ParameterID.ToString(ShouldDoubleQuoteString);
-            constexpr ImVec4  ParameterIDColor  = HTNImGuiHelpers::kParameterColor;
-            ImGui::TextColored(ParameterIDColor, ParameterIDString.c_str());
+            const HTNAtom&    ParameterIDColor  = *Parameter.FindListElement(1);
+            const ImVec4      ParameterIDImGuiColor =
+                ImVec4(ParameterIDColor.FindListElement(0)->GetValue<float>(), ParameterIDColor.FindListElement(1)->GetValue<float>(),
+                       ParameterIDColor.FindListElement(2)->GetValue<float>(), ParameterIDColor.FindListElement(3)->GetValue<float>());
+            ImGui::TextColored(ParameterIDImGuiColor, ParameterIDString.c_str());
 
             // Parameter value
             ImGui::TableNextColumn();
 
-            const HTNAtom&    ParameterValue       = *Parameter.FindListElement(1);
+            const HTNAtom&    ParameterValue       = *Parameter.FindListElement(2);
             const std::string ParameterValueString = ParameterValue.ToString(ShouldDoubleQuoteString);
             ImGui::Text(ParameterValueString.c_str());
         }
@@ -65,13 +68,16 @@ void HTNDecompositionWatchWindowPrinter::Print()
 
             const HTNAtom&    ArgumentID       = *Argument.FindListElement(0);
             const std::string ArgumentIDString = ArgumentID.ToString(ShouldDoubleQuoteString);
-            const ImVec4      ArgumentIDColor  = HTNImGuiHelpers::GetArgumentColor(ArgumentIDString);
-            ImGui::TextColored(ArgumentIDColor, ArgumentIDString.c_str());
+            const HTNAtom&    ArgumentIDColor  = *Argument.FindListElement(1);
+            const ImVec4      ArgumentIDImGuiColor =
+                ImVec4(ArgumentIDColor.FindListElement(0)->GetValue<float>(), ArgumentIDColor.FindListElement(1)->GetValue<float>(),
+                       ArgumentIDColor.FindListElement(2)->GetValue<float>(), ArgumentIDColor.FindListElement(3)->GetValue<float>());
+            ImGui::TextColored(ArgumentIDImGuiColor, ArgumentIDString.c_str());
 
             // Argument value
             ImGui::TableNextColumn();
 
-            const HTNAtom&    ArgumentValue       = *Argument.FindListElement(1);
+            const HTNAtom&    ArgumentValue       = *Argument.FindListElement(2);
             const std::string ArgumentValueString = ArgumentValue.ToString(ShouldDoubleQuoteString);
             ImGui::Text(ArgumentValueString.c_str());
         }
@@ -96,7 +102,7 @@ void HTNDecompositionWatchWindowPrinter::Print()
             const bool  FindVariableIDResult = HTNDecompositionHelpers::FindVariableID(VariablePath, VariableID);
             assert(FindVariableIDResult);
             const std::string VariableIDString = std::format("?{}", VariableID);
-            const ImVec4      VariableIDColor  = HTNImGuiHelpers::GetArgumentColor(VariableID);
+            const ImVec4      VariableIDColor  = HTNImGuiHelpers::GetVariableColor(VariableID);
             ImGui::TextColored(VariableIDColor, VariableIDString.c_str());
 
             // Variable value

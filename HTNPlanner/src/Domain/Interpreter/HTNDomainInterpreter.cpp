@@ -242,6 +242,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
             continue;
         }
 
+        // TODO salvarez Detect whether it is a choice point in the domain validator and store the data in the condition node
         if (!ShouldBindFactArguments)
         {
             constexpr bool Result = true;

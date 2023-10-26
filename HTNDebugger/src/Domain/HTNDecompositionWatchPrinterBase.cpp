@@ -31,17 +31,18 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantNode& inConstan
 
 HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode)
 {
-    const HTNAtom& Value = inLiteralExpressionNode.GetValue();
+    const HTNAtom& Literal = inLiteralExpressionNode.GetValue();
 
     // Literal ID
     const bool         ShouldDoubleQuoteIDString = false;
-    const std::string& ValueIDString             = Value.ToString(ShouldDoubleQuoteIDString);
+    const std::string& LiteralIDString           = Literal.ToString(ShouldDoubleQuoteIDString);
+    constexpr ImVec4   LiteralIDColor           = HTNImGuiHelpers::kArgumentColor;
 
     // Literal value
     const bool         ShouldDoubleQuoteValueString = true;
-    const std::string& ValueValueString             = Value.ToString(ShouldDoubleQuoteValueString);
+    const std::string& LiteralValueString           = Literal.ToString(ShouldDoubleQuoteValueString);
 
-    return HTNAtomList({ValueIDString, ValueValueString});
+    return HTNAtomList({LiteralIDString, HTNAtomList({LiteralIDColor.x, LiteralIDColor.y, LiteralIDColor.z, LiteralIDColor.w}), LiteralValueString});
 }
 
 HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode& inVariableExpressionNode)
@@ -54,6 +55,8 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
         constexpr bool    ShouldDoubleQuoteString = false;
         const std::string VariableIDString        = std::format("?{}", VariableID.ToString(ShouldDoubleQuoteString));
         Result.Add(VariableIDString);
+        const ImVec4 VariableIDColor = HTNImGuiHelpers::GetVariableColor(VariableIDString);
+        Result.Add(HTNAtomList({VariableIDColor.x, VariableIDColor.y, VariableIDColor.z, VariableIDColor.w}));
     }
 
     // Variable value
@@ -85,6 +88,8 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode&
         constexpr bool    ShouldDoubleQuoteString = false;
         const std::string ConstantIDString        = std::format("@{}", ConstantID.ToString(ShouldDoubleQuoteString));
         Result.Add(ConstantIDString);
+        constexpr ImVec4 ConstantIDColor = HTNImGuiHelpers::kArgumentColor;
+        Result.Add(HTNAtomList({ConstantIDColor.x, ConstantIDColor.y, ConstantIDColor.z, ConstantIDColor.w}));
     }
 
     // Constant value
