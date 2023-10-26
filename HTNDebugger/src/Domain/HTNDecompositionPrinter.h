@@ -105,8 +105,8 @@ inline void HTNDecompositionPrinter::SetMaxDecompositionStep(const std::size_t i
 inline bool HTNDecompositionPrinter::IsValidDecompositionStep(const int inDecompositionStep, const bool inIsChoicePoint) const
 {
     return (inDecompositionStep == mCurrentDecompositionStep) ||
-           (inIsChoicePoint && (mCurrentDecompositionStep == -1) && (inDecompositionStep <= mMaxDecompositionStep) &&
-            (inDecompositionStep > mMinDecompositionStep));
+           (inIsChoicePoint && (mCurrentDecompositionStep == -1)); // && (inDecompositionStep <= mMaxDecompositionStep) &&
+            //(inDecompositionStep > mMinDecompositionStep));
 }
 
 inline void HTNDecompositionPrinter::SelectNode(const HTNDecompositionNode& inNode)

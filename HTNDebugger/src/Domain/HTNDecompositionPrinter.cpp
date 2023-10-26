@@ -580,7 +580,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         }
 
         // TODO salvarez Draw background for invalid decomposition
-        // TODO salvarez Fix axioms
+        // TODO salvarez Fix axioms -> Record video
 
         // TODO salvarez
         // if (NodeSnapshotCollectionSize > 1)
