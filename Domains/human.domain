@@ -9,6 +9,7 @@
 
     (:constants Nationalities
         (spanish "spanish")
+        (french "french")
     )
 
     (:axiom (find_food ?inp_food_type ?out_food)
@@ -22,23 +23,22 @@
                     (is_dry ?inp_food)
                 )
 		)
-	)
-
-                //(#find_food @spanish ?food)
-                    //(not (#is_spoiled ?food))
+	)                
 
     (:method (behave) top_level_method
         (branch_eat
             (and    (food @spanish ?food)
                     (has_mold ?food)
-                    (food @italian ?food2)
-                    (has_mold ?food2)
-		            //(and (food @italian ?food2)
-                    //(has_mold ?food2))
-                    //(has_mold ?food)
+
+		            (and (food @italian ?food2)
+                    (has_mold ?food2))
+
+                    (food @french ?food3)
+                    (has_mold ?food3)
             )
             (   (eat ?food)
                 (eat ?food2)
+                (eat ?food3)
             )
         )
     )

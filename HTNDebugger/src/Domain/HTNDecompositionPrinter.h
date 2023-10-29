@@ -75,7 +75,7 @@ private:
     HTNNodePath mCurrentVariableScopeNodePath;
 
     int  mCurrentDecompositionStep = -1;
-    bool mShouldDecompose          = false;
+    bool mShouldDecompose          = true;
 };
 
 inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,

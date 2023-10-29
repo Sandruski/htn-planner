@@ -7,3 +7,7 @@ food "italian" "pasta"
 food "italian" "pizza"
 food "italian" "gelato"
 has_mold "gelato"
+
+food "french" "croissant"
+food "french" "duck"
+has_mold "croissant"
