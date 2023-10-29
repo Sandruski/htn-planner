@@ -74,8 +74,8 @@ private:
     // Path from the root node to the current node determining the scope of the variables
     HTNNodePath mCurrentVariableScopeNodePath;
 
-    int  mCurrentDecompositionStep = -1;
-    bool mShouldDecompose          = true;
+    int  mCurrentDecompositionStep            = -1;
+    bool mShouldDecompose                     = true;
 };
 
 inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,

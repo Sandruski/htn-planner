@@ -27,10 +27,10 @@
 
     (:method (behave) top_level_method
         (branch_eat
-            (and    (food @spanish ?food)
+            (and    (and (food @spanish ?food)
                     (has_mold ?food)
 
-		            (and (food @italian ?food2)
+		            (food @italian ?food2)
                     (has_mold ?food2))
 
                     (food @french ?food3)

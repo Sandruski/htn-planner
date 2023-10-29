@@ -504,6 +504,9 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
     ImGuiTreeNodeFlags TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags | inTreeNodeFlags;
 
+    const auto        LastIt                = NodeSnapshotStepsCollection.rbegin();
+    const std::size_t LastDecompositionStep = LastIt->first;
+
     const bool IsChoicePoint = NodeSnapshotHistory->IsChoicePoint();
     if (IsChoicePoint)
     {
@@ -538,9 +541,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         }
     }
 
-    const auto        LastIt                = NodeSnapshotStepsCollection.rbegin();
-    const std::size_t LastDecompositionStep = LastIt->first;
-
     for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
     {
         const std::size_t                     DecompositionStep      = It->first;
@@ -557,7 +557,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
         const std::string Label = std::format("##{}{}", CurrentNodePath, DecompositionStep);
 
-        const bool IsDefaultOpen = (mCurrentDecompositionStep == DecompositionStep);
+        const bool IsDefaultOpen = (DecompositionStep == mCurrentDecompositionStep);
         if (mShouldResetView)
         {
             HTNImGuiHelpers::SetTreeNodeOpen(Label, IsDefaultOpen);
@@ -581,7 +581,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
         if (IsChoicePoint)
         {
-            const bool   IsSuccessful = NodeSnapshot.GetResult() && (DecompositionStep == LastDecompositionStep);
+            const bool   IsSuccessful = (LastDecompositionStep == DecompositionStep);
             const ImVec4 ArrowColor   = IsSuccessful ? HTNImGuiHelpers::kSuccessColor : HTNImGuiHelpers::kFailColor;
             ImGui::PushStyleColor(ImGuiCol_Text, ArrowColor);
         }
@@ -648,8 +648,10 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
     if (IsChoicePoint)
     {
+        const bool IsCurrentDecompositionStepSuccessful = (LastDecompositionStep == mCurrentDecompositionStep);
+        mShouldDecompose &= IsCurrentDecompositionStepSuccessful;
         const bool HasPendingChoicePoint = (-1 == mCurrentDecompositionStep);
-        mShouldDecompose                 = !HasPendingChoicePoint;
+        mShouldDecompose &= !HasPendingChoicePoint;
     }
 
     return true;
