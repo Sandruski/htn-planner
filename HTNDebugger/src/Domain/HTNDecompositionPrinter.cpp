@@ -614,8 +614,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             SelectNode(Node);
         }
 
-        // TODO salvarez Fix axioms -> Record video
-
         // TODO salvarez
         // if (NodeSnapshotCollectionSize > 1)
         //{
