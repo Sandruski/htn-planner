@@ -24,25 +24,15 @@
 		)
 	)
 
+                //(#find_food @spanish ?food)
+                    //(not (#is_spoiled ?food))
+
     (:method (behave) top_level_method
         (branch_eat
-            (and                        (and (food @spanish ?food)
-                    (not (has_mold ?food))
-		            )
-                    (not (and (or (has_mold ?food)
-                    (is_dry ?food)
-                    )
-		            ))
-            
-            //(#find_food @spanish ?food)
-                    //(not (#is_spoiled ?food))
-                    (and (food @italian ?food2)
-                    (not (has_mold ?food2))
-		            )
-                    (not (and (or (has_mold ?food2)
-                    (is_dry ?food2)
-                    )
-		            ))
+            (and    (food @spanish ?food)
+                    (has_mold ?food)
+		            (food @italian ?food2)
+                    (has_mold ?food2)
             )
             (   (eat ?food)
                 (eat ?food2)

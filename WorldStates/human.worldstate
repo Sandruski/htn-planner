@@ -1,12 +1,9 @@
 food
-food
-food "spanish" "paella"
-food "spanish" "paella"
 food "spanish" "tortilla"
+food "spanish" "paella"
 has_mold "paella"
 
 food "italian" "pasta"
 food "italian" "pizza"
 food "italian" "gelato"
-has_mold "pasta"
-is_dry "pizza"
+has_mold "gelato"

@@ -62,8 +62,6 @@ private:
     void SelectNode(const HTNDecompositionNode& inNode);
     bool IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const;
 
-    std::size_t GetSuccessfulDecompositionStep() const;
-
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointID;
     const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;

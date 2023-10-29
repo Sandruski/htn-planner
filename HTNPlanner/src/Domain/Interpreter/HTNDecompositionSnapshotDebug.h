@@ -11,7 +11,7 @@ class HTNNodeSnapshotDebug;
 class HTNNodeSnapshotHistoryDebug;
 
 // Decomposition step to node snapshot
-using HTNNodeSnapshotCollectionDebug = std::unordered_map<std::size_t, HTNNodeSnapshotDebug>;
+using HTNNodeSnapshotCollectionDebug = std::map<std::size_t, HTNNodeSnapshotDebug>;
 
 // Node path to node snapshot history
 using HTNNodeSnapshotHistoryCollectionDebug = std::unordered_map<std::string, HTNNodeSnapshotHistoryDebug>;
