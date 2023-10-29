@@ -55,8 +55,6 @@ private:
                                   const ImGuiTreeNodeFlags inTreeNodeFlags);
 
     void SetCurrentDecompositionStep(const int inCurrentDecompositionStep);
-    void SetMinDecompositionStep(const int inMinDecompositionStep);
-    void SetMaxDecompositionStep(const std::size_t inMaxDecompositionStep);
     bool IsValidDecompositionStep(const int inDecompositionStep, const bool inIsChoicePoint) const;
 
     void SelectNode(const HTNDecompositionNode& inNode);
@@ -77,8 +75,6 @@ private:
     HTNNodePath mCurrentVariableScopeNodePath;
 
     int         mCurrentDecompositionStep = -1;
-    int         mMinDecompositionStep     = -1;
-    std::size_t mMaxDecompositionStep     = std::numeric_limits<std::size_t>::max();
 };
 
 inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
@@ -94,21 +90,10 @@ inline void HTNDecompositionPrinter::SetCurrentDecompositionStep(const int inCur
     mCurrentDecompositionStep = inCurrentDecompositionStep;
 }
 
-inline void HTNDecompositionPrinter::SetMinDecompositionStep(const int inMinDecompositionStep)
-{
-    mMinDecompositionStep = inMinDecompositionStep;
-}
-
-inline void HTNDecompositionPrinter::SetMaxDecompositionStep(const std::size_t inMaxDecompositionStep)
-{
-    mMaxDecompositionStep = inMaxDecompositionStep;
-}
-
 inline bool HTNDecompositionPrinter::IsValidDecompositionStep(const int inDecompositionStep, const bool inIsChoicePoint) const
 {
     return (inDecompositionStep == mCurrentDecompositionStep) ||
-           (inIsChoicePoint && (mCurrentDecompositionStep == -1)); // && (inDecompositionStep <= mMaxDecompositionStep) &&
-                                                                   //(inDecompositionStep > mMinDecompositionStep));
+           (inIsChoicePoint && (mCurrentDecompositionStep == -1));
 }
 
 inline void HTNDecompositionPrinter::SelectNode(const HTNDecompositionNode& inNode)

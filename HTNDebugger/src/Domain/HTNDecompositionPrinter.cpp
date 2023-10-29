@@ -527,9 +527,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         }
     }
 
-    const int         PreviousMinDecompositionStep = mMinDecompositionStep;
-    const std::size_t PreviousMaxDecompositionStep = mMaxDecompositionStep;
-
     int PreviousDecompositionStep = -1;
 
     const auto        LastIt                = NodeSnapshotCollection.rbegin();
@@ -620,19 +617,10 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             continue;
         }
 
-        // TODO salvarez Are these needed?
-        const int         CurrentMinDecompositionStep = PreviousDecompositionStep;
-        const std::size_t CurrentMaxDecompositionStep = DecompositionStep;
-        SetMinDecompositionStep(CurrentMinDecompositionStep);
-        SetMaxDecompositionStep(CurrentMaxDecompositionStep);
-
         if (inNodeBehaviorFunction)
         {
             (*inNodeBehaviorFunction)();
         }
-
-        SetMinDecompositionStep(PreviousMinDecompositionStep);
-        SetMaxDecompositionStep(PreviousMaxDecompositionStep);
 
         if (TreeNodeFlags & ImGuiTreeNodeFlags_NoTreePushOnOpen)
         {
