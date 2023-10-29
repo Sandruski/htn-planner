@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
+#include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Interpreter/HTNTaskInstance.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
 
@@ -82,7 +82,8 @@ private:
 
 #ifdef HTN_DEBUG
 public:
-    void RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const bool inIsChoicePoint);
+    void RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
+    void RecordNodeSnapshot(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
 
     const HTNDecompositionSnapshotDebug& GetDecompositionSnapshot() const;
 

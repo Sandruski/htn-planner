@@ -10,8 +10,18 @@
 class HTNNodeSnapshotDebug;
 class HTNNodeSnapshotHistoryDebug;
 
-// Decomposition step to node snapshot
-using HTNNodeSnapshotCollectionDebug = std::map<std::size_t, HTNNodeSnapshotDebug>;
+enum class HTNNodeStep : unsigned char
+{
+    START,
+    END, // RETRY
+    NONE
+};
+
+// Node step to node snapshot
+using HTNNodeSnapshotCollectionDebug = std::unordered_map<HTNNodeStep, HTNNodeSnapshotDebug>;
+
+// Decomposition step to node snapshot steps
+using HTNNodeSnapshotStepsCollectionDebug = std::map<std::size_t, HTNNodeSnapshotCollectionDebug>;
 
 // Node path to node snapshot history
 using HTNNodeSnapshotHistoryCollectionDebug = std::unordered_map<std::string, HTNNodeSnapshotHistoryDebug>;
@@ -20,15 +30,15 @@ class HTNNodeSnapshotDebug
 {
 public:
     HTNNodeSnapshotDebug() = default;
-    explicit HTNNodeSnapshotDebug(const bool inResult, const HTNVariables& inVariables);
+    explicit HTNNodeSnapshotDebug(const HTNVariables& inVariables);
+    explicit HTNNodeSnapshotDebug(const HTNVariables& inVariables, const bool inResult);
 
-    bool                GetResult() const;
     const HTNVariables& GetVariables() const;
+    bool                GetResult() const;
 
 private:
-    bool mResult = false;
-
     HTNVariables mVariables;
+    bool         mResult = false;
 };
 
 class HTNNodeSnapshotHistoryDebug
@@ -37,19 +47,20 @@ public:
     HTNNodeSnapshotHistoryDebug() = default;
     explicit HTNNodeSnapshotHistoryDebug(const bool inIsChoicePoint);
 
-    const HTNNodeSnapshotCollectionDebug& GetNodeSnapshotCollection() const;
-    HTNNodeSnapshotCollectionDebug&       GetNodeSnapshotCollectionMutable();
-    bool                                  IsChoicePoint() const;
+    const HTNNodeSnapshotStepsCollectionDebug& GetNodeSnapshotStepsCollection() const;
+    HTNNodeSnapshotStepsCollectionDebug&       GetNodeSnapshotStepsCollectionMutable();
+    bool                                      IsChoicePoint() const;
 
 private:
-    HTNNodeSnapshotCollectionDebug mNodeSnapshotCollection;
-    bool                           mIsChoicePoint = false;
+    HTNNodeSnapshotStepsCollectionDebug mNodeSnapshotStepsCollection;
+    bool                               mIsChoicePoint = false;
 };
 
 class HTNDecompositionSnapshotDebug
 {
 public:
-    void AddNodeSnapshot(const std::string& inNodePath, const HTNNodeSnapshotDebug& inNodeSnapshot, const bool inIsChoicePoint);
+    void AddNodeSnapshot(const std::string& inNodePath, const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep,
+                         const bool inIsChoicePoint);
     const HTNNodeSnapshotHistoryDebug* FindNodeSnapshotHistory(const std::string& inNodePath) const;
 
     void   IncrementDecompositionStep();
@@ -60,7 +71,11 @@ private:
     size_t                                mDecompositionStep = 0;
 };
 
-inline HTNNodeSnapshotDebug::HTNNodeSnapshotDebug(const bool inResult, const HTNVariables& inVariables) : mResult(inResult), mVariables(inVariables)
+inline HTNNodeSnapshotDebug::HTNNodeSnapshotDebug(const HTNVariables& inVariables) : mVariables(inVariables)
+{
+}
+
+inline HTNNodeSnapshotDebug::HTNNodeSnapshotDebug(const HTNVariables& inVariables, const bool inResult) : mVariables(inVariables), mResult(inResult)
 {
 }
 
@@ -78,14 +93,14 @@ inline HTNNodeSnapshotHistoryDebug::HTNNodeSnapshotHistoryDebug(const bool inIsC
 {
 }
 
-inline const HTNNodeSnapshotCollectionDebug& HTNNodeSnapshotHistoryDebug::GetNodeSnapshotCollection() const
+inline const HTNNodeSnapshotStepsCollectionDebug& HTNNodeSnapshotHistoryDebug::GetNodeSnapshotStepsCollection() const
 {
-    return mNodeSnapshotCollection;
+    return mNodeSnapshotStepsCollection;
 }
 
-inline HTNNodeSnapshotCollectionDebug& HTNNodeSnapshotHistoryDebug::GetNodeSnapshotCollectionMutable()
+inline HTNNodeSnapshotStepsCollectionDebug& HTNNodeSnapshotHistoryDebug::GetNodeSnapshotStepsCollectionMutable()
 {
-    return mNodeSnapshotCollection;
+    return mNodeSnapshotStepsCollection;
 }
 
 inline bool HTNNodeSnapshotHistoryDebug::IsChoicePoint() const

@@ -2,7 +2,7 @@
 
 #ifdef HTN_DEBUG
 void HTNDecompositionSnapshotDebug::AddNodeSnapshot(const std::string& inNodePath, const HTNNodeSnapshotDebug& inNodeSnapshot,
-                                                    const bool inIsChoicePoint)
+                                                    const HTNNodeStep inNodeStep, const bool inIsChoicePoint)
 {
     if (!mNodeSnapshotHistoryCollection.contains(inNodePath))
     {
@@ -12,7 +12,8 @@ void HTNDecompositionSnapshotDebug::AddNodeSnapshot(const std::string& inNodePat
     HTNNodeSnapshotHistoryDebug& NodeSnapshotHistory = mNodeSnapshotHistoryCollection[inNodePath];
     assert(inIsChoicePoint == NodeSnapshotHistory.IsChoicePoint());
 
-    HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection = NodeSnapshotHistory.GetNodeSnapshotCollectionMutable();
-    NodeSnapshotCollection[mDecompositionStep]             = inNodeSnapshot;
+    HTNNodeSnapshotStepsCollectionDebug& NodeSnapshotStepsCollection = NodeSnapshotHistory.GetNodeSnapshotStepsCollectionMutable();
+    HTNNodeSnapshotCollectionDebug&      NodeSnapshotCollection      = NodeSnapshotStepsCollection[mDecompositionStep];
+    NodeSnapshotCollection[inNodeStep]                               = inNodeSnapshot;
 }
 #endif

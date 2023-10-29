@@ -6,6 +6,9 @@
 #include <format>
 #include <string>
 
+class HTNNodeSnapshotDebug;
+enum class HTNNodeStep : unsigned char;
+
 namespace HTNImGuiHelpers
 {
 void SelectTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags);
@@ -16,6 +19,7 @@ bool IsTreeNodeOpen(const std::string& inLabel, const ImGuiTreeNodeFlags inTreeN
 bool IsCurrentItemHovered();
 bool IsCurrentItemSelected();
 
+ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep);
 ImVec4 GetResultColor(const bool inResult);
 ImVec4 GetVariableColor(const std::string& inVariableID);
 
@@ -29,6 +33,7 @@ const ImGuiTreeNodeFlags   kDefaultTreeNodeFlags   = ImGuiTreeNodeFlags_OpenOnAr
 
 constexpr ImVec4 kFailColor        = ImVec4(1.f, 0.5f, 0.5f, 1.f);
 constexpr ImVec4 kSuccessColor     = ImVec4(0.f, 1.f, 0.f, 1.f);
+constexpr ImVec4 kNoResultColor    = ImVec4(0.6f, 0.6f, 0.6f, 1.f);
 constexpr ImVec4 kParameterColor   = ImVec4(1.f, 0.6f, 0.f, 1.f);
 constexpr ImVec4 kArgumentColor    = ImVec4(1.f, 1.f, 0.f, 1.f);
 constexpr ImVec4 kAnyArgumentColor = ImVec4(0.6f, 0.6f, 0.6f, 1.f);

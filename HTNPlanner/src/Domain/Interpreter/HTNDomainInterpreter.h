@@ -7,6 +7,7 @@
 
 class HTNDecompositionContext;
 class HTNDomainNode;
+enum class HTNNodeStep : unsigned char;
 
 // Decision-making
 // Returns a plan from an abstract syntax tree
@@ -44,7 +45,8 @@ private:
 
 #ifdef HTN_DEBUG
 private:
-    void RecordCurrentNodeSnapshot(const bool inResult, const bool inIsChoicePoint);
+    void RecordCurrentNodeSnapshot(const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
+    void RecordCurrentNodeSnapshot(const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
 #endif
 };
 

@@ -31,8 +31,11 @@
         (branch_eat
             (and    (food @spanish ?food)
                     (has_mold ?food)
-		            (food @italian ?food2)
+                    (food @italian ?food2)
                     (has_mold ?food2)
+		            //(and (food @italian ?food2)
+                    //(has_mold ?food2))
+                    //(has_mold ?food)
             )
             (   (eat ?food)
                 (eat ?food2)

@@ -18,11 +18,20 @@ bool HTNDecompositionContext::RestoreDecomposition()
 }
 
 #ifdef HTN_DEBUG
-void HTNDecompositionContext::RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const bool inIsChoicePoint)
+void HTNDecompositionContext::RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep,
+                                                 const bool inIsChoicePoint)
 {
     const HTNEnvironment&      Environment  = mCurrentDecomposition.GetEnvironment();
     const HTNVariables&        Variables    = Environment.GetVariables();
-    const HTNNodeSnapshotDebug NodeSnapshot = HTNNodeSnapshotDebug(inResult, Variables);
-    mDecompositionSnapshot.AddNodeSnapshot(inNodePath, NodeSnapshot, inIsChoicePoint);
+    const HTNNodeSnapshotDebug NodeSnapshot = HTNNodeSnapshotDebug(Variables, inResult);
+    mDecompositionSnapshot.AddNodeSnapshot(inNodePath, NodeSnapshot, inNodeStep, inIsChoicePoint);
+}
+
+void HTNDecompositionContext::RecordNodeSnapshot(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint)
+{
+    const HTNEnvironment&      Environment  = mCurrentDecomposition.GetEnvironment();
+    const HTNVariables&        Variables    = Environment.GetVariables();
+    const HTNNodeSnapshotDebug NodeSnapshot = HTNNodeSnapshotDebug(Variables);
+    mDecompositionSnapshot.AddNodeSnapshot(inNodePath, NodeSnapshot, inNodeStep, inIsChoicePoint);
 }
 #endif

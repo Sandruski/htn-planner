@@ -24,7 +24,7 @@
 
 namespace
 {
-enum HTNOperationResult : unsigned int
+enum class HTNOperationResult : unsigned char
 {
     FAILED    = 0,
     SUCCEEDED = 1,
