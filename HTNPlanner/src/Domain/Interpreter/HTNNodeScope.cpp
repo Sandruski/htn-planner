@@ -13,6 +13,7 @@ HTNNodeScope::~HTNNodeScope()
     {
         return;
     }
+
     // Remove the current node from the path
     const bool Result = mNodePath.TryPopNodeFromNodePath();
     assert(Result);

@@ -2,23 +2,48 @@
 
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
+#include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 #include <functional>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
-class HTNDecompositionSnapshotDebug;
 class HTNDomainNode;
-class HTNNodeSnapshotDebug;
-enum class HTNNodeStep : unsigned char;
+class HTNNodeState;
 
-using HTNNodeTitleFunction    = std::function<void(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep)>;
+using HTNNodeTitleFunction    = std::function<void(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeState& inNodeState)>;
 using HTNNodeBehaviorFunction = std::function<void()>;
 using HTNNodeFunction         = std::function<HTNDecompositionNode(const HTNNodeSnapshotDebug& inNodeSnapshot)>;
 
 typedef int ImGuiTreeNodeFlags;
+
+enum class HTNNodeDirection : unsigned char
+{
+    TOP_DOWN,
+    BOTTOM_UP,
+    NONE
+};
+
+class HTNNodeState
+{
+public:
+    HTNNodeState() = default;
+    explicit HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, const HTNNodeDirection inNodeDirection);
+
+    void             SetDecompositionStep(const int inDecompositionStep);
+    int              GetDecompositionStep() const;
+    HTNNodeStep      GetNodeStep() const;
+    void             SetNodeDirection(const HTNNodeDirection inNodeDirection);
+    HTNNodeDirection GetNodeDirection() const;
+
+private:
+    int              mDecompositionStep = -1;
+    HTNNodeStep      mNodeStep          = HTNNodeStep::NONE;
+    HTNNodeDirection mNodeDirection     = HTNNodeDirection::NONE;
+};
 
 /**
  * Prints a decomposition
@@ -55,7 +80,7 @@ private:
                                   const HTNNodeBehaviorFunction* inNodeBehaviorFunction, const HTNNodeFunction& inNodeFunction,
                                   const ImGuiTreeNodeFlags inTreeNodeFlags);
 
-    bool IsValidDecompositionStep(const int inDecompositionStep, const bool inIsChoicePoint) const;
+    bool IsValidDecompositionStep(const int inCurrentDecompositionStep, const int inDecompositionStep, const bool inIsChoicePoint) const;
 
     void SelectNode(const HTNDecompositionNode& inNode);
     bool IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const;
@@ -74,9 +99,44 @@ private:
     // Path from the root node to the current node determining the scope of the variables
     HTNNodePath mCurrentVariableScopeNodePath;
 
-    int  mCurrentDecompositionStep            = -1;
-    bool mShouldDecompose                     = true;
+    int  mCurrentDecompositionStep = -1;
+    bool mShouldDisplay            = true;
+    bool mShouldDisplayChoicePoint = true;
+    bool mShouldDraw = true;
+
+    // Node path to node state
+    static std::unordered_map<std::string, HTNNodeState> mNodeStates;
 };
+
+inline HTNNodeState::HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, const HTNNodeDirection inNodeDirection)
+    : mDecompositionStep(inDecompositionStep), mNodeStep(inNodeStep), mNodeDirection(inNodeDirection)
+{
+}
+
+inline void HTNNodeState::SetDecompositionStep(const int inDecompositionStep)
+{
+    mDecompositionStep = inDecompositionStep;
+}
+
+inline int HTNNodeState::GetDecompositionStep() const
+{
+    return mDecompositionStep;
+}
+
+inline HTNNodeStep HTNNodeState::GetNodeStep() const
+{
+    return mNodeStep;
+}
+
+inline void HTNNodeState::SetNodeDirection(const HTNNodeDirection inNodeDirection)
+{
+    mNodeDirection = inNodeDirection;
+}
+
+inline HTNNodeDirection HTNNodeState::GetNodeDirection() const
+{
+    return mNodeDirection;
+}
 
 inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                                         const HTNDecompositionSnapshotDebug& inDecompositionSnapshot,
@@ -86,9 +146,11 @@ inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<co
 {
 }
 
-inline bool HTNDecompositionPrinter::IsValidDecompositionStep(const int inDecompositionStep, const bool inIsChoicePoint) const
+inline bool HTNDecompositionPrinter::IsValidDecompositionStep(const int inCurrentDecompositionStep, const int inDecompositionStep,
+                                                              const bool inIsChoicePoint) const
 {
-    return (inDecompositionStep == mCurrentDecompositionStep) || (inIsChoicePoint && mShouldDecompose && (mCurrentDecompositionStep == -1));
+    return mShouldDisplay && ((inDecompositionStep == inCurrentDecompositionStep) ||
+                              (inIsChoicePoint && mShouldDisplayChoicePoint && (inCurrentDecompositionStep == -1)));
 }
 
 inline void HTNDecompositionPrinter::SelectNode(const HTNDecompositionNode& inNode)

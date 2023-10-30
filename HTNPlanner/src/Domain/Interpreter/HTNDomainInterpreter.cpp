@@ -179,6 +179,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode)
             {
                 break;
             }
+#ifdef HTN_DEBUG
+            RecordCurrentNodeSnapshot(Result, StartNodeStep, IsChoicePoint);
+#endif
         }
         else
         {
@@ -473,6 +476,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
                 {
                     break;
                 }
+#ifdef HTN_DEBUG
+                RecordCurrentNodeSnapshot(Result, StartNodeStep, IsChoicePoint);
+#endif
                 continue;
             }
         }
@@ -592,6 +598,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
             {
                 break;
             }
+#ifdef HTN_DEBUG
+            RecordCurrentNodeSnapshot(Result, StartNodeStep, IsChoicePoint);
+#endif
         }
         else
         {
