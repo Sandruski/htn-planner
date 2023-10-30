@@ -35,9 +35,9 @@ bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode)
     // TODO salvarez
     // Open successful decomposition by default
     // mCurrentDecompositionStep = static_cast<int>(mDecompositionSnapshot.GetDecompositionStep());
-    mCurrentDecompositionStep = 0;
     mShouldDisplay            = true;
     mShouldDisplayChoicePoint = true;
+    mShouldDraw               = true;
 
     GetNodeValue(*DomainNode).GetValue<bool>();
 
@@ -741,6 +741,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             if (-1 == mCurrentDecompositionStep)
             {
                 // Nested choice point not chosen
+                mCurrentDecompositionStep = InitialDecompositionStep;
                 CurrentNodeState.SetDecompositionStep(InitialDecompositionStep);
                 CurrentNodeState.SetNodeDirection(HTNNodeDirection::TOP_DOWN);
             }
