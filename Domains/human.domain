@@ -28,6 +28,7 @@
     (:method (behave) top_level_method
         (branch_eat
             (and    (food @spanish ?food)
+                    //(food @italian ?food2)
                     (has_mold ?food)
 
 		            //(and (food @italian ?food2)

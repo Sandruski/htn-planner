@@ -35,11 +35,13 @@ public:
 
     void             SetDecompositionStep(const int inDecompositionStep);
     int              GetDecompositionStep() const;
+    void             SetNodeStep(const HTNNodeStep inNodeStep);
     HTNNodeStep      GetNodeStep() const;
     void             SetNodeDirection(const HTNNodeDirection inNodeDirection);
     HTNNodeDirection GetNodeDirection() const;
 
 private:
+    // Only used if HTNNodeDirection::BOTTOM_UP == mNodeDirection
     int              mDecompositionStep = -1;
     HTNNodeStep      mNodeStep          = HTNNodeStep::NONE;
     HTNNodeDirection mNodeDirection     = HTNNodeDirection::NONE;
@@ -97,7 +99,9 @@ private:
     // Path from the root node to the current node determining the scope of the variables
     HTNNodePath mCurrentVariableScopeNodePath;
 
-    inline static int  mCurrentDecompositionStep = 0;
+    inline static int         mCurrentDecompositionStep = 0;
+    inline static HTNNodeStep mCurrentNodeStep          = HTNNodeStep::NONE;
+    inline static bool        mIsChoicePointSelected    = false;
 
     inline static bool mShouldDisplay            = true;
     inline static bool mShouldDisplayChoicePoint = true;
@@ -119,6 +123,11 @@ inline void HTNNodeState::SetDecompositionStep(const int inDecompositionStep)
 inline int HTNNodeState::GetDecompositionStep() const
 {
     return mDecompositionStep;
+}
+
+inline void HTNNodeState::SetNodeStep(const HTNNodeStep inNodeStep)
+{
+    mNodeStep = inNodeStep;
 }
 
 inline HTNNodeStep HTNNodeState::GetNodeStep() const
