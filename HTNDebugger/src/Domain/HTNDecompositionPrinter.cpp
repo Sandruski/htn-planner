@@ -38,9 +38,6 @@ bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode)
     mCurrentDecompositionStep     = 0;
     mChoicePointDecompositionStep = -1;
 
-    mShouldDisplay            = true;
-    mShouldDisplayChoicePoint = true;
-
     GetNodeValue(*DomainNode).GetValue<bool>();
 
     ioSelectedNode = mSelectedNode;
@@ -507,12 +504,10 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         return false;
     }
 
-    /*
     if (mCurrentDecompositionStep == -1)
     {
         return false;
     }
-    */
 
     const HTNNodeSnapshotStepsCollectionDebug& NodeSnapshotStepsCollection = NodeSnapshotHistory->GetNodeSnapshotStepsCollection();
     const bool                                 IsChoicePoint               = NodeSnapshotHistory->IsChoicePoint();
@@ -521,11 +516,13 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     const std::size_t LastDecompositionStep = LastIt->first;
 
     // Get node(s)
+    HTNNodeStep CurrentNodeStep   = HTNNodeStep::NONE;
+
     const auto CurrentNodeStateIt = mNodeStates.find(CurrentNodePath);
     if (CurrentNodeStateIt != mNodeStates.end())
     {
         HTNNodeState& CurrentNodeState = CurrentNodeStateIt->second;
-        mCurrentNodeStep               = CurrentNodeState.GetNodeStep();
+        CurrentNodeStep                = CurrentNodeState.GetNodeStep();
 
         const HTNNodeDirection NodeDirection = CurrentNodeState.GetNodeDirection();
         if (NodeDirection == HTNNodeDirection::BOTTOM_UP)
@@ -538,13 +535,13 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         if (IsChoicePoint)
         {
             mCurrentDecompositionStep    = -1;
-            mCurrentNodeStep             = HTNNodeStep::END;
-            mNodeStates[CurrentNodePath] = HTNNodeState(mCurrentDecompositionStep, mCurrentNodeStep, HTNNodeDirection::BOTTOM_UP);
+            CurrentNodeStep              = HTNNodeStep::END;
+            mNodeStates[CurrentNodePath] = HTNNodeState(mCurrentDecompositionStep, CurrentNodeStep, HTNNodeDirection::BOTTOM_UP);
         }
         else
         {
-            mCurrentNodeStep             = HTNNodeStep::START;
-            mNodeStates[CurrentNodePath] = HTNNodeState(mCurrentDecompositionStep, mCurrentNodeStep, HTNNodeDirection::TOP_DOWN);
+            CurrentNodeStep              = HTNNodeStep::START;
+            mNodeStates[CurrentNodePath] = HTNNodeState(mCurrentDecompositionStep, CurrentNodeStep, HTNNodeDirection::TOP_DOWN);
         }
     }
 
@@ -570,10 +567,10 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
         // TODO salvarez Fix hack
         // TODO We miss information on upper nodes (they have start but not end)
-        auto NodeStepIt = NodeSnapshotCollection.find(mCurrentNodeStep);
+        auto NodeStepIt = NodeSnapshotCollection.find(CurrentNodeStep);
         if (NodeStepIt == NodeSnapshotCollection.end())
         {
-            if (HTNNodeStep::START == mCurrentNodeStep)
+            if (HTNNodeStep::START == CurrentNodeStep)
             {
                 NodeStepIt = NodeSnapshotCollection.find(HTNNodeStep::END);
                 if (NodeStepIt == NodeSnapshotCollection.end())
@@ -581,7 +578,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
                     continue;
                 }
             }
-            else if (HTNNodeStep::END == mCurrentNodeStep)
+            else if (HTNNodeStep::END == CurrentNodeStep)
             {
                 NodeStepIt = NodeSnapshotCollection.find(HTNNodeStep::START);
                 if (NodeStepIt == NodeSnapshotCollection.end())
