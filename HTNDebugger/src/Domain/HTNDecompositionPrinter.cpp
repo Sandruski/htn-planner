@@ -569,6 +569,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         }
 
         // TODO salvarez Fix hack
+        // TODO We miss information on upper nodes (they have start but not end)
         auto NodeStepIt = NodeSnapshotCollection.find(mCurrentNodeStep);
         if (NodeStepIt == NodeSnapshotCollection.end())
         {
