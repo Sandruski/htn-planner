@@ -99,8 +99,10 @@ private:
     // Path from the root node to the current node determining the scope of the variables
     HTNNodePath mCurrentVariableScopeNodePath;
 
-    inline static int mCurrentDecompositionStep     = 0;
-    inline static int mChoicePointDecompositionStep = -1;
+    int mCurrentDecompositionStep     = 0;
+    int mChoicePointDecompositionStep = -1;
+    int mMinDecompositionStep         = std::numeric_limits<int>::min();
+    int mMaxDecompositionStep         = std::numeric_limits<int>::max();
 
     // Node path to node state
     static std::unordered_map<std::string, HTNNodeState> mNodeStates;

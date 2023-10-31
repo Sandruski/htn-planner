@@ -35,8 +35,6 @@ bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode)
     // TODO salvarez
     // Open successful decomposition by default
     // mCurrentDecompositionStep = static_cast<int>(mDecompositionSnapshot.GetDecompositionStep());
-    mCurrentDecompositionStep     = 0;
-    mChoicePointDecompositionStep = -1;
 
     GetNodeValue(*DomainNode).GetValue<bool>();
 
@@ -516,7 +514,11 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     const std::size_t LastDecompositionStep = LastIt->first;
 
     // Get node(s)
-    HTNNodeStep CurrentNodeStep   = HTNNodeStep::NONE;
+    mMinDecompositionStep = mCurrentDecompositionStep;
+    // TODO salvarez Implement max decomposition step
+    // mMaxDecompositionStep = mCurrentDecompositionStep;
+
+    HTNNodeStep CurrentNodeStep = HTNNodeStep::NONE;
 
     const auto CurrentNodeStateIt = mNodeStates.find(CurrentNodePath);
     if (CurrentNodeStateIt != mNodeStates.end())
@@ -551,18 +553,27 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         const std::size_t                     DecompositionStep      = It->first;
         const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection = It->second;
 
-        if (-1 == mCurrentDecompositionStep)
+        // Print all choice points
+        // [min, max)
+        if (static_cast<int>(DecompositionStep) < mMinDecompositionStep)
+        {
+            continue;
+        }
+        else if (static_cast<int>(DecompositionStep) >= mMaxDecompositionStep)
+        {
+            continue;
+        }
+        else if (-1 == mCurrentDecompositionStep)
         {
             if (!IsChoicePoint)
             {
-                // Print all choice points
                 continue; // TODO salvarez return
             }
         }
-        else if (DecompositionStep != mCurrentDecompositionStep)
+        // Print node (choice point or not)
+        else if (static_cast<int>(DecompositionStep) != mCurrentDecompositionStep)
         {
-            // Print node (choice point or not)
-            continue; // TODO salvarez return
+            continue;
         }
 
         // TODO salvarez Fix hack
@@ -643,10 +654,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             // Pop arrow color
             ImGui::PopStyleColor(1);
 
-            // Set choice point
-            // HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
-            // mCurrentDecompositionStep      = IsOpen ? static_cast<int>(DecompositionStep) : -1;
-            // CurrentNodeState.SetDecompositionStep(mCurrentDecompositionStep);
+            // Update choice point
             mChoicePointDecompositionStep = IsOpen ? static_cast<int>(DecompositionStep) : -1;
         }
 
@@ -693,20 +701,12 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         break;
     }
 
+    // Set node(s)
     if (IsChoicePoint)
     {
         HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
-        if (-1 == mChoicePointDecompositionStep)
-        {
-            CurrentNodeState.SetDecompositionStep(-1);
-        }
-        else
-        {
-            CurrentNodeState.SetDecompositionStep(mChoicePointDecompositionStep);
-        }
+        CurrentNodeState.SetDecompositionStep(mChoicePointDecompositionStep);
     }
-
-    // Set node (not choice point)
     else
     {
         HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];

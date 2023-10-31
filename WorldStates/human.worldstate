@@ -1,7 +1,7 @@
 food
 food "spanish" "tortilla"
 food "spanish" "paella"
-has_mold "tortilla"
+has_mold "paella"
 
 food "italian" "pasta"
 food "italian" "pizza"
