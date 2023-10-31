@@ -49,11 +49,11 @@ public:
 
     const HTNNodeSnapshotStepsCollectionDebug& GetNodeSnapshotStepsCollection() const;
     HTNNodeSnapshotStepsCollectionDebug&       GetNodeSnapshotStepsCollectionMutable();
-    bool                                      IsChoicePoint() const;
+    bool                                       IsChoicePoint() const;
 
 private:
     HTNNodeSnapshotStepsCollectionDebug mNodeSnapshotStepsCollection;
-    bool                               mIsChoicePoint = false;
+    bool                                mIsChoicePoint = false;
 };
 
 class HTNDecompositionSnapshotDebug

@@ -80,8 +80,6 @@ private:
                                   const HTNNodeBehaviorFunction* inNodeBehaviorFunction, const HTNNodeFunction& inNodeFunction,
                                   const ImGuiTreeNodeFlags inTreeNodeFlags);
 
-    bool IsValidDecompositionStep(const int inDecompositionStep, const bool inIsChoicePoint) const;
-
     void SelectNode(const HTNDecompositionNode& inNode);
     bool IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const;
 
@@ -144,12 +142,6 @@ inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<co
     : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot),
       mShouldPrintFullTooltip(inShouldPrintFullTooltip), mShouldResetView(inShouldResetView)
 {
-}
-
-inline bool HTNDecompositionPrinter::IsValidDecompositionStep(const int inDecompositionStep, const bool inIsChoicePoint) const
-{
-    return mShouldDisplay && ((inDecompositionStep == mCurrentDecompositionStep) ||
-                              (inIsChoicePoint && mShouldDisplayChoicePoint && (mCurrentDecompositionStep == -1)));
 }
 
 inline void HTNDecompositionPrinter::SelectNode(const HTNDecompositionNode& inNode)
