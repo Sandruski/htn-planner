@@ -664,6 +664,10 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
                 // Update choice point
                 mSelectedDecompositionStep = static_cast<int>(DecompositionStep);
             }
+            else
+            {
+                mCurrentDecompositionStep = kInvalidDecompositionStep;
+            }
         }
 
         if (HTNImGuiHelpers::IsCurrentItemHovered())
