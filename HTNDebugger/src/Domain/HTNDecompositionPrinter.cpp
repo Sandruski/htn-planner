@@ -35,6 +35,7 @@ bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode)
     // TODO salvarez
     // Open successful decomposition by default
     // mCurrentDecompositionStep = static_cast<int>(mDecompositionSnapshot.GetDecompositionStep());
+    mCurrentDecompositionStep = 0;
 
     GetNodeValue(*DomainNode).GetValue<bool>();
 
@@ -514,10 +515,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     const std::size_t LastDecompositionStep = LastIt->first;
 
     // Get node(s)
-    mMinDecompositionStep = mCurrentDecompositionStep;
-    // TODO salvarez Implement max decomposition step
-    // mMaxDecompositionStep = mCurrentDecompositionStep;
-
     HTNNodeStep CurrentNodeStep = HTNNodeStep::NONE;
 
     const auto CurrentNodeStateIt = mNodeStates.find(CurrentNodePath);
@@ -550,16 +547,16 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     // Print node(s)
     for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
     {
-        const std::size_t                     DecompositionStep      = It->first;
-        const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection = It->second;
+        const std::size_t DecompositionStep = It->first;
 
         // Print all choice points
-        // [min, max)
-        if (static_cast<int>(DecompositionStep) < mMinDecompositionStep)
+
+        // Filter available choice points within range [min, max)
+        if (IsChoicePoint && (static_cast<int>(DecompositionStep) < mMinDecompositionStep))
         {
             continue;
         }
-        else if (static_cast<int>(DecompositionStep) >= mMaxDecompositionStep)
+        else if (IsChoicePoint && (static_cast<int>(DecompositionStep) >= mMaxDecompositionStep))
         {
             continue;
         }
@@ -576,30 +573,8 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             continue;
         }
 
-        // TODO salvarez Fix hack
-        // TODO We miss information on upper nodes (they have start but not end)
-        auto NodeStepIt = NodeSnapshotCollection.find(CurrentNodeStep);
-        if (NodeStepIt == NodeSnapshotCollection.end())
-        {
-            if (HTNNodeStep::START == CurrentNodeStep)
-            {
-                NodeStepIt = NodeSnapshotCollection.find(HTNNodeStep::END);
-                if (NodeStepIt == NodeSnapshotCollection.end())
-                {
-                    continue;
-                }
-            }
-            else if (HTNNodeStep::END == CurrentNodeStep)
-            {
-                NodeStepIt = NodeSnapshotCollection.find(HTNNodeStep::START);
-                if (NodeStepIt == NodeSnapshotCollection.end())
-                {
-                    continue;
-                }
-            }
-        }
-
-        const HTNNodeSnapshotDebug& NodeSnapshot = NodeStepIt->second;
+        const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection = It->second;
+        const HTNNodeSnapshotDebug&           NodeSnapshot           = NodeSnapshotCollection.at(CurrentNodeStep);
 
         /*
         const bool IsDefaultOpen = (DecompositionStep == mCurrentDecompositionStep);
@@ -655,7 +630,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             ImGui::PopStyleColor(1);
 
             // Update choice point
-            mChoicePointDecompositionStep = IsOpen ? static_cast<int>(DecompositionStep) : -1;
+            mSelectedDecompositionStep = IsOpen ? static_cast<int>(DecompositionStep) : -1;
         }
 
         const HTNDecompositionNode Node = inNodeFunction(NodeSnapshot);
@@ -688,6 +663,18 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             continue;
         }
 
+        if (IsChoicePoint)
+        {
+            // Set range to filter next nodes
+            mMinDecompositionStep = static_cast<int>(DecompositionStep);
+
+            auto NextIt = It;
+            ++NextIt;
+
+            mMaxDecompositionStep = (NextIt != NodeSnapshotStepsCollection.end()) ? static_cast<int>(NextIt->first) : std::numeric_limits<int>::max();
+        }
+
+        // Perform selected node behavior
         if (inNodeBehaviorFunction)
         {
             (*inNodeBehaviorFunction)();
@@ -705,21 +692,30 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     if (IsChoicePoint)
     {
         HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
-        CurrentNodeState.SetDecompositionStep(mChoicePointDecompositionStep);
+        CurrentNodeState.SetDecompositionStep(mSelectedDecompositionStep);
     }
     else
     {
         HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
-        if (-1 == mChoicePointDecompositionStep)
+        if (-1 == mSelectedDecompositionStep)
         {
             CurrentNodeState.SetNodeStep(HTNNodeStep::START);
             CurrentNodeState.SetNodeDirection(HTNNodeDirection::TOP_DOWN);
         }
         else
         {
-            CurrentNodeState.SetDecompositionStep(mChoicePointDecompositionStep);
-            CurrentNodeState.SetNodeStep(HTNNodeStep::END);
-            CurrentNodeState.SetNodeDirection(HTNNodeDirection::BOTTOM_UP);
+            const auto NodeSnapshotStepsCollectionIt = NodeSnapshotStepsCollection.find(mSelectedDecompositionStep);
+            if (NodeSnapshotStepsCollectionIt != NodeSnapshotStepsCollection.end())
+            {
+                const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection   = NodeSnapshotStepsCollectionIt->second;
+                const auto                            NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
+                if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
+                {
+                    CurrentNodeState.SetDecompositionStep(mSelectedDecompositionStep);
+                    CurrentNodeState.SetNodeStep(HTNNodeStep::END);
+                    CurrentNodeState.SetNodeDirection(HTNNodeDirection::BOTTOM_UP);
+                }
+            }
         }
     }
 
