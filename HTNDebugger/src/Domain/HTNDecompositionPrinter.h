@@ -39,12 +39,15 @@ public:
     HTNNodeStep      GetNodeStep() const;
     void             SetNodeDirection(const HTNNodeDirection inNodeDirection);
     HTNNodeDirection GetNodeDirection() const;
+    void             SetIsOpen(const bool inIsOpen);
+    bool             IsOpen() const;
 
 private:
     // Only used if HTNNodeDirection::BOTTOM_UP == mNodeDirection
     int              mDecompositionStep = -1;
     HTNNodeStep      mNodeStep          = HTNNodeStep::NONE;
     HTNNodeDirection mNodeDirection     = HTNNodeDirection::NONE;
+    bool             mIsOpen            = false;
 };
 
 /**
@@ -157,6 +160,16 @@ inline void HTNNodeState::SetNodeDirection(const HTNNodeDirection inNodeDirectio
 inline HTNNodeDirection HTNNodeState::GetNodeDirection() const
 {
     return mNodeDirection;
+}
+
+inline void HTNNodeState::SetIsOpen(const bool inIsOpen)
+{
+    mIsOpen = inIsOpen;
+}
+
+inline bool HTNNodeState::IsOpen() const
+{
+    return mIsOpen;
 }
 
 inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
