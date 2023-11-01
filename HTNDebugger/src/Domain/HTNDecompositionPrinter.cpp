@@ -20,6 +20,7 @@
 
 // TODO salvarez Do not make this static or reset it when new decomposition
 std::unordered_map<std::string, HTNNodeState> HTNDecompositionPrinter::mNodeStates;
+std::string                                   HTNDecompositionPrinter::mCurrentSelectedNodeLabel;
 
 bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode)
 {
@@ -30,7 +31,7 @@ bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode)
         return false;
     }
 
-    mSelectedNode = ioSelectedNode;
+    mCurrentSelectedNode = ioSelectedNode;
 
     // TODO salvarez
     // Open successful decomposition by default
@@ -39,7 +40,12 @@ bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode)
 
     GetNodeValue(*DomainNode).GetValue<bool>();
 
-    ioSelectedNode = mSelectedNode;
+    if (!mIsCurrentSelectedNodeSelected)
+    {
+        mCurrentSelectedNode = HTNDecompositionNode();
+    }
+
+    ioSelectedNode = mCurrentSelectedNode;
 
     return true;
 }
@@ -595,8 +601,12 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             TreeNodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
         }
 
-        if (IsNodeSelected(NodeSnapshot))
+        const HTNDecompositionNode Node = inNodeFunction(NodeSnapshot);
+
+        const std::string Label = IsChoicePoint ? std::format("##{}{}", CurrentNodePath, DecompositionStep) : std::format("##{}", CurrentNodePath);
+        if (IsNodeSelected(Label))
         {
+            RefreshSelectedNode(Node);
             HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
         }
 
@@ -621,8 +631,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         }
         */
 
-        const std::string Label  = IsChoicePoint ? std::format("##{}{}", CurrentNodePath, DecompositionStep) : std::format("##{}", CurrentNodePath);
-        const bool        IsOpen = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
+        const bool IsOpen = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
 
         if (IsChoicePoint)
         {
@@ -633,8 +642,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             mSelectedDecompositionStep = IsOpen ? static_cast<int>(DecompositionStep) : -1;
         }
 
-        const HTNDecompositionNode Node = inNodeFunction(NodeSnapshot);
-
         if (HTNImGuiHelpers::IsCurrentItemHovered())
         {
             HTNDecompositionWatchTooltipPrinter DecompositionWatchTooltipPrinter = HTNDecompositionWatchTooltipPrinter(mDomainNode, Node);
@@ -643,7 +650,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
         if (HTNImGuiHelpers::IsCurrentItemSelected())
         {
-            SelectNode(Node);
+            SelectNode(Label, Node);
         }
 
         // TODO salvarez
@@ -722,14 +729,3 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     return true;
 }
 #endif
-
-/*
-if (IsChoicePoint)
-{
-    const bool IsCurrentDecompositionStepSuccessful = (LastDecompositionStep == mCurrentDecompositionStep);
-    mShouldDisplayChoicePoint &= IsCurrentDecompositionStepSuccessful;
-    const bool HasPendingChoicePoint = (-1 == mCurrentDecompositionStep);
-    mShouldDisplayChoicePoint &= !HasPendingChoicePoint;
-    mShouldDisplay &= !HasPendingChoicePoint;
-}
-*/

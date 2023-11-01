@@ -82,8 +82,9 @@ private:
                                   const HTNNodeBehaviorFunction* inNodeBehaviorFunction, const HTNNodeFunction& inNodeFunction,
                                   const ImGuiTreeNodeFlags inTreeNodeFlags);
 
-    void SelectNode(const HTNDecompositionNode& inNode);
-    bool IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const;
+    void SelectNode(const std::string& inNodeLabel, const HTNDecompositionNode& inNode);
+    void RefreshSelectedNode(const HTNDecompositionNode& inNode);
+    bool IsNodeSelected(const std::string& inNodeLabel) const;
 
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointID;
@@ -91,7 +92,9 @@ private:
     bool                                 mShouldPrintFullTooltip = false;
     bool                                 mShouldResetView        = false;
 
-    HTNDecompositionNode mSelectedNode;
+    HTNDecompositionNode mCurrentSelectedNode;
+    bool                 mIsCurrentSelectedNodeSelected = false;
+    static std::string   mCurrentSelectedNodeLabel;
 
     // Path from the root node to the current node being processed
     HTNNodePath mCurrentNodePath;
@@ -162,13 +165,20 @@ inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<co
 {
 }
 
-inline void HTNDecompositionPrinter::SelectNode(const HTNDecompositionNode& inNode)
+inline void HTNDecompositionPrinter::SelectNode(const std::string& inNodeLabel, const HTNDecompositionNode& inNode)
 {
-    mSelectedNode = inNode;
+    mCurrentSelectedNodeLabel = inNodeLabel;
+    UpdateSelectedNode(inNode);
 }
 
-inline bool HTNDecompositionPrinter::IsNodeSelected(const HTNNodeSnapshotDebug& inNodeSnapshot) const
+inline void HTNDecompositionPrinter::RefreshSelectedNode(const HTNDecompositionNode& inNode)
 {
-    return mSelectedNode.GetNodeSnapshot() == &inNodeSnapshot;
+    mCurrentSelectedNode           = inNode;
+    mIsCurrentSelectedNodeSelected = true;
+}
+
+inline bool HTNDecompositionPrinter::IsNodeSelected(const std::string& inNodeLabel) const
+{
+    return (inNodeLabel == mCurrentSelectedNodeLabel);
 }
 #endif
