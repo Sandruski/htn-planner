@@ -89,6 +89,8 @@ private:
     void RefreshSelectedNode(const HTNDecompositionNode& inNode);
     bool IsNodeSelected(const std::string& inNodeLabel) const;
 
+    bool IsValidNode(const int inDecompositionStep, const int CurrentDecompositionStep, const bool inIsChoicePoint);
+
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointID;
     const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
