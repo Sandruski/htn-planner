@@ -569,10 +569,11 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     }
 
     // Print node(s)
-    for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
+    auto It = NodeSnapshotStepsCollection.begin();
+    for (;It != NodeSnapshotStepsCollection.end(); ++It)
     {
         const std::size_t DecompositionStep = It->first;
-        if (!IsValidNode(static_cast<int>(DecompositionStep), IsChoicePoint))
+        if (!IsValidNode(DecompositionStep, IsChoicePoint))
         {
             continue;
         }
@@ -607,13 +608,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
         if (IsChoicePoint)
         {
-            // Update decomposition step
-            if (IsOpen)
-            {
-                mCurrentDecompositionStep  = static_cast<int>(DecompositionStep);
-                mSelectedDecompositionStep = mCurrentDecompositionStep;
-            }
-
             // Pop arrow color
             ImGui::PopStyleColor(1);
         }
@@ -643,19 +637,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             continue;
         }
 
-        if (IsChoicePoint)
-        {
-            // Set range to filter next nodes
-            mMinDecompositionStep = static_cast<int>(DecompositionStep);
-
-            auto NextIt = It;
-            ++NextIt;
-            if (NextIt != NodeSnapshotStepsCollection.end())
-            {
-                mMaxDecompositionStep = static_cast<int>(NextIt->first);
-            }
-        }
-
         // Perform selected node behavior
         if (inNodeBehaviorFunction)
         {
@@ -676,7 +657,22 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
     if (IsChoicePoint)
     {
-        if (!IsOpen)
+        if (IsOpen)
+        {
+            mCurrentDecompositionStep  = static_cast<int>(It->first);
+            mSelectedDecompositionStep = mCurrentDecompositionStep;
+
+            // Set range to filter next nodes
+            mMinDecompositionStep = mCurrentDecompositionStep;
+
+            auto NextIt = It;
+            ++NextIt;
+            if (NextIt != NodeSnapshotStepsCollection.end())
+            {
+                mMaxDecompositionStep = static_cast<int>(NextIt->first);
+            }
+        }
+        else
         {
             mCurrentDecompositionStep  = kInvalidDecompositionStep;
             mSelectedDecompositionStep = kInvalidDecompositionStep;
@@ -711,14 +707,14 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     return true;
 }
 
-bool HTNDecompositionPrinter::IsValidNode(const int inDecompositionStep, const bool inIsChoicePoint)
+bool HTNDecompositionPrinter::IsValidNode(const std::size_t inDecompositionStep, const bool inIsChoicePoint)
 {
     // Filter available nodes within range [min, max)
-    if (inDecompositionStep < mMinDecompositionStep)
+    if (static_cast<int>(inDecompositionStep) < mMinDecompositionStep)
     {
         return false;
     }
-    else if (inDecompositionStep >= mMaxDecompositionStep)
+    else if (static_cast<int>(inDecompositionStep) >= mMaxDecompositionStep)
     {
         return false;
     }
@@ -732,7 +728,7 @@ bool HTNDecompositionPrinter::IsValidNode(const int inDecompositionStep, const b
                 return false;
             }
         }
-        else if (inDecompositionStep != mCurrentDecompositionStep) // Print node (choice point or not)
+        else if (static_cast<int>(inDecompositionStep) != mCurrentDecompositionStep) // Print node (choice point or not)
         {
             return false;
         }
