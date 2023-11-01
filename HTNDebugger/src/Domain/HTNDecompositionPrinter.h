@@ -31,7 +31,7 @@ class HTNNodeState
 {
 public:
     HTNNodeState() = default;
-    explicit HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, const HTNNodeDirection inNodeDirection);
+    explicit HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, const HTNNodeDirection inNodeDirection, const bool inIsOpen);
 
     void             SetDecompositionStep(const int inDecompositionStep);
     int              GetDecompositionStep() const;
@@ -81,7 +81,7 @@ public:
     HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode) final;
 
 private:
-    bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const HTNNodeStep inNodeStep, const HTNNodeTitleFunction& inNodeTitleFunction,
+    bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const HTNNodeTitleFunction& inNodeTitleFunction,
                                   const HTNNodeBehaviorFunction* inNodeBehaviorFunction, const HTNNodeFunction& inNodeFunction,
                                   const ImGuiTreeNodeFlags inTreeNodeFlags);
 
@@ -107,7 +107,7 @@ private:
 
     // Current decomposition step
     // - -1 means all of them
-    int mCurrentDecompositionStep = kInvalidDecompositionStep;
+    int mCurrentDecompositionStep = 0;
 
     // Selected decomposition step
     // - -1 means not selected
@@ -127,8 +127,9 @@ private:
     inline static int kInvalidDecompositionStep = -1;
 };
 
-inline HTNNodeState::HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, const HTNNodeDirection inNodeDirection)
-    : mDecompositionStep(inDecompositionStep), mNodeStep(inNodeStep), mNodeDirection(inNodeDirection)
+inline HTNNodeState::HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, const HTNNodeDirection inNodeDirection,
+                                  const bool inIsOpen)
+    : mDecompositionStep(inDecompositionStep), mNodeStep(inNodeStep), mNodeDirection(inNodeDirection), mIsOpen(inIsOpen)
 {
 }
 
