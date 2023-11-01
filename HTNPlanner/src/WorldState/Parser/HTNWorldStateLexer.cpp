@@ -1,7 +1,7 @@
 #include "WorldState/Parser/HTNWorldStateLexer.h"
 
-#include "Parser/HTNLexerHelpers.h"
 #include "HTNToken.h"
+#include "Parser/HTNLexerHelpers.h"
 
 bool HTNWorldStateLexer::Lex(std::vector<HTNToken>& outTokens)
 {
@@ -20,6 +20,20 @@ bool HTNWorldStateLexer::Lex(std::vector<HTNToken>& outTokens)
         case ')': {
             // Right parenthesis
             AddToken(HTNTokenType::RIGHT_PARENTHESIS, std::string(1, Character), HTNAtom(), outTokens);
+            AdvancePosition();
+            break;
+        }
+        case '/': {
+            const char NextCharacter = GetCharacter(1);
+            if (NextCharacter == '/')
+            {
+                // Comment
+                LexComment();
+                break;
+            }
+
+            LOG_HTN_ERROR(mRow, mColumn, "Expected '/' after [{}] for a comment", Character);
+            Result = false;
             AdvancePosition();
             break;
         }
@@ -49,8 +63,7 @@ bool HTNWorldStateLexer::Lex(std::vector<HTNToken>& outTokens)
             else if (HTNLexerHelpers::IsLetter(Character))
             {
                 // Identifier
-                static const std::unordered_map<std::string, HTNTokenType> Keywords = {
-                    {"true", HTNTokenType::TRUE}, {"false", HTNTokenType::FALSE}};
+                static const std::unordered_map<std::string, HTNTokenType> Keywords = {{"true", HTNTokenType::TRUE}, {"false", HTNTokenType::FALSE}};
                 LexIdentifier(outTokens, Keywords);
                 break;
             }
