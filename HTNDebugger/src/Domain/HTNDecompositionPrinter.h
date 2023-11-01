@@ -168,7 +168,7 @@ inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<co
 inline void HTNDecompositionPrinter::SelectNode(const std::string& inNodeLabel, const HTNDecompositionNode& inNode)
 {
     mCurrentSelectedNodeLabel = inNodeLabel;
-    UpdateSelectedNode(inNode);
+    RefreshSelectedNode(inNode);
 }
 
 inline void HTNDecompositionPrinter::RefreshSelectedNode(const HTNDecompositionNode& inNode)
