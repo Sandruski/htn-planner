@@ -509,7 +509,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         return false;
     }
 
-    if (mCurrentDecompositionStep == -1)
+    if (mCurrentDecompositionStep == kInvalidDecompositionStep)
     {
         return false;
     }
@@ -539,7 +539,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     {
         if (IsChoicePoint)
         {
-            mCurrentDecompositionStep    = -1;
+            mCurrentDecompositionStep    = kInvalidDecompositionStep;
             CurrentNodeStep              = HTNNodeStep::END;
             mNodeStates[CurrentNodePath] = HTNNodeState(mCurrentDecompositionStep, CurrentNodeStep, HTNNodeDirection::BOTTOM_UP);
         }
@@ -551,6 +551,9 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     }
 
     // Print node(s)
+    const int MinDecompositionStep = mMinDecompositionStep;
+    const int MaxDecompositionStep = mMaxDecompositionStep;
+    const int CurrentDecompositionStep = mCurrentDecompositionStep;
     for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
     {
         const std::size_t DecompositionStep = It->first;
@@ -558,15 +561,15 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         // Print all choice points
 
         // Filter available choice points within range [min, max)
-        if (IsChoicePoint && (static_cast<int>(DecompositionStep) < mMinDecompositionStep))
+        if (IsChoicePoint && (static_cast<int>(DecompositionStep) < MinDecompositionStep))
         {
             continue;
         }
-        else if (IsChoicePoint && (static_cast<int>(DecompositionStep) >= mMaxDecompositionStep))
+        else if (IsChoicePoint && (static_cast<int>(DecompositionStep) >= MaxDecompositionStep))
         {
             continue;
         }
-        else if (-1 == mCurrentDecompositionStep)
+        else if (kInvalidDecompositionStep == CurrentDecompositionStep)
         {
             if (!IsChoicePoint)
             {
@@ -574,7 +577,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             }
         }
         // Print node (choice point or not)
-        else if (static_cast<int>(DecompositionStep) != mCurrentDecompositionStep)
+        else if (static_cast<int>(DecompositionStep) != CurrentDecompositionStep)
         {
             continue;
         }
@@ -639,7 +642,22 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             ImGui::PopStyleColor(1);
 
             // Update choice point
-            mSelectedDecompositionStep = IsOpen ? static_cast<int>(DecompositionStep) : -1;
+            mCurrentDecompositionStep = IsOpen ? static_cast<int>(DecompositionStep) : kInvalidDecompositionStep;
+
+            mSelectedDecompositionStep = mCurrentDecompositionStep;
+
+            if (IsOpen)
+            {
+                // Set range to filter next nodes
+                mMinDecompositionStep = static_cast<int>(DecompositionStep);
+
+                auto NextIt = It;
+                ++NextIt;
+                if (NextIt != NodeSnapshotStepsCollection.end())
+                {
+                    mMaxDecompositionStep = static_cast<int>(NextIt->first);
+                }
+            }
         }
 
         if (HTNImGuiHelpers::IsCurrentItemHovered())
@@ -656,7 +674,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         // TODO salvarez
         // if (NodeSnapshotCollectionSize > 1)
         //{
-        // if (-1 == mCurrentDecompositionStep)
+        // if (kInvalidDecompositionStep == mCurrentDecompositionStep)
         //{
         ImGui::SameLine();
         ImGui::TextDisabled("%i", DecompositionStep);
@@ -668,17 +686,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         if (!IsOpen)
         {
             continue;
-        }
-
-        if (IsChoicePoint)
-        {
-            // Set range to filter next nodes
-            mMinDecompositionStep = static_cast<int>(DecompositionStep);
-
-            auto NextIt = It;
-            ++NextIt;
-
-            mMaxDecompositionStep = (NextIt != NodeSnapshotStepsCollection.end()) ? static_cast<int>(NextIt->first) : std::numeric_limits<int>::max();
         }
 
         // Perform selected node behavior
@@ -704,7 +711,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     else
     {
         HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
-        if (-1 == mSelectedDecompositionStep)
+        if (kInvalidDecompositionStep == mSelectedDecompositionStep)
         {
             CurrentNodeState.SetNodeStep(HTNNodeStep::START);
             CurrentNodeState.SetNodeDirection(HTNNodeDirection::TOP_DOWN);
