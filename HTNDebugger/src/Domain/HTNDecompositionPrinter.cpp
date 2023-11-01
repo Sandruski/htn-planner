@@ -570,7 +570,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
     // Print node(s)
     auto It = NodeSnapshotStepsCollection.begin();
-    for (;It != NodeSnapshotStepsCollection.end(); ++It)
+    for (; It != NodeSnapshotStepsCollection.end(); ++It)
     {
         const std::size_t DecompositionStep = It->first;
         if (!IsValidNode(DecompositionStep, IsChoicePoint))
@@ -623,12 +623,11 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             SelectNode(Label, Node);
         }
 
-        // TODO salvarez Debug
-        // if (NodeSnapshotCollectionSize > 1)
-        //{
-        ImGui::SameLine();
-        ImGui::TextDisabled("%i", DecompositionStep);
-        //}
+        if (IsChoicePoint)
+        {
+            ImGui::SameLine();
+            ImGui::TextDisabled("%i", DecompositionStep);
+        }
 
         inNodeTitleFunction(NodeSnapshot, mNodeStates[CurrentNodePath]);
 
