@@ -569,18 +569,10 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     }
 
     // Print node(s)
-    int CurrentDecompositionStep = mCurrentDecompositionStep;
-
-    if (IsChoicePoint)
-    {
-        mCurrentDecompositionStep  = kInvalidDecompositionStep;
-        mSelectedDecompositionStep = kInvalidDecompositionStep;
-    }
-
     for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
     {
         const std::size_t DecompositionStep = It->first;
-        if (!IsValidNode(static_cast<int>(DecompositionStep), CurrentDecompositionStep, IsChoicePoint))
+        if (!IsValidNode(static_cast<int>(DecompositionStep), IsChoicePoint))
         {
             continue;
         }
@@ -619,7 +611,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             if (IsOpen)
             {
                 mCurrentDecompositionStep  = static_cast<int>(DecompositionStep);
-                CurrentDecompositionStep   = mCurrentDecompositionStep;
                 mSelectedDecompositionStep = mCurrentDecompositionStep;
             }
 
@@ -679,6 +670,15 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         break;
     }
 
+    if (IsChoicePoint)
+    {
+        if (!IsOpen)
+        {
+            mCurrentDecompositionStep  = kInvalidDecompositionStep;
+            mSelectedDecompositionStep = kInvalidDecompositionStep;
+        }
+    }
+
     // Set node(s)
     HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
     CurrentNodeState.SetIsOpen(IsOpen);
@@ -714,7 +714,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     return true;
 }
 
-bool HTNDecompositionPrinter::IsValidNode(const int inDecompositionStep, const int inCurrentDecompositionStep, const bool inIsChoicePoint)
+bool HTNDecompositionPrinter::IsValidNode(const int inDecompositionStep, const bool inIsChoicePoint)
 {
     // Filter available nodes within range [min, max)
     if (inDecompositionStep < mMinDecompositionStep)
@@ -728,14 +728,14 @@ bool HTNDecompositionPrinter::IsValidNode(const int inDecompositionStep, const i
     else
     {
         // Print all choice points
-        if (kInvalidDecompositionStep == inCurrentDecompositionStep)
+        if (kInvalidDecompositionStep == mCurrentDecompositionStep)
         {
             if (!inIsChoicePoint)
             {
                 return false;
             }
         }
-        else if (inDecompositionStep != inCurrentDecompositionStep) // Print node (choice point or not)
+        else if (inDecompositionStep != mCurrentDecompositionStep) // Print node (choice point or not)
         {
             return false;
         }
