@@ -549,15 +549,10 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         }
     }
 
-    if (IsChoicePoint)
-    {
-        mSelectedDecompositionStep = kInvalidDecompositionStep;
-    }
-
     // Print node(s)
     const int MinDecompositionStep     = mMinDecompositionStep;
     const int MaxDecompositionStep     = mMaxDecompositionStep;
-    const int CurrentDecompositionStep = mCurrentDecompositionStep;
+    int       CurrentDecompositionStep = mCurrentDecompositionStep;
     for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
     {
         const std::size_t DecompositionStep = It->first;
@@ -639,41 +634,24 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         }
         */
 
-        const bool WasOpen = HTNImGuiHelpers::IsTreeNodeOpen(Label, TreeNodeFlags);
-        const bool IsOpen  = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
-
-        if (!WasOpen && IsOpen)
-        {
-            ImGui::SameLine();
-            ImGui::Text("OPENED");
-        }
-
-        if (WasOpen && !IsOpen)
-        {
-            ImGui::SameLine();
-            ImGui::Text("CLOSED");
-        }
+        const bool IsOpen = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
 
         if (IsChoicePoint)
         {
             // Pop arrow color
             ImGui::PopStyleColor(1);
 
-            if (IsOpen)
-            {
-                // Update choice point
-                mSelectedDecompositionStep = static_cast<int>(DecompositionStep);
-            }
-            else
-            {
-                mCurrentDecompositionStep = kInvalidDecompositionStep;
-            }
+            // Update decomposition step
+            mCurrentDecompositionStep  = IsOpen ? static_cast<int>(DecompositionStep) : kInvalidDecompositionStep;
+            CurrentDecompositionStep   = mCurrentDecompositionStep;
+
+            mSelectedDecompositionStep = mCurrentDecompositionStep;
         }
 
         if (HTNImGuiHelpers::IsCurrentItemHovered())
         {
-            // HTNDecompositionWatchTooltipPrinter DecompositionWatchTooltipPrinter = HTNDecompositionWatchTooltipPrinter(mDomainNode, Node);
-            // DecompositionWatchTooltipPrinter.Print(mShouldPrintFullTooltip);
+            HTNDecompositionWatchTooltipPrinter DecompositionWatchTooltipPrinter = HTNDecompositionWatchTooltipPrinter(mDomainNode, Node);
+            DecompositionWatchTooltipPrinter.Print(mShouldPrintFullTooltip);
         }
 
         if (HTNImGuiHelpers::IsCurrentItemSelected())
