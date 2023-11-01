@@ -642,9 +642,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             ImGui::PopStyleColor(1);
 
             // Update choice point
-            mCurrentDecompositionStep = IsOpen ? static_cast<int>(DecompositionStep) : kInvalidDecompositionStep;
-
-            mSelectedDecompositionStep = mCurrentDecompositionStep;
+            mSelectedDecompositionStep = IsOpen ? static_cast<int>(DecompositionStep) : kInvalidDecompositionStep;
 
             if (IsOpen)
             {
@@ -662,8 +660,8 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
         if (HTNImGuiHelpers::IsCurrentItemHovered())
         {
-            HTNDecompositionWatchTooltipPrinter DecompositionWatchTooltipPrinter = HTNDecompositionWatchTooltipPrinter(mDomainNode, Node);
-            DecompositionWatchTooltipPrinter.Print(mShouldPrintFullTooltip);
+            //HTNDecompositionWatchTooltipPrinter DecompositionWatchTooltipPrinter = HTNDecompositionWatchTooltipPrinter(mDomainNode, Node);
+            //DecompositionWatchTooltipPrinter.Print(mShouldPrintFullTooltip);
         }
 
         if (HTNImGuiHelpers::IsCurrentItemSelected())
