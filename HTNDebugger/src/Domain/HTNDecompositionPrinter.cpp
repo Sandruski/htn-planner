@@ -509,11 +509,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
         if (kInvalidDecompositionStep == mCurrentDecompositionStep)
         {
-            if (!mShouldUpdateNodeStates)
-            {
-                return true;
-            }
-
             // End choice point
             if (IsChoicePoint)
             {
