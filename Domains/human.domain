@@ -25,13 +25,13 @@
 
     (:method (behave) top_level_method
         (branch_eat
-            (and    (food @spanish ?spanish_food)
-                    (food @italian ?italian_food)
-                    (has_mold ?spanish_food)            
-                    //(#find_food @spanish ?spanish_food)
-                    //(not (#is_spoiled ?spanish_food))
-                    //(#find_food @italian ?italian_food)
-                    //(not (#is_spoiled ?italian_food))
+            (and    //(food @spanish ?spanish_food)
+                    //(food @italian ?italian_food)
+                    //(has_mold ?spanish_food)            
+                    (#find_food @spanish ?spanish_food)
+                    (not (#is_spoiled ?spanish_food))
+                    (#find_food @italian ?italian_food)
+                    (not (#is_spoiled ?italian_food))
             )
             (   (eat ?spanish_food)
                 (eat ?italian_food)

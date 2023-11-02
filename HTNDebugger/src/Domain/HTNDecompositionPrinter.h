@@ -113,7 +113,7 @@ private:
 
     // Selected decomposition step
     // - -1 means not selected
-    int mSelectedDecompositionStep = kInvalidDecompositionStep;
+    int mCurrentChoicePointDecompositionStep = kInvalidDecompositionStep;
 
     // Minimum decomposition step that the current decomposition step can be
     // - Inclusive
@@ -122,6 +122,8 @@ private:
     // Maximum decomposition step that the current decomposition step can be
     // - Exclusive
     int mMaxDecompositionStep = std::numeric_limits<int>::max();
+
+    bool mShouldUpdateNodeStates = false;
 
     // Node path to node state
     static std::unordered_map<std::string, HTNNodeState> mNodeStates;
