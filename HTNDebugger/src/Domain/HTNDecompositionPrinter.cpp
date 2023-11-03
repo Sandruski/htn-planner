@@ -508,13 +508,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     {
         HTNNodeState& CurrentNodeState = CurrentNodeStateIt->second;
 
-        // TODO salvarez Move inside loop
-        // Reset node
-        if (kInvalidDecompositionStep == mCurrentDecompositionStep)
-        {
-            mShouldResetView = true;
-        }
-
         // Reset node
         if (mShouldResetView)
         {
@@ -733,6 +726,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         {
             mCurrentDecompositionStep            = kInvalidDecompositionStep;
             mCurrentChoicePointDecompositionStep = kInvalidDecompositionStep;
+            mShouldResetView = true;
         }
         /*
         if (IsCurrentNodeOpen != IsOpen)
