@@ -20,19 +20,25 @@ using HTNNodeFunction         = std::function<HTNDecompositionNode(const HTNNode
 
 typedef int ImGuiTreeNodeFlags;
 
+enum class HTNNodeType : unsigned char
+{
+    CHOICE_POINT,
+    GROUPING_NODE,
+    NODE,
+    NONE
+};
+
 class HTNNodeState
 {
 public:
     HTNNodeState() = default;
-    explicit HTNNodeState(const bool inIsDrawn, const bool inIsOpen);
-    explicit HTNNodeState(const int inEndDecompositionStep, const bool inIsDrawn, const bool inIsOpen);
+    explicit HTNNodeState(const bool inIsOpen);
+    explicit HTNNodeState(const int inEndDecompositionStep, const bool inIsOpen);
 
     void        SetStartNodeStep();
     HTNNodeStep GetNodeStep() const;
     void        SetEndDecompositionStep(const int inEndDecompositionStep);
     int         GetEndDecompositionStep() const;
-    void        SetIsDrawn(const bool inIsDrawn);
-    bool        IsDrawn() const;
     void        SetIsOpen(const bool inIsOpen);
     bool        IsOpen() const;
 
@@ -82,7 +88,8 @@ private:
     void RefreshSelectedNode(const HTNDecompositionNode& inNode);
     bool IsNodeSelected(const std::string& inNodeLabel) const;
 
-    bool IsValidNode(const std::size_t inDecompositionStep, const bool inIsChoicePoint);
+    bool IsValidNode(const std::size_t inDecompositionStep, const bool inIsChoicePoint, const int inCurrentDecompositionStep,
+                     const int inMinDecompositionStep, const int inMaxDecompositionStep);
 
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointID;
@@ -116,6 +123,8 @@ private:
     // - Exclusive
     int mMaxDecompositionStep = std::numeric_limits<int>::max();
 
+    bool mIsCurrentNodeVisible = true;
+
     bool mShouldUpdateNodeStates = false;
 
     // Node path to node state
@@ -124,12 +133,12 @@ private:
     inline static int kInvalidDecompositionStep = -1;
 };
 
-inline HTNNodeState::HTNNodeState(const bool inIsDrawn, const bool inIsOpen) : mNodeStep(HTNNodeStep::START), mIsDrawn(inIsDrawn), mIsOpen(inIsOpen)
+inline HTNNodeState::HTNNodeState(const bool inIsOpen) : mNodeStep(HTNNodeStep::START), mIsOpen(inIsOpen)
 {
 }
 
-inline HTNNodeState::HTNNodeState(const int inEndDecompositionStep, const bool inIsDrawn, const bool inIsOpen)
-    : mNodeStep(HTNNodeStep::END), mEndDecompositionStep(inEndDecompositionStep), mIsDrawn(inIsDrawn), mIsOpen(inIsOpen)
+inline HTNNodeState::HTNNodeState(const int inEndDecompositionStep, const bool inIsOpen)
+    : mNodeStep(HTNNodeStep::END), mEndDecompositionStep(inEndDecompositionStep), mIsOpen(inIsOpen)
 {
 }
 
@@ -152,16 +161,6 @@ inline void HTNNodeState::SetEndDecompositionStep(const int inEndDecompositionSt
 inline int HTNNodeState::GetEndDecompositionStep() const
 {
     return mEndDecompositionStep;
-}
-
-inline void HTNNodeState::SetIsDrawn(const bool inIsDrawn)
-{
-    mIsDrawn = inIsDrawn;
-}
-
-inline bool HTNNodeState::IsDrawn() const
-{
-    return mIsDrawn;
 }
 
 inline void HTNNodeState::SetIsOpen(const bool inIsOpen)
