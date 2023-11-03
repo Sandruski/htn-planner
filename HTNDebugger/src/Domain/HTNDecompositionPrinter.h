@@ -110,10 +110,6 @@ private:
     // - -1 means all of them
     int mCurrentDecompositionStep = 0;
 
-    // Selected decomposition step
-    // - -1 means not selected
-    int mCurrentChoicePointDecompositionStep = kInvalidDecompositionStep;
-
     // Minimum decomposition step that the current decomposition step can be
     // - Inclusive
     int mMinDecompositionStep = std::numeric_limits<int>::min();
