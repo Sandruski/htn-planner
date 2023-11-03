@@ -45,7 +45,6 @@ public:
 private:
     HTNNodeStep mNodeStep             = HTNNodeStep::NONE;
     int         mEndDecompositionStep = -1;
-    bool        mIsDrawn              = false;
     bool        mIsOpen               = false;
 };
 
