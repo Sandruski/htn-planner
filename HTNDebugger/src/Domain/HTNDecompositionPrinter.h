@@ -56,7 +56,7 @@ class HTNDecompositionPrinter final : public HTNNodeVisitorBase
 public:
     explicit HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                      const HTNDecompositionSnapshotDebug& inDecompositionSnapshot, const bool inShouldPrintFullTooltip,
-                                     const bool inShouldResetView);
+                                     const bool inShouldResetNodeStates);
 
     bool Print(HTNDecompositionNode& ioSelectedNode);
 
@@ -94,7 +94,9 @@ private:
     std::string                          mEntryPointID;
     const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
     bool                                 mShouldPrintFullTooltip = false;
-    bool                                 mShouldResetView        = false;
+
+    bool mShouldResetNodeStates  = false;
+    bool mShouldUpdateNodeStates = false;
 
     HTNDecompositionNode mCurrentSelectedNode;
     bool                 mIsCurrentSelectedNodeSelected = false;
@@ -168,9 +170,9 @@ inline bool HTNNodeState::IsOpen() const
 
 inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                                         const HTNDecompositionSnapshotDebug& inDecompositionSnapshot,
-                                                        const bool inShouldPrintFullTooltip, const bool inShouldResetView)
+                                                        const bool inShouldPrintFullTooltip, const bool inShouldResetNodeStates)
     : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot),
-      mShouldPrintFullTooltip(inShouldPrintFullTooltip), mShouldResetView(inShouldResetView)
+      mShouldPrintFullTooltip(inShouldPrintFullTooltip), mShouldResetNodeStates(inShouldResetNodeStates)
 {
 }
 

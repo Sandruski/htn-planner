@@ -206,6 +206,7 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
 
     ImGui::Separator();
 
+    // TODO salvarez Rename this
     bool ShouldResetView = false;
     ShouldResetView      = ImGui::Button("Reset View");
     if (HTNImGuiHelpers::IsCurrentItemHovered())

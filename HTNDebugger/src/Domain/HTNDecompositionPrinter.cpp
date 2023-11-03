@@ -492,6 +492,11 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         return false;
     }
 
+    if (kInvalidDecompositionStep == mCurrentDecompositionStep)
+    {
+        return false;
+    }
+
     const HTNNodeSnapshotStepsCollectionDebug& NodeSnapshotStepsCollection = NodeSnapshotHistory->GetNodeSnapshotStepsCollection();
     const bool                                 IsChoicePoint               = NodeSnapshotHistory->IsChoicePoint();
 
@@ -508,8 +513,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     {
         HTNNodeState& CurrentNodeState = CurrentNodeStateIt->second;
 
-        // Reset node
-        if (mShouldResetView)
+        if (mShouldResetNodeStates)
         {
             // Default open successful choice point
             if (IsChoicePoint)
@@ -527,6 +531,8 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
             IsCurrentNodeOpen = true;
             CurrentNodeState.SetIsOpen(IsCurrentNodeOpen);
+
+            mShouldUpdateNodeStates = true;
         }
         else
         {
@@ -568,6 +574,8 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         }
 
         CurrentNodeStep = mNodeStates[CurrentNodePath].GetNodeStep();
+
+        mShouldUpdateNodeStates = true;
     }
 
     // Print node(s)
@@ -575,7 +583,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     const int  MaxDecompositionStep = mMaxDecompositionStep;
     const bool IsCurrentNodeVisible = mIsCurrentNodeVisible;
 
-    bool IsCurrentNodeOpened = IsCurrentNodeVisible ? false : IsCurrentNodeOpen;
+    bool IsCurrentNodeOpened = IsCurrentNodeOpen;
     for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
     {
         const std::size_t DecompositionStep = It->first;
@@ -664,6 +672,11 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             {
                 mCurrentDecompositionStep = kInvalidDecompositionStep;
             }
+
+            if (IsCurrentNodeOpen != IsCurrentNodeOpened)
+            {
+                mShouldUpdateNodeStates = true;
+            }
         }
 
         // Grouping point determines visibility
@@ -710,33 +723,35 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
     // Set node(s)
     HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
-    CurrentNodeState.SetIsOpen(IsCurrentNodeOpened);
-
     if (IsChoicePoint)
     {
-        if (kInvalidDecompositionStep == mCurrentDecompositionStep)
+        if (mShouldUpdateNodeStates)
         {
-            mShouldResetView = true;
+            CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
+            CurrentNodeState.SetIsOpen(IsCurrentNodeOpened);
         }
-
-        CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
     }
     else
     {
-        if (kInvalidDecompositionStep == mCurrentDecompositionStep)
+        if (mShouldUpdateNodeStates)
         {
-            CurrentNodeState.SetStartNodeStep();
-        }
-        else
-        {
-            const auto NodeSnapshotStepsCollectionIt = NodeSnapshotStepsCollection.find(mCurrentDecompositionStep);
-            if (NodeSnapshotStepsCollectionIt != NodeSnapshotStepsCollection.end())
+            CurrentNodeState.SetIsOpen(IsCurrentNodeOpened);
+
+            if (kInvalidDecompositionStep == mCurrentDecompositionStep)
             {
-                const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection   = NodeSnapshotStepsCollectionIt->second;
-                const auto                            NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
-                if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
+                CurrentNodeState.SetStartNodeStep();
+            }
+            else
+            {
+                const auto NodeSnapshotStepsCollectionIt = NodeSnapshotStepsCollection.find(mCurrentDecompositionStep);
+                if (NodeSnapshotStepsCollectionIt != NodeSnapshotStepsCollection.end())
                 {
-                    CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
+                    const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection   = NodeSnapshotStepsCollectionIt->second;
+                    const auto                            NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
+                    if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
+                    {
+                        CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
+                    }
                 }
             }
         }
