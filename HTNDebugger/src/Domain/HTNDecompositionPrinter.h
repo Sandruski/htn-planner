@@ -20,34 +20,24 @@ using HTNNodeFunction         = std::function<HTNDecompositionNode(const HTNNode
 
 typedef int ImGuiTreeNodeFlags;
 
-enum class HTNNodeDirection : unsigned char
-{
-    TOP_DOWN,
-    BOTTOM_UP,
-    NONE
-};
-
 class HTNNodeState
 {
 public:
     HTNNodeState() = default;
-    explicit HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, const HTNNodeDirection inNodeDirection, const bool inIsOpen);
+    explicit HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, const bool inIsOpen);
 
-    void             SetDecompositionStep(const int inDecompositionStep);
-    int              GetDecompositionStep() const;
-    void             SetNodeStep(const HTNNodeStep inNodeStep);
-    HTNNodeStep      GetNodeStep() const;
-    void             SetNodeDirection(const HTNNodeDirection inNodeDirection);
-    HTNNodeDirection GetNodeDirection() const;
-    void             SetIsOpen(const bool inIsOpen);
-    bool             IsOpen() const;
+    void        SetNodeStep(const HTNNodeStep inNodeStep);
+    HTNNodeStep GetNodeStep() const;
+    void        SetDecompositionStep(const int inDecompositionStep);
+    int         GetDecompositionStep() const;
+    void        SetIsOpen(const bool inIsOpen);
+    bool        IsOpen() const;
 
 private:
+    HTNNodeStep mNodeStep = HTNNodeStep::NONE;
     // Only used if HTNNodeDirection::BOTTOM_UP == mNodeDirection
-    int              mDecompositionStep = -1;
-    HTNNodeStep      mNodeStep          = HTNNodeStep::NONE;
-    HTNNodeDirection mNodeDirection     = HTNNodeDirection::NONE;
-    bool             mIsOpen            = false;
+    int  mDecompositionStep = -1;
+    bool mIsOpen            = false;
 };
 
 /**
@@ -131,9 +121,9 @@ private:
     inline static int kInvalidDecompositionStep = -1;
 };
 
-inline HTNNodeState::HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, const HTNNodeDirection inNodeDirection,
+inline HTNNodeState::HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, 
                                   const bool inIsOpen)
-    : mDecompositionStep(inDecompositionStep), mNodeStep(inNodeStep), mNodeDirection(inNodeDirection), mIsOpen(inIsOpen)
+    : mDecompositionStep(inDecompositionStep), mNodeStep(inNodeStep), mIsOpen(inIsOpen)
 {
 }
 
@@ -155,16 +145,6 @@ inline void HTNNodeState::SetNodeStep(const HTNNodeStep inNodeStep)
 inline HTNNodeStep HTNNodeState::GetNodeStep() const
 {
     return mNodeStep;
-}
-
-inline void HTNNodeState::SetNodeDirection(const HTNNodeDirection inNodeDirection)
-{
-    mNodeDirection = inNodeDirection;
-}
-
-inline HTNNodeDirection HTNNodeState::GetNodeDirection() const
-{
-    return mNodeDirection;
 }
 
 inline void HTNNodeState::SetIsOpen(const bool inIsOpen)

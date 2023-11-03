@@ -27,17 +27,17 @@ bool IsTreeNodeOpen(const std::string& inLabel, const ImGuiTreeNodeFlags inTreeN
 
 ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeState& inNodeState)
 {
-    const HTNNodeDirection NodeDirection = inNodeState.GetNodeDirection();
-    switch (NodeDirection)
+    const HTNNodeStep NodeStep = inNodeState.GetNodeStep();
+    switch (NodeStep)
     {
-    case HTNNodeDirection::TOP_DOWN: {
+    case HTNNodeStep::START: {
         return kNoResultColor;
     }
-    case HTNNodeDirection::BOTTOM_UP: {
+    case HTNNodeStep::END: {
         const bool Result = inNodeSnapshot.GetResult();
         return GetResultColor(Result);
     }
-    case HTNNodeDirection::NONE:
+    case HTNNodeStep::NONE:
     default: {
         assert(false);
     }
