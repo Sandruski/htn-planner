@@ -24,20 +24,23 @@ class HTNNodeState
 {
 public:
     HTNNodeState() = default;
-    explicit HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, const bool inIsOpen);
+    explicit HTNNodeState(const bool inIsDrawn, const bool inIsOpen);
+    explicit HTNNodeState(const int inEndDecompositionStep, const bool inIsDrawn, const bool inIsOpen);
 
-    void        SetNodeStep(const HTNNodeStep inNodeStep);
+    void        SetStartNodeStep();
     HTNNodeStep GetNodeStep() const;
-    void        SetDecompositionStep(const int inDecompositionStep);
-    int         GetDecompositionStep() const;
+    void        SetEndDecompositionStep(const int inEndDecompositionStep);
+    int         GetEndDecompositionStep() const;
+    void        SetIsDrawn(const bool inIsDrawn);
+    bool        IsDrawn() const;
     void        SetIsOpen(const bool inIsOpen);
     bool        IsOpen() const;
 
 private:
-    HTNNodeStep mNodeStep = HTNNodeStep::NONE;
-    // Only used if HTNNodeDirection::BOTTOM_UP == mNodeDirection
-    int  mDecompositionStep = -1;
-    bool mIsOpen            = false;
+    HTNNodeStep mNodeStep             = HTNNodeStep::NONE;
+    int         mEndDecompositionStep = -1;
+    bool        mIsDrawn              = false;
+    bool        mIsOpen               = false;
 };
 
 /**
@@ -121,30 +124,44 @@ private:
     inline static int kInvalidDecompositionStep = -1;
 };
 
-inline HTNNodeState::HTNNodeState(const int inDecompositionStep, const HTNNodeStep inNodeStep, 
-                                  const bool inIsOpen)
-    : mDecompositionStep(inDecompositionStep), mNodeStep(inNodeStep), mIsOpen(inIsOpen)
+inline HTNNodeState::HTNNodeState(const bool inIsDrawn, const bool inIsOpen) : mNodeStep(HTNNodeStep::START), mIsDrawn(inIsDrawn), mIsOpen(inIsOpen)
 {
 }
 
-inline void HTNNodeState::SetDecompositionStep(const int inDecompositionStep)
+inline HTNNodeState::HTNNodeState(const int inEndDecompositionStep, const bool inIsDrawn, const bool inIsOpen)
+    : mNodeStep(HTNNodeStep::END), mEndDecompositionStep(inEndDecompositionStep), mIsDrawn(inIsDrawn), mIsOpen(inIsOpen)
 {
-    mDecompositionStep = inDecompositionStep;
 }
 
-inline int HTNNodeState::GetDecompositionStep() const
+inline void HTNNodeState::SetStartNodeStep()
 {
-    return mDecompositionStep;
-}
-
-inline void HTNNodeState::SetNodeStep(const HTNNodeStep inNodeStep)
-{
-    mNodeStep = inNodeStep;
+    mNodeStep = HTNNodeStep::START;
 }
 
 inline HTNNodeStep HTNNodeState::GetNodeStep() const
 {
     return mNodeStep;
+}
+
+inline void HTNNodeState::SetEndDecompositionStep(const int inEndDecompositionStep)
+{
+    mEndDecompositionStep = inEndDecompositionStep;
+    mNodeStep             = HTNNodeStep::END;
+}
+
+inline int HTNNodeState::GetEndDecompositionStep() const
+{
+    return mEndDecompositionStep;
+}
+
+inline void HTNNodeState::SetIsDrawn(const bool inIsDrawn)
+{
+    mIsDrawn = inIsDrawn;
+}
+
+inline bool HTNNodeState::IsDrawn() const
+{
+    return mIsDrawn;
 }
 
 inline void HTNNodeState::SetIsOpen(const bool inIsOpen)
