@@ -574,7 +574,8 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     const int  MinDecompositionStep = mMinDecompositionStep;
     const int  MaxDecompositionStep = mMaxDecompositionStep;
     const bool IsCurrentNodeVisible = mIsCurrentNodeVisible;
-    bool       IsOpen               = IsCurrentNodeVisible ? false : IsCurrentNodeOpen;
+
+    bool IsCurrentNodeOpened = IsCurrentNodeVisible ? false : IsCurrentNodeOpen;
     for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
     {
         const std::size_t DecompositionStep = It->first;
@@ -614,7 +615,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             }
 
             HTNImGuiHelpers::SetTreeNodeOpen(Label, IsCurrentNodeOpen);
-            IsOpen = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
+            IsCurrentNodeOpened = ImGui::TreeNodeEx(Label.c_str(), TreeNodeFlags);
 
             if (IsChoicePoint)
             {
@@ -645,7 +646,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         // Choice point determines decomposition step
         if (IsChoicePoint)
         {
-            if (IsOpen)
+            if (IsCurrentNodeOpened)
             {
                 mCurrentDecompositionStep = static_cast<int>(DecompositionStep);
 
@@ -669,7 +670,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         const bool IsGroupingPoint = !(TreeNodeFlags & ImGuiTreeNodeFlags_Leaf);
         if (IsGroupingPoint)
         {
-            if (!IsOpen)
+            if (!IsCurrentNodeOpened)
             {
                 mIsCurrentNodeVisible = false;
             }
@@ -692,7 +693,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
         if (IsCurrentNodeVisible)
         {
-            if (IsOpen)
+            if (IsCurrentNodeOpened)
             {
                 if (!(TreeNodeFlags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
                 {
@@ -701,7 +702,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             }
         }
 
-        if (IsOpen)
+        if (IsCurrentNodeOpened)
         {
             break;
         }
@@ -709,7 +710,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
     // Set node(s)
     HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
-    CurrentNodeState.SetIsOpen(IsOpen);
+    CurrentNodeState.SetIsOpen(IsCurrentNodeOpened);
 
     if (IsChoicePoint)
     {
