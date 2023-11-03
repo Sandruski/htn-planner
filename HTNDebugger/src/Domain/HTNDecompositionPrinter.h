@@ -124,8 +124,6 @@ private:
 
     bool mIsCurrentNodeVisible = true;
 
-    bool mShouldUpdateNodeStates = false;
-
     // Node path to node state
     static std::unordered_map<std::string, HTNNodeState> mNodeStates;
 
