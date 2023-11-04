@@ -22,6 +22,40 @@
 std::unordered_map<std::string, HTNNodeState> HTNDecompositionPrinter::mNodeStates;
 std::string                                   HTNDecompositionPrinter::mCurrentSelectedNodeLabel;
 
+namespace
+{
+bool IsNodeValid(const std::size_t inDecompositionStep, const bool inIsChoicePoint, const int inCurrentDecompositionStep,
+                 const int inMinDecompositionStep, const int inMaxDecompositionStep)
+{
+    // Filter available nodes within range [min, max)
+    if (static_cast<int>(inDecompositionStep) < inMinDecompositionStep)
+    {
+        return false;
+    }
+    else if (static_cast<int>(inDecompositionStep) >= inMaxDecompositionStep)
+    {
+        return false;
+    }
+    else
+    {
+        // Print all choice points
+        if (!HTNDecompositionPrinterHelpers::IsDecompositionStepValid(inCurrentDecompositionStep))
+        {
+            if (!inIsChoicePoint)
+            {
+                return false;
+            }
+        }
+        else if (static_cast<int>(inDecompositionStep) != inCurrentDecompositionStep) // Print node (choice point or not)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+} // namespace
+
 bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode)
 {
     const HTNDomainNode* DomainNode = mDomainNode.get();
@@ -512,36 +546,32 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         {
             if (IsChoicePoint)
             {
+                CurrentDecompositionStep = mCurrentDecompositionStep;
+                CurrentNodeState.SetEndDecompositionStep(CurrentDecompositionStep);
+
                 IsCurrentNodeOpen = false;
                 CurrentNodeState.SetIsOpen(IsCurrentNodeOpen);
-
-                CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
             }
             else
             {
-                IsCurrentNodeOpen = CurrentNodeState.IsOpen();
+                CurrentDecompositionStep = mCurrentDecompositionStep;
 
-                if (kInvalidDecompositionStep == mCurrentDecompositionStep)
+                if (IsCurrentDecompositionStepValid())
                 {
-                    CurrentNodeState.SetStartNodeStep();
+                    CurrentNodeState.SetEndDecompositionStep(CurrentDecompositionStep);
                 }
                 else
                 {
-                    const auto NodeSnapshotStepsCollectionIt = NodeSnapshotStepsCollection.find(mCurrentDecompositionStep);
-                    if (NodeSnapshotStepsCollectionIt != NodeSnapshotStepsCollection.end())
-                    {
-                        const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection   = NodeSnapshotStepsCollectionIt->second;
-                        const auto                            NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
-                        if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
-                        {
-                            CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
-                        }
-                    }
+                    CurrentNodeState.SetStartNodeStep();
                 }
+
+                IsCurrentNodeOpen = true;
+                CurrentNodeState.SetIsOpen(IsCurrentNodeOpen);
             }
 
-            CurrentNodeStep   = CurrentNodeState.GetNodeStep();
+            CurrentNodeStep = CurrentNodeState.GetNodeStep();
         }
+        /*
         else if (mShouldResetNodeStates)
         {
             // Default open successful choice point
@@ -560,9 +590,8 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
             IsCurrentNodeOpen = true;
             CurrentNodeState.SetIsOpen(IsCurrentNodeOpen);
-
-            // mShouldUpdateNodeStates = true;
         }
+        */
         else
         {
             CurrentNodeStep = CurrentNodeState.GetNodeStep();
@@ -604,7 +633,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
         CurrentNodeStep = mNodeStates[CurrentNodePath].GetNodeStep();
 
-        // mShouldUpdateNodeStates = true;
+        mShouldUpdateNodeStates = true;
     }
 
     // Print node(s)
@@ -616,7 +645,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
     {
         const std::size_t DecompositionStep = It->first;
-        if (!IsValidNode(DecompositionStep, IsChoicePoint, CurrentDecompositionStep, MinDecompositionStep, MaxDecompositionStep))
+        if (!IsNodeValid(DecompositionStep, IsChoicePoint, CurrentDecompositionStep, MinDecompositionStep, MaxDecompositionStep))
         {
             continue;
         }
@@ -683,24 +712,17 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         // Choice point determines decomposition step
         if (IsChoicePoint)
         {
-            if (IsCurrentNodeOpened)
-            {
-                mCurrentDecompositionStep = static_cast<int>(DecompositionStep);
+            mCurrentDecompositionStep =
+                IsCurrentNodeOpened ? static_cast<int>(DecompositionStep) : HTNDecompositionPrinterHelpers::kInvalidDecompositionStep;
 
-                // Set range to filter next nodes
-                mMinDecompositionStep = mCurrentDecompositionStep;
+            // Set range to filter next nodes
+            mMinDecompositionStep = IsCurrentNodeOpened ? mCurrentDecompositionStep : std::numeric_limits<int>::max();
 
-                auto NextIt = It;
-                ++NextIt;
-                if (NextIt != NodeSnapshotStepsCollection.end())
-                {
-                    mMaxDecompositionStep = static_cast<int>(NextIt->first);
-                }
-            }
-            else
-            {
-                mCurrentDecompositionStep = kInvalidDecompositionStep;
-            }
+            auto NextIt = It;
+            ++NextIt;
+            mMaxDecompositionStep = IsCurrentNodeOpened ? ((NodeSnapshotStepsCollection.end() != NextIt) ? static_cast<int>(NextIt->first)
+                                                                                                         : std::numeric_limits<int>::max())
+                                                        : std::numeric_limits<int>::min();
 
             if (IsCurrentNodeOpen != IsCurrentNodeOpened)
             {
@@ -750,65 +772,36 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         }
     }
 
+    HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
+    CurrentNodeState.SetIsOpen(IsCurrentNodeOpened);
+
     // Set node(s)
     // TODO salvarez Check how we can use mShouldUpdateNodeStates here to avoid doing this every time
-    HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
-    if (IsChoicePoint)
+    if (mShouldUpdateNodeStates || mShouldResetNodeStates)
     {
-        CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
-        CurrentNodeState.SetIsOpen(IsCurrentNodeOpened);
-    }
-    else
-    {
-        CurrentNodeState.SetIsOpen(IsCurrentNodeOpened);
-
-        if (kInvalidDecompositionStep == mCurrentDecompositionStep)
+        if (IsChoicePoint)
         {
-            CurrentNodeState.SetStartNodeStep();
+            CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
         }
         else
         {
-            const auto NodeSnapshotStepsCollectionIt = NodeSnapshotStepsCollection.find(mCurrentDecompositionStep);
-            if (NodeSnapshotStepsCollectionIt != NodeSnapshotStepsCollection.end())
+            if (IsCurrentDecompositionStepValid())
             {
-                const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection   = NodeSnapshotStepsCollectionIt->second;
-                const auto                            NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
-                if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
+                const auto NodeSnapshotStepsCollectionIt = NodeSnapshotStepsCollection.find(mCurrentDecompositionStep);
+                if (NodeSnapshotStepsCollectionIt != NodeSnapshotStepsCollection.end())
                 {
-                    CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
+                    const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection   = NodeSnapshotStepsCollectionIt->second;
+                    const auto                            NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
+                    if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
+                    {
+                        CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
+                    }
                 }
             }
-        }
-    }
-
-    return true;
-}
-
-bool HTNDecompositionPrinter::IsValidNode(const std::size_t inDecompositionStep, const bool inIsChoicePoint, const int inCurrentDecompositionStep,
-                                          const int inMinDecompositionStep, const int inMaxDecompositionStep)
-{
-    // Filter available nodes within range [min, max)
-    if (static_cast<int>(inDecompositionStep) < inMinDecompositionStep)
-    {
-        return false;
-    }
-    else if (static_cast<int>(inDecompositionStep) >= inMaxDecompositionStep)
-    {
-        return false;
-    }
-    else
-    {
-        // Print all choice points
-        if (kInvalidDecompositionStep == inCurrentDecompositionStep)
-        {
-            if (!inIsChoicePoint)
+            else
             {
-                return false;
+                CurrentNodeState.SetStartNodeStep();
             }
-        }
-        else if (static_cast<int>(inDecompositionStep) != inCurrentDecompositionStep) // Print node (choice point or not)
-        {
-            return false;
         }
     }
 

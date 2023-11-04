@@ -20,13 +20,12 @@ using HTNNodeFunction         = std::function<HTNDecompositionNode(const HTNNode
 
 typedef int ImGuiTreeNodeFlags;
 
-enum class HTNNodeType : unsigned char
+namespace HTNDecompositionPrinterHelpers
 {
-    CHOICE_POINT,
-    GROUPING_NODE,
-    NODE,
-    NONE
-};
+bool IsDecompositionStepValid(const int inDecompositionStep);
+
+const int kInvalidDecompositionStep = -1;
+} // namespace HTNDecompositionPrinterHelpers
 
 class HTNNodeState
 {
@@ -87,8 +86,7 @@ private:
     void RefreshSelectedNode(const HTNDecompositionNode& inNode);
     bool IsNodeSelected(const std::string& inNodeLabel) const;
 
-    bool IsValidNode(const std::size_t inDecompositionStep, const bool inIsChoicePoint, const int inCurrentDecompositionStep,
-                     const int inMinDecompositionStep, const int inMaxDecompositionStep);
+    bool IsCurrentDecompositionStepValid() const;
 
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointID;
@@ -124,9 +122,15 @@ private:
 
     // Node path to node state
     static std::unordered_map<std::string, HTNNodeState> mNodeStates;
-
-    inline static int kInvalidDecompositionStep = -1;
 };
+
+namespace HTNDecompositionPrinterHelpers
+{
+inline bool IsDecompositionStepValid(const int inDecompositionStep)
+{
+    return (inDecompositionStep != kInvalidDecompositionStep);
+}
+} // namespace HTNDecompositionPrinterHelpers
 
 inline HTNNodeState::HTNNodeState(const bool inIsOpen) : mNodeStep(HTNNodeStep::START), mIsOpen(inIsOpen)
 {
@@ -191,5 +195,10 @@ inline void HTNDecompositionPrinter::RefreshSelectedNode(const HTNDecompositionN
 inline bool HTNDecompositionPrinter::IsNodeSelected(const std::string& inNodeLabel) const
 {
     return (inNodeLabel == mCurrentSelectedNodeLabel);
+}
+
+inline bool HTNDecompositionPrinter::IsCurrentDecompositionStepValid() const
+{
+    return HTNDecompositionPrinterHelpers::IsDecompositionStepValid(mCurrentDecompositionStep);
 }
 #endif
