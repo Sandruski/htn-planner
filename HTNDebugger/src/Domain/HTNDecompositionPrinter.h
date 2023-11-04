@@ -64,14 +64,17 @@ private:
 
     bool IsCurrentDecompositionStepValid() const;
 
+    HTNNodeStep GetNodeStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
+    int         GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
+    bool        IsNodeOpen(const std::string& inNodePath, const int inDecompositionStep, const bool inIsChoicePoint) const;
+
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointID;
     const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
     bool                                 mShouldPrintFullTooltip = false;
 
+    bool mShouldRefreshNodeStates = false;
     bool mShouldResetNodeStates  = false;
-    bool mShouldUpdateNodeStates = false;
-    bool mIsNodeOpenStateDirty   = false;
 
     HTNDecompositionNode mCurrentSelectedNode;
     bool                 mIsCurrentSelectedNodeSelected = false;
@@ -84,7 +87,6 @@ private:
     HTNNodePath mCurrentVariableScopeNodePath;
 
     // Current decomposition step
-    // - -1 means all of them
     int mCurrentDecompositionStep = 0;
 
     // Minimum decomposition step that the current decomposition step can be
@@ -95,12 +97,13 @@ private:
     // - Exclusive
     int mMaxDecompositionStep = std::numeric_limits<int>::max();
 
+    // Whether the current node is shown or hidden
     bool mIsCurrentNodeVisible = true;
 
     // Node path to node state
     static std::unordered_map<std::string, HTNDecompositionNodeState> mNodeStates;
 
-    // Choice point node path to node state
+    // Node path to choice point node state
     static std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mChoicePointNodeStates;
 };
 

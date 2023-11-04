@@ -8,7 +8,8 @@ HTNDecompositionNodeStateBase::HTNDecompositionNodeStateBase(const int inDecompo
 {
 }
 
-HTNDecompositionNodeState::HTNDecompositionNodeState(const bool inIsOpen) : HTNDecompositionNodeStateBase(), mIsOpen(inIsOpen)
+HTNDecompositionNodeState::HTNDecompositionNodeState(const int inDecompositionStep, const bool inIsOpen)
+    : HTNDecompositionNodeStateBase(inDecompositionStep), mIsOpen(inIsOpen)
 {
 }
 
