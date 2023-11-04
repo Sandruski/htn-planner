@@ -15,8 +15,13 @@ HTNDecompositionWatchTooltipPrinter::HTNDecompositionWatchTooltipPrinter(const s
 {
 }
 
-void HTNDecompositionWatchTooltipPrinter::Print(const bool inShouldPrintFullTooltip)
+void HTNDecompositionWatchTooltipPrinter::Print(const HTNDecompositionTooltipMode inTooltipMode)
 {
+    if (inTooltipMode == HTNDecompositionTooltipMode::NONE)
+    {
+        return;
+    }
+
     const HTNNodeSnapshotDebug* NodeSnapshot = mNode.GetNodeSnapshot();
     if (!NodeSnapshot)
     {
@@ -32,7 +37,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(const bool inShouldPrintFullTool
     ShouldPrint                                                                            = ShouldPrint || HasNodeArguments;
     const std::unordered_map<std::string, HTNAtom>& Variables                              = NodeSnapshot->GetVariables().GetVariables();
     const bool                                      HasVariables                           = !Variables.empty();
-    if (inShouldPrintFullTooltip)
+    if (inTooltipMode == HTNDecompositionTooltipMode::FULL)
     {
         ShouldPrint = ShouldPrint || HasVariables;
     }
@@ -102,7 +107,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(const bool inShouldPrintFullTool
             ImGui::Spacing();
         }
 
-        if (inShouldPrintFullTooltip)
+        if (inTooltipMode == HTNDecompositionTooltipMode::FULL)
         {
             // Print remaining variables
             if (HasVariables)

@@ -3,6 +3,7 @@
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionPrinter.h"
+#include "Domain/HTNDecompositionWatchTooltipPrinter.h"
 #include "Domain/HTNDecompositionWatchWindowPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
@@ -206,20 +207,24 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
 
     ImGui::Separator();
 
-    // TODO salvarez Rename this
-    bool ShouldResetView = false;
-    ShouldResetView      = ImGui::Button("Reset View");
+    static HTNDecompositionTooltipMode TooltipMode = HTNDecompositionTooltipMode::REGULAR;
+    const char*                        Items[]     = {"NONE", "REGULAR", "FULL"};
+    static int                         CurrentItem = static_cast<int>(TooltipMode);
+    if (ImGui::Combo("Tooltip Mode", &CurrentItem, Items, IM_ARRAYSIZE(Items)))
+    {
+        TooltipMode = static_cast<HTNDecompositionTooltipMode>(CurrentItem);
+    }
+
+    if (HTNImGuiHelpers::IsCurrentItemHovered())
+    {
+        ImGui::SetTooltip("Whether to display no variables, only the parameters or arguments, or all variables in the tooltip of the hovered line");
+    }
+
+    ImGui::SameLine();
+    const bool ShouldReset = ImGui::Button("Reset View");
     if (HTNImGuiHelpers::IsCurrentItemHovered())
     {
         ImGui::SetTooltip("Display successful decomposition");
-    }
-
-    static bool ShouldPrintFullTooltip = false;
-    ImGui::SameLine();
-    ImGui::Checkbox("Full Tooltip", &ShouldPrintFullTooltip);
-    if (HTNImGuiHelpers::IsCurrentItemHovered())
-    {
-        ImGui::SetTooltip("Whether to display all variables or only the parameters or arguments in the tooltip of the hovered line");
     }
 
     if (HTNOperationResult::SUCCEEDED != inPlanningQuery.mLastDecompositionResult)
@@ -234,9 +239,8 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
     const std::string&                          LastEntryPointID = inPlanningQuery.mPlanningUnit->GetLastEntryPointID();
     const HTNDecompositionSnapshotDebug&        LastDecompositionSnapshot =
         inPlanningQuery.mPlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
-    HTNDecompositionPrinter DecompositionPrinter =
-        HTNDecompositionPrinter(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, ShouldPrintFullTooltip, ShouldResetView);
-    DecompositionPrinter.Print(ioSelectedNode);
+    HTNDecompositionPrinter DecompositionPrinter = HTNDecompositionPrinter(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, TooltipMode);
+    DecompositionPrinter.Print(ioSelectedNode, ShouldReset);
 
     ImGui::EndChild();
 

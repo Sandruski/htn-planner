@@ -3,6 +3,7 @@
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionNodeState.h"
+#include "Domain/HTNDecompositionWatchTooltipPrinter.h"
 #include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
@@ -30,10 +31,9 @@ class HTNDecompositionPrinter final : public HTNNodeVisitorBase
 {
 public:
     explicit HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                                     const HTNDecompositionSnapshotDebug& inDecompositionSnapshot, const bool inShouldPrintFullTooltip,
-                                     const bool inShouldResetNodeStates);
+                                     const HTNDecompositionSnapshotDebug& inDecompositionSnapshot, const HTNDecompositionTooltipMode inTooltipMode);
 
-    bool Print(HTNDecompositionNode& ioSelectedNode);
+    bool Print(HTNDecompositionNode& ioSelectedNode, const bool inShouldReset);
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
 
@@ -68,13 +68,12 @@ private:
     int         GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
     bool        IsNodeOpen(const std::string& inNodePath, const int inDecompositionStep, const bool inIsChoicePoint) const;
 
+    void Reset();
+
     std::shared_ptr<const HTNDomainNode> mDomainNode;
     std::string                          mEntryPointID;
     const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
-    bool                                 mShouldPrintFullTooltip = false;
-
-    bool mShouldRefreshNodeStates = false;
-    bool mShouldResetNodeStates  = false;
+    HTNDecompositionTooltipMode          mTooltipMode = HTNDecompositionTooltipMode::NONE;
 
     HTNDecompositionNode mCurrentSelectedNode;
     bool                 mIsCurrentSelectedNodeSelected = false;
@@ -100,20 +99,14 @@ private:
     // Whether the current node is shown or hidden
     bool mIsCurrentNodeVisible = true;
 
+    bool mShouldRefreshNodeStates = false;
+
     // Node path to node state
     static std::unordered_map<std::string, HTNDecompositionNodeState> mNodeStates;
 
     // Node path to choice point node state
     static std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mChoicePointNodeStates;
 };
-
-inline HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                                                        const HTNDecompositionSnapshotDebug& inDecompositionSnapshot,
-                                                        const bool inShouldPrintFullTooltip, const bool inShouldResetNodeStates)
-    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot),
-      mShouldPrintFullTooltip(inShouldPrintFullTooltip), mShouldResetNodeStates(inShouldResetNodeStates)
-{
-}
 
 inline void HTNDecompositionPrinter::SelectNode(const std::string& inNodeLabel, const HTNDecompositionNode& inNode)
 {
@@ -130,5 +123,12 @@ inline void HTNDecompositionPrinter::RefreshSelectedNode(const HTNDecompositionN
 inline bool HTNDecompositionPrinter::IsNodeSelected(const std::string& inNodeLabel) const
 {
     return (inNodeLabel == mCurrentSelectedNodeLabel);
+}
+
+inline void HTNDecompositionPrinter::Reset()
+{
+    mNodeStates.clear();
+    mChoicePointNodeStates.clear();
+    mCurrentSelectedNodeLabel.clear();
 }
 #endif

@@ -8,6 +8,13 @@
 class HTNDecompositionNode;
 class HTNDomainNode;
 
+enum class HTNDecompositionTooltipMode : unsigned char
+{
+    NONE,
+    REGULAR,
+    FULL
+};
+
 /**
  * Prints the watch tooltip for the selected node
  */
@@ -16,6 +23,6 @@ class HTNDecompositionWatchTooltipPrinter final : public HTNDecompositionWatchPr
 public:
     explicit HTNDecompositionWatchTooltipPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode);
 
-    void Print(const bool inShouldPrintFullTooltip);
+    void Print(const HTNDecompositionTooltipMode inTooltipMode);
 };
 #endif

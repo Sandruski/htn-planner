@@ -2,7 +2,6 @@
 
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionHelpers.h"
-#include "Domain/HTNDecompositionWatchTooltipPrinter.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Interpreter/HTNNodeScope.h"
@@ -53,7 +52,14 @@ bool IsNodeValid(const std::size_t inDecompositionStep, const bool inIsChoicePoi
 }
 } // namespace
 
-bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode)
+HTNDecompositionPrinter::HTNDecompositionPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
+                                                 const HTNDecompositionSnapshotDebug& inDecompositionSnapshot,
+                                                 const HTNDecompositionTooltipMode    inTooltipMode)
+    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot), mTooltipMode(inTooltipMode)
+{
+}
+
+bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode, const bool inShouldReset)
 {
     const HTNDomainNode* DomainNode = mDomainNode.get();
     if (!DomainNode)
@@ -63,6 +69,11 @@ bool HTNDecompositionPrinter::Print(HTNDecompositionNode& ioSelectedNode)
     }
 
     mCurrentSelectedNode = ioSelectedNode;
+
+    if (inShouldReset)
+    {
+        Reset();
+    }
 
     GetNodeValue(*DomainNode).GetValue<bool>();
 
@@ -541,20 +552,9 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         const auto CurrentNodeStateIt = mChoicePointNodeStates.find(CurrentNodePath);
         if (CurrentNodeStateIt != mChoicePointNodeStates.end())
         {
-            HTNDecompositionChoicePointNodeState& CurrentNodeState = CurrentNodeStateIt->second;
-
-            if (mShouldResetNodeStates)
+            if (mShouldRefreshNodeStates)
             {
-                // Default open successful decomposition step
-                const int      DecompositionStep = static_cast<int>(LastDecompositionStep);
-                constexpr bool IsOpen            = true;
-                CurrentNodeState.SetDecompositionStep(DecompositionStep);
-                CurrentNodeState.SetIsOpen(DecompositionStep, IsOpen);
-
-                mShouldRefreshNodeStates = true;
-            }
-            else if (mShouldRefreshNodeStates)
-            {
+                HTNDecompositionChoicePointNodeState& CurrentNodeState = CurrentNodeStateIt->second;
                 const int DecompositionStep = CurrentNodeState.FindOpenDecompositionStepInRange(mMinDecompositionStep, mMaxDecompositionStep);
                 CurrentNodeState.SetDecompositionStep(DecompositionStep);
             }
@@ -574,21 +574,10 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         const auto CurrentNodeStateIt = mNodeStates.find(CurrentNodePath);
         if (CurrentNodeStateIt != mNodeStates.end())
         {
-            HTNDecompositionNodeState& CurrentNodeState = CurrentNodeStateIt->second;
-
-            if (mShouldResetNodeStates)
+            if (mShouldRefreshNodeStates)
             {
-                // Default open current decomposition step
-                constexpr int  DecompositionStep = HTNDecompositionHelpers::kInvalidDecompositionStep;
-                constexpr bool IsOpen            = true;
-                CurrentNodeState.SetDecompositionStep(DecompositionStep);
-                CurrentNodeState.SetIsOpen(IsOpen);
-
-                mShouldRefreshNodeStates = true;
-            }
-            else if (mShouldRefreshNodeStates)
-            {
-                const int DecompositionStep = mCurrentDecompositionStep;
+                HTNDecompositionNodeState& CurrentNodeState  = CurrentNodeStateIt->second;
+                const int                  DecompositionStep = mCurrentDecompositionStep;
                 CurrentNodeState.SetDecompositionStep(DecompositionStep);
             }
         }
@@ -672,7 +661,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             if (HTNImGuiHelpers::IsCurrentItemHovered())
             {
                 HTNDecompositionWatchTooltipPrinter DecompositionWatchTooltipPrinter = HTNDecompositionWatchTooltipPrinter(mDomainNode, Node);
-                DecompositionWatchTooltipPrinter.Print(mShouldPrintFullTooltip);
+                DecompositionWatchTooltipPrinter.Print(mTooltipMode);
             }
 
             if (HTNImGuiHelpers::IsCurrentItemSelected())
