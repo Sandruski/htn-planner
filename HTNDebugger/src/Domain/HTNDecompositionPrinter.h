@@ -95,6 +95,7 @@ private:
 
     bool mShouldResetNodeStates  = false;
     bool mShouldUpdateNodeStates = false;
+    bool mIsNodeOpenStateDirty       = false;
 
     HTNDecompositionNode mCurrentSelectedNode;
     bool                 mIsCurrentSelectedNodeSelected = false;

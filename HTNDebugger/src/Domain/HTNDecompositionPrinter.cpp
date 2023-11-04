@@ -738,6 +738,11 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             {
                 mIsCurrentNodeVisible = false;
             }
+
+            if (!mIsNodeOpenStateDirty)
+            {
+                mIsNodeOpenStateDirty = true;
+            }
         }
 
         // Perform selected node behavior
@@ -773,7 +778,11 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     }
 
     HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
-    CurrentNodeState.SetIsOpen(IsCurrentNodeOpened);
+
+    if (mIsNodeOpenStateDirty)
+    {
+        CurrentNodeState.SetIsOpen(IsCurrentNodeOpened);
+    }
 
     // Set node(s)
     // TODO salvarez Check how we can use mShouldUpdateNodeStates here to avoid doing this every time
