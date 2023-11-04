@@ -1,6 +1,7 @@
 #include "Domain/HTNDecompositionPrinter.h"
 
 #ifdef HTN_DEBUG
+#include "Domain/HTNDecompositionHelpers.h"
 #include "Domain/HTNDecompositionWatchTooltipPrinter.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
@@ -18,9 +19,9 @@
 
 #include "imgui.h"
 
-// TODO salvarez Do not make this static or reset it when new decomposition
-std::unordered_map<std::string, HTNNodeState> HTNDecompositionPrinter::mNodeStates;
-std::string                                   HTNDecompositionPrinter::mCurrentSelectedNodeLabel;
+std::unordered_map<std::string, HTNDecompositionNodeState>            HTNDecompositionPrinter::mNodeStates;
+std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> HTNDecompositionPrinter::mChoicePointNodeStates;
+std::string                                                           HTNDecompositionPrinter::mCurrentSelectedNodeLabel;
 
 namespace
 {
@@ -28,18 +29,14 @@ bool IsNodeValid(const std::size_t inDecompositionStep, const bool inIsChoicePoi
                  const int inMinDecompositionStep, const int inMaxDecompositionStep)
 {
     // Filter available nodes within range [min, max)
-    if (static_cast<int>(inDecompositionStep) < inMinDecompositionStep)
-    {
-        return false;
-    }
-    else if (static_cast<int>(inDecompositionStep) >= inMaxDecompositionStep)
+    if (!HTNDecompositionHelpers::IsDecompositionStepInRange(static_cast<int>(inDecompositionStep), inMinDecompositionStep, inMaxDecompositionStep))
     {
         return false;
     }
     else
     {
         // Print all choice points
-        if (!HTNDecompositionPrinterHelpers::IsDecompositionStepValid(inCurrentDecompositionStep))
+        if (!HTNDecompositionHelpers::IsDecompositionStepValid(inCurrentDecompositionStep))
         {
             if (!inIsChoicePoint)
             {
@@ -103,8 +100,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode)
 
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& ParameterNodes = inAxiomNode.GetParameterNodes();
 
-    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeState& inNodeState) {
-        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeState);
+    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep) {
+        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
         ImGui::SameLine();
         ImGui::TextColored(IDColor, IDString.c_str());
 
@@ -149,7 +146,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode)
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& ParameterNodes = inMethodNode.GetParameterNodes();
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
-                                                       MAYBE_UNUSED const HTNNodeState&         inNodeState) {
+                                                       MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
         ImGui::SameLine();
         ImGui::Text(IDString.c_str());
 
@@ -191,7 +188,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode)
     const std::string                                         IDString                = ID.ToString(ShouldDoubleQuoteString);
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
-                                                       MAYBE_UNUSED const HTNNodeState&         inNodeState) {
+                                                       MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
         ImGui::SameLine();
         ImGui::Text(IDString.c_str());
     };
@@ -226,8 +223,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode)
 
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inConditionNode.GetArgumentNodes();
 
-    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeState& inNodeState) {
-        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeState);
+    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep) {
+        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
         ImGui::SameLine();
         ImGui::TextColored(IDColor, IDString.c_str());
 
@@ -263,8 +260,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
 
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
 
-    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeState& inNodeState) {
-        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeState);
+    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep) {
+        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
         ImGui::SameLine();
         ImGui::TextColored(IDColor, std::format("#{}", IDString).c_str());
 
@@ -303,8 +300,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndCondition
 {
     const std::string IDString = "and";
 
-    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeState& inNodeState) {
-        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeState);
+    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep) {
+        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
         ImGui::SameLine();
         ImGui::TextColored(IDColor, IDString.c_str());
     };
@@ -329,8 +326,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNo
 {
     const std::string IDString = "or";
 
-    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeState& inNodeState) {
-        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeState);
+    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep) {
+        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
         ImGui::SameLine();
         ImGui::TextColored(IDColor, IDString.c_str());
     };
@@ -355,8 +352,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltCondition
 {
     const std::string IDString = "alt";
 
-    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeState& inNodeState) {
-        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeState);
+    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep) {
+        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
         ImGui::SameLine();
         ImGui::TextColored(IDColor, IDString.c_str());
     };
@@ -381,8 +378,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotCondition
 {
     const std::string IDString = "not";
 
-    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeState& inNodeState) {
-        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeState);
+    const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep) {
+        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
         ImGui::SameLine();
         ImGui::TextColored(IDColor, IDString.c_str());
     };
@@ -410,7 +407,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
-                                                       MAYBE_UNUSED const HTNNodeState&         inNodeState) {
+                                                       MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
         ImGui::SameLine();
         ImGui::Text(IDString.c_str());
 
@@ -455,7 +452,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
-                                                       MAYBE_UNUSED const HTNNodeState&         inNodeState) {
+                                                       MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
         ImGui::SameLine();
         ImGui::Text(IDString.c_str());
 
@@ -526,6 +523,11 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         return false;
     }
 
+    if (!IsCurrentDecompositionStepValid())
+    {
+        return false;
+    }
+
     const HTNNodeSnapshotStepsCollectionDebug& NodeSnapshotStepsCollection = NodeSnapshotHistory->GetNodeSnapshotStepsCollection();
     const bool                                 IsChoicePoint               = NodeSnapshotHistory->IsChoicePoint();
 
@@ -537,103 +539,129 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     int         CurrentDecompositionStep = 0;
     bool        IsCurrentNodeOpen        = false;
 
-    const auto CurrentNodeStateIt = mNodeStates.find(CurrentNodePath);
-    if (CurrentNodeStateIt != mNodeStates.end())
+    if (IsChoicePoint)
     {
-        HTNNodeState& CurrentNodeState = CurrentNodeStateIt->second;
-
-        if (mShouldUpdateNodeStates)
+        const auto CurrentNodeStateIt = mChoicePointNodeStates.find(CurrentNodePath);
+        if (CurrentNodeStateIt != mChoicePointNodeStates.end())
         {
-            if (IsChoicePoint)
-            {
-                CurrentDecompositionStep = mCurrentDecompositionStep;
-                CurrentNodeState.SetEndDecompositionStep(CurrentDecompositionStep);
+            HTNDecompositionChoicePointNodeState& CurrentNodeState = CurrentNodeStateIt->second;
 
-                IsCurrentNodeOpen = false;
-                CurrentNodeState.SetIsOpen(IsCurrentNodeOpen);
+            if (mShouldUpdateNodeStates)
+            {
+                CurrentDecompositionStep = CurrentNodeState.FindOpenDecompositionStepInRange(mMinDecompositionStep, mMaxDecompositionStep);
+                CurrentNodeState.SetDecompositionStep(CurrentDecompositionStep);
+
+                IsCurrentNodeOpen = CurrentNodeState.IsOpen(CurrentDecompositionStep);
+
+                CurrentNodeStep = CurrentNodeState.GetNodeStep();
             }
             else
             {
-                CurrentDecompositionStep = mCurrentDecompositionStep;
+                CurrentNodeStep = CurrentNodeState.GetNodeStep();
 
-                if (IsCurrentDecompositionStepValid())
+                switch (CurrentNodeStep)
                 {
-                    CurrentNodeState.SetEndDecompositionStep(CurrentDecompositionStep);
+                case HTNNodeStep::START: {
+                    CurrentDecompositionStep = mCurrentDecompositionStep;
+                    break;
+                }
+                case HTNNodeStep::END: {
+                    CurrentDecompositionStep = CurrentNodeState.GetDecompositionStep();
+                    break;
+                }
+                case HTNNodeStep::NONE:
+                default: {
+                    assert(false);
+                }
+                }
+
+                IsCurrentNodeOpen = CurrentNodeState.IsOpen(CurrentDecompositionStep);
+            }
+        }
+        else // Initialize node
+        {
+            // Default open successful choice point
+            CurrentDecompositionStep = static_cast<int>(LastDecompositionStep);
+            IsCurrentNodeOpen        = true;
+
+            mChoicePointNodeStates[CurrentNodePath] = HTNDecompositionChoicePointNodeState(CurrentDecompositionStep, IsCurrentNodeOpen);
+
+            CurrentNodeStep = mChoicePointNodeStates[CurrentNodePath].GetNodeStep();
+
+            mShouldUpdateNodeStates = true;
+        }
+    }
+    else
+    {
+        const auto CurrentNodeStateIt = mNodeStates.find(CurrentNodePath);
+        if (CurrentNodeStateIt != mNodeStates.end())
+        {
+            HTNDecompositionNodeState& CurrentNodeState = CurrentNodeStateIt->second;
+
+            if (mShouldUpdateNodeStates)
+            {
+                CurrentDecompositionStep = mCurrentDecompositionStep;
+                CurrentNodeState.SetDecompositionStep(CurrentDecompositionStep);
+
+                IsCurrentNodeOpen = CurrentNodeState.IsOpen();
+
+                CurrentNodeStep = CurrentNodeState.GetNodeStep();
+            }
+            /*
+            else if (mShouldResetNodeStates)
+            {
+                // Default open successful choice point
+                if (IsChoicePoint)
+                {
+                    CurrentDecompositionStep = static_cast<int>(LastDecompositionStep);
+                    CurrentNodeState.SetDecompositionStep(CurrentDecompositionStep);
                 }
                 else
                 {
+                    CurrentDecompositionStep = mCurrentDecompositionStep;
                     CurrentNodeState.SetStartNodeStep();
                 }
+
+                CurrentNodeStep = CurrentNodeState.GetNodeStep();
 
                 IsCurrentNodeOpen = true;
                 CurrentNodeState.SetIsOpen(IsCurrentNodeOpen);
             }
-
-            CurrentNodeStep = CurrentNodeState.GetNodeStep();
-        }
-        /*
-        else if (mShouldResetNodeStates)
-        {
-            // Default open successful choice point
-            if (IsChoicePoint)
-            {
-                CurrentDecompositionStep = static_cast<int>(LastDecompositionStep);
-                CurrentNodeState.SetEndDecompositionStep(CurrentDecompositionStep);
-            }
+            */
             else
             {
-                CurrentDecompositionStep = mCurrentDecompositionStep;
-                CurrentNodeState.SetStartNodeStep();
+                CurrentNodeStep = CurrentNodeState.GetNodeStep();
+
+                switch (CurrentNodeStep)
+                {
+                case HTNNodeStep::START: {
+                    CurrentDecompositionStep = mCurrentDecompositionStep;
+                    break;
+                }
+                case HTNNodeStep::END: {
+                    CurrentDecompositionStep = CurrentNodeState.GetDecompositionStep();
+                    break;
+                }
+                case HTNNodeStep::NONE:
+                default: {
+                    assert(false);
+                }
+                }
+
+                IsCurrentNodeOpen = CurrentNodeState.IsOpen();
             }
-
-            CurrentNodeStep = CurrentNodeState.GetNodeStep();
-
+        }
+        else // Initialize node
+        {
             IsCurrentNodeOpen = true;
-            CurrentNodeState.SetIsOpen(IsCurrentNodeOpen);
+
+            mNodeStates[CurrentNodePath] = HTNDecompositionNodeState(IsCurrentNodeOpen);
+
+            CurrentDecompositionStep = mCurrentDecompositionStep;
+            CurrentNodeStep          = mNodeStates[CurrentNodePath].GetNodeStep();
+
+            mShouldUpdateNodeStates = true;
         }
-        */
-        else
-        {
-            CurrentNodeStep = CurrentNodeState.GetNodeStep();
-
-            switch (CurrentNodeStep)
-            {
-            case HTNNodeStep::START: {
-                CurrentDecompositionStep = mCurrentDecompositionStep;
-                break;
-            }
-            case HTNNodeStep::END: {
-                CurrentDecompositionStep = CurrentNodeState.GetEndDecompositionStep();
-                break;
-            }
-            case HTNNodeStep::NONE:
-            default: {
-                assert(false);
-            }
-            }
-
-            IsCurrentNodeOpen = CurrentNodeState.IsOpen();
-        }
-    }
-    else // Initialize node
-    {
-        IsCurrentNodeOpen = true;
-
-        // Default open successful choice point
-        if (IsChoicePoint)
-        {
-            CurrentDecompositionStep     = static_cast<int>(LastDecompositionStep);
-            mNodeStates[CurrentNodePath] = HTNNodeState(CurrentDecompositionStep, IsCurrentNodeOpen);
-        }
-        else
-        {
-            CurrentDecompositionStep     = mCurrentDecompositionStep;
-            mNodeStates[CurrentNodePath] = HTNNodeState(IsCurrentNodeOpen);
-        }
-
-        CurrentNodeStep = mNodeStates[CurrentNodePath].GetNodeStep();
-
-        mShouldUpdateNodeStates = true;
     }
 
     // Print node(s)
@@ -706,14 +734,14 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             ImGui::TextDisabled("%i", DecompositionStep);
             //}
 
-            inNodeTitleFunction(NodeSnapshot, mNodeStates[CurrentNodePath]);
+            inNodeTitleFunction(NodeSnapshot, CurrentNodeStep);
         }
 
         // Choice point determines decomposition step
         if (IsChoicePoint)
         {
             mCurrentDecompositionStep =
-                IsCurrentNodeOpened ? static_cast<int>(DecompositionStep) : HTNDecompositionPrinterHelpers::kInvalidDecompositionStep;
+                IsCurrentNodeOpened ? static_cast<int>(DecompositionStep) : HTNDecompositionHelpers::kInvalidDecompositionStep;
 
             // Set range to filter next nodes
             mMinDecompositionStep = IsCurrentNodeOpened ? mCurrentDecompositionStep : std::numeric_limits<int>::max();
@@ -737,11 +765,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             if (!IsCurrentNodeOpened)
             {
                 mIsCurrentNodeVisible = false;
-            }
-
-            if (!mIsNodeOpenStateDirty)
-            {
-                mIsNodeOpenStateDirty = true;
             }
         }
 
@@ -771,17 +794,21 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             }
         }
 
+        if (IsChoicePoint)
+        {
+            HTNDecompositionChoicePointNodeState& CurrentNodeState = mChoicePointNodeStates[CurrentNodePath];
+            CurrentNodeState.SetIsOpen(DecompositionStep, IsCurrentNodeOpened);
+        }
+        else
+        {
+            HTNDecompositionNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
+            CurrentNodeState.SetIsOpen(IsCurrentNodeOpened);
+        }
+
         if (IsCurrentNodeOpened)
         {
             break;
         }
-    }
-
-    HTNNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
-
-    if (mIsNodeOpenStateDirty)
-    {
-        CurrentNodeState.SetIsOpen(IsCurrentNodeOpened);
     }
 
     // Set node(s)
@@ -790,10 +817,12 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     {
         if (IsChoicePoint)
         {
-            CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
+            HTNDecompositionChoicePointNodeState& CurrentNodeState = mChoicePointNodeStates[CurrentNodePath];
+            CurrentNodeState.SetDecompositionStep(mCurrentDecompositionStep);
         }
         else
         {
+            HTNDecompositionNodeState& CurrentNodeState = mNodeStates[CurrentNodePath];
             if (IsCurrentDecompositionStepValid())
             {
                 const auto NodeSnapshotStepsCollectionIt = NodeSnapshotStepsCollection.find(mCurrentDecompositionStep);
@@ -803,17 +832,22 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
                     const auto                            NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
                     if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
                     {
-                        CurrentNodeState.SetEndDecompositionStep(mCurrentDecompositionStep);
+                        CurrentNodeState.SetDecompositionStep(mCurrentDecompositionStep);
                     }
                 }
             }
             else
             {
-                CurrentNodeState.SetStartNodeStep();
+                CurrentNodeState.SetDecompositionStep(mCurrentDecompositionStep);
             }
         }
     }
 
     return true;
+}
+
+bool HTNDecompositionPrinter::IsCurrentDecompositionStepValid() const
+{
+    return HTNDecompositionHelpers::IsDecompositionStepValid(mCurrentDecompositionStep);
 }
 #endif

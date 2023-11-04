@@ -7,7 +7,7 @@
 #include <string>
 
 class HTNNodeSnapshotDebug;
-class HTNNodeState;
+enum class HTNNodeStep : unsigned char;
 
 namespace HTNImGuiHelpers
 {
@@ -19,7 +19,7 @@ bool IsTreeNodeOpen(const std::string& inLabel, const ImGuiTreeNodeFlags inTreeN
 bool IsCurrentItemHovered();
 bool IsCurrentItemSelected();
 
-ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeState& inNodeState);
+ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep);
 ImVec4 GetResultColor(const bool inResult);
 ImVec4 GetVariableColor(const std::string& inVariableID);
 

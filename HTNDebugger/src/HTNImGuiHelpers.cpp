@@ -3,9 +3,10 @@
 #ifdef HTN_DEBUG
 #include "HTNImGuiHelpers.h"
 
+#include "Domain/HTNDecompositionNodeState.h"
+#include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
-#include "Domain/HTNDecompositionPrinter.h"
 
 #include "imgui_internal.h"
 
@@ -25,10 +26,9 @@ bool IsTreeNodeOpen(const std::string& inLabel, const ImGuiTreeNodeFlags inTreeN
     return ImGui::TreeNodeUpdateNextOpen(ID, inTreeNodeFlags);
 }
 
-ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeState& inNodeState)
+ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep)
 {
-    const HTNNodeStep NodeStep = inNodeState.GetNodeStep();
-    switch (NodeStep)
+    switch (inNodeStep)
     {
     case HTNNodeStep::START: {
         return kNoResultColor;
