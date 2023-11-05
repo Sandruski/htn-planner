@@ -192,6 +192,8 @@ void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const
 
     if (ImGui::Button("Decompose"))
     {
+        // TODO salvarez ShouldReset = true
+
         inPlanningQuery.mLastDecompositionResult =
             static_cast<HTNOperationResult>(inPlanningQuery.mPlanningUnit->ExecuteTopLevelMethod(inPlanningQuery.mEntryPointID));
 
