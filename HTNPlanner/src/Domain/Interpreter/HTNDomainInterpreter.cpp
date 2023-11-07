@@ -33,6 +33,14 @@ bool HTNDomainInterpreter::Interpret()
         return false;
     }
 
+    /*
+    if (mEntryPointID.empty())
+    {
+        LOG_ERROR("Entry point ID is empty");
+        return false;
+    }
+    */
+
     return GetNodeValue(*DomainNode).GetValue<bool>();
 }
 

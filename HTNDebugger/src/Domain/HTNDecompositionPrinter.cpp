@@ -669,6 +669,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
                 SelectNode(Label, Node);
             }
 
+            // TODO salvarez Uncomment
             // if (IsChoicePoint)
             //{
             ImGui::SameLine();
