@@ -27,9 +27,7 @@ class HTNVariableExpressionNode;
 class HTNDomainParser final : public HTNParserBase<std::shared_ptr<const HTNDomainNode>>
 {
 public:
-    explicit HTNDomainParser(const std::vector<HTNToken>& inDomainTokens);
-
-    bool Parse(std::shared_ptr<const HTNDomainNode>& outDomainNode) final;
+    bool Parse(const std::vector<HTNToken>& inTokens, std::shared_ptr<const HTNDomainNode>& outDomainNode) final;
 
 private:
     bool ParseDomainNode(std::shared_ptr<const HTNDomainNode>& outDomainNode, unsigned int& ioPosition);
@@ -49,7 +47,3 @@ private:
 
     bool ParseLiteral(HTNAtom& outLiteral, unsigned int& inPosition);
 };
-
-inline HTNDomainParser::HTNDomainParser(const std::vector<HTNToken>& inDomainTokens) : HTNParserBase(inDomainTokens)
-{
-}

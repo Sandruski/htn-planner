@@ -2,9 +2,7 @@
 
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
-#include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/HTNDecompositionWatchTooltipPrinter.h"
-#include "Domain/HTNDecompositionWatchWindowPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Interpreter/HTNNodePath.h"
@@ -25,24 +23,6 @@
 
 namespace
 {
-enum class HTNOperationResult : unsigned char
-{
-    FAILED    = 0,
-    SUCCEEDED = 1,
-    NONE,
-};
-
-struct HTNPlanningQuery
-{
-    explicit HTNPlanningQuery(HTNPlanningUnit* inPlanningUnit) : mPlanningUnit(inPlanningUnit)
-    {
-    }
-
-    HTNPlanningUnit*   mPlanningUnit = nullptr;
-    std::string        mEntryPointID;
-    HTNOperationResult mLastDecompositionResult = HTNOperationResult::NONE;
-};
-
 void RenderFileSelector(const std::string& inDirectoryName, const std::string& inFileExtension, std::filesystem::path& ioSelectedFilePath)
 {
     std::vector<std::filesystem::path> FilePaths;
@@ -141,192 +121,18 @@ std::vector<std::shared_ptr<const HTNMethodNode>>::const_iterator FindTopLevelMe
     });
 }
 
-void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const std::vector<std::shared_ptr<const HTNMethodNode>>* inMethodNodes,
-                                        HTNDecompositionNode& ioSelectedNode)
-{
-    if (inMethodNodes)
-    {
-        const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(inPlanningQuery.mEntryPointID, *inMethodNodes);
-        if (TopLevelMethodNode == inMethodNodes->end())
-        {
-            inPlanningQuery.mEntryPointID.clear();
-        }
-    }
-    else
-    {
-        inPlanningQuery.mEntryPointID.clear();
-    }
-
-    if (ImGui::BeginCombo("Entry Point", inPlanningQuery.mEntryPointID.c_str(), HTNImGuiHelpers::kDefaultComboFlags))
-    {
-        if (inMethodNodes)
-        {
-            for (const std::shared_ptr<const HTNMethodNode>& MethodNode : *inMethodNodes)
-            {
-                if (!MethodNode)
-                {
-                    continue;
-                }
-
-                if (!MethodNode->IsTopLevel())
-                {
-                    continue;
-                }
-
-                const std::string MethodNodeID = MethodNode->GetID();
-                const bool        IsSelected   = (inPlanningQuery.mEntryPointID == MethodNodeID);
-                if (ImGui::Selectable(MethodNodeID.c_str(), IsSelected, HTNImGuiHelpers::kDefaultSelectableFlags))
-                {
-                    inPlanningQuery.mEntryPointID = MethodNodeID;
-                }
-
-                if (IsSelected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-        }
-
-        ImGui::EndCombo();
-    }
-
-    if (ImGui::Button("Decompose"))
-    {
-        // TODO salvarez ShouldReset = true
-
-        inPlanningQuery.mLastDecompositionResult =
-            static_cast<HTNOperationResult>(inPlanningQuery.mPlanningUnit->ExecuteTopLevelMethod(inPlanningQuery.mEntryPointID));
-
-        ioSelectedNode = HTNDecompositionNode();
-    }
-
-    if (ImGui::IsItemHovered())
-    {
-        ImGui::SetTooltip("Decompose the selected entry point of the parsed domain using the parsed world state");
-    }
-
-    RenderOperationResult(inPlanningQuery.mLastDecompositionResult);
-
-    ImGui::Separator();
-
-    const ImVec2 DecompositionChildSize = ImVec2(500.f, 350.f);
-    ImGui::BeginChild("DecompositionChild", DecompositionChildSize, false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
-
-    static HTNDecompositionTooltipMode TooltipMode = HTNDecompositionTooltipMode::REGULAR;
-    bool                               ShouldReset = false;
-    
-    // TODO salvarez Make it work without delay
-    /*
-    if (ImGui::IsKeyDown(ImGuiKey_R))
-    {
-        ShouldReset = true;
-    }
-    */
-
-    if (ImGui::BeginMenuBar())
-    {
-        if (ImGui::BeginMenu("View"))
-        {
-            if (ImGui::MenuItem("Reset", "R"))
-            {
-                ShouldReset = true;
-            }
-
-            if (HTNImGuiHelpers::IsCurrentItemHovered())
-            {
-                ImGui::SetTooltip("Display successful decomposition");
-            }
-
-            ImGui::EndMenu();
-        }
-
-        if (ImGui::BeginMenu("Tooltip"))
-        {
-            bool IsRegularSelected = (HTNDecompositionTooltipMode::REGULAR == TooltipMode);
-            if (ImGui::MenuItem("Regular", nullptr, &IsRegularSelected))
-            {
-                if (IsRegularSelected)
-                {
-                    TooltipMode = HTNDecompositionTooltipMode::REGULAR;
-                }
-                else
-                {
-                    TooltipMode = HTNDecompositionTooltipMode::NONE;
-                }
-            }
-
-            if (HTNImGuiHelpers::IsCurrentItemHovered())
-            {
-                ImGui::SetTooltip("Display only the parameters or arguments of the hovered line");
-            }
-
-            bool IsFullSelected = (HTNDecompositionTooltipMode::FULL == TooltipMode);
-            if (ImGui::MenuItem("Full", nullptr, &IsFullSelected))
-            {
-                if (IsFullSelected)
-                {
-                    TooltipMode = HTNDecompositionTooltipMode::FULL;
-                }
-                else
-                {
-                    TooltipMode = HTNDecompositionTooltipMode::NONE;
-                }
-            }
-
-            if (HTNImGuiHelpers::IsCurrentItemHovered())
-            {
-                ImGui::SetTooltip("Display all variables of the hovered line");
-            }
-
-            ImGui::EndMenu();
-        }
-
-        ImGui::EndMenuBar();
-    }
-
-    if (HTNOperationResult::SUCCEEDED == inPlanningQuery.mLastDecompositionResult)
-    {
-        const std::shared_ptr<const HTNDomainNode>& LastDomainNode   = inPlanningQuery.mPlanningUnit->GetLastDomainNode();
-        const std::string&                          LastEntryPointID = inPlanningQuery.mPlanningUnit->GetLastEntryPointID();
-        const HTNDecompositionSnapshotDebug&        LastDecompositionSnapshot =
-            inPlanningQuery.mPlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
-        HTNDecompositionPrinter DecompositionPrinter =
-            HTNDecompositionPrinter(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, TooltipMode);
-        DecompositionPrinter.Print(ioSelectedNode, ShouldReset);
-    }
-
-    ImGui::EndChild();
-
-    // Watch window
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-    const ImVec2 WatchWindowChildSize = ImVec2(500.f, 150.f);
-    ImGui::BeginChild("WatchWindowChild", WatchWindowChildSize, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
-
-    if (ImGui::BeginMenuBar())
-    {
-        if (ImGui::BeginMenu("Watch Window", false))
-        {
-            ImGui::EndMenu();
-        }
-
-        ImGui::EndMenuBar();
-    }
-
-    if (HTNOperationResult::SUCCEEDED == inPlanningQuery.mLastDecompositionResult)
-    {
-        const std::shared_ptr<const HTNDomainNode>& LastDomainNode         = inPlanningQuery.mPlanningUnit->GetLastDomainNode();
-        HTNDecompositionWatchWindowPrinter DecompositionWatchWindowPrinter = HTNDecompositionWatchWindowPrinter(LastDomainNode, ioSelectedNode);
-        DecompositionWatchWindowPrinter.Print();
-    }
-
-    ImGui::EndChild();
-    ImGui::PopStyleVar();
-}
 } // namespace
 
-void HTNDebuggerWindow::Render(bool& _IsOpen)
+HTNDebuggerWindow::HTNDebuggerWindow(HTNDatabaseHook& inDatabaseHook, HTNPlannerHook& inPlannerHook, HTNPlanningUnit& inMainPlanningUnit,
+                                     HTNPlanningUnit& inUpperBodyPlanningUnit)
+    : mDatabaseHook(&inDatabaseHook), mPlannerHook(&inPlannerHook), mMainPlanningUnit(&inMainPlanningUnit),
+      mUpperBodyPlanningUnit(&inUpperBodyPlanningUnit)
 {
-    if (ImGui::Begin("HTN Debugger Window", &_IsOpen, HTNImGuiHelpers::kDefaultWindowFlags))
+}
+
+void HTNDebuggerWindow::Render()
+{
+    if (ImGui::Begin("HTN Debugger Window", nullptr, HTNImGuiHelpers::kDefaultWindowFlags))
     {
         if (ImGui::BeginTabBar("Tab Bar", HTNImGuiHelpers::kDefaultTabBarFlags))
         {
@@ -527,5 +333,185 @@ void HTNDebuggerWindow::RenderWorldState()
     static const HTNWorldStatePrinter WorldStatePrinter;
     const HTNWorldState&              WorldState = mDatabaseHook->GetWorldState();
     WorldStatePrinter.Print(WorldState, TextFilter);
+}
+
+void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(HTNPlanningQuery&                                        inPlanningQuery,
+                                                           const std::vector<std::shared_ptr<const HTNMethodNode>>* inMethodNodes,
+                                                           HTNDecompositionNode&                                    ioSelectedNode)
+{
+    if (inMethodNodes)
+    {
+        const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(inPlanningQuery.mEntryPointID, *inMethodNodes);
+        if (TopLevelMethodNode == inMethodNodes->end())
+        {
+            inPlanningQuery.mEntryPointID.clear();
+        }
+    }
+    else
+    {
+        inPlanningQuery.mEntryPointID.clear();
+    }
+
+    if (ImGui::BeginCombo("Entry Point", inPlanningQuery.mEntryPointID.c_str(), HTNImGuiHelpers::kDefaultComboFlags))
+    {
+        if (inMethodNodes)
+        {
+            for (const std::shared_ptr<const HTNMethodNode>& MethodNode : *inMethodNodes)
+            {
+                if (!MethodNode)
+                {
+                    continue;
+                }
+
+                if (!MethodNode->IsTopLevel())
+                {
+                    continue;
+                }
+
+                const std::string MethodNodeID = MethodNode->GetID();
+                const bool        IsSelected   = (inPlanningQuery.mEntryPointID == MethodNodeID);
+                if (ImGui::Selectable(MethodNodeID.c_str(), IsSelected, HTNImGuiHelpers::kDefaultSelectableFlags))
+                {
+                    inPlanningQuery.mEntryPointID = MethodNodeID;
+                }
+
+                if (IsSelected)
+                {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+        }
+
+        ImGui::EndCombo();
+    }
+
+    if (ImGui::Button("Decompose"))
+    {
+        // TODO salvarez ShouldReset = true
+
+        inPlanningQuery.mLastDecompositionResult =
+            static_cast<HTNOperationResult>(inPlanningQuery.mPlanningUnit->ExecuteTopLevelMethod(inPlanningQuery.mEntryPointID));
+
+        ioSelectedNode = HTNDecompositionNode();
+    }
+
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("Decompose the selected entry point of the parsed domain using the parsed world state");
+    }
+
+    RenderOperationResult(inPlanningQuery.mLastDecompositionResult);
+
+    ImGui::Separator();
+
+    const ImVec2 DecompositionChildSize = ImVec2(500.f, 350.f);
+    ImGui::BeginChild("DecompositionChild", DecompositionChildSize, false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
+
+    static HTNDecompositionTooltipMode TooltipMode = HTNDecompositionTooltipMode::REGULAR;
+    bool                               ShouldReset = false;
+
+    // TODO salvarez Make it work without delay
+    /*
+    if (ImGui::IsKeyDown(ImGuiKey_R))
+    {
+        ShouldReset = true;
+    }
+    */
+
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::BeginMenu("View"))
+        {
+            if (ImGui::MenuItem("Reset", "R"))
+            {
+                ShouldReset = true;
+            }
+
+            if (HTNImGuiHelpers::IsCurrentItemHovered())
+            {
+                ImGui::SetTooltip("Display successful decomposition");
+            }
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Tooltip"))
+        {
+            bool IsRegularSelected = (HTNDecompositionTooltipMode::REGULAR == TooltipMode);
+            if (ImGui::MenuItem("Regular", nullptr, &IsRegularSelected))
+            {
+                if (IsRegularSelected)
+                {
+                    TooltipMode = HTNDecompositionTooltipMode::REGULAR;
+                }
+                else
+                {
+                    TooltipMode = HTNDecompositionTooltipMode::NONE;
+                }
+            }
+
+            if (HTNImGuiHelpers::IsCurrentItemHovered())
+            {
+                ImGui::SetTooltip("Display only the parameters or arguments of the hovered line");
+            }
+
+            bool IsFullSelected = (HTNDecompositionTooltipMode::FULL == TooltipMode);
+            if (ImGui::MenuItem("Full", nullptr, &IsFullSelected))
+            {
+                if (IsFullSelected)
+                {
+                    TooltipMode = HTNDecompositionTooltipMode::FULL;
+                }
+                else
+                {
+                    TooltipMode = HTNDecompositionTooltipMode::NONE;
+                }
+            }
+
+            if (HTNImGuiHelpers::IsCurrentItemHovered())
+            {
+                ImGui::SetTooltip("Display all variables of the hovered line");
+            }
+
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMenuBar();
+    }
+
+    if (HTNOperationResult::SUCCEEDED == inPlanningQuery.mLastDecompositionResult)
+    {
+        const std::shared_ptr<const HTNDomainNode>& LastDomainNode   = inPlanningQuery.mPlanningUnit->GetLastDomainNode();
+        const std::string&                          LastEntryPointID = inPlanningQuery.mPlanningUnit->GetLastEntryPointID();
+        const HTNDecompositionSnapshotDebug&        LastDecompositionSnapshot =
+            inPlanningQuery.mPlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
+        mDecompositionPrinter.Print(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, TooltipMode, ShouldReset, ioSelectedNode);
+    }
+
+    ImGui::EndChild();
+
+    // Watch window
+    ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+    const ImVec2 WatchWindowChildSize = ImVec2(500.f, 150.f);
+    ImGui::BeginChild("WatchWindowChild", WatchWindowChildSize, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
+
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::BeginMenu("Watch Window", false))
+        {
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMenuBar();
+    }
+
+    if (HTNOperationResult::SUCCEEDED == inPlanningQuery.mLastDecompositionResult)
+    {
+        const std::shared_ptr<const HTNDomainNode>& LastDomainNode = inPlanningQuery.mPlanningUnit->GetLastDomainNode();
+        mDecompositionWatchWindowPrinter.Print(LastDomainNode, ioSelectedNode);
+    }
+
+    ImGui::EndChild();
+    ImGui::PopStyleVar();
 }
 #endif

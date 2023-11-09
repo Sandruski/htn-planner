@@ -13,15 +13,15 @@ class HTNDomainNode;
 class HTNDecompositionWatchPrinterBase : public HTNNodeVisitorBase
 {
 public:
-    explicit HTNDecompositionWatchPrinterBase(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode);
-
     HTNAtom Visit(const HTNConstantNode& inConstantNode) final;
     HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode) final;
     HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode) final;
     HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode) final;
 
 protected:
-    const HTNDecompositionNode& mNode;
+    void Reset(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode);
+
+    const HTNDecompositionNode* mNode = nullptr;
 
     std::vector<std::string> mNodeVariablePaths;
 

@@ -13,10 +13,9 @@ enum class HTNTokenType : unsigned int;
 class HTNLexerBase
 {
 public:
-    explicit HTNLexerBase(const std::string& inText);
     virtual ~HTNLexerBase() = default;
 
-    virtual bool Lex(std::vector<HTNToken>& outTokens) = 0;
+    virtual bool Lex(const std::string& inText, std::vector<HTNToken>& outTokens) = 0;
 
 protected:
     void LexIdentifier(std::vector<HTNToken>& outTokens, const std::unordered_map<std::string, HTNTokenType>& inKeywords);
@@ -29,15 +28,14 @@ protected:
     char GetCharacter(const unsigned int inLookAhead = 0) const;
     void AdvancePosition(const bool inIsNewLine = false);
 
+    void Reset(const std::string& inText);
+
     std::string  mText;
+
     unsigned int mPosition = 0;
     unsigned int mRow      = 0;
     unsigned int mColumn   = 0;
 };
-
-inline HTNLexerBase::HTNLexerBase(const std::string& inText) : mText(inText)
-{
-}
 
 inline char HTNLexerBase::GetCharacter(const unsigned int inOffset) const
 {

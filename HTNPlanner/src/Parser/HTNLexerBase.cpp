@@ -122,3 +122,11 @@ void HTNLexerBase::AddToken(const HTNTokenType inType, const std::string& inLexe
 {
     outTokens.emplace_back(inType, inLexeme, inValue, mRow, mColumn);
 }
+
+void HTNLexerBase::Reset(const std::string& inText)
+{
+    mText = inText;
+    mPosition = 0;
+    mRow      = 0;
+    mColumn   = 0;
+}

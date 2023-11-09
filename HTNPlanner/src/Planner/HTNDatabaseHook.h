@@ -1,6 +1,8 @@
 #pragma once
 
 #include "WorldState/HTNWorldState.h"
+#include "WorldState/Parser/HTNWorldStateLexer.h"
+#include "WorldState/Parser/HTNWorldStateParser.h"
 
 #include <string>
 
@@ -14,6 +16,9 @@ public:
 
 private:
     HTNWorldState mWorldState;
+
+    HTNWorldStateLexer mWorldStateLexer;
+    HTNWorldStateParser mWorldStateParser;
 };
 
 inline const HTNWorldState& HTNDatabaseHook::GetWorldState() const

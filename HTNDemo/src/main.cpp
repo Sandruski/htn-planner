@@ -92,10 +92,11 @@ int main(int, char**)
 #endif
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    HTNPlannerHook  PlannerHook;
-    HTNDatabaseHook DatabaseHook;
-    HTNPlanningUnit MainPlanningUnit      = HTNPlanningUnit("Main", PlannerHook, DatabaseHook);
-    HTNPlanningUnit UpperBodyPlanningUnit = HTNPlanningUnit("Upper Body", PlannerHook, DatabaseHook);
+    HTNDatabaseHook   DatabaseHook;
+    HTNPlannerHook    PlannerHook;
+    HTNPlanningUnit   MainPlanningUnit      = HTNPlanningUnit("Main", DatabaseHook, PlannerHook);
+    HTNPlanningUnit   UpperBodyPlanningUnit = HTNPlanningUnit("Upper Body", DatabaseHook, PlannerHook);
+    HTNDebuggerWindow DebuggerWindow        = HTNDebuggerWindow(DatabaseHook, PlannerHook, MainPlanningUnit, UpperBodyPlanningUnit);
 
     // Main loop
     bool done = false;
@@ -130,8 +131,7 @@ int main(int, char**)
 #ifdef HTN_DEBUG
         if (ShowHTNDebuggerWindow)
         {
-            static HTNDebuggerWindow sHTNDebuggerWindow = HTNDebuggerWindow(PlannerHook, DatabaseHook, MainPlanningUnit, UpperBodyPlanningUnit);
-            sHTNDebuggerWindow.Render(ShowHTNDebuggerWindow);
+            DebuggerWindow.Render();
         }
 #endif
 

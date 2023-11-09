@@ -9,30 +9,27 @@
 
 #include "imgui.h"
 
-HTNDecompositionWatchTooltipPrinter::HTNDecompositionWatchTooltipPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                                         const HTNDecompositionNode&                 inNode)
-    : HTNDecompositionWatchPrinterBase(inDomainNode, inNode)
+void HTNDecompositionWatchTooltipPrinter::Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode,
+                                                const HTNDecompositionTooltipMode inTooltipMode)
 {
-}
+    Reset(inDomainNode, inNode);
 
-void HTNDecompositionWatchTooltipPrinter::Print(const HTNDecompositionTooltipMode inTooltipMode)
-{
     if (inTooltipMode == HTNDecompositionTooltipMode::NONE)
     {
         return;
     }
 
-    const HTNNodeSnapshotDebug* NodeSnapshot = mNode.GetNodeSnapshot();
+    const HTNNodeSnapshotDebug* NodeSnapshot = mNode->GetNodeSnapshot();
     if (!NodeSnapshot)
     {
         return;
     }
 
     bool                                                                 ShouldPrint       = false;
-    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters    = mNode.GetNodeParameters();
+    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters    = mNode->GetNodeParameters();
     const bool                                                           HasNodeParameters = !NodeParameters.empty();
     ShouldPrint                                                                            = ShouldPrint || HasNodeParameters;
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments    = mNode.GetNodeArguments();
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments    = mNode->GetNodeArguments();
     const bool                                                            HasNodeArguments = !NodeArguments.empty();
     ShouldPrint                                                                            = ShouldPrint || HasNodeArguments;
     const std::unordered_map<std::string, HTNAtom>& Variables                              = NodeSnapshot->GetVariables().GetVariables();

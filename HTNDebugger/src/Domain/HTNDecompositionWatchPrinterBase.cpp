@@ -12,15 +12,6 @@
 
 #include "imgui.h"
 
-HTNDecompositionWatchPrinterBase::HTNDecompositionWatchPrinterBase(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                                   const HTNDecompositionNode&                 inNode)
-    : mNode(inNode), mDomainNode(inDomainNode)
-{
-    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  NodeParameters = mNode.GetNodeParameters();
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments  = mNode.GetNodeArguments();
-    mNodeVariablePaths.reserve(std::max(NodeParameters.size(), NodeArguments.size()));
-}
-
 HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantNode& inConstantNode)
 {
     // Constant value
@@ -36,7 +27,7 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode& 
     // Literal ID
     const bool         ShouldDoubleQuoteIDString = false;
     const std::string& LiteralIDString           = Literal.ToString(ShouldDoubleQuoteIDString);
-    constexpr ImVec4   LiteralIDColor           = HTNImGuiHelpers::kArgumentColor;
+    constexpr ImVec4   LiteralIDColor            = HTNImGuiHelpers::kArgumentColor;
 
     // Literal value
     const bool         ShouldDoubleQuoteValueString = true;
@@ -62,13 +53,13 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
     // Variable value
     {
         const std::string& VariableID                = inVariableExpressionNode.GetValue().GetValue<std::string>();
-        const std::string& NodeVariableScopeNodePath = mNode.GetNodeVariableScopeNodePath().GetNodePath();
+        const std::string& NodeVariableScopeNodePath = mNode->GetNodeVariableScopeNodePath().GetNodePath();
         std::string        VariablePath;
         const bool         MakeVariablePathResult = HTNDecompositionHelpers::MakeVariablePath(VariableID, NodeVariableScopeNodePath, VariablePath);
         assert(MakeVariablePathResult);
         mNodeVariablePaths.emplace_back(VariablePath);
 
-        const HTNVariables& Variables               = mNode.GetNodeSnapshot()->GetVariables();
+        const HTNVariables& Variables               = mNode->GetNodeSnapshot()->GetVariables();
         const HTNAtom       VariableValue           = Variables.FindVariable(VariablePath);
         constexpr bool      ShouldDoubleQuoteString = true;
         const std::string   VariableValueString     = VariableValue.ToString(ShouldDoubleQuoteString);
@@ -103,5 +94,16 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode&
     }
 
     return Result;
+}
+
+void HTNDecompositionWatchPrinterBase::Reset(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode)
+{
+    mNode                                                                                = &inNode;
+    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  NodeParameters = mNode->GetNodeParameters();
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments  = mNode->GetNodeArguments();
+    mNodeVariablePaths.clear();
+    mNodeVariablePaths.reserve(std::max(NodeParameters.size(), NodeArguments.size()));
+
+    mDomainNode = inDomainNode;
 }
 #endif

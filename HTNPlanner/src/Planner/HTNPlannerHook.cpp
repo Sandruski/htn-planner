@@ -1,10 +1,6 @@
 #include "Planner/HTNPlannerHook.h"
 
-#include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Nodes/HTNDomainNode.h"
-#include "Domain/Parser/HTNDomainLexer.h"
-#include "Domain/Parser/HTNDomainParser.h"
-#include "Domain/Parser/HTNDomainValidator.h"
 #include "HTNFileHandler.h"
 #include "HTNToken.h"
 
@@ -18,26 +14,17 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
         return false;
     }
 
-    HTNDomainLexer        DomainLexer = HTNDomainLexer(DomainFileText);
     std::vector<HTNToken> Tokens;
-    if (!DomainLexer.Lex(Tokens))
+    if (!mDomainLexer.Lex(DomainFileText, Tokens))
     {
         LOG_ERROR("Domain [{}] could not be lexed", inDomainFilePath);
         return false;
     }
 
-    HTNDomainParser                      DomainParser = HTNDomainParser(Tokens);
     std::shared_ptr<const HTNDomainNode> DomainNode;
-    if (!DomainParser.Parse(DomainNode))
+    if (!mDomainParser.Parse(Tokens, DomainNode))
     {
         LOG_ERROR("Domain [{}] could not be parsed", inDomainFilePath);
-        return false;
-    }
-
-    HTNDomainValidator DomainValidator = HTNDomainValidator(DomainNode);
-    if (!DomainValidator.Validate())
-    {
-        LOG_ERROR("Domain [{}] could not be validated", DomainNode->GetID());
         return false;
     }
 
@@ -46,7 +33,7 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
     return true;
 }
 
-bool HTNPlannerHook::MakePlan(const std::string& inEntryPointID, HTNDecompositionContext& ioDecompositionContext) const
+bool HTNPlannerHook::MakePlan(const std::string& inEntryPointID, HTNDecompositionContext& ioDecompositionContext)
 {
     if (!mDomainNode)
     {
@@ -54,8 +41,7 @@ bool HTNPlannerHook::MakePlan(const std::string& inEntryPointID, HTNDecompositio
         return false;
     }
 
-    HTNDomainInterpreter DomainInterpreter = HTNDomainInterpreter(mDomainNode, inEntryPointID, ioDecompositionContext);
-    if (!DomainInterpreter.Interpret())
+    if (!mDomainInterpreter.Interpret(mDomainNode, inEntryPointID, ioDecompositionContext))
     {
         LOG_ERROR("Domain [{}] could not be interpreted", mDomainNode->GetID());
         return false;

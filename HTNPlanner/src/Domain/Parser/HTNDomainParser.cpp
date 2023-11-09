@@ -31,11 +31,12 @@ Backus Naur Form (BNF):
 <literal> ::= ('(' <literal>+ ')') | 'true' | 'false' | 'number' | 'string'
 */
 
-bool HTNDomainParser::Parse(std::shared_ptr<const HTNDomainNode>& outDomainNode)
+bool HTNDomainParser::Parse(const std::vector<HTNToken>& inTokens, std::shared_ptr<const HTNDomainNode>& outDomainNode)
 {
-    std::shared_ptr<const HTNDomainNode> DomainNode;
+    Reset(inTokens);
+
     unsigned int                         CurrentPosition = 0;
-    if (!ParseDomainNode(DomainNode, CurrentPosition))
+    if (!ParseDomainNode(outDomainNode, CurrentPosition))
     {
         LOG_HTN_ERROR(mLastErrorRow, mLastErrorColumn, "{}", mLastErrorMessage);
         return false;
@@ -46,8 +47,6 @@ bool HTNDomainParser::Parse(std::shared_ptr<const HTNDomainNode>& outDomainNode)
         LOG_HTN_ERROR(mLastErrorRow, mLastErrorColumn, "{}", mLastErrorMessage);
         return false;
     }
-
-    outDomainNode = DomainNode;
 
     return true;
 }

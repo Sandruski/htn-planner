@@ -10,8 +10,10 @@ Backus Naur Form (BNF):
 <argument> ::= ('(' <argument>+ ')') | 'true' | 'false' | 'number' | 'string'
 */
 
-bool HTNWorldStateParser::Parse(HTNWorldState& outWorldState)
+bool HTNWorldStateParser::Parse(const std::vector<HTNToken>& inTokens, HTNWorldState& outWorldState)
 {
+    Reset(inTokens);
+
     unsigned int CurrentPosition = 0;
 
     while (!ParseToken(HTNTokenType::END_OF_FILE, CurrentPosition))

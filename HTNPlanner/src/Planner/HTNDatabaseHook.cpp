@@ -2,30 +2,26 @@
 
 #include "HTNFileHandler.h"
 #include "HTNToken.h"
-#include "WorldState/Parser/HTNWorldStateLexer.h"
-#include "WorldState/Parser/HTNWorldStateParser.h"
 
 bool HTNDatabaseHook::ParseWorldStateFile(const std::string& inWorldStateFilePath)
 {
     const HTNFileHandler WorldStateFileHandler = HTNFileHandler(inWorldStateFilePath);
-    std::string          WorldStateFileText;
-    if (!WorldStateFileHandler.ReadFile(WorldStateFileText))
+    std::string          WorldStateText;
+    if (!WorldStateFileHandler.ReadFile(WorldStateText))
     {
         LOG_ERROR("World state [{}] could not be read", inWorldStateFilePath);
         return false;
     }
 
-    HTNWorldStateLexer    WorldStateLexer = HTNWorldStateLexer(WorldStateFileText);
     std::vector<HTNToken> Tokens;
-    if (!WorldStateLexer.Lex(Tokens))
+    if (!mWorldStateLexer.Lex(WorldStateText, Tokens))
     {
         LOG_ERROR("World state [{}] could not be lexed", inWorldStateFilePath);
         return false;
     }
 
-    HTNWorldStateParser WorldStateParser = HTNWorldStateParser(Tokens);
-    HTNWorldState       WorldState;
-    if (!WorldStateParser.Parse(WorldState))
+    HTNWorldState WorldState;
+    if (!mWorldStateParser.Parse(Tokens, WorldState))
     {
         LOG_ERROR("World state [{}] could not be parsed", inWorldStateFilePath);
         return false;

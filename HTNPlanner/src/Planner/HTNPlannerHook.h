@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Domain/Interpreter/HTNDomainInterpreter.h"
+#include "Domain/Parser/HTNDomainLexer.h"
+#include "Domain/Parser/HTNDomainParser.h"
+
 #include <memory>
 #include <string>
 
@@ -14,12 +18,16 @@ public:
     // Parses a domain file and builds a domain node
     bool ParseDomainFile(const std::string& inDomainFilePath);
 
-    bool MakePlan(const std::string& inEntryPointID, HTNDecompositionContext& ioDecompositionContext) const;
+    bool MakePlan(const std::string& inEntryPointID, HTNDecompositionContext& ioDecompositionContext);
 
     const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 
 private:
     std::shared_ptr<const HTNDomainNode> mDomainNode;
+
+    HTNDomainLexer       mDomainLexer;
+    HTNDomainParser      mDomainParser;
+    HTNDomainInterpreter mDomainInterpreter;
 };
 
 inline const std::shared_ptr<const HTNDomainNode>& HTNPlannerHook::GetDomainNode() const

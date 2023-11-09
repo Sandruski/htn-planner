@@ -3,8 +3,10 @@
 #include "HTNToken.h"
 #include "Parser/HTNLexerHelpers.h"
 
-bool HTNDomainLexer::Lex(std::vector<HTNToken>& outTokens)
+bool HTNDomainLexer::Lex(const std::string& inText, std::vector<HTNToken>& outTokens)
 {
+    Reset(inText);
+
     bool Result = true;
 
     for (char Character = GetCharacter(); HTNLexerHelpers::IsValidCharacter(Character); Character = GetCharacter())

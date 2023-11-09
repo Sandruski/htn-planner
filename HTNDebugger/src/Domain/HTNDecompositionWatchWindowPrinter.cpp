@@ -10,15 +10,11 @@
 
 #include "imgui.h"
 
-HTNDecompositionWatchWindowPrinter::HTNDecompositionWatchWindowPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                                       const HTNDecompositionNode&                 inNode)
-    : HTNDecompositionWatchPrinterBase(inDomainNode, inNode)
+void HTNDecompositionWatchWindowPrinter::Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode)
 {
-}
+    Reset(inDomainNode, inNode);
 
-void HTNDecompositionWatchWindowPrinter::Print()
-{
-    const HTNNodeSnapshotDebug* NodeSnapshot = mNode.GetNodeSnapshot();
+    const HTNNodeSnapshotDebug* NodeSnapshot = mNode->GetNodeSnapshot();
     if (!NodeSnapshot)
     {
         return;
@@ -27,7 +23,7 @@ void HTNDecompositionWatchWindowPrinter::Print()
     if (ImGui::BeginTable("WatchWindowTable", 2, HTNImGuiHelpers::kDefaultTableFlags))
     {
         // Print node parameters
-        const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters = mNode.GetNodeParameters();
+        const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters = mNode->GetNodeParameters();
         for (const std::shared_ptr<const HTNVariableExpressionNode>& NodeParameter : NodeParameters)
         {
             ImGui::TableNextRow();
@@ -55,7 +51,7 @@ void HTNDecompositionWatchWindowPrinter::Print()
         }
 
         // Print node arguments
-        const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments = mNode.GetNodeArguments();
+        const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments = mNode->GetNodeArguments();
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& NodeArgument : NodeArguments)
         {
             ImGui::TableNextRow();

@@ -21,8 +21,7 @@ enum class HTNDecompositionTooltipMode : unsigned char
 class HTNDecompositionWatchTooltipPrinter final : public HTNDecompositionWatchPrinterBase
 {
 public:
-    explicit HTNDecompositionWatchTooltipPrinter(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode);
-
-    void Print(const HTNDecompositionTooltipMode inTooltipMode);
+    void Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode,
+               const HTNDecompositionTooltipMode inTooltipMode);
 };
 #endif
