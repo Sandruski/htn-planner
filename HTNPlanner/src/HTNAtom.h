@@ -68,6 +68,7 @@ public:
     // multiple times because the backtracking mechanism (we will talk about this later) is making us reevaluate the planner.
     void UnBind();
 
+    // Returns a string optionally delimited by double quotes
     std::string ToString(const bool inShouldDoubleQuoteString) const;
 
 private:
