@@ -1,0 +1,12 @@
+item "wallet"
+item "sandwich"
+item "banana"
+
+edible "sandwich"
+edible "banana"
+
+type "banana" "fruit"
+
+peel "banana"
+
+unwrap "sandwich"

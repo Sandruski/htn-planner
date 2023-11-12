@@ -1,0 +1,67 @@
+
+(:domain HumanEat top_level_domain
+
+    (:constants Types
+        (fruit "fruit")
+    )
+
+    (:axiom (find_edible_item ?inp_item)
+		(and    (item ?x)
+                (edible ?x)
+		)
+	)
+
+     (:method (behave) top_level_method
+
+        (branch_eat
+            (
+            )
+            (   (eat @fruit)
+            )
+        )
+    )
+
+    (:method (eat ?inp_type)
+
+        (branch_in_possession
+            (and    (#find_edible_item ?x)
+                    (type ?x ?inp_type)
+            )
+            (       (!take ?x)
+                    (prepare ?x)
+                    (!eat ?x)
+            )
+        )
+
+        (branch_get_from_house
+            (
+            )
+            (       (!get_from_house ?inp_food)
+            )
+        )
+
+        (branch_buy_in_store
+            (
+            )
+            (       (!buy_in_store ?inp_food)
+            )
+        )
+    )
+
+     (:method (prepare ?inp_item)
+
+        (branch_peel
+            (and    (peel ?inp_item)
+            )
+            (       (!peel ?inp_item)
+            )
+        )
+
+        (branch_unwrap
+            (and    (unwrap ?inp_item)
+            )
+            (       (!unwrap ?inp_item)
+            )
+        )
+    )
+)
