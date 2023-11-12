@@ -12,6 +12,7 @@
 #include <filesystem>
 #include <memory>
 #include <vector>
+#include <mutex>
 
 class HTNDatabaseHook;
 class HTNMethodNode;
@@ -43,6 +44,7 @@ private:
     HTNPlanningUnit* mMainPlanningUnit      = nullptr;
     HTNPlanningUnit* mUpperBodyPlanningUnit = nullptr;
 
+    std::mutex                     mPlanningQueryMutex;
     HTNPlanningQuery               mMainPlanningQuery      = HTNPlanningQuery(mMainPlanningUnit);
     HTNPlanningQuery               mUpperBodyPlanningQuery = HTNPlanningQuery(mUpperBodyPlanningUnit);
     std::vector<HTNPlanningQuery*> mPlanningQueries        = {&mMainPlanningQuery, &mUpperBodyPlanningQuery};

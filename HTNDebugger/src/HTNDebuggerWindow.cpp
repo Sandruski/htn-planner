@@ -206,28 +206,34 @@ void HTNDebuggerWindow::RenderDecomposition()
         }
     }
 
-    if (mMainPlanningQuery.IsEntryPointIDEmpty())
     {
-        if (MethodNodes)
+        const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
+        if (mMainPlanningQuery.IsEntryPointIDEmpty())
         {
-            const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(DefaultMainTopLevelMethodID, *MethodNodes);
-            if (TopLevelMethodNode != MethodNodes->end())
+            if (MethodNodes)
             {
-                const std::string EntryPointID = (*TopLevelMethodNode)->GetID();
-                mMainPlanningQuery.SetEntryPointID(EntryPointID);
+                const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(DefaultMainTopLevelMethodID, *MethodNodes);
+                if (TopLevelMethodNode != MethodNodes->end())
+                {
+                    const std::string EntryPointID = (*TopLevelMethodNode)->GetID();
+                    mMainPlanningQuery.SetEntryPointID(EntryPointID);
+                }
             }
         }
     }
 
-    if (mUpperBodyPlanningQuery.IsEntryPointIDEmpty())
     {
-        if (MethodNodes)
+        const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
+        if (mUpperBodyPlanningQuery.IsEntryPointIDEmpty())
         {
-            const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(DefaultUpperBodyTopLevelMethodID, *MethodNodes);
-            if (TopLevelMethodNode != MethodNodes->end())
+            if (MethodNodes)
             {
-                const std::string EntryPointID = (*TopLevelMethodNode)->GetID();
-                mUpperBodyPlanningQuery.SetEntryPointID(EntryPointID);
+                const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(DefaultUpperBodyTopLevelMethodID, *MethodNodes);
+                if (TopLevelMethodNode != MethodNodes->end())
+                {
+                    const std::string EntryPointID = (*TopLevelMethodNode)->GetID();
+                    mUpperBodyPlanningQuery.SetEntryPointID(EntryPointID);
+                }
             }
         }
     }
@@ -235,9 +241,10 @@ void HTNDebuggerWindow::RenderDecomposition()
     if (ImGui::Button("Decompose All"))
     {
         std::for_each(std::execution::par, mPlanningQueries.begin(), mPlanningQueries.end(), [this](HTNPlanningQuery* inPlanningQuery) {
-            HTNPlanningUnit*         PlanningUnit = inPlanningQuery->GetPlanningUnitMutable();
-            const std::string&       EntryPointID = inPlanningQuery->GetEntryPointID();
-            const HTNOperationResult Result       = static_cast<const HTNOperationResult>(PlanningUnit->ExecuteTopLevelMethod(EntryPointID));
+            const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
+            HTNPlanningUnit*                  PlanningUnit = inPlanningQuery->GetPlanningUnitMutable();
+            const std::string&                EntryPointID = inPlanningQuery->GetEntryPointID();
+            const HTNOperationResult          Result       = static_cast<const HTNOperationResult>(PlanningUnit->ExecuteTopLevelMethod(EntryPointID));
             inPlanningQuery->SetLastDecompositionResult(Result);
         });
     }
@@ -251,13 +258,19 @@ void HTNDebuggerWindow::RenderDecomposition()
     {
         if (ImGui::BeginTabItem("Main"))
         {
-            RenderDecompositionByPlanningQuery(mMainPlanningQuery, MethodNodes, mMainSelectedNode);
+            {
+                const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
+                RenderDecompositionByPlanningQuery(mMainPlanningQuery, MethodNodes, mMainSelectedNode);
+            }
             ImGui::EndTabItem();
         }
 
         if (ImGui::BeginTabItem("Upper Body"))
         {
-            RenderDecompositionByPlanningQuery(mUpperBodyPlanningQuery, MethodNodes, mUpperBodySelectedNode);
+            {
+                const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
+                RenderDecompositionByPlanningQuery(mUpperBodyPlanningQuery, MethodNodes, mUpperBodySelectedNode);
+            }
             ImGui::EndTabItem();
         }
 
