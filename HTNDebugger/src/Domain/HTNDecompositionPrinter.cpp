@@ -674,12 +674,11 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
                 SelectNode(Node);
             }
 
-            // TODO salvarez Uncomment
-            // if (IsChoicePoint)
-            //{
-            ImGui::SameLine();
-            ImGui::TextDisabled("%i", DecompositionStep);
-            //}
+            if (IsChoicePoint)
+            {
+                ImGui::SameLine();
+                ImGui::TextDisabled("%i", DecompositionStep);
+            }
 
             inNodeTitleFunction(NodeSnapshot, CurrentNodeStep);
         }
