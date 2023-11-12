@@ -516,7 +516,7 @@ bool HTNDomainParser::ParseTaskNode(std::shared_ptr<const HTNTaskNodeBase>& outT
     }
     else
     {
-        static constexpr bool IsTopLevel = false;
+        constexpr bool IsTopLevel = false;
         outTaskNode                      = std::make_shared<HTNCompoundTaskNode>(IDNode, ArgumentNodes, IsTopLevel);
     }
 

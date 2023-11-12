@@ -86,8 +86,8 @@ bool HTNDomainLexer::Lex(const std::string& inText, std::vector<HTNToken>& outTo
         }
         case '\n': {
             // Newline
-            static constexpr bool IsNewLine = true;
-            AdvancePosition(true);
+            constexpr bool IsNewLine = true;
+            AdvancePosition(IsNewLine);
             break;
         }
         default: {

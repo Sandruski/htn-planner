@@ -51,7 +51,7 @@ bool HTNWorldStateLexer::Lex(const std::string& inText, std::vector<HTNToken>& o
         }
         case '\n': {
             // Newline
-            static constexpr bool IsNewLine = true;
+            constexpr bool IsNewLine = true;
             AdvancePosition(IsNewLine);
             break;
         }

@@ -7,7 +7,7 @@ namespace HTNDecompositionHelpers
 {
 std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const std::string& inEntryPointID)
 {
-    static constexpr bool IsTopLevel = true;
+    constexpr bool IsTopLevel = true;
     return std::make_shared<HTNCompoundTaskNode>(std::make_shared<const HTNIdentifierExpressionNode>(inEntryPointID),
                                                  std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>(), kTopLevelCompoundTaskNodeID,
                                                  IsTopLevel);

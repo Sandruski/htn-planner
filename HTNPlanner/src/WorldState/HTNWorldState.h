@@ -122,7 +122,7 @@ inline bool HTNFactArgumentsTable::AddUniqueFactArguments(const T& inFactArgumen
 
         for (auto It = inFactArgumentsBegin; It != inFactArgumentsEnd; ++It)
         {
-            static constexpr bool ShouldDoubleQuoteString = true;
+            constexpr bool ShouldDoubleQuoteString = true;
             FactArgumentsDescription.append(std::format("{} ", (*It).ToString(ShouldDoubleQuoteString)));
         }
 

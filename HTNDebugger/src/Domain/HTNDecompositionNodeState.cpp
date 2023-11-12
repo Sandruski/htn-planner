@@ -33,7 +33,7 @@ int HTNDecompositionChoicePointNodeState::FindOpenDecompositionStepInRange(const
 {
     for (const std::pair<std::size_t, bool>& Pair : mIsOpen)
     {
-        const int DecompositionStep = static_cast<int>(Pair.first);
+        const int DecompositionStep = static_cast<const int>(Pair.first);
         if (!HTNDecompositionHelpers::IsDecompositionStepInRange(DecompositionStep, inMinDecompositionStep, inMaxDecompositionStep))
         {
             continue;

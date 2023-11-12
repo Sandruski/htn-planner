@@ -18,7 +18,7 @@ bool HTNWorldStatePrinter::Print(const HTNWorldState& inWorldState, const ImGuiT
                 std::string FactString = FactID;
                 for (const HTNAtom& FactArgument : FactArgumentsElement)
                 {
-                    static constexpr bool ShouldDoubleQuoteString = false;
+                    constexpr bool ShouldDoubleQuoteString = false;
                     FactString.append(std::format(" {}", FactArgument.ToString(ShouldDoubleQuoteString)));
                 }
 
@@ -47,7 +47,7 @@ void HTNWorldStatePrinter::PrintFactArguments(const HTNFactArguments& inFactArgu
     {
         ImGui::SameLine();
 
-        static constexpr bool ShouldDoubleQuoteString = true;
+        constexpr bool ShouldDoubleQuoteString = true;
         const std::string     FactArgumentString      = FactArgument.ToString(ShouldDoubleQuoteString);
         ImGui::Text(FactArgumentString.c_str());
     }
