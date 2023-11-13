@@ -14,7 +14,7 @@
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "Domain/Nodes/HTNTaskNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
-#include "HTNImGuiHelpers.h"
+#include "Helpers/HTNImGuiHelpers.h"
 
 #include "imgui.h"
 

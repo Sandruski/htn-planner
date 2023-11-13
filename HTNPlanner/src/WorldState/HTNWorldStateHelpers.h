@@ -17,7 +17,7 @@ constexpr std::size_t kFactArgumentsContainerSize = kMaxFactArgumentsNum + 1;
 } // namespace HTNWorldStateHelpers
 
 template<typename T>
-inline unsigned int HTNWorldStateHelpers::CountFactArgumentsBound(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd)
+unsigned int HTNWorldStateHelpers::CountFactArgumentsBound(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd)
 {
     unsigned int FactArgumentsBoundNum = 0;
 

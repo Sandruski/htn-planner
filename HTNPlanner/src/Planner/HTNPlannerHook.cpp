@@ -1,8 +1,8 @@
 #include "Planner/HTNPlannerHook.h"
 
 #include "Domain/Nodes/HTNDomainNode.h"
-#include "HTNFileHandler.h"
-#include "HTNToken.h"
+#include "Helpers/HTNFileHandler.h"
+#include "Helpers/HTNToken.h"
 
 bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
 {

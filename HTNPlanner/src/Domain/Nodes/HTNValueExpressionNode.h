@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Domain/Nodes/HTNNodeBase.h"
-#include "HTNAtom.h"
+#include "Helpers/HTNAtom.h"
 
 #include <string>
 

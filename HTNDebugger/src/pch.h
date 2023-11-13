@@ -1,8 +1,8 @@
 #pragma once
 
-#include "HTNAtom.h"
-#include "HTNMacros.h"
-#include "HTNLog.h"
+#include "Helpers/HTNAtom.h"
+#include "Helpers/HTNMacros.h"
+#include "Helpers/HTNLog.h"
 
 #include <algorithm>
 #include <cassert>

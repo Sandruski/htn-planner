@@ -8,7 +8,7 @@
 #include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
-#include "HTNImGuiHelpers.h"
+#include "Helpers/HTNImGuiHelpers.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
 #include "Planner/HTNPlanningUnit.h"
@@ -284,7 +284,7 @@ void HTNDebuggerWindow::RenderDomain()
 
     if (ImGui::Button("Parse"))
     {
-        mLastDomainFileParsingResult = static_cast<const HTNOperationResult>(mPlannerHook->ParseDomainFile(mSelectedDomainFilePath.string()));
+        mLastParseDomainFileResult = static_cast<const HTNOperationResult>(mPlannerHook->ParseDomainFile(mSelectedDomainFilePath.string()));
     }
 
     if (ImGui::IsItemHovered())
@@ -292,7 +292,7 @@ void HTNDebuggerWindow::RenderDomain()
         ImGui::SetTooltip("Parse the selected domain file");
     }
 
-    RenderOperationResult(mLastDomainFileParsingResult);
+    RenderOperationResult(mLastParseDomainFileResult);
 
     ImGui::Separator();
 
@@ -311,7 +311,7 @@ void HTNDebuggerWindow::RenderWorldState()
 
     if (ImGui::Button("Parse"))
     {
-        mLastWorldStateFileParsingResult =
+        mLastParseWorldStateFileResult =
             static_cast<const HTNOperationResult>(mDatabaseHook->ParseWorldStateFile(mSelectedWorldStateFilePath.string()));
     }
 
@@ -320,7 +320,7 @@ void HTNDebuggerWindow::RenderWorldState()
         ImGui::SetTooltip("Parse the selected world state file");
     }
 
-    RenderOperationResult(mLastWorldStateFileParsingResult);
+    RenderOperationResult(mLastParseWorldStateFileResult);
 
     ImGui::Separator();
 

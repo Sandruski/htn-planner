@@ -68,7 +68,6 @@ project "HTNDebugger"
     links { "HTNPlanner" }
 
 -- HTNTest
---[[
 project "HTNTest"
     location "HTNTest"
     kind "ConsoleApp"
@@ -89,7 +88,6 @@ project "HTNTest"
     links { "HTNPlanner" }
 
     nuget { "Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1.7" }
-]]
 
 -- HTNDemo
 project "HTNDemo"

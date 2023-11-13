@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HTNToken.h"
+#include "Helpers/HTNToken.h"
 
 #include <vector>
 

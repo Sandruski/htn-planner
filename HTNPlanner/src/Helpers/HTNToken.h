@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HTNAtom.h"
+#include "Helpers/HTNAtom.h"
 
 #include <optional>
 #include <string>

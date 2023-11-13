@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
-#include "HTNImGuiHelpers.h"
+#include "Helpers/HTNImGuiHelpers.h"
 
 #include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/HTNDecompositionPrinter.h"

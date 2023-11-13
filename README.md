@@ -1,5 +1,5 @@
 # HTN
- A hierarchical task network (HTN) planner with a custom domain language.
+A hierarchical task network (HTN) planner with a custom domain language.
 
 ## Getting Started
 1. Clone the repository with `git clone https://github.com/Sandruski/HTN`.

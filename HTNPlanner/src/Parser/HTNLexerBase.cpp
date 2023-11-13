@@ -1,7 +1,7 @@
 #include "Parser/HTNLexerBase.h"
 
 #include "HTNLexerHelpers.h"
-#include "HTNToken.h"
+#include "Helpers/HTNToken.h"
 
 #if HTN_DEBUG
 #include <limits>

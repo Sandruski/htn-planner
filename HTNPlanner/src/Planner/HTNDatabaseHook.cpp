@@ -1,7 +1,7 @@
 #include "Planner/HTNDatabaseHook.h"
 
-#include "HTNFileHandler.h"
-#include "HTNToken.h"
+#include "Helpers/HTNFileHandler.h"
+#include "Helpers/HTNToken.h"
 
 bool HTNDatabaseHook::ParseWorldStateFile(const std::string& inWorldStateFilePath)
 {

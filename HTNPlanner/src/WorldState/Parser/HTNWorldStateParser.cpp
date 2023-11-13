@@ -1,6 +1,6 @@
 #include "WorldState/Parser/HTNWorldStateParser.h"
 
-#include "HTNToken.h"
+#include "Helpers/HTNToken.h"
 #include "WorldState/HTNWorldState.h"
 
 /*

@@ -1,6 +1,6 @@
 #include "Domain/Parser/HTNDomainLexer.h"
 
-#include "HTNToken.h"
+#include "Helpers/HTNToken.h"
 #include "Parser/HTNLexerHelpers.h"
 
 bool HTNDomainLexer::Lex(const std::string& inText, std::vector<HTNToken>& outTokens)

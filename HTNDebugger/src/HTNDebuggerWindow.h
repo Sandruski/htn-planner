@@ -51,8 +51,8 @@ private:
 
     std::filesystem::path mSelectedWorldStateFilePath;
     std::filesystem::path mSelectedDomainFilePath;
-    HTNOperationResult    mLastWorldStateFileParsingResult = HTNOperationResult::NONE;
-    HTNOperationResult    mLastDomainFileParsingResult     = HTNOperationResult::NONE;
+    HTNOperationResult    mLastParseWorldStateFileResult = HTNOperationResult::NONE;
+    HTNOperationResult    mLastParseDomainFileResult     = HTNOperationResult::NONE;
 
     HTNDecompositionNode        mMainSelectedNode;
     HTNDecompositionNode        mUpperBodySelectedNode;
@@ -67,11 +67,11 @@ private:
 
 inline bool HTNDebuggerWindow::IsLastWorldStateFileParsingSuccessful() const
 {
-    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastWorldStateFileParsingResult);
+    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastParseWorldStateFileResult);
 }
 
 inline bool HTNDebuggerWindow::IsLastDomainFileParsingSuccessful() const
 {
-    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastDomainFileParsingResult);
+    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastParseDomainFileResult);
 }
 #endif

@@ -8,7 +8,7 @@
 #include "Domain/Nodes/HTNConstantNode.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
-#include "HTNImGuiHelpers.h"
+#include "Helpers/HTNImGuiHelpers.h"
 
 #include "imgui.h"
 
