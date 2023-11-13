@@ -34,9 +34,12 @@ project "HTNPlanner"
     pchsource "%{prj.name}/src/pch.cpp"
     forceincludes "pch.h"
 
-    files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h" }
+    files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h",                 
+            -- Optick
+            "ThirdParty/Optick_1.4.0/src/**.cpp",
+            "ThirdParty/Optick_1.4.0/src/**.h" }
 
-    includedirs { "%{prj.name}/src" }
+    includedirs { "%{prj.name}/src", "ThirdParty/Optick_1.4.0/src" }
 
 -- HTNDebugger
 project "HTNDebugger"
@@ -53,15 +56,15 @@ project "HTNDebugger"
     forceincludes "pch.h"
 
     files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h",
-                -- imgui includes --
-				"ThirdParty/imgui-1.89.4/imconfig.h", 
-				"ThirdParty/imgui-1.89.4/imgui.cpp", 
-				"ThirdParty/imgui-1.89.4/imgui.h", 
-				"ThirdParty/imgui-1.89.4/imgui_demo.cpp", 
-				"ThirdParty/imgui-1.89.4/imgui_draw.cpp", 
-				"ThirdParty/imgui-1.89.4/imgui_internal.h", 
-				"ThirdParty/imgui-1.89.4/imgui_tables.cpp", 
-				"ThirdParty/imgui-1.89.4/imgui_widgets.cpp" }
+            -- ImGui
+			"ThirdParty/imgui-1.89.4/imconfig.h", 
+			"ThirdParty/imgui-1.89.4/imgui.cpp", 
+			"ThirdParty/imgui-1.89.4/imgui.h", 
+			"ThirdParty/imgui-1.89.4/imgui_demo.cpp", 
+			"ThirdParty/imgui-1.89.4/imgui_draw.cpp", 
+			"ThirdParty/imgui-1.89.4/imgui_internal.h", 
+			"ThirdParty/imgui-1.89.4/imgui_tables.cpp", 
+			"ThirdParty/imgui-1.89.4/imgui_widgets.cpp" }
 
     includedirs { "%{prj.name}/src", "HTNPlanner/src", "ThirdParty/imgui-1.89.4" }
 
@@ -104,22 +107,25 @@ project "HTNDemo"
     forceincludes "pch.h"
 
     files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h", 
-				-- imgui includes --
-				"ThirdParty/imgui-1.89.4/imconfig.h", 
-				"ThirdParty/imgui-1.89.4/imgui.cpp", 
-				"ThirdParty/imgui-1.89.4/imgui.h", 
-				"ThirdParty/imgui-1.89.4/imgui_demo.cpp", 
-				"ThirdParty/imgui-1.89.4/imgui_draw.cpp", 
-				"ThirdParty/imgui-1.89.4/imgui_internal.h", 
-				"ThirdParty/imgui-1.89.4/imgui_tables.cpp", 
-				"ThirdParty/imgui-1.89.4/imgui_widgets.cpp",
-				-- imgui backend includes --
-				"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdl2.h", 
-				"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdl2.cpp", 
-				"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdlrenderer.h", 
-				"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdlrenderer.cpp" }
+			-- ImGui
+			"ThirdParty/imgui-1.89.4/imconfig.h", 
+			"ThirdParty/imgui-1.89.4/imgui.cpp", 
+			"ThirdParty/imgui-1.89.4/imgui.h", 
+			"ThirdParty/imgui-1.89.4/imgui_demo.cpp", 
+			"ThirdParty/imgui-1.89.4/imgui_draw.cpp", 
+			"ThirdParty/imgui-1.89.4/imgui_internal.h", 
+			"ThirdParty/imgui-1.89.4/imgui_tables.cpp", 
+			"ThirdParty/imgui-1.89.4/imgui_widgets.cpp",
+			-- ImGui backend
+			"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdl2.h", 
+			"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdl2.cpp", 
+			"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdlrenderer.h", 
+			"ThirdParty/imgui-1.89.4/backends/imgui_impl_sdlrenderer.cpp",
+            -- Optick
+            "ThirdParty/Optick_1.4.0/src/**.cpp",
+            "ThirdParty/Optick_1.4.0/src/**.h" }
 
-    includedirs { "%{prj.name}/src", "HTNPlanner/src", "HTNDebugger/src", "ThirdParty/SDL2-2.26.4/include", "ThirdParty/imgui-1.89.4", "ThirdParty/imgui-1.89.4/backends" }
+    includedirs { "%{prj.name}/src", "HTNPlanner/src", "HTNDebugger/src", "ThirdParty/Optick_1.4.0/src", "ThirdParty/SDL2-2.26.4/include", "ThirdParty/imgui-1.89.4", "ThirdParty/imgui-1.89.4/backends" }
 
 	libdirs { "ThirdParty/SDL2-2.26.4/lib/x64" }
     links { "HTNPlanner", "HTNDebugger", "SDL2", "SDL2main" }

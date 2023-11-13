@@ -20,6 +20,8 @@
 bool HTNDomainInterpreter::Interpret(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                      HTNDecompositionContext& ioDecompositionContext)
 {
+    OPTICK_EVENT("InterpretDomain");
+
     Reset(inDomainNode, inEntryPointID, ioDecompositionContext);
 
     const HTNDomainNode* DomainNode = mDomainNode.get();
@@ -50,6 +52,8 @@ bool HTNDomainInterpreter::Interpret(const std::shared_ptr<const HTNDomainNode>&
  */
 HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode)
 {
+    OPTICK_EVENT("GetDomainNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -108,6 +112,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode)
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode)
 {
+    OPTICK_EVENT("GetConstantNodeValue");
+
     const HTNDecompositionNodeScope ConstantNodeScope = HTNDecompositionNodeScope(*mDecompositionContext, inConstantNode.GetID());
 
     const std::shared_ptr<const HTNLiteralExpressionNode>& ValueNode = inConstantNode.GetValueNode();
@@ -116,6 +122,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode)
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode)
 {
+    OPTICK_EVENT("GetAxiomNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -149,6 +157,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode)
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode)
 {
+    OPTICK_EVENT("GetMethodNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -211,6 +221,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode)
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode)
 {
+    OPTICK_EVENT("GetBranchNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -259,6 +271,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode)
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
 {
+    OPTICK_EVENT("GetConditionNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -360,6 +374,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
 {
+    OPTICK_EVENT("GetAxiomConditionNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -444,6 +460,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 // YES backtracking
 HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
 {
+    OPTICK_EVENT("GetAndConditionNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -511,6 +529,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
 // NO backtracking
 HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
 {
+    OPTICK_EVENT("GetOrConditionNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -567,6 +587,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
 // YES backtracking
 HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
 {
+    OPTICK_EVENT("GetAltConditionNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -633,6 +655,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
 // NO backtracking
 HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode)
 {
+    OPTICK_EVENT("GetNotConditionNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -672,6 +696,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
 {
+    OPTICK_EVENT("GetCompoundTaskNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -737,6 +763,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
 {
+    OPTICK_EVENT("GetPrimitiveTaskNodeValue");
+
 #ifdef HTN_DEBUG
     constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
     constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
@@ -775,6 +803,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode)
 {
+    OPTICK_EVENT("GetIdentifierExpressionNodeValue");
+
     const HTNDecompositionNodeScope IdentifierExpressionNodeScope =
         HTNDecompositionNodeScope(*mDecompositionContext, inIdentifierExpressionNode.GetID());
 
@@ -783,6 +813,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNIdentifierExpressionNode& inIdentif
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode)
 {
+    OPTICK_EVENT("GetLiteralExpressionNodeValue");
+
     const HTNDecompositionNodeScope LiteralExpressionNodeScope = HTNDecompositionNodeScope(*mDecompositionContext, inLiteralExpressionNode.GetID());
 
     return inLiteralExpressionNode.GetValue();
@@ -790,6 +822,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExp
 
 void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, const HTNAtom& inVariableExpressionNodeValue)
 {
+    OPTICK_EVENT("SetVariableExpressionNodeValue");
+
     const HTNDecompositionNodeScope VariableExpressionNodeScope = HTNDecompositionNodeScope(*mDecompositionContext, inVariableExpressionNode.GetID());
 
     const std::string  VariableID                   = inVariableExpressionNode.GetValue().GetValue<std::string>();
@@ -809,6 +843,8 @@ void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpr
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode)
 {
+    OPTICK_EVENT("GetVariableExpressionNodeValue");
+
     const HTNDecompositionNodeScope VariableExpressionNodeScope = HTNDecompositionNodeScope(*mDecompositionContext, inVariableExpressionNode.GetID());
 
     const std::string  VariableID                   = inVariableExpressionNode.GetValue().GetValue<std::string>();
@@ -828,6 +864,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableE
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode)
 {
+    OPTICK_EVENT("GetConstantExpressionNodeValue");
+
     const HTNDecompositionNodeScope ConstantExpressionNodeScope = HTNDecompositionNodeScope(*mDecompositionContext, inConstantExpressionNode.GetID());
 
     const std::string&                     ConstantNodeID = inConstantExpressionNode.GetValue().GetValue<std::string>();

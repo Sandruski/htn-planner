@@ -4,6 +4,8 @@
 #include "Helpers/HTNLog.h"
 #include "Helpers/HTNMacros.h"
 
+#include "optick.h"
+
 #include <algorithm>
 #include <cassert>
 #include <format>

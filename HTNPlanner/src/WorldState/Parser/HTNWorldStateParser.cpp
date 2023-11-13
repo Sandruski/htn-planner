@@ -12,6 +12,8 @@ Backus Naur Form (BNF):
 
 bool HTNWorldStateParser::Parse(const std::vector<HTNToken>& inTokens, HTNWorldState& outWorldState)
 {
+    OPTICK_EVENT("ParseWorldState");
+
     Reset(inTokens);
 
     unsigned int CurrentPosition = 0;
@@ -30,6 +32,8 @@ bool HTNWorldStateParser::Parse(const std::vector<HTNToken>& inTokens, HTNWorldS
 
 bool HTNWorldStateParser::ParseFact(HTNWorldState& outWorldState, unsigned int& ioPosition)
 {
+    OPTICK_EVENT("ParseFact");
+
     unsigned int CurrentPosition = ioPosition;
 
     HTNAtom Identifier;
@@ -54,6 +58,8 @@ bool HTNWorldStateParser::ParseFact(HTNWorldState& outWorldState, unsigned int& 
 
 bool HTNWorldStateParser::ParseIdentifier(HTNAtom& outIdentifier, unsigned int& inPosition)
 {
+    OPTICK_EVENT("ParseIdentifier");
+
     unsigned int CurrentPosition = inPosition;
 
     const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
@@ -70,6 +76,8 @@ bool HTNWorldStateParser::ParseIdentifier(HTNAtom& outIdentifier, unsigned int& 
 
 bool HTNWorldStateParser::ParseArgument(HTNAtom& outArgument, unsigned int& inPosition)
 {
+    OPTICK_EVENT("ParseArgument");
+
     unsigned int CurrentPosition = inPosition;
 
     HTNAtom Argument;

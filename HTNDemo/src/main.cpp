@@ -14,6 +14,7 @@
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer.h"
+#include "optick.h"
 
 #include <SDL.h>
 #include <stdio.h>
@@ -102,6 +103,8 @@ int main(int, char**)
     bool done = false;
     while (!done)
     {
+        OPTICK_FRAME("MainThread");
+
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse

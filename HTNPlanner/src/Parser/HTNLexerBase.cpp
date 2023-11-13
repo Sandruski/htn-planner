@@ -9,6 +9,8 @@
 
 void HTNLexerBase::LexIdentifier(std::vector<HTNToken>& outTokens, const std::unordered_map<std::string, HTNTokenType>& inKeywords)
 {
+    OPTICK_EVENT("LexIdentifier");
+
     const unsigned int StartPosition = mPosition;
 
     AdvancePosition();
@@ -38,6 +40,8 @@ void HTNLexerBase::LexIdentifier(std::vector<HTNToken>& outTokens, const std::un
 
 void HTNLexerBase::LexNumber(std::vector<HTNToken>& outTokens)
 {
+    OPTICK_EVENT("LexNumber");
+
     const unsigned int StartPosition = mPosition;
 
 #ifdef HTN_DEBUG
@@ -83,6 +87,8 @@ void HTNLexerBase::LexNumber(std::vector<HTNToken>& outTokens)
 
 bool HTNLexerBase::LexString(std::vector<HTNToken>& outTokens)
 {
+    OPTICK_EVENT("LexString");
+
     const unsigned int StartPosition = mPosition;
 
     AdvancePosition();
@@ -110,6 +116,8 @@ bool HTNLexerBase::LexString(std::vector<HTNToken>& outTokens)
 
 void HTNLexerBase::LexComment()
 {
+    OPTICK_EVENT("LexComment");
+
     for (char Character = GetCharacter(); Character != '\n'; Character = GetCharacter())
     {
         AdvancePosition();
@@ -125,7 +133,7 @@ void HTNLexerBase::AddToken(const HTNTokenType inType, const std::string& inLexe
 
 void HTNLexerBase::Reset(const std::string& inText)
 {
-    mText = inText;
+    mText     = inText;
     mPosition = 0;
     mRow      = 0;
     mColumn   = 0;

@@ -5,6 +5,8 @@
 
 bool HTNDomainLexer::Lex(const std::string& inText, std::vector<HTNToken>& outTokens)
 {
+    OPTICK_EVENT("LexDomain");
+
     Reset(inText);
 
     bool Result = true;

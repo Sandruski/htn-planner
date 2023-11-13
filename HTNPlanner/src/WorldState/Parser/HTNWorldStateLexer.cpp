@@ -5,6 +5,8 @@
 
 bool HTNWorldStateLexer::Lex(const std::string& inText, std::vector<HTNToken>& outTokens)
 {
+    OPTICK_EVENT("LexWorldState");
+
     Reset(inText);
 
     bool Result = true;
