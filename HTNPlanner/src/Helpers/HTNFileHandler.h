@@ -11,7 +11,7 @@
 class HTNFileHandler : private HTNUncopyable
 {
 public:
-    HTNFileHandler(const std::string& inFilePath);
+    explicit HTNFileHandler(const std::string& inFilePath);
     ~HTNFileHandler();
 
     bool ReadFile(std::string& outFileText) const;

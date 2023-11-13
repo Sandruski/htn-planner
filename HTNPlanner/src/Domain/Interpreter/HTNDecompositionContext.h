@@ -42,7 +42,7 @@ class HTNDecompositionContext
 {
 public:
     HTNDecompositionContext() = default;
-    HTNDecompositionContext(const HTNWorldState& inWorldState);
+    explicit HTNDecompositionContext(const HTNWorldState& inWorldState);
 
     const HTNWorldState* GetWorldState() const;
 

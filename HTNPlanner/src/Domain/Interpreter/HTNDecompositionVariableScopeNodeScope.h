@@ -14,7 +14,7 @@ class HTNVariables;
 class HTNDecompositionVariableScopeNodeScope final : public HTNNodeScope
 {
 public:
-    HTNDecompositionVariableScopeNodeScope(HTNDecompositionContext& outDecompositionContext, const std::string& inNodeID);
+    explicit HTNDecompositionVariableScopeNodeScope(HTNDecompositionContext& outDecompositionContext, const std::string& inNodeID);
     ~HTNDecompositionVariableScopeNodeScope();
 
 private:

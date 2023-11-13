@@ -14,7 +14,7 @@ class HTNIndices;
 class HTNDecompositionNodeScope final : public HTNNodeScope
 {
 public:
-    HTNDecompositionNodeScope(HTNDecompositionContext& outDecompositionContext, const std::string& inNodeID);
+    explicit HTNDecompositionNodeScope(HTNDecompositionContext& outDecompositionContext, const std::string& inNodeID);
     ~HTNDecompositionNodeScope();
 
 private:

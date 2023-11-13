@@ -1,36 +1,10 @@
 #pragma once
 
+#include "Helpers/HTNAtomList.h"
+
 #include <optional>
 #include <string>
 #include <variant>
-
-class HTNAtom;
-class HTNAtomNode;
-
-class HTNAtomList
-{
-public:
-    HTNAtomList() = default;
-    HTNAtomList(const std::initializer_list<HTNAtom>& inElements);
-    HTNAtomList(const HTNAtomList& inOther);
-    ~HTNAtomList();
-
-    bool operator==(const HTNAtomList& inOther) const;
-
-    void Add(const HTNAtom& inData);
-
-    const HTNAtom* Find(const unsigned int inIndex) const;
-
-    unsigned int GetSize() const;
-    bool         IsEmpty() const;
-
-    std::string ToString(const bool inShouldDoubleQuoteString) const;
-
-private:
-    HTNAtomNode* mHead = nullptr;
-    HTNAtomNode* mTail = nullptr;
-    unsigned int mSize = 0;
-};
 
 class HTNAtom
 {
@@ -41,6 +15,7 @@ public:
     HTNAtom(const float inValue);
     HTNAtom(const std::string& inValue);
     HTNAtom(const HTNAtomList& inValue);
+    ~HTNAtom();
 
     bool operator==(const HTNAtom& inOther) const;
 
@@ -75,32 +50,6 @@ private:
     std::optional<std::variant<bool, int, float, std::string, HTNAtomList>> mData;
 };
 
-class HTNAtomNode
-{
-public:
-    explicit HTNAtomNode(const HTNAtom& inData);
-
-    const HTNAtom& GetData() const;
-
-    void SetNext(const HTNAtomNode* inNext);
-
-    const HTNAtomNode* GetNext() const;
-
-private:
-    HTNAtom            mData;
-    const HTNAtomNode* mNext = nullptr;
-};
-
-inline unsigned int HTNAtomList::GetSize() const
-{
-    return mSize;
-}
-
-inline bool HTNAtomList::IsEmpty() const
-{
-    return mSize == 0;
-}
-
 inline bool HTNAtom::operator==(const HTNAtom& inOther) const
 {
     return (mData == inOther.mData);
@@ -132,19 +81,4 @@ inline bool HTNAtom::IsSet() const
 inline void HTNAtom::UnBind()
 {
     mData.reset();
-}
-
-inline const HTNAtom& HTNAtomNode::GetData() const
-{
-    return mData;
-}
-
-inline void HTNAtomNode::SetNext(const HTNAtomNode* inNext)
-{
-    mNext = inNext;
-}
-
-inline const HTNAtomNode* HTNAtomNode::GetNext() const
-{
-    return mNext;
 }
