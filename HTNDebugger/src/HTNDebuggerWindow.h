@@ -1,18 +1,19 @@
 #pragma once
 
 #ifdef HTN_DEBUG
+#include "Domain/HTNDecompositionHelpers.h"
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionPrinter.h"
-#include "Domain/HTNDecompositionWatchTooltipPrinter.h"
 #include "Domain/HTNDecompositionWatchWindowPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
-#include "HTNDebuggerWindowHelpers.h"
+#include "Helpers/HTNDebuggerWindowHelpers.h"
+#include "Helpers/HTNPlanningQuery.h"
 #include "WorldState/HTNWorldStatePrinter.h"
 
 #include <filesystem>
 #include <memory>
-#include <vector>
 #include <mutex>
+#include <vector>
 
 class HTNDatabaseHook;
 class HTNMethodNode;
@@ -56,7 +57,7 @@ private:
 
     HTNDecompositionNode        mMainSelectedNode;
     HTNDecompositionNode        mUpperBodySelectedNode;
-    HTNDecompositionTooltipMode mTooltipMode = HTNDecompositionTooltipMode::REGULAR;
+    HTNDecompositionTooltipMode mTooltipMode               = HTNDecompositionTooltipMode::REGULAR;
     bool                        mIsDecompositionCurrentTab = false;
 
     HTNWorldStatePrinter               mWorldStatePrinter;

@@ -6,6 +6,7 @@
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Helpers/HTNImGuiHelpers.h"
+#include "Domain/HTNDecompositionHelpers.h"
 
 #include "imgui.h"
 

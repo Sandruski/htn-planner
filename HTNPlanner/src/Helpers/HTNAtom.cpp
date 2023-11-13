@@ -106,6 +106,26 @@ std::string HTNAtomList::ToString(const bool inShouldDoubleQuoteString) const
     return String;
 }
 
+HTNAtom::HTNAtom(const bool inValue) : mData(inValue)
+{
+}
+
+HTNAtom::HTNAtom(const int inValue) : mData(inValue)
+{
+}
+
+HTNAtom::HTNAtom(const float inValue) : mData(inValue)
+{
+}
+
+HTNAtom::HTNAtom(const std::string& inValue) : mData(inValue)
+{
+}
+
+HTNAtom::HTNAtom(const HTNAtomList& inValue) : mData(inValue)
+{
+}
+
 void HTNAtom::AddListElement(const HTNAtom& inElement)
 {
     if (!IsSet())
@@ -203,4 +223,8 @@ std::string HTNAtom::ToString(const bool inShouldDoubleQuoteString) const
     }
 
     return "";
+}
+
+HTNAtomNode::HTNAtomNode(const HTNAtom& inData) : mData(inData)
+{
 }

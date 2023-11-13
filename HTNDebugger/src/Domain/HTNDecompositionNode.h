@@ -36,27 +36,6 @@ private:
     std::string                                                    mNodeLabel;
 };
 
-inline HTNDecompositionNode::HTNDecompositionNode(const HTNNodeSnapshotDebug& inNodeSnapshot, const std::string& inNodeLabel)
-    : mNodeSnapshot(&inNodeSnapshot), mNodeLabel(inNodeLabel)
-{
-}
-
-inline HTNDecompositionNode::HTNDecompositionNode(const HTNNodeSnapshotDebug&                                          inNodeSnapshot,
-                                                  const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters,
-                                                  const HTNNodePath& inNodeVariableScopeNodePath, const std::string& inNodeLabel)
-    : mNodeSnapshot(&inNodeSnapshot), mNodeParameters(inNodeParameters), mNodeVariableScopeNodePath(inNodeVariableScopeNodePath),
-      mNodeLabel(inNodeLabel)
-{
-}
-
-inline HTNDecompositionNode::HTNDecompositionNode(const HTNNodeSnapshotDebug&                                           inNodeSnapshot,
-                                                  const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
-                                                  const HTNNodePath& inNodeVariableScopeNodePath, const std::string& inNodeLabel)
-    : mNodeSnapshot(&inNodeSnapshot), mNodeArguments(inNodeArguments), mNodeVariableScopeNodePath(inNodeVariableScopeNodePath),
-      mNodeLabel(inNodeLabel)
-{
-}
-
 inline const HTNNodeSnapshotDebug* HTNDecompositionNode::GetNodeSnapshot() const
 {
     return mNodeSnapshot;

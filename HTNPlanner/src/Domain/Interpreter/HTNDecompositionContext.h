@@ -135,10 +135,6 @@ inline const std::vector<HTNTaskResult>& HTNDecompositionRecord::GetPlan() const
     return mPlan;
 }
 
-inline HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldState) : mWorldState(&inWorldState)
-{
-}
-
 inline const HTNWorldState* HTNDecompositionContext::GetWorldState() const
 {
     return mWorldState;

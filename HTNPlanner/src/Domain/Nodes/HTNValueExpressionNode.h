@@ -68,10 +68,6 @@ public:
     HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
 };
 
-inline HTNValueExpressionNodeBase::HTNValueExpressionNodeBase(const HTNAtom& inValue) : mValue(inValue)
-{
-}
-
 inline std::string HTNValueExpressionNodeBase::GetID() const
 {
     return "";
@@ -80,20 +76,4 @@ inline std::string HTNValueExpressionNodeBase::GetID() const
 inline const HTNAtom& HTNValueExpressionNodeBase::GetValue() const
 {
     return mValue;
-}
-
-inline HTNIdentifierExpressionNode::HTNIdentifierExpressionNode(const HTNAtom& inValue) : HTNValueExpressionNodeBase(inValue)
-{
-}
-
-inline HTNLiteralExpressionNode::HTNLiteralExpressionNode(const HTNAtom& inValue) : HTNValueExpressionNodeBase(inValue)
-{
-}
-
-inline HTNVariableExpressionNode::HTNVariableExpressionNode(const HTNAtom& inValue) : HTNValueExpressionNodeBase(inValue)
-{
-}
-
-inline HTNConstantExpressionNode::HTNConstantExpressionNode(const HTNAtom& inValue) : HTNValueExpressionNodeBase(inValue)
-{
 }

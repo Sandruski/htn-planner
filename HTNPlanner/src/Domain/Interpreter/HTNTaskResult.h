@@ -21,10 +21,6 @@ private:
     std::vector<HTNAtom> mArguments;
 };
 
-inline HTNTaskResult::HTNTaskResult(const std::string& inID, const std::vector<HTNAtom>& inArguments) : mID(inID), mArguments(inArguments)
-{
-}
-
 inline const std::string& HTNTaskResult::GetID() const
 {
     return mID;

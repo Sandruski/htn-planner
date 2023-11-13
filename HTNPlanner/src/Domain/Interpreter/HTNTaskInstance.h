@@ -25,12 +25,6 @@ private:
     HTNNodePath                            mVariableScopeNodePath;
 };
 
-inline HTNTaskInstance::HTNTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode, const HTNEnvironment& inEnvironment,
-                                        const HTNNodePath& inNodePath, const HTNNodePath& inVariableScopeNodePath)
-    : mTaskNode(inTaskNode), mEnvironment(inEnvironment), mNodePath(inNodePath), mVariableScopeNodePath(inVariableScopeNodePath)
-{
-}
-
 inline const std::shared_ptr<const HTNTaskNodeBase>& HTNTaskInstance::GetTaskNode() const
 {
     return mTaskNode;

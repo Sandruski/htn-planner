@@ -1,5 +1,9 @@
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 
+HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldState) : mWorldState(&inWorldState)
+{
+}
+
 bool HTNDecompositionContext::RestoreDecomposition()
 {
     if (mDecompositionHistory.empty())

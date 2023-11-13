@@ -7,13 +7,7 @@
 
 class HTNDecompositionNode;
 class HTNDomainNode;
-
-enum class HTNDecompositionTooltipMode : unsigned char
-{
-    NONE,
-    REGULAR,
-    FULL
-};
+enum class HTNDecompositionTooltipMode : unsigned char;
 
 /**
  * Prints the watch tooltip for the selected node

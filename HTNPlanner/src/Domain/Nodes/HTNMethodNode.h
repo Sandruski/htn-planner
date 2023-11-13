@@ -43,13 +43,6 @@ private:
     bool mIsTopLevel = false;
 };
 
-inline HTNMethodNode::HTNMethodNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
-                                    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inParameterNodes,
-                                    const std::vector<std::shared_ptr<const HTNBranchNode>>& inBranchNodes, const bool inIsTopLevel)
-    : mIDNode(inIDNode), mParameterNodes(inParameterNodes), mBranchNodes(inBranchNodes), mIsTopLevel(inIsTopLevel)
-{
-}
-
 inline const std::shared_ptr<const HTNIdentifierExpressionNode>& HTNMethodNode::GetIDNode() const
 {
     return mIDNode;

@@ -1,16 +1,11 @@
 #pragma once
 
 #ifdef HTN_DEBUG
+#include "Helpers/HTNDebuggerWindowHelpers.h"
+
 #include <string>
 
 class HTNPlanningUnit;
-
-enum class HTNOperationResult : unsigned char
-{
-    FAILED    = 0,
-    SUCCEEDED = 1,
-    NONE,
-};
 
 class HTNPlanningQuery
 {
@@ -32,11 +27,6 @@ private:
     std::string        mEntryPointID;
     HTNOperationResult mLastDecompositionResult = HTNOperationResult::NONE;
 };
-
-namespace HTNDebuggerWindowHelpers
-{
-bool IsOperationSuccessful(const HTNOperationResult inOperationResult);
-} // namespace HTNDebuggerWindowHelpers
 
 inline const HTNPlanningUnit* HTNPlanningQuery::GetPlanningUnit() const
 {
@@ -82,12 +72,4 @@ inline bool HTNPlanningQuery::IsLastDecompositionSuccessful() const
 {
     return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastDecompositionResult);
 }
-
-namespace HTNDebuggerWindowHelpers
-{
-inline bool IsOperationSuccessful(const HTNOperationResult inOperationResult)
-{
-    return (inOperationResult == HTNOperationResult::SUCCEEDED);
-}
-} // namespace HTNDebuggerWindowHelpers
 #endif

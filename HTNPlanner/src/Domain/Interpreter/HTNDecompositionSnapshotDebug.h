@@ -71,14 +71,6 @@ private:
     size_t                                mDecompositionStep = 0;
 };
 
-inline HTNNodeSnapshotDebug::HTNNodeSnapshotDebug(const HTNVariables& inVariables) : mVariables(inVariables)
-{
-}
-
-inline HTNNodeSnapshotDebug::HTNNodeSnapshotDebug(const HTNVariables& inVariables, const bool inResult) : mVariables(inVariables), mResult(inResult)
-{
-}
-
 inline bool HTNNodeSnapshotDebug::GetResult() const
 {
     return mResult;
@@ -87,10 +79,6 @@ inline bool HTNNodeSnapshotDebug::GetResult() const
 inline const HTNVariables& HTNNodeSnapshotDebug::GetVariables() const
 {
     return mVariables;
-}
-
-inline HTNNodeSnapshotHistoryDebug::HTNNodeSnapshotHistoryDebug(const bool inIsChoicePoint) : mIsChoicePoint(inIsChoicePoint)
-{
 }
 
 inline const HTNNodeSnapshotStepsCollectionDebug& HTNNodeSnapshotHistoryDebug::GetNodeSnapshotStepsCollection() const

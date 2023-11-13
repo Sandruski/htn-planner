@@ -101,26 +101,6 @@ inline bool HTNAtomList::IsEmpty() const
     return mSize == 0;
 }
 
-inline HTNAtom::HTNAtom(const bool inValue) : mData(inValue)
-{
-}
-
-inline HTNAtom::HTNAtom(const int inValue) : mData(inValue)
-{
-}
-
-inline HTNAtom::HTNAtom(const float inValue) : mData(inValue)
-{
-}
-
-inline HTNAtom::HTNAtom(const std::string& inValue) : mData(inValue)
-{
-}
-
-inline HTNAtom::HTNAtom(const HTNAtomList& inValue) : mData(inValue)
-{
-}
-
 inline bool HTNAtom::operator==(const HTNAtom& inOther) const
 {
     return (mData == inOther.mData);
@@ -152,10 +132,6 @@ inline bool HTNAtom::IsSet() const
 inline void HTNAtom::UnBind()
 {
     mData.reset();
-}
-
-inline HTNAtomNode::HTNAtomNode(const HTNAtom& inData) : mData(inData)
-{
 }
 
 inline const HTNAtom& HTNAtomNode::GetData() const

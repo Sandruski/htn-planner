@@ -32,12 +32,6 @@ private:
     std::shared_ptr<const HTNLiteralExpressionNode> mValueNode;
 };
 
-inline HTNConstantNode::HTNConstantNode(const std::shared_ptr<const HTNIdentifierExpressionNode>& inIDNode,
-                                        const std::shared_ptr<const HTNLiteralExpressionNode>& inValueNode)
-    : mIDNode(inIDNode), mValueNode(inValueNode)
-{
-}
-
 inline const std::shared_ptr<const HTNIdentifierExpressionNode>& HTNConstantNode::GetIDNode() const
 {
     return mIDNode;

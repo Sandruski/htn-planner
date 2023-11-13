@@ -33,11 +33,6 @@ private:
     std::shared_ptr<const HTNDomainNode> mLastDomainNode;
 };
 
-inline HTNPlanningUnit::HTNPlanningUnit(const std::string& inID, const HTNDatabaseHook& inDatabaseHook, HTNPlannerHook& inPlannerHook)
-    : mID(inID), mDatabaseHook(&inDatabaseHook), mPlannerHook(&inPlannerHook)
-{
-}
-
 inline const std::string& HTNPlanningUnit::GetID() const
 {
     return mID;
