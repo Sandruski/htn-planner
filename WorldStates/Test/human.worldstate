@@ -1,0 +1,8 @@
+food "spanish" "tortilla"
+food "spanish" "paella"
+has_mold "paella"
+
+food "italian" "pasta"
+food "italian" "pizza"
+food "italian" "gelato"
+has_mold "gelato"

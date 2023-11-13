@@ -3,11 +3,13 @@
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDomainPrinter.h"
+#include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
+#include "Helpers/HTNFileHelpers.h"
 #include "Helpers/HTNImGuiHelpers.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
@@ -23,7 +25,7 @@ void RenderFileSelector(const std::string& inDirectoryName, const std::string& i
 {
     std::vector<std::filesystem::path> FilePaths;
 
-    const std::filesystem::path DirectoryPath = std::filesystem::current_path().parent_path() / std::filesystem::path(inDirectoryName);
+    const std::filesystem::path DirectoryPath = HTNFileHelpers::MakeAbsolutePath(inDirectoryName);
     for (const std::filesystem::directory_entry& DirectoryEntry : std::filesystem::directory_iterator(DirectoryPath))
     {
         if (!DirectoryEntry.is_regular_file())
@@ -116,14 +118,6 @@ std::vector<std::shared_ptr<const HTNMethodNode>>::const_iterator FindTopLevelMe
         return (inID == inMethodNode->GetID());
     });
 }
-
-const std::string WorldStatesDirectoryName = "WorldStates";
-const std::string WorldStateFileExtension  = ".worldstate";
-const std::string DomainsDirectoryName     = "Domains";
-const std::string DomainFileExtension      = ".domain";
-
-const std::string DefaultMainTopLevelMethodID      = "behave";
-const std::string DefaultUpperBodyTopLevelMethodID = "behave_upper_body";
 } // namespace
 
 HTNDebuggerWindow::HTNDebuggerWindow(HTNDatabaseHook& inDatabaseHook, HTNPlannerHook& inPlannerHook, HTNPlanningUnit& inMainPlanningUnit,
@@ -212,7 +206,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         {
             if (MethodNodes)
             {
-                const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(DefaultMainTopLevelMethodID, *MethodNodes);
+                const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(HTNDecompositionHelpers::kDefaultMainTopLevelMethodID, *MethodNodes);
                 if (TopLevelMethodNode != MethodNodes->end())
                 {
                     const std::string EntryPointID = (*TopLevelMethodNode)->GetID();
@@ -228,7 +222,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         {
             if (MethodNodes)
             {
-                const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(DefaultUpperBodyTopLevelMethodID, *MethodNodes);
+                const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(HTNDecompositionHelpers::kDefaultUpperBodyTopLevelMethodID, *MethodNodes);
                 if (TopLevelMethodNode != MethodNodes->end())
                 {
                     const std::string EntryPointID = (*TopLevelMethodNode)->GetID();
@@ -280,7 +274,7 @@ void HTNDebuggerWindow::RenderDecomposition()
 
 void HTNDebuggerWindow::RenderDomain()
 {
-    RenderFileSelector(DomainsDirectoryName, DomainFileExtension, mSelectedDomainFilePath);
+    RenderFileSelector(HTNFileHelpers::DomainsDirectoryName, HTNFileHelpers::DomainFileExtension, mSelectedDomainFilePath);
 
     if (ImGui::Button("Parse"))
     {
@@ -307,7 +301,7 @@ void HTNDebuggerWindow::RenderDomain()
 
 void HTNDebuggerWindow::RenderWorldState()
 {
-    RenderFileSelector(WorldStatesDirectoryName, WorldStateFileExtension, mSelectedWorldStateFilePath);
+    RenderFileSelector(HTNFileHelpers::WorldStatesDirectoryName, HTNFileHelpers::WorldStateFileExtension, mSelectedWorldStateFilePath);
 
     if (ImGui::Button("Parse"))
     {

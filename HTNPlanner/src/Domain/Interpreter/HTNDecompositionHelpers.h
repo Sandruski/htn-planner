@@ -22,6 +22,9 @@ bool IsAnyArgument(const std::string& inVariableID);
 // ID of the top-level compound task node
 constexpr unsigned int kTopLevelCompoundTaskNodeID = 0;
 
+const std::string kDefaultMainTopLevelMethodID      = "behave";
+const std::string kDefaultUpperBodyTopLevelMethodID = "behave_upper_body";
+
 const std::string kPathSegmentSeparator = " ";
 
 const std::string kInputParameterPrefix       = "inp_";
