@@ -14,3 +14,4 @@ The solution contains three projects, HTNPlanner, HTNDemo, and HTNTest. HTNPlann
 - [Dear ImGui](https://github.com/ocornut/imgui)
 - [GoogleTest](https://google.github.io/googletest/)
 - [Premake](https://premake.github.io/)
+- [Optick](https://github.com/bombomby/optick)

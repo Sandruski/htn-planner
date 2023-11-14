@@ -399,9 +399,17 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+# ImGui
+*.ini
+
+# Google Test
+*.config
+
 # Premake
-!vendor/**
 *.sln
 *.vcxproj*
-*.config
-HTNDemo/imgui.ini
+!ThirdParty/premake/bin**
+
+# Optick
+*.opt
+!ThirdParty/Optick_1.4.0/bin**
