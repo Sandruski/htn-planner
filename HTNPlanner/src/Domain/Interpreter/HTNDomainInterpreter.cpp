@@ -13,6 +13,7 @@
 #include "Domain/Nodes/HTNConstantsNode.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
+#include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "Domain/Nodes/HTNTaskNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "WorldState/HTNWorldState.h"
@@ -43,14 +44,16 @@ bool HTNDomainInterpreter::Interpret(const std::shared_ptr<const HTNDomainNode>&
         return false;
     }
 
-    return GetNodeValue(*DomainNode).GetValue<bool>();
+    HTNNodeVisitorContext Context;
+    Context.mOtherDerivedNumber = 5;
+    return GetNodeValue(*DomainNode, Context).GetValue<bool>();
 }
 
 /*
  * Depth first search on a graph
  * Domain is a graph that may contain cycles because of backtracking
  */
-HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetDomainNodeValue");
 
@@ -93,7 +96,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode)
         CurrentDecomposition.SetEnvironment(TaskInstance.GetEnvironment());
 
         const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskInstance.GetTaskNode();
-        const bool                                    Result   = GetNodeValue(*TaskNode).GetValue<bool>();
+        const bool                                    Result   = GetNodeValue(*TaskNode, ioContext).GetValue<bool>();
         if (!Result)
         {
 #ifdef HTN_DEBUG
@@ -110,17 +113,17 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode)
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetConstantNodeValue");
 
     const HTNDecompositionNodeScope ConstantNodeScope = HTNDecompositionNodeScope(*mDecompositionContext, inConstantNode.GetID());
 
     const std::shared_ptr<const HTNLiteralExpressionNode>& ValueNode = inConstantNode.GetValueNode();
-    return GetNodeValue(*ValueNode);
+    return GetNodeValue(*ValueNode, ioContext);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetAxiomNodeValue");
 
@@ -148,14 +151,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode)
     }
 
     // Check condition
-    const bool Result = GetNodeValue(*ConditionNode).GetValue<bool>();
+    const bool Result = GetNodeValue(*ConditionNode, ioContext).GetValue<bool>();
 #ifdef HTN_DEBUG
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint);
 #endif
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetMethodNodeValue");
 
@@ -182,7 +185,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode)
     {
         // Check branch
         const std::shared_ptr<const HTNBranchNode>& BranchNode = BranchNodes[BranchIndex];
-        const bool                                  Result     = GetNodeValue(*BranchNode).GetValue<bool>();
+        const bool                                  Result     = GetNodeValue(*BranchNode, ioContext).GetValue<bool>();
         if (Result)
         {
 #ifdef HTN_DEBUG
@@ -219,7 +222,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode)
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetBranchNodeValue");
 
@@ -238,7 +241,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode)
     const std::shared_ptr<const HTNConditionNodeBase>& CurrentPreConditionNode = inBranchNode.GetPreConditionNode();
     if (CurrentPreConditionNode)
     {
-        const bool Result = GetNodeValue(*CurrentPreConditionNode).GetValue<bool>();
+        const bool Result = GetNodeValue(*CurrentPreConditionNode, ioContext).GetValue<bool>();
         if (!Result)
         {
 #ifdef HTN_DEBUG
@@ -269,7 +272,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode)
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetConditionNodeValue");
 
@@ -288,7 +291,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
     bool ShouldBindFactArguments = false;
     for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
     {
-        const HTNAtom Argument  = GetNodeValue(*ArgumentNode);
+        const HTNAtom Argument  = GetNodeValue(*ArgumentNode, ioContext);
         ShouldBindFactArguments = ShouldBindFactArguments || !Argument.IsSet();
         FactArguments.emplace_back(Argument);
     }
@@ -309,8 +312,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
 
     // Check fact
     const std::shared_ptr<const HTNIdentifierExpressionNode>& ConditionNodeIDNode = inConditionNode.GetIDNode();
-    const std::string                                         FactID              = GetNodeValue(*ConditionNodeIDNode).GetValue<std::string>();
-    const std::size_t                                         FactArgumentsSize   = WorldState->GetFactArgumentsSize(FactID, FactArguments.size());
+    const std::string                                         FactID = GetNodeValue(*ConditionNodeIDNode, ioContext).GetValue<std::string>();
+    const std::size_t                                         FactArgumentsSize = WorldState->GetFactArgumentsSize(FactID, FactArguments.size());
     for (std::size_t FactArgumentsIndex = Indices.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsSize;
          FactArgumentsIndex             = Indices.AddOrIncrementIndex(CurrentNodePath))
     {
@@ -337,7 +340,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
         {
             const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode = ArgumentNodes[i];
             const HTNAtom                                            FactArgument = FactArguments[i];
-            SetNodeValue(*ArgumentNode, FactArgument);
+            SetNodeValue(*ArgumentNode, FactArgument, ioContext);
         }
 
         const bool IsLastFactEntry = (FactArgumentsIndex == FactArgumentsSize - 1);
@@ -372,7 +375,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode)
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetAxiomConditionNodeValue");
 
@@ -389,8 +392,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 #endif
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& AxiomConditionNodeIDNode = inAxiomConditionNode.GetIDNode();
-    const std::string                                         AxiomNodeID = GetNodeValue(*AxiomConditionNodeIDNode).GetValue<std::string>();
-    const std::shared_ptr<const HTNAxiomNode>                 AxiomNode   = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
+    const std::string                         AxiomNodeID = GetNodeValue(*AxiomConditionNodeIDNode, ioContext).GetValue<std::string>();
+    const std::shared_ptr<const HTNAxiomNode> AxiomNode   = mDomainNode->FindAxiomNodeByID(AxiomNodeID);
     if (!AxiomNode)
     {
         LOG_ERROR("Axiom node [{}] could not be found", AxiomNodeID);
@@ -406,7 +409,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     AxiomConditionNodeArguments.reserve(AxiomConditionNodeArgumentNodes.size());
     for (const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomConditionNodeArgumentNode : AxiomConditionNodeArgumentNodes)
     {
-        const HTNAtom AxiomConditionNodeArgument = GetNodeValue(*AxiomConditionNodeArgumentNode);
+        const HTNAtom AxiomConditionNodeArgument = GetNodeValue(*AxiomConditionNodeArgumentNode, ioContext);
         AxiomConditionNodeArguments.emplace_back(AxiomConditionNodeArgument);
     }
 
@@ -421,10 +424,10 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         {
             const std::shared_ptr<const HTNVariableExpressionNode>& AxiomNodeParameterNode     = AxiomNodeParameterNodes[i];
             const HTNAtom&                                          AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
-            SetNodeValue(*AxiomNodeParameterNode, AxiomConditionNodeArgument);
+            SetNodeValue(*AxiomNodeParameterNode, AxiomConditionNodeArgument, ioContext);
         }
 
-        const bool Result = GetNodeValue(*AxiomNode).GetValue<bool>();
+        const bool Result = GetNodeValue(*AxiomNode, ioContext).GetValue<bool>();
         if (!Result)
         {
 #ifdef HTN_DEBUG
@@ -436,7 +439,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         AxiomNodeParameters.reserve(AxiomNodeParameterNodes.size());
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomNodeParameterNode : AxiomNodeParameterNodes)
         {
-            const HTNAtom AxiomNodeParameter = GetNodeValue(*AxiomNodeParameterNode);
+            const HTNAtom AxiomNodeParameter = GetNodeValue(*AxiomNodeParameterNode, ioContext);
             AxiomNodeParameters.emplace_back(AxiomNodeParameter);
         }
     }
@@ -446,7 +449,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     {
         const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomConditionNodeArgumentNode = AxiomConditionNodeArgumentNodes[i];
         const HTNAtom&                                           AxiomNodeArgument              = AxiomNodeParameters[i];
-        SetNodeValue(*AxiomConditionNodeArgumentNode, AxiomNodeArgument);
+        SetNodeValue(*AxiomConditionNodeArgumentNode, AxiomNodeArgument, ioContext);
     }
 
     constexpr bool Result = true;
@@ -458,7 +461,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 
 // YES bindings
 // YES backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetAndConditionNodeValue");
 
@@ -486,7 +489,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
     {
         // Check sub-condition
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = SubConditionNodes[SubConditionIndex];
-        const bool                                         Result           = GetNodeValue(*SubConditionNode).GetValue<bool>();
+        const bool                                         Result           = GetNodeValue(*SubConditionNode, ioContext).GetValue<bool>();
         if (!Result)
         {
             if (SubConditionIndex == 0) // First sub-condition
@@ -527,7 +530,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
 
 // YES bindings
 // NO backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetOrConditionNodeValue");
 
@@ -558,7 +561,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
 
         // Check sub-condition
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = SubConditionNodes[SubConditionIndex];
-        const bool                                         Result           = GetNodeValue(*SubConditionNode).GetValue<bool>();
+        const bool                                         Result           = GetNodeValue(*SubConditionNode, ioContext).GetValue<bool>();
 
         // Reset decomposition history
         mDecompositionContext->SetDecompositionHistory(DecompositionHistory);
@@ -585,7 +588,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode)
 
 // YES bindings
 // YES backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetAltConditionNodeValue");
 
@@ -613,7 +616,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
     {
         // Check sub-condition
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = SubConditionNodes[SubConditionIndex];
-        const bool                                         Result           = GetNodeValue(*SubConditionNode).GetValue<bool>();
+        const bool                                         Result           = GetNodeValue(*SubConditionNode, ioContext).GetValue<bool>();
         if (Result)
         {
 #ifdef HTN_DEBUG
@@ -653,7 +656,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
 
 // NO bindings
 // NO backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetNotConditionNodeValue");
 
@@ -680,7 +683,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
 
     // Check sub-condition
     const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = inNotConditionNode.GetSubConditionNode();
-    const bool                                         Result           = !GetNodeValue(*SubConditionNode).GetValue<bool>();
+    const bool                                         Result           = !GetNodeValue(*SubConditionNode, ioContext).GetValue<bool>();
 
     // Reset variables
     Environment.SetVariables(Variables);
@@ -694,7 +697,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetCompoundTaskNodeValue");
 
@@ -711,8 +714,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
 #endif
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& CompoundTaskNodeIDNode = inCompoundTaskNode.GetIDNode();
-    const std::string                                         MethodNodeID           = GetNodeValue(*CompoundTaskNodeIDNode).GetValue<std::string>();
-    const std::shared_ptr<const HTNMethodNode>                MethodNode             = mDomainNode->FindMethodNodeByID(MethodNodeID);
+    const std::string                                         MethodNodeID = GetNodeValue(*CompoundTaskNodeIDNode, ioContext).GetValue<std::string>();
+    const std::shared_ptr<const HTNMethodNode>                MethodNode   = mDomainNode->FindMethodNodeByID(MethodNodeID);
     if (!MethodNode)
     {
         LOG_ERROR("Method node [{}] could not be found", MethodNodeID);
@@ -738,7 +741,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     CompoundTaskNodeArguments.reserve(CompoundTaskNodeArgumentNodes.size());
     for (const std::shared_ptr<const HTNValueExpressionNodeBase>& CompoundTaskNodeArgumentNode : CompoundTaskNodeArgumentNodes)
     {
-        const HTNAtom CompoundTaskNodeArgument = GetNodeValue(*CompoundTaskNodeArgumentNode);
+        const HTNAtom CompoundTaskNodeArgument = GetNodeValue(*CompoundTaskNodeArgumentNode, ioContext);
         CompoundTaskNodeArguments.emplace_back(CompoundTaskNodeArgument);
     }
 
@@ -751,17 +754,17 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     {
         const std::shared_ptr<const HTNVariableExpressionNode>& MethodNodeParameterNode  = MethodNodeParameterNodes[i];
         const HTNAtom&                                          CompoundTaskNodeArgument = CompoundTaskNodeArguments[i];
-        SetNodeValue(*MethodNodeParameterNode, CompoundTaskNodeArgument);
+        SetNodeValue(*MethodNodeParameterNode, CompoundTaskNodeArgument, ioContext);
     }
 
-    const bool Result = GetNodeValue(*MethodNode).GetValue<bool>();
+    const bool Result = GetNodeValue(*MethodNode, ioContext).GetValue<bool>();
 #ifdef HTN_DEBUG
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint);
 #endif
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetPrimitiveTaskNodeValue");
 
@@ -780,14 +783,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
     HTNDecompositionRecord& CurrentDecomposition = mDecompositionContext->GetCurrentDecompositionMutable();
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inPrimitiveTaskNode.GetIDNode();
-    const std::string                                         ID     = GetNodeValue(*IDNode).GetValue<std::string>();
+    const std::string                                         ID     = GetNodeValue(*IDNode, ioContext).GetValue<std::string>();
 
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
     std::vector<HTNAtom>                                                  Arguments;
     Arguments.reserve(ArgumentNodes.size());
     for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
     {
-        const HTNAtom Argument = GetNodeValue(*ArgumentNode);
+        const HTNAtom Argument = GetNodeValue(*ArgumentNode, ioContext);
         Arguments.emplace_back(Argument);
     }
 
@@ -801,7 +804,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetIdentifierExpressionNodeValue");
 
@@ -811,7 +814,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNIdentifierExpressionNode& inIdentif
     return inIdentifierExpressionNode.GetValue();
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetLiteralExpressionNodeValue");
 
@@ -820,7 +823,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExp
     return inLiteralExpressionNode.GetValue();
 }
 
-void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, const HTNAtom& inVariableExpressionNodeValue)
+void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, const HTNAtom& inVariableExpressionNodeValue,
+                                 MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("SetVariableExpressionNodeValue");
 
@@ -841,7 +845,7 @@ void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpr
     Variables.SetVariable(CurrentVariablePath, inVariableExpressionNodeValue);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetVariableExpressionNodeValue");
 
@@ -862,7 +866,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableE
     return Variables.FindVariable(CurrentVariablePath);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode)
+HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext)
 {
     OPTICK_EVENT("GetConstantExpressionNodeValue");
 
@@ -876,7 +880,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantE
         return HTNAtom();
     }
 
-    return GetNodeValue(*ConstantNode);
+    return GetNodeValue(*ConstantNode, ioContext);
 }
 
 void HTNDomainInterpreter::Reset(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,

@@ -7,12 +7,15 @@
 #include "Domain/Interpreter/HTNVariables.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Helpers/HTNImGuiHelpers.h"
+#include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 
 #include "imgui.h"
 
 void HTNDecompositionWatchWindowPrinter::Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode)
 {
     Reset(inDomainNode, inNode);
+
+    HTNNodeVisitorContext Context;
 
     const HTNNodeSnapshotDebug* NodeSnapshot = mNode->GetNodeSnapshot();
     if (!NodeSnapshot)
@@ -28,7 +31,7 @@ void HTNDecompositionWatchWindowPrinter::Print(const std::shared_ptr<const HTNDo
         {
             ImGui::TableNextRow();
 
-            const HTNAtom  Parameter               = GetNodeValue(*NodeParameter);
+            const HTNAtom  Parameter               = GetNodeValue(*NodeParameter, Context);
             constexpr bool ShouldDoubleQuoteString = false;
 
             // Parameter ID
@@ -56,7 +59,7 @@ void HTNDecompositionWatchWindowPrinter::Print(const std::shared_ptr<const HTNDo
         {
             ImGui::TableNextRow();
 
-            const HTNAtom  Argument                = GetNodeValue(*NodeArgument);
+            const HTNAtom  Argument                = GetNodeValue(*NodeArgument, Context);
             constexpr bool ShouldDoubleQuoteString = false;
 
             // Argument ID

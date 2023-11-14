@@ -10,9 +10,9 @@ HTNMethodNode::HTNMethodNode(const std::shared_ptr<const HTNIdentifierExpression
 {
 }
 
-HTNAtom HTNMethodNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
+HTNAtom HTNMethodNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
-    return ioNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this, ioContext);
 }
 
 std::string HTNMethodNode::GetID() const

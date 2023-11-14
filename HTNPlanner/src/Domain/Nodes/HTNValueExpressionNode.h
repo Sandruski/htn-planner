@@ -31,7 +31,7 @@ class HTNIdentifierExpressionNode final : public HTNValueExpressionNodeBase
 public:
     explicit HTNIdentifierExpressionNode(const HTNAtom& inValue);
 
-    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
 };
 
 /**
@@ -42,7 +42,7 @@ class HTNLiteralExpressionNode final : public HTNValueExpressionNodeBase
 public:
     explicit HTNLiteralExpressionNode(const HTNAtom& inValue);
 
-    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
 };
 
 /**
@@ -53,8 +53,8 @@ class HTNVariableExpressionNode final : public HTNValueExpressionNodeBase
 public:
     explicit HTNVariableExpressionNode(const HTNAtom& inValue);
 
-    void    Accept(HTNNodeVisitorBase& ioNodeVisitor, const HTNAtom& inNodeValue) const final;
-    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+    void    Accept(HTNNodeVisitorBase& ioNodeVisitor, const HTNAtom& inNodeValue, HTNNodeVisitorContextBase& ioContext) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
 };
 
 /**
@@ -65,7 +65,7 @@ class HTNConstantExpressionNode final : public HTNValueExpressionNodeBase
 public:
     explicit HTNConstantExpressionNode(const HTNAtom& inValue);
 
-    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor) const final;
+    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
 };
 
 inline std::string HTNValueExpressionNodeBase::GetID() const

@@ -1,12 +1,13 @@
 #include "Domain/HTNDecompositionWatchTooltipPrinter.h"
 
 #ifdef HTN_DEBUG
+#include "Domain/HTNDecompositionHelpers.h"
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
+#include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Helpers/HTNImGuiHelpers.h"
-#include "Domain/HTNDecompositionHelpers.h"
 
 #include "imgui.h"
 
@@ -14,6 +15,8 @@ void HTNDecompositionWatchTooltipPrinter::Print(const std::shared_ptr<const HTND
                                                 const HTNDecompositionTooltipMode inTooltipMode)
 {
     Reset(inDomainNode, inNode);
+
+    HTNNodeVisitorContext Context;
 
     if (inTooltipMode == HTNDecompositionTooltipMode::NONE)
     {
@@ -52,7 +55,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(const std::shared_ptr<const HTND
         {
             for (const std::shared_ptr<const HTNVariableExpressionNode>& NodeParameter : NodeParameters)
             {
-                const HTNAtom  Parameter               = GetNodeValue(*NodeParameter);
+                const HTNAtom  Parameter               = GetNodeValue(*NodeParameter, Context);
                 constexpr bool ShouldDoubleQuoteString = false;
 
                 // Parameter ID
@@ -81,7 +84,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(const std::shared_ptr<const HTND
         {
             for (const std::shared_ptr<const HTNValueExpressionNodeBase>& NodeArgument : NodeArguments)
             {
-                const HTNAtom  Argument                = GetNodeValue(*NodeArgument);
+                const HTNAtom  Argument                = GetNodeValue(*NodeArgument, Context);
                 constexpr bool ShouldDoubleQuoteString = false;
 
                 // Argument ID

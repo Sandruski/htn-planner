@@ -10,9 +10,9 @@ HTNBranchNode::HTNBranchNode(const std::shared_ptr<const HTNIdentifierExpression
 {
 }
 
-HTNAtom HTNBranchNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
+HTNAtom HTNBranchNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
-    return ioNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this, ioContext);
 }
 
 std::string HTNBranchNode::GetID() const

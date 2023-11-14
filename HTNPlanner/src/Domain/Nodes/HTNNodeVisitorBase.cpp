@@ -2,107 +2,111 @@
 
 #include "Domain/Nodes/HTNNodeBase.h"
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNDomainNode& inDomainNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNDomainNode& inDomainNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNConstantsNode& inConstantsNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNConstantsNode& inConstantsNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNConstantNode& inConstantNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNConstantNode& inConstantNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNAxiomNode& inAxiomNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNAxiomNode& inAxiomNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNMethodNode& inMethodNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNMethodNode& inMethodNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNBranchNode& inBranchNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNBranchNode& inBranchNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNConditionNode& inConditionNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNConditionNode& inConditionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNAxiomConditionNode& inAxiomConditionNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNAxiomConditionNode& inAxiomConditionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNAndConditionNode& inAndConditionNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNAndConditionNode& inAndConditionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNOrConditionNode& inOrConditionNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNOrConditionNode& inOrConditionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNAltConditionNode& inAltConditionNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNAltConditionNode& inAltConditionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNNotConditionNode& inNotConditionNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNNotConditionNode& inNotConditionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNCompoundTaskNode& inCompoundTaskNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNCompoundTaskNode& inCompoundTaskNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNPrimitiveTaskNode& inPrimitiveTaskNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNPrimitiveTaskNode& inPrimitiveTaskNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNIdentifierExpressionNode& inIdentifierExpressionNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNIdentifierExpressionNode& inIdentifierExpressionNode,
+                                  MAYBE_UNUSED HTNNodeVisitorContextBase&         ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNLiteralExpressionNode& inLiteralExpressionNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNLiteralExpressionNode& inLiteralExpressionNode,
+                                  MAYBE_UNUSED HTNNodeVisitorContextBase&      ioContext)
 {
     return HTNAtom();
 }
 
 void HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNVariableExpressionNode& inVariableExpressionNode,
-                               MAYBE_UNUSED const HTNAtom&                   inVariableExpressionNodeValue)
+                               MAYBE_UNUSED const HTNAtom& inVariableExpressionNodeValue, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext)
 {
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNVariableExpressionNode& inVariableExpressionNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNVariableExpressionNode& inVariableExpressionNode,
+                                  MAYBE_UNUSED HTNNodeVisitorContextBase&       ioContext)
 {
     return HTNAtom();
 }
 
-HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNConstantExpressionNode& inConstantExpressionNode)
+HTNAtom HTNNodeVisitorBase::Visit(MAYBE_UNUSED const HTNConstantExpressionNode& inConstantExpressionNode,
+                                  MAYBE_UNUSED HTNNodeVisitorContextBase&       ioContext)
 {
     return HTNAtom();
 }
 
-void HTNNodeVisitorBase::SetNodeValue(const HTNNodeBase& inNode, const HTNAtom& inNodeValue)
+void HTNNodeVisitorBase::SetNodeValue(const HTNNodeBase& inNode, const HTNAtom& inNodeValue, HTNNodeVisitorContextBase& ioContext)
 {
-    inNode.Accept(*this, inNodeValue);
+    inNode.Accept(*this, inNodeValue, ioContext);
 }
 
-HTNAtom HTNNodeVisitorBase::GetNodeValue(const HTNNodeBase& inNode)
+HTNAtom HTNNodeVisitorBase::GetNodeValue(const HTNNodeBase& inNode, HTNNodeVisitorContextBase& ioContext)
 {
-    return inNode.Accept(*this);
+    return inNode.Accept(*this, ioContext);
 }

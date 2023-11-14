@@ -86,7 +86,7 @@ project "HTNTest"
 
     files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h" }
 
-    includedirs { "%{prj.name}/src", "HTNPlanner/src" }
+    includedirs { "%{prj.name}/src", "HTNPlanner/src", "ThirdParty/Optick_1.4.0/src" }
 
     links { "HTNPlanner" }
 

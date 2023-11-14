@@ -9,9 +9,9 @@ HTNConstantsNode::HTNConstantsNode(const std::shared_ptr<const HTNIdentifierExpr
 {
 }
 
-HTNAtom HTNConstantsNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
+HTNAtom HTNConstantsNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
-    return ioNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this, ioContext);
 }
 
 std::string HTNConstantsNode::GetID() const

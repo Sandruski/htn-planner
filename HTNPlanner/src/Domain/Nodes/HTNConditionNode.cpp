@@ -17,9 +17,9 @@ HTNConditionNode::HTNConditionNode(const std::shared_ptr<const HTNIdentifierExpr
 {
 }
 
-HTNAtom HTNConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
+HTNAtom HTNConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
-    return ioNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this, ioContext);
 }
 
 HTNAxiomConditionNode::HTNAxiomConditionNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
@@ -28,9 +28,9 @@ HTNAxiomConditionNode::HTNAxiomConditionNode(const std::shared_ptr<const HTNIden
 {
 }
 
-HTNAtom HTNAxiomConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
+HTNAtom HTNAxiomConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
-    return ioNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this, ioContext);
 }
 
 HTNAndConditionNode::HTNAndConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes)
@@ -38,9 +38,9 @@ HTNAndConditionNode::HTNAndConditionNode(const std::vector<std::shared_ptr<const
 {
 }
 
-HTNAtom HTNAndConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
+HTNAtom HTNAndConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
-    return ioNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this, ioContext);
 }
 
 HTNOrConditionNode::HTNOrConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes)
@@ -48,9 +48,9 @@ HTNOrConditionNode::HTNOrConditionNode(const std::vector<std::shared_ptr<const H
 {
 }
 
-HTNAtom HTNOrConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
+HTNAtom HTNOrConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
-    return ioNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this, ioContext);
 }
 
 HTNAltConditionNode::HTNAltConditionNode(const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& inSubConditionNodes)
@@ -58,9 +58,9 @@ HTNAltConditionNode::HTNAltConditionNode(const std::vector<std::shared_ptr<const
 {
 }
 
-HTNAtom HTNAltConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
+HTNAtom HTNAltConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
-    return ioNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this, ioContext);
 }
 
 HTNNotConditionNode::HTNNotConditionNode(const std::shared_ptr<const HTNConditionNodeBase>& inSubConditionNode)
@@ -68,7 +68,7 @@ HTNNotConditionNode::HTNNotConditionNode(const std::shared_ptr<const HTNConditio
 {
 }
 
-HTNAtom HTNNotConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor) const
+HTNAtom HTNNotConditionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
-    return ioNodeVisitor.Visit(*this);
+    return ioNodeVisitor.Visit(*this, ioContext);
 }

@@ -9,18 +9,19 @@
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Helpers/HTNImGuiHelpers.h"
+#include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 
 #include "imgui.h"
 
-HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantNode& inConstantNode)
+HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext)
 {
     // Constant value
     const std::shared_ptr<const HTNLiteralExpressionNode>& ValueNode  = inConstantNode.GetValueNode();
-    const HTNAtom                                          ValueValue = *GetNodeValue(*ValueNode).FindListElement(0);
+    const HTNAtom                                          ValueValue = *GetNodeValue(*ValueNode, ioContext).FindListElement(0);
     return ValueValue;
 }
 
-HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode)
+HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTNNodeVisitorContextBase& ioContext)
 {
     const HTNAtom& Literal = inLiteralExpressionNode.GetValue();
 
@@ -36,7 +37,7 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode& 
     return HTNAtomList({LiteralIDString, HTNAtomList({LiteralIDColor.x, LiteralIDColor.y, LiteralIDColor.z, LiteralIDColor.w}), LiteralValueString});
 }
 
-HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode& inVariableExpressionNode)
+HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioContext)
 {
     HTNAtomList Result;
 
@@ -69,7 +70,7 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
     return Result;
 }
 
-HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode& inConstantExpressionNode)
+HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext)
 {
     HTNAtomList Result;
 
@@ -87,7 +88,7 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode&
     {
         const std::string&                     ConstantID              = inConstantExpressionNode.GetValue().GetValue<std::string>();
         std::shared_ptr<const HTNConstantNode> ConstantNode            = mDomainNode->FindConstantNodeByID(ConstantID);
-        const HTNAtom                          ConstantValue           = GetNodeValue(*ConstantNode);
+        const HTNAtom                          ConstantValue           = GetNodeValue(*ConstantNode, ioContext);
         constexpr bool                         ShouldDoubleQuoteString = true;
         const std::string                      ConstantValueString     = ConstantValue.ToString(ShouldDoubleQuoteString);
         Result.Add(ConstantValueString);

@@ -18,24 +18,25 @@ public:
     bool Interpret(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                    HTNDecompositionContext& ioDecompositionContext);
 
-    HTNAtom Visit(const HTNDomainNode& inDomainNode) final;
-    HTNAtom Visit(const HTNConstantNode& inConstantNode) final;
-    HTNAtom Visit(const HTNAxiomNode& inAxiomNode) final;
-    HTNAtom Visit(const HTNMethodNode& inMethodNode) final;
-    HTNAtom Visit(const HTNBranchNode& inBranchNode) final;
-    HTNAtom Visit(const HTNConditionNode& inConditionNode) final;
-    HTNAtom Visit(const HTNAxiomConditionNode& inAxiomConditionNode) final;
-    HTNAtom Visit(const HTNAndConditionNode& inAndConditionNode) final;
-    HTNAtom Visit(const HTNOrConditionNode& inOrConditionNode) final;
-    HTNAtom Visit(const HTNAltConditionNode& inAltConditionNode) final;
-    HTNAtom Visit(const HTNNotConditionNode& inNotConditionNode) final;
-    HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode) final;
-    HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode) final;
-    HTNAtom Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode) final;
-    HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode) final;
-    void    Visit(const HTNVariableExpressionNode& inVariableExpressionNode, const HTNAtom& inVariableExpressionNodeValue) final;
-    HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode) final;
-    HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode) final;
+    HTNAtom Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNMethodNode& inMethodNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNConditionNode& inConditionNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNAxiomConditionNode& inAxiomConditionNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTNNodeVisitorContextBase& ioContext) final;
+    void    Visit(const HTNVariableExpressionNode& inVariableExpressionNode, const HTNAtom& inVariableExpressionNodeValue,
+                  HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext) final;
 
 private:
     void Reset(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,

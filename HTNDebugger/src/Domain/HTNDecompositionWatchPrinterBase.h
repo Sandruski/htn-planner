@@ -13,10 +13,10 @@ class HTNDomainNode;
 class HTNDecompositionWatchPrinterBase : public HTNNodeVisitorBase
 {
 public:
-    HTNAtom Visit(const HTNConstantNode& inConstantNode) final;
-    HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode) final;
-    HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode) final;
-    HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode) final;
+    HTNAtom Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioContext) final;
+    HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext) final;
 
 protected:
     void Reset(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode);
