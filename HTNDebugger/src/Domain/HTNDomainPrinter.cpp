@@ -1,6 +1,7 @@
 #include "Domain/HTNDomainPrinter.h"
 
 #ifdef HTN_DEBUG
+#include "Domain/HTNDomainPrinterContext.h"
 #include "Domain/Nodes/HTNAxiomNode.h"
 #include "Domain/Nodes/HTNBranchNode.h"
 #include "Domain/Nodes/HTNConditionNode.h"
@@ -28,17 +29,16 @@ void PrintTopLevelKeyword()
 }
 } // namespace
 
-bool HTNDomainPrinter::Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode)
+bool HTNDomainPrinter::Print(HTNDomainPrinterContext& ioDomainPrinterContext)
 {
-    const HTNDomainNode* DomainNode = inDomainNode.get();
+    const std::shared_ptr<const HTNDomainNode>& DomainNode = ioDomainPrinterContext.GetDomainNode();
     if (!DomainNode)
     {
         LOG_ERROR("Domain node is null");
         return false;
     }
 
-    HTNNodeVisitorContextBase Context;
-    return GetNodeValue(*DomainNode, Context).GetValue<bool>();
+    return GetNodeValue(*DomainNode, ioDomainPrinterContext).GetValue<bool>();
 }
 
 HTNAtom HTNDomainPrinter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioContext)

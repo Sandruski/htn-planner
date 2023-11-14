@@ -4,9 +4,9 @@
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNIndices.h"
 
-HTNDecompositionNodeScope::HTNDecompositionNodeScope(HTNDecompositionContext& outDecompositionContext, const std::string& inNodeID)
-    : HTNNodeScope(outDecompositionContext.GetCurrentNodePathMutable(), inNodeID),
-      mIndices(outDecompositionContext.GetCurrentDecompositionMutable().GetEnvironmentMutable().GetIndicesMutable())
+HTNDecompositionNodeScope::HTNDecompositionNodeScope(const std::string& inNodeID, HTNDecompositionContext& ioDecompositionContext)
+    : HTNNodeScope(inNodeID, ioDecompositionContext.GetCurrentNodePathMutable()),
+      mIndices(ioDecompositionContext.GetCurrentDecompositionMutable().GetEnvironmentMutable().GetIndicesMutable())
 {
 }
 

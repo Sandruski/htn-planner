@@ -3,17 +3,15 @@
 #ifdef HTN_DEBUG
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
-#include <memory>
-
-class HTNDomainNode;
+class HTNDomainPrinterContext;
 
 /**
- * Prints an abstract syntax tree representing a domain
+ * Prints a domain
  */
 class HTNDomainPrinter final : public HTNNodeVisitorBase
 {
 public:
-	bool Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
+    bool Print(HTNDomainPrinterContext& ioDomainPrinterContext);
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioContext) final;
     HTNAtom Visit(const HTNConstantsNode& inConstantsNode, HTNNodeVisitorContextBase& ioContext) final;

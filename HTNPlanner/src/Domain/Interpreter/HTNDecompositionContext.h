@@ -4,13 +4,17 @@
 #include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Interpreter/HTNTaskInstance.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
+#include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 
+#include <memory>
+#include <string>
 #include <vector>
 
 #ifdef HTN_DEBUG
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #endif
 
+class HTNDomainNode;
 class HTNWorldState;
 
 class HTNDecompositionRecord
@@ -38,13 +42,19 @@ private:
     std::vector<HTNTaskResult> mPlan;
 };
 
-class HTNDecompositionContext
+class HTNDecompositionContext final : public HTNNodeVisitorContextBase
 {
 public:
     HTNDecompositionContext() = default;
     explicit HTNDecompositionContext(const HTNWorldState& inWorldState);
 
     const HTNWorldState* GetWorldState() const;
+
+    void                                        SetDomainNode(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
+    const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
+
+    void               SetEntryPointID(const std::string& inEntryPointID);
+    const std::string& GetEntryPointID() const;
 
     void RecordDecomposition(HTNDecompositionRecord& inDecomposition);
     bool RestoreDecomposition();
@@ -64,9 +74,13 @@ public:
     HTNNodePath&       GetCurrentVariableScopeNodePathMutable();
 
 private:
-    // TODO salvarez Maybe move the world state to the interpreter too
-    const HTNWorldState* mWorldState = nullptr; ///< Pointer to world state. All the queries will just not be able to modify the world state at
-                                                ///< all, this is why it is important this is a const pointer.
+    // World state
+    // - Queries are not able to modify it
+    const HTNWorldState* mWorldState = nullptr;
+
+    std::shared_ptr<const HTNDomainNode> mDomainNode;
+
+    std::string mEntryPointID;
 
     // Current decomposition
     HTNDecompositionRecord mCurrentDecomposition;
@@ -138,6 +152,26 @@ inline const std::vector<HTNTaskResult>& HTNDecompositionRecord::GetPlan() const
 inline const HTNWorldState* HTNDecompositionContext::GetWorldState() const
 {
     return mWorldState;
+}
+
+inline void HTNDecompositionContext::SetDomainNode(const std::shared_ptr<const HTNDomainNode>& inDomainNode)
+{
+    mDomainNode = inDomainNode;
+}
+
+inline const std::shared_ptr<const HTNDomainNode>& HTNDecompositionContext::GetDomainNode() const
+{
+    return mDomainNode;
+}
+
+inline void HTNDecompositionContext::SetEntryPointID(const std::string& inEntryPointID)
+{
+    mEntryPointID = inEntryPointID;
+}
+
+inline const std::string& HTNDecompositionContext::GetEntryPointID() const
+{
+    return mEntryPointID;
 }
 
 inline void HTNDecompositionContext::RecordDecomposition(HTNDecompositionRecord& inDecomposition)

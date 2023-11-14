@@ -3,10 +3,7 @@
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionWatchPrinterBase.h"
 
-#include <memory>
-
-class HTNDecompositionNode;
-class HTNDomainNode;
+class HTNDecompositionWatchWindowPrinterContext;
 
 /**
  * Prints the watch window for the selected node
@@ -14,6 +11,6 @@ class HTNDomainNode;
 class HTNDecompositionWatchWindowPrinter final : public HTNDecompositionWatchPrinterBase
 {
 public:
-    void Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode);
+    void Print(HTNDecompositionWatchWindowPrinterContext& ioDecompositionWatchWindowPrinterContext);
 };
 #endif

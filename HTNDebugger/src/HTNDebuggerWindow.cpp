@@ -3,6 +3,7 @@
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDomainPrinter.h"
+#include "Domain/HTNDomainPrinterContext.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Interpreter/HTNNodePath.h"
@@ -295,8 +296,9 @@ void HTNDebuggerWindow::RenderDomain()
         return;
     }
 
-    const std::shared_ptr<const HTNDomainNode>& DomainNode = mPlannerHook->GetDomainNode();
-    mDomainPrinter.Print(DomainNode);
+    const std::shared_ptr<const HTNDomainNode>& DomainNode           = mPlannerHook->GetDomainNode();
+    HTNDomainPrinterContext                     DomainPrinterContext = HTNDomainPrinterContext(DomainNode);
+    mDomainPrinter.Print(DomainPrinterContext);
 }
 
 void HTNDebuggerWindow::RenderWorldState()

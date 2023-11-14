@@ -2,22 +2,20 @@
 
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
+#include "Domain/HTNDecompositionWatchWindowPrinterContext.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Interpreter/HTNVariables.h"
+#include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Helpers/HTNImGuiHelpers.h"
-#include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 
 #include "imgui.h"
 
-void HTNDecompositionWatchWindowPrinter::Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode)
+void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinterContext& ioDecompositionWatchWindowPrinterContext)
 {
-    Reset(inDomainNode, inNode);
-
-    HTNNodeVisitorContext Context;
-
-    const HTNNodeSnapshotDebug* NodeSnapshot = mNode->GetNodeSnapshot();
+    const HTNDecompositionNode* Node         = ioDecompositionWatchWindowPrinterContext.GetNode();
+    const HTNNodeSnapshotDebug* NodeSnapshot = Node->GetNodeSnapshot();
     if (!NodeSnapshot)
     {
         return;
@@ -26,12 +24,12 @@ void HTNDecompositionWatchWindowPrinter::Print(const std::shared_ptr<const HTNDo
     if (ImGui::BeginTable("WatchWindowTable", 2, HTNImGuiHelpers::kDefaultTableFlags))
     {
         // Print node parameters
-        const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters = mNode->GetNodeParameters();
+        const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters = Node->GetNodeParameters();
         for (const std::shared_ptr<const HTNVariableExpressionNode>& NodeParameter : NodeParameters)
         {
             ImGui::TableNextRow();
 
-            const HTNAtom  Parameter               = GetNodeValue(*NodeParameter, Context);
+            const HTNAtom  Parameter               = GetNodeValue(*NodeParameter, ioDecompositionWatchWindowPrinterContext);
             constexpr bool ShouldDoubleQuoteString = false;
 
             // Parameter ID
@@ -54,12 +52,12 @@ void HTNDecompositionWatchWindowPrinter::Print(const std::shared_ptr<const HTNDo
         }
 
         // Print node arguments
-        const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments = mNode->GetNodeArguments();
+        const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments = Node->GetNodeArguments();
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& NodeArgument : NodeArguments)
         {
             ImGui::TableNextRow();
 
-            const HTNAtom  Argument                = GetNodeValue(*NodeArgument, Context);
+            const HTNAtom  Argument                = GetNodeValue(*NodeArgument, ioDecompositionWatchWindowPrinterContext);
             constexpr bool ShouldDoubleQuoteString = false;
 
             // Argument ID
@@ -82,12 +80,13 @@ void HTNDecompositionWatchWindowPrinter::Print(const std::shared_ptr<const HTNDo
         }
 
         // Print remaining variables
-        const std::unordered_map<std::string, HTNAtom>& Variables = NodeSnapshot->GetVariables().GetVariables();
+        const std::vector<std::string>&                 NodeVariablePaths = ioDecompositionWatchWindowPrinterContext.GetNodeVariablePaths();
+        const std::unordered_map<std::string, HTNAtom>& Variables         = NodeSnapshot->GetVariables().GetVariables();
         for (const std::pair<std::string, HTNAtom>& VariablePair : Variables)
         {
             const std::string& VariablePath = VariablePair.first;
-            const auto         It           = std::find(mNodeVariablePaths.begin(), mNodeVariablePaths.end(), VariablePath);
-            if (It != mNodeVariablePaths.end())
+            const auto         It           = std::find(NodeVariablePaths.begin(), NodeVariablePaths.end(), VariablePath);
+            if (It != NodeVariablePaths.end())
             {
                 continue;
             }

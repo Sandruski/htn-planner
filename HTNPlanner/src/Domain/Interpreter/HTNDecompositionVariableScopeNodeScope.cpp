@@ -4,10 +4,10 @@
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNVariables.h"
 
-HTNDecompositionVariableScopeNodeScope::HTNDecompositionVariableScopeNodeScope(HTNDecompositionContext& outDecompositionContext,
-                                                                               const std::string&       inNodeID)
-    : HTNNodeScope(outDecompositionContext.GetCurrentVariableScopeNodePathMutable(), inNodeID),
-      mVariables(outDecompositionContext.GetCurrentDecompositionMutable().GetEnvironmentMutable().GetVariablesMutable())
+HTNDecompositionVariableScopeNodeScope::HTNDecompositionVariableScopeNodeScope(const std::string&       inNodeID,
+                                                                               HTNDecompositionContext& ioDecompositionContext)
+    : HTNNodeScope(inNodeID, ioDecompositionContext.GetCurrentVariableScopeNodePathMutable()),
+      mVariables(ioDecompositionContext.GetCurrentDecompositionMutable().GetEnvironmentMutable().GetVariablesMutable())
 {
 }
 

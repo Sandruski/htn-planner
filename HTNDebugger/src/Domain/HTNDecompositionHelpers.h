@@ -1,13 +1,6 @@
 #pragma once
 
 #ifdef HTN_DEBUG
-enum class HTNDecompositionTooltipMode : unsigned char
-{
-    NONE,
-    REGULAR,
-    FULL
-};
-
 namespace HTNDecompositionHelpers
 {
 // Check if the decomposition step is valid

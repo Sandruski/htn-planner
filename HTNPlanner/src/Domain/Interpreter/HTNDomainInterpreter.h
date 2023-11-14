@@ -1,22 +1,17 @@
 #pragma once
 
-#include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
-#include <memory>
-#include <string>
-
 class HTNDecompositionContext;
-class HTNDomainNode;
-enum class HTNNodeStep : unsigned char;
 
-// Decision-making
-// Returns a plan from an abstract syntax tree
+/**
+ * Decision-making
+ * Returns a plan
+ */
 class HTNDomainInterpreter final : public HTNNodeVisitorBase
 {
 public:
-    bool Interpret(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                   HTNDecompositionContext& ioDecompositionContext);
+    bool Interpret(HTNDecompositionContext& ioDecompositionContext);
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioContext) final;
     HTNAtom Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext) final;
@@ -37,18 +32,4 @@ public:
                   HTNNodeVisitorContextBase& ioContext) final;
     HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioContext) final;
     HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext) final;
-
-private:
-    void Reset(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-               HTNDecompositionContext& ioDecompositionContext);
-
-    std::shared_ptr<const HTNDomainNode> mDomainNode;
-    std::string                          mEntryPointID;
-    HTNDecompositionContext*             mDecompositionContext = nullptr;
-
-#ifdef HTN_DEBUG
-private:
-    void RecordCurrentNodeSnapshot(const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
-    void RecordCurrentNodeSnapshot(const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
-#endif
 };

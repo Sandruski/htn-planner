@@ -2,9 +2,9 @@
 
 #include "Domain/Interpreter/HTNNodePath.h"
 
-HTNNodeScope::HTNNodeScope(HTNNodePath& outNodePath, const std::string& inNodeID) : mNodePath(outNodePath)
+HTNNodeScope::HTNNodeScope(const std::string& inNodeID, HTNNodePath& ioNodePath) : mNodePath(ioNodePath)
 {
-    mResult = mNodePath.TryPushNodeToNodePath(inNodeID);
+    mResult = ioNodePath.TryPushNodeToNodePath(inNodeID);
 }
 
 HTNNodeScope::~HTNNodeScope()

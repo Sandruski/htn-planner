@@ -3,6 +3,7 @@
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionHelpers.h"
 #include "Domain/HTNDecompositionNode.h"
+#include "Domain/HTNDecompositionWatchTooltipPrinterContext.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
@@ -11,34 +12,31 @@
 
 #include "imgui.h"
 
-void HTNDecompositionWatchTooltipPrinter::Print(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNDecompositionNode& inNode,
-                                                const HTNDecompositionTooltipMode inTooltipMode)
+void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrinterContext& ioDecompositionWatchTooltipPrinterContext)
 {
-    Reset(inDomainNode, inNode);
-
-    HTNNodeVisitorContext Context;
-
-    if (inTooltipMode == HTNDecompositionTooltipMode::NONE)
+    const HTNDecompositionTooltipMode TooltipMode = ioDecompositionWatchTooltipPrinterContext.GetTooltipMode();
+    if (TooltipMode == HTNDecompositionTooltipMode::NONE)
     {
         return;
     }
 
-    const HTNNodeSnapshotDebug* NodeSnapshot = mNode->GetNodeSnapshot();
+    const HTNDecompositionNode* Node         = ioDecompositionWatchTooltipPrinterContext.GetNode();
+    const HTNNodeSnapshotDebug* NodeSnapshot = Node->GetNodeSnapshot();
     if (!NodeSnapshot)
     {
         return;
     }
 
     bool                                                                 ShouldPrint       = false;
-    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters    = mNode->GetNodeParameters();
+    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters    = Node->GetNodeParameters();
     const bool                                                           HasNodeParameters = !NodeParameters.empty();
     ShouldPrint                                                                            = ShouldPrint || HasNodeParameters;
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments    = mNode->GetNodeArguments();
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments    = Node->GetNodeArguments();
     const bool                                                            HasNodeArguments = !NodeArguments.empty();
     ShouldPrint                                                                            = ShouldPrint || HasNodeArguments;
     const std::unordered_map<std::string, HTNAtom>& Variables                              = NodeSnapshot->GetVariables().GetVariables();
     const bool                                      HasVariables                           = !Variables.empty();
-    if (inTooltipMode == HTNDecompositionTooltipMode::FULL)
+    if (TooltipMode == HTNDecompositionTooltipMode::FULL)
     {
         ShouldPrint = ShouldPrint || HasVariables;
     }
@@ -55,7 +53,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(const std::shared_ptr<const HTND
         {
             for (const std::shared_ptr<const HTNVariableExpressionNode>& NodeParameter : NodeParameters)
             {
-                const HTNAtom  Parameter               = GetNodeValue(*NodeParameter, Context);
+                const HTNAtom  Parameter               = GetNodeValue(*NodeParameter, ioDecompositionWatchTooltipPrinterContext);
                 constexpr bool ShouldDoubleQuoteString = false;
 
                 // Parameter ID
@@ -84,7 +82,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(const std::shared_ptr<const HTND
         {
             for (const std::shared_ptr<const HTNValueExpressionNodeBase>& NodeArgument : NodeArguments)
             {
-                const HTNAtom  Argument                = GetNodeValue(*NodeArgument, Context);
+                const HTNAtom  Argument                = GetNodeValue(*NodeArgument, ioDecompositionWatchTooltipPrinterContext);
                 constexpr bool ShouldDoubleQuoteString = false;
 
                 // Argument ID
@@ -108,16 +106,17 @@ void HTNDecompositionWatchTooltipPrinter::Print(const std::shared_ptr<const HTND
             ImGui::Spacing();
         }
 
-        if (inTooltipMode == HTNDecompositionTooltipMode::FULL)
+        if (TooltipMode == HTNDecompositionTooltipMode::FULL)
         {
             // Print remaining variables
             if (HasVariables)
             {
+                const std::vector<std::string>& NodeVariablePaths = ioDecompositionWatchTooltipPrinterContext.GetNodeVariablePaths();
                 for (const std::pair<std::string, HTNAtom>& VariablePair : Variables)
                 {
                     const std::string& VariablePath = VariablePair.first;
-                    const auto         It           = std::find(mNodeVariablePaths.begin(), mNodeVariablePaths.end(), VariablePath);
-                    if (It != mNodeVariablePaths.end())
+                    const auto         It           = std::find(NodeVariablePaths.begin(), NodeVariablePaths.end(), VariablePath);
+                    if (It != NodeVariablePaths.end())
                     {
                         continue;
                     }

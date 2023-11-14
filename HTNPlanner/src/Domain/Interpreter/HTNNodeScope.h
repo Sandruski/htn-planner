@@ -12,7 +12,7 @@ class HTNNodePath;
 class HTNNodeScope : private HTNUncopyable
 {
 public:
-    explicit HTNNodeScope(HTNNodePath& outNodePath, const std::string& inNodeID);
+    explicit HTNNodeScope(const std::string& inNodeID, HTNNodePath& ioNodePath);
     virtual ~HTNNodeScope();
 
 protected:

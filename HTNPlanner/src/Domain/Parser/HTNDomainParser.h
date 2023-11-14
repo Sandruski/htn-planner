@@ -20,10 +20,12 @@ class HTNToken;
 class HTNValueExpressionNodeBase;
 class HTNVariableExpressionNode;
 
-// Syntactic analysis
-// Recursive descent parser
-// Builds an abstract syntax tree from a series of tokens
-// Reports the first syntax error of the tokens
+/**
+ * Syntactic analysis
+ * Recursive descent parser
+ * Builds a domain from a series of tokens
+ * Reports the first syntax error of the tokens
+ */
 class HTNDomainParser final : public HTNParserBase<std::shared_ptr<const HTNDomainNode>>
 {
 public:

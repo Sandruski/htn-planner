@@ -1,5 +1,6 @@
 #include "Planner/HTNPlannerHook.h"
 
+#include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Helpers/HTNFileHandler.h"
 #include "Helpers/HTNToken.h"
@@ -35,13 +36,10 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
 
 bool HTNPlannerHook::MakePlan(const std::string& inEntryPointID, HTNDecompositionContext& ioDecompositionContext)
 {
-    if (!mDomainNode)
-    {
-        LOG_ERROR("Domain node is null");
-        return false;
-    }
+    ioDecompositionContext.SetDomainNode(mDomainNode);
+    ioDecompositionContext.SetEntryPointID(inEntryPointID);
 
-    if (!mDomainInterpreter.Interpret(mDomainNode, inEntryPointID, ioDecompositionContext))
+    if (!mDomainInterpreter.Interpret(ioDecompositionContext))
     {
         LOG_ERROR("Domain [{}] could not be interpreted", mDomainNode->GetID());
         return false;
