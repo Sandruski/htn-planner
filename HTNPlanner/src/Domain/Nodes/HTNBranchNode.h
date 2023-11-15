@@ -19,7 +19,7 @@ public:
                            const std::shared_ptr<const HTNConditionNodeBase>&         inPreConditionNode,
                            const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& inTaskNodes);
 
-    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
+    HTNAtom Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
 
     std::string GetID() const final;
 

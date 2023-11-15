@@ -2,84 +2,90 @@
 
 #include "Helpers/HTNToken.h"
 #include "Parser/HTNLexerHelpers.h"
+#include "WorldState/Parser/HTNWorldStateLexerContext.h"
 
-bool HTNWorldStateLexer::Lex(const std::string& inText, std::vector<HTNToken>& outTokens)
+bool HTNWorldStateLexer::Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext) const
 {
     OPTICK_EVENT("LexWorldState");
 
-    Reset(inText);
-
     bool Result = true;
 
-    for (char Character = GetCharacter(); HTNLexerHelpers::IsValidCharacter(Character); Character = GetCharacter())
+    for (char Character = ioWorldStateLexerContext.GetCharacter(); HTNLexerHelpers::IsValidCharacter(Character);
+         Character      = ioWorldStateLexerContext.GetCharacter())
     {
         switch (Character)
         {
         case '(': {
             // Left parenthesis
-            AddToken(HTNTokenType::LEFT_PARENTHESIS, std::string(1, Character), HTNAtom(), outTokens);
-            AdvancePosition();
+            ioWorldStateLexerContext.AddToken(HTNAtom(), HTNTokenType::LEFT_PARENTHESIS HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioWorldStateLexerContext.AdvancePosition();
             break;
         }
         case ')': {
             // Right parenthesis
-            AddToken(HTNTokenType::RIGHT_PARENTHESIS, std::string(1, Character), HTNAtom(), outTokens);
-            AdvancePosition();
+            ioWorldStateLexerContext.AddToken(HTNAtom(), HTNTokenType::RIGHT_PARENTHESIS HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioWorldStateLexerContext.AdvancePosition();
             break;
         }
         case '/': {
-            const char NextCharacter = GetCharacter(1);
+            const char NextCharacter = ioWorldStateLexerContext.GetCharacter(1);
             if (NextCharacter == '/')
             {
                 // Comment
-                LexComment();
+                LexComment(ioWorldStateLexerContext);
                 break;
             }
 
-            LOG_HTN_ERROR(mRow, mColumn, "Expected '/' after [{}] for a comment", Character);
+#ifdef HTN_DEBUG
+            const std::string Message = std::format("Expected '/' after [{}] for a comment", Character);
+            HTNLexerHelpers::PrintErrorMessage(Message, ioWorldStateLexerContext);
+#endif
             Result = false;
-            AdvancePosition();
+            ioWorldStateLexerContext.AdvancePosition();
             break;
         }
         case '"': {
             // String
-            Result = LexString(outTokens) && Result;
+            Result = LexString(ioWorldStateLexerContext) && Result;
             break;
         }
         case ' ': {
             // Whitespace
-            AdvancePosition();
+            ioWorldStateLexerContext.AdvancePosition();
             break;
         }
         case '\n': {
             // Newline
             constexpr bool IsNewLine = true;
-            AdvancePosition(IsNewLine);
+            ioWorldStateLexerContext.AdvancePosition(IsNewLine);
             break;
         }
         default: {
             if (HTNLexerHelpers::IsDigit(Character))
             {
                 // Number
-                LexNumber(outTokens);
+                LexNumber(ioWorldStateLexerContext);
                 break;
             }
             else if (HTNLexerHelpers::IsLetter(Character))
             {
                 // Identifier
                 static const std::unordered_map<std::string, HTNTokenType> Keywords = {{"true", HTNTokenType::TRUE}, {"false", HTNTokenType::FALSE}};
-                LexIdentifier(outTokens, Keywords);
+                LexIdentifier(Keywords, ioWorldStateLexerContext);
                 break;
             }
 
-            LOG_HTN_ERROR(mRow, mColumn, "Character [{}] not recognized", HTNLexerHelpers::GetSpecialCharacterEscapeSequence(Character));
+#ifdef HTN_DEBUG
+            const std::string Message = std::format("Character [{}] not recognized", HTNLexerHelpers::GetSpecialCharacterEscapeSequence(Character));
+            HTNLexerHelpers::PrintErrorMessage(Message, ioWorldStateLexerContext);
+#endif
             Result = false;
-            AdvancePosition();
+            ioWorldStateLexerContext.AdvancePosition();
         }
         }
     }
 
-    AddToken(HTNTokenType::END_OF_FILE, "", HTNAtom(), outTokens);
+    ioWorldStateLexerContext.AddToken(HTNAtom(), HTNTokenType::END_OF_FILE HTN_DEBUG_ONLY(, ""));
 
     return Result;
 }

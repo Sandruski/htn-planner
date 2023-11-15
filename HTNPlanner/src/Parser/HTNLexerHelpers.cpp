@@ -1,5 +1,9 @@
 #include "Parser/HTNLexerHelpers.h"
 
+#ifdef HTN_DEBUG
+#include "Parser/HTNLexerContextBase.h"
+#endif
+
 namespace HTNLexerHelpers
 {
 bool IsValidCharacter(const char inCharacter)
@@ -30,4 +34,13 @@ std::string GetSpecialCharacterEscapeSequence(const char inCharacter)
     const auto It = SpecialCharactersToEscapeSequences.find(inCharacter);
     return (It != SpecialCharactersToEscapeSequences.end() ? It->second : std::string(1, inCharacter));
 }
+
+#ifdef HTN_DEBUG
+void PrintErrorMessage(const std::string& inMessage, HTNLexerContextBase& ioLexerContext)
+{
+    const unsigned int Row    = ioLexerContext.GetRow();
+    const unsigned int Column = ioLexerContext.GetColumn();
+    LOG_HTN_ERROR(Row, Column, "{}", inMessage);
+}
+#endif
 } // namespace HTNLexerHelpers

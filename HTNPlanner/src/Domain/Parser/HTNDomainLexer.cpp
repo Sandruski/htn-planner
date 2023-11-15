@@ -1,102 +1,105 @@
 #include "Domain/Parser/HTNDomainLexer.h"
 
+#include "Domain/Parser/HTNDomainLexerContext.h"
 #include "Helpers/HTNToken.h"
 #include "Parser/HTNLexerHelpers.h"
 
-bool HTNDomainLexer::Lex(const std::string& inText, std::vector<HTNToken>& outTokens)
+bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
 {
     OPTICK_EVENT("LexDomain");
 
-    Reset(inText);
-
     bool Result = true;
 
-    for (char Character = GetCharacter(); HTNLexerHelpers::IsValidCharacter(Character); Character = GetCharacter())
+    for (char Character = ioDomainLexerContext.GetCharacter(); HTNLexerHelpers::IsValidCharacter(Character);
+         Character      = ioDomainLexerContext.GetCharacter())
     {
         switch (Character)
         {
         case ':': {
             // Colon
-            AddToken(HTNTokenType::COLON, std::string(1, Character), HTNAtom(), outTokens);
-            AdvancePosition();
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::COLON HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '(': {
             // Left parenthesis
-            AddToken(HTNTokenType::LEFT_PARENTHESIS, std::string(1, Character), HTNAtom(), outTokens);
-            AdvancePosition();
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::LEFT_PARENTHESIS HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AdvancePosition();
             break;
         }
         case ')': {
             // Right parenthesis
-            AddToken(HTNTokenType::RIGHT_PARENTHESIS, std::string(1, Character), HTNAtom(), outTokens);
-            AdvancePosition();
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::RIGHT_PARENTHESIS HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '!': {
             // Exclamation mark
-            AddToken(HTNTokenType::EXCLAMATION_MARK, std::string(1, Character), HTNAtom(), outTokens);
-            AdvancePosition();
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::EXCLAMATION_MARK HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '?': {
             // Question mark
-            AddToken(HTNTokenType::QUESTION_MARK, std::string(1, Character), HTNAtom(), outTokens);
-            AdvancePosition();
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::QUESTION_MARK HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '#': {
             // Hash
-            AddToken(HTNTokenType::HASH, std::string(1, Character), HTNAtom(), outTokens);
-            AdvancePosition();
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::HASH HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '@': {
             // At
-            AddToken(HTNTokenType::AT, std::string(1, Character), HTNAtom(), outTokens);
-            AdvancePosition();
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::AT HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '/': {
-            const char NextCharacter = GetCharacter(1);
+            const char NextCharacter = ioDomainLexerContext.GetCharacter(1);
             if (NextCharacter == '/')
             {
                 // Comment
-                LexComment();
+                LexComment(ioDomainLexerContext);
                 break;
             }
 
-            LOG_HTN_ERROR(mRow, mColumn, "Expected '/' after [{}] for a comment", Character);
+#ifdef HTN_DEBUG
+            const std::string Message = std::format("Expected '/' after [{}] for a comment", Character);
+            HTNLexerHelpers::PrintErrorMessage(Message, ioDomainLexerContext);
+#endif
             Result = false;
-            AdvancePosition();
+            ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '"': {
             // String
-            Result = LexString(outTokens) && Result;
+            Result = LexString(ioDomainLexerContext) && Result;
             break;
         }
         case ' ': {
             // Whitespace
-            AdvancePosition();
+            ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '\t': {
             // Tab
-            AdvancePosition();
+            ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '\n': {
             // Newline
             constexpr bool IsNewLine = true;
-            AdvancePosition(IsNewLine);
+            ioDomainLexerContext.AdvancePosition(IsNewLine);
             break;
         }
         default: {
             if (HTNLexerHelpers::IsDigit(Character))
             {
                 // Number
-                LexNumber(outTokens);
+                LexNumber(ioDomainLexerContext);
                 break;
             }
             else if (HTNLexerHelpers::IsLetter(Character))
@@ -109,18 +112,21 @@ bool HTNDomainLexer::Lex(const std::string& inText, std::vector<HTNToken>& outTo
                     {"and", HTNTokenType::AND},           {"or", HTNTokenType::OR},
                     {"alt", HTNTokenType::ALT},           {"not", HTNTokenType::NOT},
                     {"true", HTNTokenType::TRUE},         {"false", HTNTokenType::FALSE}};
-                LexIdentifier(outTokens, Keywords);
+                LexIdentifier(Keywords, ioDomainLexerContext);
                 break;
             }
 
-            LOG_HTN_ERROR(mRow, mColumn, "Character [{}] not recognized", HTNLexerHelpers::GetSpecialCharacterEscapeSequence(Character));
+#ifdef HTN_DEBUG
+            const std::string Message = std::format("Character [{}] not recognized", HTNLexerHelpers::GetSpecialCharacterEscapeSequence(Character));
+            HTNLexerHelpers::PrintErrorMessage(Message, ioDomainLexerContext);
+#endif
             Result = false;
-            AdvancePosition();
+            ioDomainLexerContext.AdvancePosition();
         }
         }
     }
 
-    AddToken(HTNTokenType::END_OF_FILE, "", HTNAtom(), outTokens);
+    ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::END_OF_FILE HTN_DEBUG_ONLY(, ""));
 
     return Result;
 }

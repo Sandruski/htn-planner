@@ -22,7 +22,7 @@ public:
                            const std::vector<std::shared_ptr<const HTNAxiomNode>>&     inAxiomNodes,
                            const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel);
 
-    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
+    HTNAtom Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
 
     std::string GetID() const final;
 

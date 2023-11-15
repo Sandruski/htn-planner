@@ -2,6 +2,9 @@
 
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
+#include "Domain/HTNDecompositionPrinterContext.h"
+#include "Domain/HTNDecompositionWatchTooltipPrinterContext.h"
+#include "Domain/HTNDecompositionWatchWindowPrinterContext.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/HTNDomainPrinterContext.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
@@ -477,13 +480,14 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(HTNPlanningQuery&    
 
     if (inPlanningQuery.IsLastDecompositionSuccessful())
     {
-        const HTNPlanningUnit*                      PlanningUnit       = inPlanningQuery.GetPlanningUnit();
-        const std::shared_ptr<const HTNDomainNode>& LastDomainNode     = PlanningUnit->GetLastDomainNode();
-        const std::string&                          LastEntryPointID   = PlanningUnit->GetLastEntryPointID();
-        const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = PlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
-        const bool                           ShouldIgnoreNewNodeOpen   = !mIsDecompositionCurrentTab;
-        mDecompositionPrinter.Print(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, mTooltipMode, ShouldIgnoreNewNodeOpen, ShouldReset,
-                                    ioSelectedNode);
+        const HTNPlanningUnit*                      PlanningUnit         = inPlanningQuery.GetPlanningUnit();
+        const std::shared_ptr<const HTNDomainNode>& LastDomainNode       = PlanningUnit->GetLastDomainNode();
+        const std::string&                          LastEntryPointID     = PlanningUnit->GetLastEntryPointID();
+        const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot   = PlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
+        const bool                           ShouldIgnoreNewNodeOpen     = !mIsDecompositionCurrentTab;
+        HTNDecompositionPrinterContext       DecompositionPrinterContext = HTNDecompositionPrinterContext(
+            LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, mTooltipMode, ShouldIgnoreNewNodeOpen, ioSelectedNode);
+        mDecompositionPrinter.Print(DecompositionPrinterContext);
     }
 
     ImGui::EndChild();
@@ -507,7 +511,9 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(HTNPlanningQuery&    
     {
         const HTNPlanningUnit*                      PlanningUnit   = inPlanningQuery.GetPlanningUnit();
         const std::shared_ptr<const HTNDomainNode>& LastDomainNode = PlanningUnit->GetLastDomainNode();
-        mDecompositionWatchWindowPrinter.Print(LastDomainNode, ioSelectedNode);
+        HTNDecompositionWatchWindowPrinterContext   DecompositionWatchWindowPrinterContext =
+            HTNDecompositionWatchWindowPrinterContext(LastDomainNode, ioSelectedNode);
+        mDecompositionWatchWindowPrinter.Print(DecompositionWatchWindowPrinterContext);
     }
 
     ImGui::EndChild();

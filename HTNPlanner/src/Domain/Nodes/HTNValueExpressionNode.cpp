@@ -16,7 +16,7 @@ HTNIdentifierExpressionNode::HTNIdentifierExpressionNode(const HTNAtom& inValue)
 {
 }
 
-HTNAtom HTNIdentifierExpressionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNIdentifierExpressionNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
     return ioNodeVisitor.Visit(*this, ioContext);
 }
@@ -25,7 +25,7 @@ HTNLiteralExpressionNode::HTNLiteralExpressionNode(const HTNAtom& inValue) : HTN
 {
 }
 
-HTNAtom HTNLiteralExpressionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNLiteralExpressionNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
     return ioNodeVisitor.Visit(*this, ioContext);
 }
@@ -34,12 +34,13 @@ HTNVariableExpressionNode::HTNVariableExpressionNode(const HTNAtom& inValue) : H
 {
 }
 
-void HTNVariableExpressionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, const HTNAtom& inNodeValue, HTNNodeVisitorContextBase& ioContext) const
+void HTNVariableExpressionNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, const HTNAtom& inNodeValue,
+                                       HTNNodeVisitorContextBase& ioContext) const
 {
     return ioNodeVisitor.Visit(*this, inNodeValue, ioContext);
 }
 
-HTNAtom HTNVariableExpressionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNVariableExpressionNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
     return ioNodeVisitor.Visit(*this, ioContext);
 }
@@ -48,7 +49,7 @@ HTNConstantExpressionNode::HTNConstantExpressionNode(const HTNAtom& inValue) : H
 {
 }
 
-HTNAtom HTNConstantExpressionNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNConstantExpressionNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
     return ioNodeVisitor.Visit(*this, ioContext);
 }

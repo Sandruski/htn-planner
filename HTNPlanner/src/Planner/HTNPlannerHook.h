@@ -10,8 +10,9 @@
 class HTNDecompositionContext;
 class HTNDomainNode;
 
-// Runtime instance of an HTN Planner.
-//
+/**
+ * Runtime instance of an HTN Planner
+ */
 class HTNPlannerHook
 {
 public:
@@ -25,9 +26,9 @@ public:
 private:
     std::shared_ptr<const HTNDomainNode> mDomainNode;
 
-    HTNDomainLexer       mDomainLexer;
-    HTNDomainParser      mDomainParser;
-    HTNDomainInterpreter mDomainInterpreter;
+    const HTNDomainLexer       mDomainLexer;
+    const HTNDomainParser      mDomainParser;
+    const HTNDomainInterpreter mDomainInterpreter;
 };
 
 inline const std::shared_ptr<const HTNDomainNode>& HTNPlannerHook::GetDomainNode() const

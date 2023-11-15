@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Helpers/HTNAtom.h"
+#include "Helpers/HTNMacros.h"
 
 #include <optional>
 #include <string>
@@ -67,36 +68,43 @@ inline std::string GetTokenTypeString(const HTNTokenType inTokenType)
 class HTNToken
 {
 public:
-    explicit HTNToken(const HTNTokenType inType, const std::string& inLexeme, const HTNAtom& inValue, const unsigned int inRow,
-                      const unsigned int inColumn);
+    explicit HTNToken(const HTNAtom&            inValue,
+                      const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme, const unsigned int inRow, const unsigned int inColumn));
 
-    HTNTokenType       GetType() const;
+    const HTNAtom& GetValue() const;
+    HTNTokenType   GetType() const;
+
+private:
+    HTNAtom      mValue;
+    HTNTokenType mType;
+
+#if HTN_DEBUG
+public:
     const std::string& GetLexeme() const;
-    const HTNAtom&     GetValue() const;
     unsigned int       GetRow() const;
     unsigned int       GetColumn() const;
 
 private:
-    HTNTokenType mType;
     std::string  mLexeme;
-    HTNAtom      mValue;
     unsigned int mRow    = 0;
     unsigned int mColumn = 0;
+#endif
 };
+
+inline const HTNAtom& HTNToken::GetValue() const
+{
+    return mValue;
+}
 
 inline HTNTokenType HTNToken::GetType() const
 {
     return mType;
 }
 
+#if HTN_DEBUG
 inline const std::string& HTNToken::GetLexeme() const
 {
     return mLexeme;
-}
-
-inline const HTNAtom& HTNToken::GetValue() const
-{
-    return mValue;
 }
 
 inline unsigned int HTNToken::GetRow() const
@@ -108,3 +116,4 @@ inline unsigned int HTNToken::GetColumn() const
 {
     return mColumn;
 }
+#endif

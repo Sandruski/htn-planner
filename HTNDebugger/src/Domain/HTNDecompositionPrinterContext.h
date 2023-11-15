@@ -31,8 +31,12 @@ public:
     HTNDecompositionTooltipMode                 GetTooltipMode() const;
     bool                                        ShouldIgnoreNewNodeOpen() const;
 
-    const HTNDecompositionNodeState*            FindNodeState(const std::string& inNodePath) const;
+    void                             AddNodeState(const std::string& inNodePath, const HTNDecompositionNodeState& inNodeState);
+    const HTNDecompositionNodeState* FindNodeState(const std::string& inNodePath) const;
+    HTNDecompositionNodeState*       FindNodeStateMutable(const std::string& inNodePath);
+    void AddChoicePointNodeState(const std::string& inNodePath, const HTNDecompositionChoicePointNodeState& inChoicePointNodeState);
     const HTNDecompositionChoicePointNodeState* FindChoicePointNodeState(const std::string& inNodePath) const;
+    HTNDecompositionChoicePointNodeState*       FindChoicePointNodeStateMutable(const std::string& inNodePath);
 
     const HTNNodePath& GetCurrentNodePath() const;
     HTNNodePath&       GetCurrentNodePathMutable();
@@ -127,13 +131,36 @@ inline bool HTNDecompositionPrinterContext::ShouldIgnoreNewNodeOpen() const
     return mShouldIgnoreNewNodeOpen;
 }
 
+inline void HTNDecompositionPrinterContext::AddNodeState(const std::string& inNodePath, const HTNDecompositionNodeState& inNodeState)
+{
+    mNodeStates[inNodePath] = inNodeState;
+}
+
 inline const HTNDecompositionNodeState* HTNDecompositionPrinterContext::FindNodeState(const std::string& inNodePath) const
 {
     const auto It = mNodeStates.find(inNodePath);
     return ((It != mNodeStates.end()) ? &It->second : nullptr);
 }
 
+inline HTNDecompositionNodeState* HTNDecompositionPrinterContext::FindNodeStateMutable(const std::string& inNodePath)
+{
+    const auto It = mNodeStates.find(inNodePath);
+    return ((It != mNodeStates.end()) ? &It->second : nullptr);
+}
+
+inline void HTNDecompositionPrinterContext::AddChoicePointNodeState(const std::string&                          inNodePath,
+                                                                    const HTNDecompositionChoicePointNodeState& inChoicePointNodeState)
+{
+    mChoicePointNodeStates[inNodePath] = inChoicePointNodeState;
+}
+
 inline const HTNDecompositionChoicePointNodeState* HTNDecompositionPrinterContext::FindChoicePointNodeState(const std::string& inNodePath) const
+{
+    const auto It = mChoicePointNodeStates.find(inNodePath);
+    return ((It != mChoicePointNodeStates.end()) ? &It->second : nullptr);
+}
+
+inline HTNDecompositionChoicePointNodeState* HTNDecompositionPrinterContext::FindChoicePointNodeStateMutable(const std::string& inNodePath)
 {
     const auto It = mChoicePointNodeStates.find(inNodePath);
     return ((It != mChoicePointNodeStates.end()) ? &It->second : nullptr);

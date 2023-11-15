@@ -34,7 +34,7 @@ HTNCompoundTaskNode::HTNCompoundTaskNode(const std::shared_ptr<const HTNIdentifi
 {
 }
 
-HTNAtom HTNCompoundTaskNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNCompoundTaskNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
     return ioNodeVisitor.Visit(*this, ioContext);
 }
@@ -46,7 +46,7 @@ HTNPrimitiveTaskNode::HTNPrimitiveTaskNode(const std::shared_ptr<const HTNIdenti
 }
 
 
-HTNAtom HTNPrimitiveTaskNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNPrimitiveTaskNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
     return ioNodeVisitor.Visit(*this, ioContext);
 }

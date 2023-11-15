@@ -19,7 +19,7 @@ public:
                            const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inParameterNodes,
                            const std::vector<std::shared_ptr<const HTNBranchNode>>& inBranchNodes, const bool inIsTopLevel);
 
-    HTNAtom Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
+    HTNAtom Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
 
     std::string GetID() const final;
 

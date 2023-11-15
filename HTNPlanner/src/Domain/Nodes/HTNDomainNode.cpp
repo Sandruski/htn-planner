@@ -15,7 +15,7 @@ HTNDomainNode::HTNDomainNode(const std::shared_ptr<const HTNIdentifierExpression
 {
 }
 
-HTNAtom HTNDomainNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
     return ioNodeVisitor.Visit(*this, ioContext);
 }

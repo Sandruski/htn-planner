@@ -11,6 +11,6 @@ class HTNDecompositionWatchTooltipPrinterContext;
 class HTNDecompositionWatchTooltipPrinter final : public HTNDecompositionWatchPrinterBase
 {
 public:
-    void Print(HTNDecompositionWatchTooltipPrinterContext& ioDecompositionWatchTooltipPrinterContext);
+    void Print(HTNDecompositionWatchTooltipPrinterContext& ioDecompositionWatchTooltipPrinterContext) const;
 };
 #endif

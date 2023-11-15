@@ -3,5 +3,5 @@
 class HTNNodeVisitorContextBase
 {
 public:
-    virtual ~HTNNodeVisitorContextBase() = default;
+    virtual ~HTNNodeVisitorContextBase() = 0;
 };

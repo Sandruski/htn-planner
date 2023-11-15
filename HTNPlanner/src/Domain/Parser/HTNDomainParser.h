@@ -3,8 +3,8 @@
 #include "Parser/HTNParserBase.h"
 
 #include <memory>
-#include <vector>
 
+class HTNAtom;
 class HTNAxiomNode;
 class HTNBranchNode;
 class HTNConditionNodeBase;
@@ -12,11 +12,11 @@ class HTNConstantExpressionNode;
 class HTNConstantNode;
 class HTNConstantsNode;
 class HTNDomainNode;
+class HTNDomainParserContext;
 class HTNIdentifierExpressionNode;
 class HTNLiteralExpressionNode;
 class HTNMethodNode;
 class HTNTaskNodeBase;
-class HTNToken;
 class HTNValueExpressionNodeBase;
 class HTNVariableExpressionNode;
 
@@ -26,26 +26,30 @@ class HTNVariableExpressionNode;
  * Builds a domain from a series of tokens
  * Reports the first syntax error of the tokens
  */
-class HTNDomainParser final : public HTNParserBase<std::shared_ptr<const HTNDomainNode>>
+class HTNDomainParser final : public HTNParserBase
 {
 public:
-    bool Parse(const std::vector<HTNToken>& inTokens, std::shared_ptr<const HTNDomainNode>& outDomainNode) final;
+    bool Parse(HTNDomainParserContext& ioDomainParserContext) const;
 
 private:
-    bool ParseDomainNode(std::shared_ptr<const HTNDomainNode>& outDomainNode, unsigned int& ioPosition);
-    bool ParseConstantsNode(std::shared_ptr<const HTNConstantsNode>& outConstantsNode, unsigned int& ioPosition);
-    bool ParseConstantNode(std::shared_ptr<const HTNConstantNode>& outConstantNode, unsigned int& ioPosition);
-    bool ParseAxiomNode(std::shared_ptr<const HTNAxiomNode>& outAxiomNode, unsigned int& ioPosition);
-    bool ParseMethodNode(std::shared_ptr<const HTNMethodNode>& outMethodNode, unsigned int& ioPosition);
-    bool ParseBranchNode(std::shared_ptr<const HTNBranchNode>& outBranchNode, unsigned int& ioPosition);
-    bool ParseConditionNode(std::shared_ptr<const HTNConditionNodeBase>& outConditionNode, unsigned int& ioPosition);
-    bool ParseSubConditionNode(std::shared_ptr<const HTNConditionNodeBase>& outSubConditionNode, unsigned int& ioPosition);
-    bool ParseTaskNode(std::shared_ptr<const HTNTaskNodeBase>& outTaskNode, unsigned int& ioPosition);
-    bool ParseArgumentNode(std::shared_ptr<const HTNValueExpressionNodeBase>& outArgumentNode, unsigned int& ioPosition);
-    bool ParseVariableExpressionNode(std::shared_ptr<const HTNVariableExpressionNode>& outVariableExpressionNode, unsigned int& ioPosition);
-    bool ParseConstantExpressionNode(std::shared_ptr<const HTNConstantExpressionNode>& outConstantExpressionNode, unsigned int& ioPosition);
-    bool ParseIdentifierExpressionNode(std::shared_ptr<const HTNIdentifierExpressionNode>& outIdentifierExpressionNode, unsigned int& ioPosition);
-    bool ParseLiteralExpressionNode(std::shared_ptr<const HTNLiteralExpressionNode>& outLiteralExpressionNode, unsigned int& ioPosition);
+    bool ParseDomainNode(std::shared_ptr<const HTNDomainNode>& outDomainNode, HTNDomainParserContext& ioDomainParserContext) const;
+    bool ParseConstantsNode(std::shared_ptr<const HTNConstantsNode>& outConstantsNode, HTNDomainParserContext& ioDomainParserContext) const;
+    bool ParseConstantNode(std::shared_ptr<const HTNConstantNode>& outConstantNode, HTNDomainParserContext& ioDomainParserContext) const;
+    bool ParseAxiomNode(std::shared_ptr<const HTNAxiomNode>& outAxiomNode, HTNDomainParserContext& ioDomainParserContext) const;
+    bool ParseMethodNode(std::shared_ptr<const HTNMethodNode>& outMethodNode, HTNDomainParserContext& ioDomainParserContext) const;
+    bool ParseBranchNode(std::shared_ptr<const HTNBranchNode>& outBranchNode, HTNDomainParserContext& ioDomainParserContext) const;
+    bool ParseConditionNode(std::shared_ptr<const HTNConditionNodeBase>& outConditionNode, HTNDomainParserContext& ioDomainParserContext) const;
+    bool ParseSubConditionNode(std::shared_ptr<const HTNConditionNodeBase>& outSubConditionNode, HTNDomainParserContext& ioDomainParserContext) const;
+    bool ParseTaskNode(std::shared_ptr<const HTNTaskNodeBase>& outTaskNode, HTNDomainParserContext& ioDomainParserContext) const;
+    bool ParseArgumentNode(std::shared_ptr<const HTNValueExpressionNodeBase>& outArgumentNode, HTNDomainParserContext& ioDomainParserContext) const;
+    bool ParseVariableExpressionNode(std::shared_ptr<const HTNVariableExpressionNode>& outVariableExpressionNode,
+                                     HTNDomainParserContext&                           ioDomainParserContext) const;
+    bool ParseConstantExpressionNode(std::shared_ptr<const HTNConstantExpressionNode>& outConstantExpressionNode,
+                                     HTNDomainParserContext&                           ioDomainParserContext) const;
+    bool ParseIdentifierExpressionNode(std::shared_ptr<const HTNIdentifierExpressionNode>& outIdentifierExpressionNode,
+                                       HTNDomainParserContext&                             ioDomainParserContext) const;
+    bool ParseLiteralExpressionNode(std::shared_ptr<const HTNLiteralExpressionNode>& outLiteralExpressionNode,
+                                    HTNDomainParserContext&                          ioDomainParserContext) const;
 
-    bool ParseLiteral(HTNAtom& outLiteral, unsigned int& inPosition);
+    bool ParseLiteral(HTNAtom& outLiteral, HTNDomainParserContext& ioDomainParserContext) const;
 };

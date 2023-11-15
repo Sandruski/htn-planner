@@ -19,7 +19,7 @@ class HTNDecompositionWatchTooltipPrinterContext final : public HTNDecomposition
 {
 public:
     explicit HTNDecompositionWatchTooltipPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                        const HTNDecompositionNode&                 inDecompositionNode,                                                        
+                                                        const HTNDecompositionNode&                 inDecompositionNode,
                                                         const HTNDecompositionTooltipMode           inTooltipMode);
 
     HTNDecompositionTooltipMode GetTooltipMode() const;
@@ -28,7 +28,7 @@ private:
     HTNDecompositionTooltipMode mTooltipMode = HTNDecompositionTooltipMode::NONE;
 };
 
-inline HTNDecompositionTooltipMode HTNDecompositionWatchTooltipPrinterContext::GetTooltipMode() const;
+inline HTNDecompositionTooltipMode HTNDecompositionWatchTooltipPrinterContext::GetTooltipMode() const
 {
     return mTooltipMode;
 }

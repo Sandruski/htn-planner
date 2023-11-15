@@ -1,9 +1,9 @@
 #pragma once
 
 #ifdef HTN_DEBUG
-#include "Domain/HTNDecompositionHelpers.h"
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionPrinter.h"
+#include "Domain/HTNDecompositionWatchTooltipPrinterContext.h"
 #include "Domain/HTNDecompositionWatchWindowPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Helpers/HTNDebuggerWindowHelpers.h"
@@ -60,10 +60,10 @@ private:
     HTNDecompositionTooltipMode mTooltipMode               = HTNDecompositionTooltipMode::REGULAR;
     bool                        mIsDecompositionCurrentTab = false;
 
-    HTNWorldStatePrinter               mWorldStatePrinter;
-    HTNDomainPrinter                   mDomainPrinter;
-    HTNDecompositionPrinter            mDecompositionPrinter;
-    HTNDecompositionWatchWindowPrinter mDecompositionWatchWindowPrinter;
+    const HTNWorldStatePrinter               mWorldStatePrinter;
+    const HTNDomainPrinter                   mDomainPrinter;
+    const HTNDecompositionPrinter            mDecompositionPrinter;
+    const HTNDecompositionWatchWindowPrinter mDecompositionWatchWindowPrinter;
 };
 
 inline bool HTNDebuggerWindow::IsLastWorldStateFileParsingSuccessful() const

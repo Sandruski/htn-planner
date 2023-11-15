@@ -15,6 +15,7 @@ class HTNDecompositionWatchPrinterContextBase : public HTNNodeVisitorContextBase
 public:
     explicit HTNDecompositionWatchPrinterContextBase(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
                                                      const HTNDecompositionNode&                 inDecompositionNode);
+    virtual ~HTNDecompositionWatchPrinterContextBase() = 0;
 
     void                                        AddVariablePath(const std::string& inVariablePath);
     const std::vector<std::string>&             GetNodeVariablePaths() const;

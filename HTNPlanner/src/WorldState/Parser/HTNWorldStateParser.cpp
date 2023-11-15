@@ -1,7 +1,9 @@
 #include "WorldState/Parser/HTNWorldStateParser.h"
 
 #include "Helpers/HTNToken.h"
+#include "Parser/HTNParserHelpers.h"
 #include "WorldState/HTNWorldState.h"
+#include "WorldState/Parser/HTNWorldStateParserContext.h"
 
 /*
 Backus Naur Form (BNF):
@@ -10,19 +12,18 @@ Backus Naur Form (BNF):
 <argument> ::= ('(' <argument>+ ')') | 'true' | 'false' | 'number' | 'string'
 */
 
-bool HTNWorldStateParser::Parse(const std::vector<HTNToken>& inTokens, HTNWorldState& outWorldState)
+bool HTNWorldStateParser::Parse(HTNWorldStateParserContext& ioWorldStateParserContext) const
 {
     OPTICK_EVENT("ParseWorldState");
 
-    Reset(inTokens);
-
-    unsigned int CurrentPosition = 0;
-
-    while (!ParseToken(HTNTokenType::END_OF_FILE, CurrentPosition))
+    HTNWorldState& WorldState = ioWorldStateParserContext.GetWorldStateMutable();
+    while (!ParseToken(HTNTokenType::END_OF_FILE, ioWorldStateParserContext))
     {
-        if (!ParseFact(outWorldState, CurrentPosition))
+        if (!ParseFact(WorldState, ioWorldStateParserContext))
         {
-            LOG_HTN_ERROR(mLastErrorRow, mLastErrorColumn, "{}", mLastErrorMessage);
+#ifdef HTN_DEBUG
+            HTNParserHelpers::PrintLastErrorMessage(ioWorldStateParserContext);
+#endif
             return false;
         }
     }
@@ -30,99 +31,100 @@ bool HTNWorldStateParser::Parse(const std::vector<HTNToken>& inTokens, HTNWorldS
     return true;
 }
 
-bool HTNWorldStateParser::ParseFact(HTNWorldState& outWorldState, unsigned int& ioPosition)
+bool HTNWorldStateParser::ParseFact(HTNWorldState& outWorldState, HTNWorldStateParserContext& ioWorldStateParserContext) const
 {
     OPTICK_EVENT("ParseFact");
 
-    unsigned int CurrentPosition = ioPosition;
+    const unsigned int StartPosition = ioWorldStateParserContext.GetPosition();
 
     HTNAtom Identifier;
-    if (!ParseIdentifier(Identifier, CurrentPosition))
+    if (!ParseIdentifier(Identifier, ioWorldStateParserContext))
     {
+        ioWorldStateParserContext.SetPosition(StartPosition);
         return false;
     }
 
     std::vector<HTNAtom> Arguments;
     HTNAtom              Argument;
-    while (ParseArgument(Argument, CurrentPosition))
+    while (ParseArgument(Argument, ioWorldStateParserContext))
     {
         Arguments.emplace_back(Argument);
     }
 
     outWorldState.AddFact(Identifier.GetValue<std::string>().c_str(), Arguments.begin(), Arguments.end());
 
-    ioPosition = CurrentPosition;
-
     return true;
 }
 
-bool HTNWorldStateParser::ParseIdentifier(HTNAtom& outIdentifier, unsigned int& inPosition)
+bool HTNWorldStateParser::ParseIdentifier(HTNAtom& outIdentifier, HTNWorldStateParserContext& ioWorldStateParserContext) const
 {
     OPTICK_EVENT("ParseIdentifier");
 
-    unsigned int CurrentPosition = inPosition;
+    const unsigned int StartPosition = ioWorldStateParserContext.GetPosition();
 
-    const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, CurrentPosition);
+    const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, ioWorldStateParserContext);
     if (!IdentifierToken)
     {
+        ioWorldStateParserContext.SetPosition(StartPosition);
         return false;
     }
 
     outIdentifier = IdentifierToken->GetValue();
-    inPosition    = CurrentPosition;
 
     return true;
 }
 
-bool HTNWorldStateParser::ParseArgument(HTNAtom& outArgument, unsigned int& inPosition)
+bool HTNWorldStateParser::ParseArgument(HTNAtom& outArgument, HTNWorldStateParserContext& ioWorldStateParserContext) const
 {
     OPTICK_EVENT("ParseArgument");
 
-    unsigned int CurrentPosition = inPosition;
+    const unsigned int StartPosition = ioWorldStateParserContext.GetPosition();
 
     HTNAtom Argument;
 
-    if (ParseToken(HTNTokenType::LEFT_PARENTHESIS, CurrentPosition))
+    if (ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioWorldStateParserContext))
     {
         HTNAtom ArgumentElement;
-        while (ParseArgument(ArgumentElement, CurrentPosition))
+        while (ParseArgument(ArgumentElement, ioWorldStateParserContext))
         {
             Argument.AddListElement(ArgumentElement);
         }
 
         if (Argument.IsListEmpty())
         {
+            ioWorldStateParserContext.SetPosition(StartPosition);
             return false;
         }
 
-        if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, CurrentPosition))
+        if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, ioWorldStateParserContext))
         {
+            ioWorldStateParserContext.SetPosition(StartPosition);
             return false;
         }
     }
-    else if (const HTNToken* TrueToken = ParseToken(HTNTokenType::TRUE, CurrentPosition))
+    else if (const HTNToken* TrueToken = ParseToken(HTNTokenType::TRUE, ioWorldStateParserContext))
     {
         Argument = TrueToken->GetValue();
     }
-    else if (const HTNToken* FalseToken = ParseToken(HTNTokenType::FALSE, CurrentPosition))
+    else if (const HTNToken* FalseToken = ParseToken(HTNTokenType::FALSE, ioWorldStateParserContext))
     {
         Argument = FalseToken->GetValue();
     }
-    else if (const HTNToken* NumberToken = ParseToken(HTNTokenType::NUMBER, CurrentPosition))
+    else if (const HTNToken* NumberToken = ParseToken(HTNTokenType::NUMBER, ioWorldStateParserContext))
     {
         Argument = NumberToken->GetValue();
     }
-    else if (const HTNToken* StringToken = ParseToken(HTNTokenType::STRING, CurrentPosition))
+    else if (const HTNToken* StringToken = ParseToken(HTNTokenType::STRING, ioWorldStateParserContext))
     {
         Argument = StringToken->GetValue();
     }
     else
     {
+        ioWorldStateParserContext.SetPosition(StartPosition);
         return false;
     }
 
     outArgument = Argument;
-    inPosition  = CurrentPosition;
 
     return true;
 }

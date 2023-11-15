@@ -11,4 +11,6 @@ HTNDecompositionWatchPrinterContextBase::HTNDecompositionWatchPrinterContextBase
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments  = inDecompositionNode.GetNodeArguments();
     mNodeVariablePaths.reserve(std::max(NodeParameters.size(), NodeArguments.size()));
 }
+
+HTNDecompositionWatchPrinterContextBase::~HTNDecompositionWatchPrinterContextBase() = default;
 #endif

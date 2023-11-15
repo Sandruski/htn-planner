@@ -8,7 +8,6 @@
 #include "Domain/Interpreter/HTNVariables.h"
 #include "Domain/Nodes/HTNConstantNode.h"
 #include "Domain/Nodes/HTNDomainNode.h"
-#include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Helpers/HTNImGuiHelpers.h"
 
@@ -22,7 +21,9 @@ HTNDecompositionWatchPrinterContextBase& GetDecompositionWatchPrinterContext(HTN
 }
 } // namespace
 
-HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext)
+HTNDecompositionWatchPrinterBase::~HTNDecompositionWatchPrinterBase() = default;
+
+HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext) const
 {
     // Constant value
     const std::shared_ptr<const HTNLiteralExpressionNode>& ValueNode  = inConstantNode.GetValueNode();
@@ -30,7 +31,8 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantNode& inConstan
     return ValueValue;
 }
 
-HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode&         inLiteralExpressionNode,
+                                                MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     const HTNAtom& Literal = inLiteralExpressionNode.GetValue();
 
@@ -46,7 +48,7 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode& 
     return HTNAtomList({LiteralIDString, HTNAtomList({LiteralIDColor.x, LiteralIDColor.y, LiteralIDColor.z, LiteralIDColor.w}), LiteralValueString});
 }
 
-HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     HTNAtomList Result;
 
@@ -82,7 +84,7 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
     return Result;
 }
 
-HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     HTNAtomList Result;
 

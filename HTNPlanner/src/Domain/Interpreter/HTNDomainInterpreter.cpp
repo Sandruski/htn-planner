@@ -14,7 +14,6 @@
 #include "Domain/Nodes/HTNConstantsNode.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
-#include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "Domain/Nodes/HTNTaskNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "WorldState/HTNWorldState.h"
@@ -42,7 +41,7 @@ void RecordCurrentNodeSnapshot(const HTNNodeStep inNodeStep, const bool inIsChoi
 #endif
 } // namespace
 
-bool HTNDomainInterpreter::Interpret(HTNDecompositionContext& ioDecompositionContext)
+bool HTNDomainInterpreter::Interpret(HTNDecompositionContext& ioDecompositionContext) const
 {
     OPTICK_EVENT("InterpretDomain");
 
@@ -60,7 +59,7 @@ bool HTNDomainInterpreter::Interpret(HTNDecompositionContext& ioDecompositionCon
  * Depth first search on a graph
  * Domain is a graph that may contain cycles because of backtracking
  */
-HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetDomainNodeValue");
 
@@ -135,7 +134,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetConstantNodeValue");
 
@@ -147,7 +146,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode, HTNNo
     return GetNodeValue(*ValueNode, ioContext);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetAxiomNodeValue");
 
@@ -184,7 +183,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisi
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetMethodNodeValue");
 
@@ -250,7 +249,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetBranchNodeValue");
 
@@ -302,7 +301,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVi
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetConditionNodeValue");
 
@@ -407,7 +406,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetAxiomConditionNodeValue");
 
@@ -496,7 +495,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 
 // YES bindings
 // YES backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetAndConditionNodeValue");
 
@@ -567,7 +566,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
 
 // YES bindings
 // NO backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetOrConditionNodeValue");
 
@@ -627,7 +626,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
 
 // YES bindings
 // YES backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetAltConditionNodeValue");
 
@@ -697,7 +696,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
 
 // NO bindings
 // NO backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetNotConditionNodeValue");
 
@@ -740,7 +739,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetCompoundTaskNodeValue");
 
@@ -810,7 +809,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetPrimitiveTaskNodeValue");
 
@@ -852,7 +851,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetIdentifierExpressionNodeValue");
 
@@ -864,7 +863,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNIdentifierExpressionNode& inIdentif
     return inIdentifierExpressionNode.GetValue();
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetLiteralExpressionNodeValue");
 
@@ -876,7 +875,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExp
 }
 
 void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, const HTNAtom& inVariableExpressionNodeValue,
-                                 HTNNodeVisitorContextBase& ioContext)
+                                 HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("SetVariableExpressionNodeValue");
 
@@ -899,7 +898,7 @@ void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpr
     Variables.SetVariable(CurrentVariablePath, inVariableExpressionNodeValue);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetVariableExpressionNodeValue");
 
@@ -922,7 +921,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableE
     return Variables.FindVariable(CurrentVariablePath);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext)
+HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetConstantExpressionNodeValue");
 

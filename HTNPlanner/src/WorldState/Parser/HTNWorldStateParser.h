@@ -2,19 +2,18 @@
 
 #include "Parser/HTNParserBase.h"
 
-#include <vector>
-
-class HTNToken;
+class HTNAtom;
 class HTNWorldState;
+class HTNWorldStateParserContext;
 
-class HTNWorldStateParser final : public HTNParserBase<HTNWorldState>
+class HTNWorldStateParser final : public HTNParserBase
 {
 public:
-    bool Parse(const std::vector<HTNToken>& inTokens, HTNWorldState& outWorldState) final;
+    bool Parse(HTNWorldStateParserContext& ioWorldStateParserContext) const;
 
 private:
-    bool ParseFact(HTNWorldState& outWorldState, unsigned int& ioPosition);
+    bool ParseFact(HTNWorldState& outWorldState, HTNWorldStateParserContext& ioWorldStateParserContext) const;
 
-    bool ParseIdentifier(HTNAtom& outIdentifier, unsigned int& inPosition);
-    bool ParseArgument(HTNAtom& outArgument, unsigned int& inPosition);
+    bool ParseIdentifier(HTNAtom& outIdentifier, HTNWorldStateParserContext& ioWorldStateParserContext) const;
+    bool ParseArgument(HTNAtom& outArgument, HTNWorldStateParserContext& ioWorldStateParserContext) const;
 };

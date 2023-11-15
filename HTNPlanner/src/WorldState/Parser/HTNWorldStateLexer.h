@@ -2,8 +2,10 @@
 
 #include "Parser/HTNLexerBase.h"
 
+class HTNWorldStateLexerContext;
+
 class HTNWorldStateLexer final : public HTNLexerBase
 {
 public:
-    bool Lex(const std::string& inText, std::vector<HTNToken>& outTokens) final;
+    bool Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext) const;
 };

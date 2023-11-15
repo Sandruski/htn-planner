@@ -10,7 +10,7 @@ HTNAxiomNode::HTNAxiomNode(const std::shared_ptr<const HTNIdentifierExpressionNo
 {
 }
 
-HTNAtom HTNAxiomNode::Accept(HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNAxiomNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
 {
     return ioNodeVisitor.Visit(*this, ioContext);
 }

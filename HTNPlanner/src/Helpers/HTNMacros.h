@@ -2,7 +2,8 @@
 
 #define MAYBE_UNUSED [[maybe_unused]]
 
-#define HTN_BEGIN                                                                                                                                    \
-    namespace HTN                                                                                                                                    \
-    {
-#define HTN_END }
+#if HTN_DEBUG
+#define HTN_DEBUG_ONLY(...) __VA_ARGS__
+#else
+#define HTN_DEBUG_ONLY(...)
+#endif
