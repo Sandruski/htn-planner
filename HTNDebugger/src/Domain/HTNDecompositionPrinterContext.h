@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
+#include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/HTNDecompositionWatchTooltipPrinterContext.h"
 #include "Domain/Interpreter/HTNNodePath.h"
@@ -11,7 +12,6 @@
 #include <string>
 #include <unordered_map>
 
-class HTNDecompositionNode;
 class HTNDecompositionSnapshotDebug;
 class HTNDomainNode;
 
@@ -19,11 +19,11 @@ class HTNDecompositionPrinterContext final : public HTNNodeVisitorContextBase
 {
 public:
     explicit HTNDecompositionPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                                            const HTNDecompositionSnapshotDebug& inDecompositionSnapshot,
-                                            const HTNDecompositionTooltipMode inTooltipMode, const bool inShouldIgnoreNewNodeOpen,
-                                            HTNDecompositionNode& ioSelectedNode);
-
-    void Reset();
+                                            const HTNDecompositionSnapshotDebug&                                         inDecompositionSnapshot,
+                                            const std::unordered_map<std::string, HTNDecompositionNodeState>&            inNodeStates,
+                                            const std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& inChoicePointNodeStates,
+                                            const HTNDecompositionNode& inSelectedNode, const HTNDecompositionTooltipMode inTooltipMode,
+                                            const bool inShouldIgnoreNewNodeOpen);
 
     const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
     const std::string&                          GetEntryPointID() const;
@@ -43,10 +43,11 @@ public:
     const HTNNodePath& GetCurrentVariableScopeNodePath() const;
     HTNNodePath&       GetCurrentVariableScopeNodePathMutable();
 
-    void SelectNode(const HTNDecompositionNode& inNode);
-    void UnselectSelectedNode();
-    bool IsSelectedNodeSelected() const;
-    bool IsNodeSelected(const std::string& inNodeLabel) const;
+    void                        SelectNode(const HTNDecompositionNode& inNode);
+    void                        UnselectSelectedNode();
+    bool                        IsSelectedNodeSelected() const;
+    bool                        IsNodeSelected(const std::string& inNodeLabel) const;
+    const HTNDecompositionNode& GetSelectedNode() const;
 
     void SetCurrentDecompositionStep(const int inCurrentDecompositionStep);
     int  GetCurrentDecompositionStep() const;
@@ -71,13 +72,15 @@ private:
     const HTNDecompositionSnapshotDebug* mDecompositionSnapshot   = nullptr;
     HTNDecompositionTooltipMode          mTooltipMode             = HTNDecompositionTooltipMode::NONE;
     bool                                 mShouldIgnoreNewNodeOpen = false;
-    HTNDecompositionNode*                mSelectedNode            = nullptr;
 
     // Node path to node state
     std::unordered_map<std::string, HTNDecompositionNodeState> mNodeStates;
 
     // Node path to choice point node state
     std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mChoicePointNodeStates;
+
+    // Selected node
+    HTNDecompositionNode mSelectedNode;
 
     // Whether the selected node is still selected
     bool mIsSelectedNodeSelected = false;
@@ -189,6 +192,11 @@ inline HTNNodePath& HTNDecompositionPrinterContext::GetCurrentVariableScopeNodeP
 inline bool HTNDecompositionPrinterContext::IsSelectedNodeSelected() const
 {
     return mIsSelectedNodeSelected;
+}
+
+inline const HTNDecompositionNode& HTNDecompositionPrinterContext::GetSelectedNode() const
+{
+    return mSelectedNode;
 }
 
 inline void HTNDecompositionPrinterContext::SetCurrentDecompositionStep(const int inCurrentDecompositionStep)

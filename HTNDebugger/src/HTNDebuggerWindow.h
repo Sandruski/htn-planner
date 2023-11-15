@@ -2,6 +2,7 @@
 
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
+#include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/HTNDecompositionWatchTooltipPrinterContext.h"
 #include "Domain/HTNDecompositionWatchWindowPrinter.h"
@@ -13,6 +14,8 @@
 #include <filesystem>
 #include <memory>
 #include <mutex>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 class HTNDatabaseHook;
@@ -55,10 +58,12 @@ private:
     HTNOperationResult    mLastParseWorldStateFileResult = HTNOperationResult::NONE;
     HTNOperationResult    mLastParseDomainFileResult     = HTNOperationResult::NONE;
 
-    HTNDecompositionNode        mMainSelectedNode;
-    HTNDecompositionNode        mUpperBodySelectedNode;
-    HTNDecompositionTooltipMode mTooltipMode               = HTNDecompositionTooltipMode::REGULAR;
-    bool                        mIsDecompositionCurrentTab = false;
+    HTNDecompositionNode                                                  mMainSelectedNode;
+    HTNDecompositionNode                                                  mUpperBodySelectedNode;
+    HTNDecompositionTooltipMode                                           mTooltipMode               = HTNDecompositionTooltipMode::REGULAR;
+    bool                                                                  mIsDecompositionCurrentTab = false;
+    std::unordered_map<std::string, HTNDecompositionNodeState>            mNodeStates;
+    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mChoicePointNodeStates;
 
     const HTNWorldStatePrinter               mWorldStatePrinter;
     const HTNDomainPrinter                   mDomainPrinter;

@@ -6,38 +6,32 @@
 #include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 
-HTNDecompositionPrinterContext::HTNDecompositionPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                               const std::string&                          inEntryPointID,
-                                                               const HTNDecompositionSnapshotDebug&        inDecompositionSnapshot,
-                                                               const HTNDecompositionTooltipMode inTooltipMode, const bool inShouldIgnoreNewNodeOpen,
-                                                               HTNDecompositionNode& ioSelectedNode)
+HTNDecompositionPrinterContext::HTNDecompositionPrinterContext(
+    const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
+    const HTNDecompositionSnapshotDebug& inDecompositionSnapshot, const std::unordered_map<std::string, HTNDecompositionNodeState>& inNodeStates,
+    const std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& inChoicePointNodeStates, const HTNDecompositionNode& inSelectedNode,
+    const HTNDecompositionTooltipMode inTooltipMode, const bool inShouldIgnoreNewNodeOpen)
     : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(&inDecompositionSnapshot), mTooltipMode(inTooltipMode),
-      mShouldIgnoreNewNodeOpen(inShouldIgnoreNewNodeOpen), mSelectedNode(&ioSelectedNode)
+      mShouldIgnoreNewNodeOpen(inShouldIgnoreNewNodeOpen), mNodeStates(inNodeStates), mChoicePointNodeStates(inChoicePointNodeStates),
+      mSelectedNode(inSelectedNode)
 {
-}
-
-void HTNDecompositionPrinterContext::Reset()
-{
-    mNodeStates.clear();
-    mChoicePointNodeStates.clear();
-    *mSelectedNode = HTNDecompositionNode();
 }
 
 void HTNDecompositionPrinterContext::SelectNode(const HTNDecompositionNode& inNode)
 {
-    *mSelectedNode          = inNode;
+    mSelectedNode           = inNode;
     mIsSelectedNodeSelected = true;
 }
 
 void HTNDecompositionPrinterContext::UnselectSelectedNode()
 {
-    *mSelectedNode          = HTNDecompositionNode();
+    mSelectedNode           = HTNDecompositionNode();
     mIsSelectedNodeSelected = false;
 }
 
 bool HTNDecompositionPrinterContext::IsNodeSelected(const std::string& inNodeLabel) const
 {
-    const std::string& SelectedNodeLabel = mSelectedNode->GetNodeLabel();
+    const std::string& SelectedNodeLabel = mSelectedNode.GetNodeLabel();
     return (inNodeLabel == SelectedNodeLabel);
 }
 
@@ -91,43 +85,4 @@ bool HTNDecompositionPrinterContext::IsNodeOpen(const std::string& inNodePath, c
         return NodeState.IsOpen();
     }
 }
-
-// TODO salvarez
-/*
-void HTNDecompositionPrinter::Reset(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                                    const HTNDecompositionSnapshotDebug& inDecompositionSnapshot, const HTNDecompositionTooltipMode inTooltipMode,
-                                    const bool inShouldIgnoreNewNodeOpen, const bool inShouldReset, HTNDecompositionNode& ioSelectedNode)
-{
-    bool ShouldReset = inShouldReset;
-    ShouldReset      = ShouldReset || (mDomainNode != inDomainNode);
-    ShouldReset      = ShouldReset || (mEntryPointID != inEntryPointID);
-    ShouldReset      = ShouldReset || (mDecompositionSnapshot != &inDecompositionSnapshot);
-
-    mDomainNode              = inDomainNode;
-    mEntryPointID            = inEntryPointID;
-    mDecompositionSnapshot   = &inDecompositionSnapshot;
-    mTooltipMode             = inTooltipMode;
-    mShouldIgnoreNewNodeOpen = inShouldIgnoreNewNodeOpen;
-    mSelectedNode            = &ioSelectedNode;
-
-    if (ShouldReset)
-    {
-        mNodeStates.clear();
-        mChoicePointNodeStates.clear();
-        *mSelectedNode = HTNDecompositionNode();
-    }
-
-    mIsSelectedNodeSelected = false;
-
-    mCurrentNodePath              = HTNNodePath();
-    mCurrentVariableScopeNodePath = HTNNodePath();
-
-    mCurrentDecompositionStep = 0;
-    mMinDecompositionStep     = std::numeric_limits<int>::min();
-    mMaxDecompositionStep     = std::numeric_limits<int>::max();
-
-    mIsCurrentNodeVisible    = true;
-    mShouldRefreshNodeStates = false;
-}
-*/
 #endif

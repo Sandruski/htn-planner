@@ -649,7 +649,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     const int  MinDecompositionStep    = DecompositionPrinterContext.GetMinDecompositionStep();
     const int  MaxDecompositionStep    = DecompositionPrinterContext.GetMaxDecompositionStep();
     const bool ShouldIgnoreNewNodeOpen = DecompositionPrinterContext.ShouldIgnoreNewNodeOpen();
-    bool       IsCurrentNodeVisible    = DecompositionPrinterContext.IsCurrentNodeVisible();
+    const bool IsCurrentNodeVisible    = DecompositionPrinterContext.IsCurrentNodeVisible();
 
     for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
     {
@@ -764,8 +764,8 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         {
             if (!IsCurrentNodeOpen)
             {
-                IsCurrentNodeVisible = false;
-                DecompositionPrinterContext.SetIsCurrentNodeVisible(IsCurrentNodeVisible);
+                // TODO salvarez Split this function into before and after and create temp variables for values like false
+                DecompositionPrinterContext.SetIsCurrentNodeVisible(false);
             }
         }
 
@@ -806,7 +806,6 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     if (ShouldRefreshNodeStates)
     {
         const int CurrentDecompositionStep = DecompositionPrinterContext.GetCurrentDecompositionStep();
-
         if (IsChoicePoint)
         {
             HTNDecompositionChoicePointNodeState* CurrentNodeState =
@@ -828,26 +827,28 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         else
         {
             HTNDecompositionNodeState* CurrentNodeState = DecompositionPrinterContext.FindNodeStateMutable(CurrentNodePathString);
-
-            if (DecompositionPrinterContext.IsCurrentDecompositionStepValid())
+            if (CurrentNodeState)
             {
-                const auto NodeSnapshotStepsCollectionIt = NodeSnapshotStepsCollection.find(CurrentDecompositionStep);
-                if (NodeSnapshotStepsCollectionIt != NodeSnapshotStepsCollection.end())
+                if (DecompositionPrinterContext.IsCurrentDecompositionStepValid())
                 {
-                    const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection   = NodeSnapshotStepsCollectionIt->second;
-                    const auto                            NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
-                    if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
+                    const auto NodeSnapshotStepsCollectionIt = NodeSnapshotStepsCollection.find(CurrentDecompositionStep);
+                    if (NodeSnapshotStepsCollectionIt != NodeSnapshotStepsCollection.end())
                     {
-                        CurrentNodeState->SetDecompositionStep(CurrentDecompositionStep);
+                        const HTNNodeSnapshotCollectionDebug& NodeSnapshotCollection   = NodeSnapshotStepsCollectionIt->second;
+                        const auto                            NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
+                        if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
+                        {
+                            CurrentNodeState->SetDecompositionStep(CurrentDecompositionStep);
+                        }
                     }
                 }
-            }
-            else
-            {
-                CurrentNodeState->SetDecompositionStep(CurrentDecompositionStep);
-            }
+                else
+                {
+                    CurrentNodeState->SetDecompositionStep(CurrentDecompositionStep);
+                }
 
-            CurrentNodeState->SetIsOpen(IsCurrentNodeOpen);
+                CurrentNodeState->SetIsOpen(IsCurrentNodeOpen);
+            }
         }
     }
 

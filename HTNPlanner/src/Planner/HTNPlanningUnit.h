@@ -26,7 +26,7 @@ public:
 private:
     std::string            mID;
     const HTNDatabaseHook* mDatabaseHook = nullptr;
-    const HTNPlannerHook*        mPlannerHook  = nullptr;
+    const HTNPlannerHook*  mPlannerHook  = nullptr;
 
     HTNDecompositionContext              mLastDecompositionContext;
     std::string                          mLastEntryPointID;

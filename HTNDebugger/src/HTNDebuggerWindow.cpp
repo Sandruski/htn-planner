@@ -480,14 +480,16 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(HTNPlanningQuery&    
 
     if (inPlanningQuery.IsLastDecompositionSuccessful())
     {
-        const HTNPlanningUnit*                      PlanningUnit         = inPlanningQuery.GetPlanningUnit();
-        const std::shared_ptr<const HTNDomainNode>& LastDomainNode       = PlanningUnit->GetLastDomainNode();
-        const std::string&                          LastEntryPointID     = PlanningUnit->GetLastEntryPointID();
-        const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot   = PlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
-        const bool                           ShouldIgnoreNewNodeOpen     = !mIsDecompositionCurrentTab;
-        HTNDecompositionPrinterContext       DecompositionPrinterContext = HTNDecompositionPrinterContext(
-            LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, mTooltipMode, ShouldIgnoreNewNodeOpen, ioSelectedNode);
+        const HTNPlanningUnit*                      PlanningUnit       = inPlanningQuery.GetPlanningUnit();
+        const std::shared_ptr<const HTNDomainNode>& LastDomainNode     = PlanningUnit->GetLastDomainNode();
+        const std::string&                          LastEntryPointID   = PlanningUnit->GetLastEntryPointID();
+        const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = PlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
+        const bool                           ShouldIgnoreNewNodeOpen   = !mIsDecompositionCurrentTab;
+        HTNDecompositionPrinterContext       DecompositionPrinterContext =
+            HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, mNodeStates, mChoicePointNodeStates,
+                                           ioSelectedNode, mTooltipMode, ShouldIgnoreNewNodeOpen);
         mDecompositionPrinter.Print(DecompositionPrinterContext);
+        ioSelectedNode = DecompositionPrinterContext.GetSelectedNode();
     }
 
     ImGui::EndChild();
