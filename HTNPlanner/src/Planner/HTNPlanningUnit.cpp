@@ -3,7 +3,7 @@
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
 
-HTNPlanningUnit::HTNPlanningUnit(const std::string& inID, const HTNDatabaseHook& inDatabaseHook, HTNPlannerHook& inPlannerHook)
+HTNPlanningUnit::HTNPlanningUnit(const std::string& inID, const HTNDatabaseHook& inDatabaseHook, const HTNPlannerHook& inPlannerHook)
     : mID(inID), mDatabaseHook(&inDatabaseHook), mPlannerHook(&inPlannerHook)
 {
 }

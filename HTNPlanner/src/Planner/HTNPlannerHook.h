@@ -19,7 +19,7 @@ public:
     // Parses a domain file and builds a domain node
     bool ParseDomainFile(const std::string& inDomainFilePath);
 
-    bool MakePlan(const std::string& inEntryPointID, HTNDecompositionContext& ioDecompositionContext);
+    bool MakePlan(const std::string& inEntryPointID, HTNDecompositionContext& ioDecompositionContext) const;
 
     const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 

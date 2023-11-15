@@ -13,7 +13,7 @@ class HTNPlannerHook;
 class HTNPlanningUnit
 {
 public:
-    explicit HTNPlanningUnit(const std::string& inID, const HTNDatabaseHook& inDatabaseHook, HTNPlannerHook& inPlannerHook);
+    explicit HTNPlanningUnit(const std::string& inID, const HTNDatabaseHook& inDatabaseHook, const HTNPlannerHook& inPlannerHook);
 
     // Execute planning unit top level method
     bool ExecuteTopLevelMethod(const std::string& inEntryPointID);
@@ -26,7 +26,7 @@ public:
 private:
     std::string            mID;
     const HTNDatabaseHook* mDatabaseHook = nullptr;
-    HTNPlannerHook*        mPlannerHook  = nullptr;
+    const HTNPlannerHook*        mPlannerHook  = nullptr;
 
     HTNDecompositionContext              mLastDecompositionContext;
     std::string                          mLastEntryPointID;

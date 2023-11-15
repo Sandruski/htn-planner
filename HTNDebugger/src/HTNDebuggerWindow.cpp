@@ -409,7 +409,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(HTNPlanningQuery&    
 
     bool ShouldReset = false;
 
-    // TODO salvarez Make it work without delay
+    // TODO salvarez Make it work without delay (and from main)
     /*
     if (ImGui::IsKeyDown(ImGuiKey_R))
     {

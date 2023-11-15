@@ -36,7 +36,7 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
     return true;
 }
 
-bool HTNPlannerHook::MakePlan(const std::string& inEntryPointID, HTNDecompositionContext& ioDecompositionContext)
+bool HTNPlannerHook::MakePlan(const std::string& inEntryPointID, HTNDecompositionContext& ioDecompositionContext) const
 {
     ioDecompositionContext.SetDomainNode(mDomainNode);
     ioDecompositionContext.SetEntryPointID(inEntryPointID);
