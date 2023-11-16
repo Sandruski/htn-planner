@@ -1,5 +1,5 @@
 #include "WorldState/Parser/HTNWorldStateLexerContext.h"
 
-HTNWorldStateLexerContext::HTNWorldStateLexerContext(const std::string& inText) : HTNLexerContextBase(inText)
+HTNWorldStateLexerContext::HTNWorldStateLexerContext(const std::string& inText, std::vector<HTNToken>& outTokens) : HTNLexerContextBase(inText, outTokens)
 {
 }

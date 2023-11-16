@@ -1,6 +1,7 @@
 #include "Planner/HTNDatabaseHook.h"
 
 #include "Helpers/HTNFileHandler.h"
+#include "Helpers/HTNToken.h"
 #include "WorldState/Parser/HTNWorldStateLexerContext.h"
 #include "WorldState/Parser/HTNWorldStateParserContext.h"
 
@@ -14,22 +15,21 @@ bool HTNDatabaseHook::ParseWorldStateFile(const std::string& inWorldStateFilePat
         return false;
     }
 
-    HTNWorldStateLexerContext WorldStateLexerContext = HTNWorldStateLexerContext(WorldStateText);
+    std::vector<HTNToken>     Tokens;
+    HTNWorldStateLexerContext WorldStateLexerContext = HTNWorldStateLexerContext(WorldStateText, Tokens);
     if (!mWorldStateLexer.Lex(WorldStateLexerContext))
     {
         LOG_ERROR("World state [{}] could not be lexed", inWorldStateFilePath);
         return false;
     }
 
-    const std::vector<HTNToken>& Tokens                  = WorldStateLexerContext.GetTokens();
-    HTNWorldStateParserContext   WorldStateParserContext = HTNWorldStateParserContext(Tokens);
+    mWorldState                                        = HTNWorldState();
+    HTNWorldStateParserContext WorldStateParserContext = HTNWorldStateParserContext(Tokens, mWorldState);
     if (!mWorldStateParser.Parse(WorldStateParserContext))
     {
         LOG_ERROR("World state [{}] could not be parsed", inWorldStateFilePath);
         return false;
     }
-
-    mWorldState = WorldStateParserContext.GetWorldState();
 
     return true;
 }

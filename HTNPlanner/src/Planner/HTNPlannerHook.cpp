@@ -5,6 +5,7 @@
 #include "Domain/Parser/HTNDomainLexerContext.h"
 #include "Domain/Parser/HTNDomainParserContext.h"
 #include "Helpers/HTNFileHandler.h"
+#include "Helpers/HTNToken.h"
 
 bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
 {
@@ -16,22 +17,21 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
         return false;
     }
 
-    HTNDomainLexerContext DomainLexerContext = HTNDomainLexerContext(DomainFileText);
+    std::vector<HTNToken> Tokens;
+    HTNDomainLexerContext DomainLexerContext = HTNDomainLexerContext(DomainFileText, Tokens);
     if (!mDomainLexer.Lex(DomainLexerContext))
     {
         LOG_ERROR("Domain [{}] could not be lexed", inDomainFilePath);
         return false;
     }
 
-    const std::vector<HTNToken>& Tokens              = DomainLexerContext.GetTokens();
-    HTNDomainParserContext       DomainParserContext = HTNDomainParserContext(Tokens);
+    mDomainNode.reset();
+    HTNDomainParserContext DomainParserContext = HTNDomainParserContext(Tokens, mDomainNode);
     if (!mDomainParser.Parse(DomainParserContext))
     {
         LOG_ERROR("Domain [{}] could not be parsed", inDomainFilePath);
         return false;
     }
-
-    mDomainNode = DomainParserContext.GetDomainNode();
 
     return true;
 }

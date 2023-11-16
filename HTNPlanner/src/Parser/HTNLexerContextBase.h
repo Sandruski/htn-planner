@@ -2,24 +2,23 @@
 
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "Helpers/HTNMacros.h"
-#include "Helpers/HTNToken.h"
 
 #include <string>
 #include <vector>
 
 class HTNAtom;
+class HTNToken;
 enum class HTNTokenType : unsigned int;
 
 class HTNLexerContextBase : public HTNNodeVisitorContextBase
 {
 public:
-    explicit HTNLexerContextBase(const std::string& inText);
+    explicit HTNLexerContextBase(const std::string& inText, std::vector<HTNToken>& outTokens);
     virtual ~HTNLexerContextBase() = 0;
 
     const std::string& GetText() const;
 
-    void                         AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme));
-    const std::vector<HTNToken>& GetTokens() const;
+    void AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme));
 
     char GetCharacter(const unsigned int inLookAhead = 0) const;
 
@@ -35,7 +34,7 @@ private:
     //----------------------------------------------------------------------//
     // Output
     //----------------------------------------------------------------------//
-    std::vector<HTNToken> mTokens;
+    std::vector<HTNToken>& mTokens;
 
     //----------------------------------------------------------------------//
     // Internal
@@ -59,16 +58,6 @@ private:
 inline const std::string& HTNLexerContextBase::GetText() const
 {
     return mText;
-}
-
-inline void HTNLexerContextBase::AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme))
-{
-    mTokens.emplace_back(inValue, inType HTN_DEBUG_ONLY(, inLexeme, mRow, mColumn));
-}
-
-inline const std::vector<HTNToken>& HTNLexerContextBase::GetTokens() const
-{
-    return mTokens;
 }
 
 inline unsigned int HTNLexerContextBase::GetPosition() const
