@@ -49,7 +49,7 @@ bool HTNDomainInterpreter::Interpret(HTNDecompositionContext& ioDecompositionCon
     const std::shared_ptr<const HTNDomainNode>& DomainNode = ioDecompositionContext.GetDomainNode();
     if (!DomainNode)
     {
-        LOG_ERROR("Domain node is null");
+        HTN_LOG_ERROR("Domain node is null");
         return false;
     }
 
@@ -83,7 +83,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
 
     if (!inDomainNode.IsTopLevel())
     {
-        LOG_ERROR("Domain node [{}] is not top-level", inDomainNode.GetID());
+        HTN_LOG_ERROR("Domain node [{}] is not top-level", inDomainNode.GetID());
         return false;
     }
 
@@ -91,7 +91,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
     const std::string& EntryPointID = DecompositionContext.GetEntryPointID();
     if (EntryPointID.empty())
     {
-        LOG_ERROR("Entry point ID is empty");
+        HTN_LOG_ERROR("Entry point ID is empty");
         return false;
     }
 
@@ -431,7 +431,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     const std::shared_ptr<const HTNAxiomNode> AxiomNode   = DomainNode->FindAxiomNodeByID(AxiomNodeID);
     if (!AxiomNode)
     {
-        LOG_ERROR("Axiom node [{}] could not be found", AxiomNodeID);
+        HTN_LOG_ERROR("Axiom node [{}] could not be found", AxiomNodeID);
         constexpr bool Result = false;
 #ifdef HTN_DEBUG
         RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
@@ -764,7 +764,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     const std::shared_ptr<const HTNMethodNode>                MethodNode   = DomainNode->FindMethodNodeByID(MethodNodeID);
     if (!MethodNode)
     {
-        LOG_ERROR("Method node [{}] could not be found", MethodNodeID);
+        HTN_LOG_ERROR("Method node [{}] could not be found", MethodNodeID);
         constexpr bool Result = false;
 #ifdef HTN_DEBUG
         RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
@@ -774,7 +774,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
 
     if (inCompoundTaskNode.IsTopLevel() && !MethodNode->IsTopLevel())
     {
-        LOG_ERROR("Method node [{}] is not top-level", MethodNodeID);
+        HTN_LOG_ERROR("Method node [{}] is not top-level", MethodNodeID);
         constexpr bool Result = false;
 #ifdef HTN_DEBUG
         RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
@@ -889,7 +889,7 @@ void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpr
     std::string        CurrentVariablePath;
     if (!HTNDecompositionHelpers::MakeVariablePath(VariableID, CurrentVariableScopeNodePath, CurrentVariablePath))
     {
-        LOG_ERROR("Path for variable [{}] could not be made", VariableID);
+        HTN_LOG_ERROR("Path for variable [{}] could not be made", VariableID);
         return;
     }
 
@@ -912,7 +912,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableE
     std::string        CurrentVariablePath;
     if (!HTNDecompositionHelpers::MakeVariablePath(VariableID, CurrentVariableScopeNodePath, CurrentVariablePath))
     {
-        LOG_ERROR("Path for variable [{}] could not be made", VariableID);
+        HTN_LOG_ERROR("Path for variable [{}] could not be made", VariableID);
         return HTNAtom();
     }
 
@@ -935,7 +935,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantE
     std::shared_ptr<const HTNConstantNode>      ConstantNode   = DomainNode->FindConstantNodeByID(ConstantNodeID);
     if (!ConstantNode)
     {
-        LOG_ERROR("Constant node [{}] not found", ConstantNodeID);
+        HTN_LOG_ERROR("Constant node [{}] not found", ConstantNodeID);
         return HTNAtom();
     }
 

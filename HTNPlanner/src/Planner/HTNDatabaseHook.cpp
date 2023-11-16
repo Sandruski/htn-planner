@@ -11,7 +11,7 @@ bool HTNDatabaseHook::ParseWorldStateFile(const std::string& inWorldStateFilePat
     std::string          WorldStateText;
     if (!WorldStateFileHandler.ReadFile(WorldStateText))
     {
-        LOG_ERROR("World state [{}] could not be read", inWorldStateFilePath);
+        HTN_LOG_ERROR("World state [{}] could not be read", inWorldStateFilePath);
         return false;
     }
 
@@ -19,7 +19,7 @@ bool HTNDatabaseHook::ParseWorldStateFile(const std::string& inWorldStateFilePat
     HTNWorldStateLexerContext WorldStateLexerContext = HTNWorldStateLexerContext(WorldStateText, Tokens);
     if (!mWorldStateLexer.Lex(WorldStateLexerContext))
     {
-        LOG_ERROR("World state [{}] could not be lexed", inWorldStateFilePath);
+        HTN_LOG_ERROR("World state [{}] could not be lexed", inWorldStateFilePath);
         return false;
     }
 
@@ -27,7 +27,7 @@ bool HTNDatabaseHook::ParseWorldStateFile(const std::string& inWorldStateFilePat
     HTNWorldStateParserContext WorldStateParserContext = HTNWorldStateParserContext(Tokens, mWorldState);
     if (!mWorldStateParser.Parse(WorldStateParserContext))
     {
-        LOG_ERROR("World state [{}] could not be parsed", inWorldStateFilePath);
+        HTN_LOG_ERROR("World state [{}] could not be parsed", inWorldStateFilePath);
         return false;
     }
 

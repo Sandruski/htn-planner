@@ -33,7 +33,7 @@ bool HTNDomainPrinter::Print(HTNDomainPrinterContext& ioDomainPrinterContext) co
     const std::shared_ptr<const HTNDomainNode>& DomainNode = ioDomainPrinterContext.GetDomainNode();
     if (!DomainNode)
     {
-        LOG_ERROR("Domain node is null");
+        HTN_LOG_ERROR("Domain node is null");
         return false;
     }
 

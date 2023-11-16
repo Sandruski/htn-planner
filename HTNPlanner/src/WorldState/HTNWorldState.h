@@ -133,7 +133,7 @@ bool HTNFactArgumentsTable::AddUniqueFactArguments(const T& inFactArgumentsBegin
             FactArgumentsDescription.erase(Index);
         }
 #endif
-        LOG_ERROR("Fact arguments [{}] already contained", FactArgumentsDescription);
+        HTN_LOG_ERROR("Fact arguments [{}] already contained", FactArgumentsDescription);
         return false;
     }
 
@@ -152,7 +152,7 @@ bool HTNFactArgumentsTable::Check(const size inFactArgumentsIndex, const T& ioFa
 {
     if (inFactArgumentsIndex >= mFactArguments.size())
     {
-        LOG_ERROR("Fact arguments index [{}] outside of bounds [{}]", inFactArgumentsIndex, mFactArguments.size());
+        HTN_LOG_ERROR("Fact arguments index [{}] outside of bounds [{}]", inFactArgumentsIndex, mFactArguments.size());
         return false;
     }
 
@@ -295,7 +295,7 @@ bool HTNWorldState::CheckIndex(const std::string& inFactID, const size inFactArg
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.end())
     {
-        LOG_ERROR("Fact [{}] not found", inFactID);
+        HTN_LOG_ERROR("Fact [{}] not found", inFactID);
         return false;
     }
 
@@ -312,7 +312,7 @@ bool HTNWorldState::ContainsFactArguments(const std::string& inFactID, const T& 
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.end())
     {
-        LOG_ERROR("Fact [{}] not found", inFactID);
+        HTN_LOG_ERROR("Fact [{}] not found", inFactID);
         return false;
     }
 

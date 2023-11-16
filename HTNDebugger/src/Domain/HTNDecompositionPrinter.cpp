@@ -62,7 +62,7 @@ bool HTNDecompositionPrinter::Print(HTNDecompositionPrinterContext& ioDecomposit
     const std::shared_ptr<const HTNDomainNode>& DomainNode = ioDecompositionPrinterContext.GetDomainNode();
     if (!DomainNode)
     {
-        LOG_ERROR("Domain node is null");
+        HTN_LOG_ERROR("Domain node is null");
         return false;
     }
 

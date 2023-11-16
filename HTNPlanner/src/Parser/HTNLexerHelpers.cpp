@@ -2,6 +2,7 @@
 
 #ifdef HTN_DEBUG
 #include "Parser/HTNLexerContextBase.h"
+#include "Helpers/HTNDomainLog.h"
 #endif
 
 namespace HTNLexerHelpers
@@ -40,7 +41,7 @@ void PrintErrorMessage(const std::string& inMessage, HTNLexerContextBase& ioLexe
 {
     const uint32 Row    = ioLexerContext.GetRow();
     const uint32 Column = ioLexerContext.GetColumn();
-    LOG_HTN_ERROR(Row, Column, "{}", inMessage);
+    HTN_DOMAIN_LOG_ERROR(Row, Column, "{}", inMessage);
 }
 #endif
 } // namespace HTNLexerHelpers

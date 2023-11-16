@@ -3,6 +3,7 @@
 #include "HTNLexerHelpers.h"
 #include "Helpers/HTNToken.h"
 #include "Parser/HTNLexerContextBase.h"
+#include "Helpers/HTNDomainLog.h"
 
 #if HTN_DEBUG
 #include <limits>
@@ -80,7 +81,7 @@ void HTNLexerBase::LexNumber(HTNLexerContextBase& ioLexerContext) const
         const uint32 EndPosition = CurrentPosition - StartPosition;
         const std::string  Lexeme      = Text.substr(StartPosition, EndPosition);
         const float        Number      = std::stof(Lexeme);
-        CLOG_HTN_ERROR(std::stod(Lexeme) < std::numeric_limits<float>::min() || std::stod(Lexeme) > std::numeric_limits<float>::max(), StartRow,
+        HTN_DOMAIN_CLOG_ERROR(std::stod(Lexeme) < std::numeric_limits<float>::min() || std::stod(Lexeme) > std::numeric_limits<float>::max(), StartRow,
                        StartColumn, "Number out of bounds");
         ioLexerContext.AddToken(Number, HTNTokenType::NUMBER HTN_DEBUG_ONLY(, Lexeme));
     }
@@ -112,7 +113,7 @@ bool HTNLexerBase::LexString(HTNLexerContextBase& ioLexerContext) const
         const uint32 Row    = ioLexerContext.GetRow();
         const uint32 Column = ioLexerContext.GetColumn();
 #endif
-        LOG_HTN_ERROR(Row, Column, "Character '\"' not found at end of string");
+        HTN_DOMAIN_LOG_ERROR(Row, Column, "Character '\"' not found at end of string");
         return false;
     }
 

@@ -13,7 +13,7 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
     std::string          DomainFileText;
     if (!DomainFileHandler.ReadFile(DomainFileText))
     {
-        LOG_ERROR("Domain [{}] could not be read", inDomainFilePath);
+        HTN_LOG_ERROR("Domain [{}] could not be read", inDomainFilePath);
         return false;
     }
 
@@ -21,7 +21,7 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
     HTNDomainLexerContext DomainLexerContext = HTNDomainLexerContext(DomainFileText, Tokens);
     if (!mDomainLexer.Lex(DomainLexerContext))
     {
-        LOG_ERROR("Domain [{}] could not be lexed", inDomainFilePath);
+        HTN_LOG_ERROR("Domain [{}] could not be lexed", inDomainFilePath);
         return false;
     }
 
@@ -29,7 +29,7 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
     HTNDomainParserContext DomainParserContext = HTNDomainParserContext(Tokens, mDomainNode);
     if (!mDomainParser.Parse(DomainParserContext))
     {
-        LOG_ERROR("Domain [{}] could not be parsed", inDomainFilePath);
+        HTN_LOG_ERROR("Domain [{}] could not be parsed", inDomainFilePath);
         return false;
     }
 
@@ -40,7 +40,7 @@ bool HTNPlannerHook::MakePlan(HTNDecompositionContext& ioDecompositionContext) c
 {
     if (!mDomainInterpreter.Interpret(ioDecompositionContext))
     {
-        LOG_ERROR("Domain [{}] could not be interpreted", mDomainNode->GetID());
+        HTN_LOG_ERROR("Domain [{}] could not be interpreted", mDomainNode->GetID());
         return false;
     }
 

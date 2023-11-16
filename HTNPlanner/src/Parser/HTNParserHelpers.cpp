@@ -2,6 +2,7 @@
 
 #ifdef HTN_DEBUG
 #include "Parser/HTNParserContextBase.h"
+#include "Helpers/HTNDomainLog.h"
 #endif
 
 namespace HTNParserHelpers
@@ -12,7 +13,7 @@ void PrintLastErrorMessage(HTNParserContextBase& ioParserContext)
     const int32          LastErrorRow     = ioParserContext.GetLastErrorRow();
     const int32          LastErrorColumn  = ioParserContext.GetLastErrorColumn();
     const std::string& LastErrorMessage = ioParserContext.GetLastErrorMessage();
-    LOG_HTN_ERROR(LastErrorRow, LastErrorColumn, "{}", LastErrorMessage);
+    HTN_DOMAIN_LOG_ERROR(LastErrorRow, LastErrorColumn, "{}", LastErrorMessage);
 }
 #endif
 } // namespace HTNParserHelpers

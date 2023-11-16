@@ -23,7 +23,7 @@ bool HTNFileHandler::ReadFile(std::string& outFileText) const
 {
     if (!mFile.is_open())
     {
-        LOG_ERROR("File is not open");
+        HTN_LOG_ERROR("File is not open");
         return false;
     }
 
