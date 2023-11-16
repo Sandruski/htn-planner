@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstdint>
 #include <format>
 #include <string>
 #include <unordered_map>

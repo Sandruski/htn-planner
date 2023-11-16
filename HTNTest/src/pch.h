@@ -1,7 +1,8 @@
 #pragma once
 
-#include "gtest/gtest.h"
 #include "optick.h"
+#include "gtest/gtest.h"
 
+#include <cstdint>
 #include <format>
 #include <string>

@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Helpers/HTNAtom.h"
-#include "Helpers/HTNMacros.h"
 #include "Helpers/HTNLog.h"
+#include "Helpers/HTNMacros.h"
 
 #include <algorithm>
 #include <cassert>
+#include <cstdint>
 #include <format>
 #include <string>
 #include <unordered_map>

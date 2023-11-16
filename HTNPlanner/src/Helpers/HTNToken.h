@@ -7,7 +7,7 @@
 #include <string>
 #include <unordered_map>
 
-enum class HTNTokenType : unsigned int
+enum class HTNTokenType : unsigned char
 {
     COLON,
     LEFT_PARENTHESIS,

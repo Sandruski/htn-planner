@@ -2,7 +2,7 @@
 
 class HTNParserContextBase;
 class HTNToken;
-enum class HTNTokenType : unsigned int;
+enum class HTNTokenType : unsigned char;
 
 class HTNParserBase
 {
