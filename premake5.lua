@@ -20,6 +20,21 @@ workspace "HTN"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- HTNFramework
+project "HTNFramework"
+    location "HTNFramework"
+    kind "SharedItems"
+    language "C++"
+    cppdialect "C++20"
+
+    pchheader "pch.h"
+    pchsource "%{prj.name}/src/pch.cpp"
+    forceincludes "pch.h"
+
+    files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h" }
+
+    includedirs { "%{prj.name}/src" }
+
 -- HTNPlanner
 project "HTNPlanner"
     location "HTNPlanner"
@@ -39,7 +54,9 @@ project "HTNPlanner"
             "ThirdParty/Optick_1.4.0/src/**.cpp",
             "ThirdParty/Optick_1.4.0/src/**.h" }
 
-    includedirs { "%{prj.name}/src", "ThirdParty/Optick_1.4.0/src" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/Optick_1.4.0/src" }
+
+    links { "HTNFramework" }
 
 -- HTNDebugger
 project "HTNDebugger"
@@ -66,9 +83,9 @@ project "HTNDebugger"
 			"ThirdParty/imgui-1.89.4/imgui_tables.cpp", 
 			"ThirdParty/imgui-1.89.4/imgui_widgets.cpp" }
 
-    includedirs { "%{prj.name}/src", "HTNPlanner/src", "ThirdParty/imgui-1.89.4" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNPlanner/src", "ThirdParty/imgui-1.89.4" }
 
-    links { "HTNPlanner" }
+    links { "HTNFramework", "HTNPlanner" }
 
 -- HTNTest
 project "HTNTest"
@@ -86,9 +103,9 @@ project "HTNTest"
 
     files { "%{prj.name}/src/**.cpp", "%{prj.name}/src/**.h" }
 
-    includedirs { "%{prj.name}/src", "HTNPlanner/src", "ThirdParty/Optick_1.4.0/src" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNPlanner/src", "ThirdParty/Optick_1.4.0/src" }
 
-    links { "HTNPlanner" }
+    links { "HTNFramework", "HTNPlanner" }
 
     nuget { "Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1.7" }
 
@@ -125,10 +142,10 @@ project "HTNDemo"
             "ThirdParty/Optick_1.4.0/src/**.cpp",
             "ThirdParty/Optick_1.4.0/src/**.h" }
 
-    includedirs { "%{prj.name}/src", "HTNPlanner/src", "HTNDebugger/src", "ThirdParty/Optick_1.4.0/src", "ThirdParty/SDL2-2.26.4/include", "ThirdParty/imgui-1.89.4", "ThirdParty/imgui-1.89.4/backends" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNPlanner/src", "HTNDebugger/src", "ThirdParty/Optick_1.4.0/src", "ThirdParty/SDL2-2.26.4/include", "ThirdParty/imgui-1.89.4", "ThirdParty/imgui-1.89.4/backends" }
 
 	libdirs { "ThirdParty/SDL2-2.26.4/lib/x64" }
-    links { "HTNPlanner", "HTNDebugger", "SDL2", "SDL2main" }
+    links { "HTNFramework", "HTNPlanner", "HTNDebugger", "SDL2", "SDL2main" }
 	
 	-- TODO JOSE: Make this work properly, we should copy the SDL2.dll in the right target dir, I am pretty sure there is a macro to do that.
 	-- filter "configurations:Debug"
