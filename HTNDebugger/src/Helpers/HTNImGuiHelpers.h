@@ -23,6 +23,11 @@ ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeSte
 ImVec4 GetResultColor(const bool inResult);
 ImVec4 GetVariableColor(const std::string& inVariableID);
 
+// Helper to display a little (?) mark which shows a tooltip when hovered.
+// In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
+// @see imgui_demo.cpp
+void HelpMarker(const std::string& inDescription);
+
 const ImGuiWindowFlags     kDefaultWindowFlags     = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
 const ImGuiTabBarFlags     kDefaultTabBarFlags     = ImGuiTabBarFlags_None;
 const ImGuiComboFlags      kDefaultComboFlags      = ImGuiComboFlags_None;

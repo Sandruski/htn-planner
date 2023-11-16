@@ -61,5 +61,17 @@ ImVec4 GetVariableColor(const std::string& inVariableID)
         return kArgumentColor;
     }
 }
+
+void HelpMarker(const std::string& inDescription)
+{
+    ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort) && ImGui::BeginTooltip())
+    {
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(inDescription.c_str());
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
 } // namespace HTNImGuiHelpers
 #endif

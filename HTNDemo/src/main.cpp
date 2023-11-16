@@ -86,22 +86,21 @@ int main(int, char**)
     // ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     // IM_ASSERT(font != NULL);
 
-    // Our state
-    bool ShowDemoWindow = true;
 #ifdef HTN_DEBUG
-    bool ShowHTNDebuggerWindow = true;
-#endif
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
     HTNDatabaseHook   DatabaseHook;
     HTNPlannerHook    PlannerHook;
     HTNPlanningUnit   MainPlanningUnit      = HTNPlanningUnit("Main", DatabaseHook, PlannerHook);
     HTNPlanningUnit   UpperBodyPlanningUnit = HTNPlanningUnit("Upper Body", DatabaseHook, PlannerHook);
     HTNDebuggerWindow DebuggerWindow        = HTNDebuggerWindow(DatabaseHook, PlannerHook, MainPlanningUnit, UpperBodyPlanningUnit);
 
+    bool ShowHTNDebuggerWindow = true;
+#endif
+
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
     // Main loop
-    bool done = false;
-    while (!done)
+    bool Done = false;
+    while (!Done)
     {
         OPTICK_FRAME("MainThread");
 
@@ -116,9 +115,9 @@ int main(int, char**)
         {
             ImGui_ImplSDL2_ProcessEvent(&event);
             if (event.type == SDL_QUIT)
-                done = true;
+                Done = true;
             if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
-                done = true;
+                Done = true;
         }
 
         // Start the Dear ImGui frame
@@ -126,10 +125,7 @@ int main(int, char**)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        if (ShowDemoWindow)
-        {
-            ImGui::ShowDemoWindow();
-        }
+        ImGui::ShowDemoWindow();
 
 #ifdef HTN_DEBUG
         if (ShowHTNDebuggerWindow)

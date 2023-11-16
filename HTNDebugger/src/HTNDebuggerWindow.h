@@ -40,6 +40,8 @@ private:
     void RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>* inMethodNodes, HTNPlanningQuery& ioPlanningQuery,
                                             HTNDecompositionNode& ioSelectedNode);
 
+    void ResetDecompositionPrinterState();
+
     bool IsLastWorldStateFileParsingSuccessful() const;
     bool IsLastDomainFileParsingSuccessful() const;
 
@@ -53,17 +55,27 @@ private:
     HTNPlanningQuery               mUpperBodyPlanningQuery = HTNPlanningQuery(mUpperBodyPlanningUnit);
     std::vector<HTNPlanningQuery*> mPlanningQueries        = {&mMainPlanningQuery, &mUpperBodyPlanningQuery};
 
+    //----------------------------------------------------------------------//
+    // WorldState Printer
+    //----------------------------------------------------------------------//
     std::filesystem::path mSelectedWorldStateFilePath;
-    std::filesystem::path mSelectedDomainFilePath;
     HTNOperationResult    mLastParseWorldStateFileResult = HTNOperationResult::NONE;
-    HTNOperationResult    mLastParseDomainFileResult     = HTNOperationResult::NONE;
 
+    //----------------------------------------------------------------------//
+    // Domain Printer
+    //----------------------------------------------------------------------//
+    std::filesystem::path mSelectedDomainFilePath;
+    HTNOperationResult    mLastParseDomainFileResult = HTNOperationResult::NONE;
+
+    //----------------------------------------------------------------------//
+    // Decomposition Printer
+    //----------------------------------------------------------------------//
+    std::unordered_map<std::string, HTNDecompositionNodeState>            mNodeStates;
+    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mChoicePointNodeStates;
     HTNDecompositionNode                                                  mMainSelectedNode;
     HTNDecompositionNode                                                  mUpperBodySelectedNode;
     HTNDecompositionTooltipMode                                           mTooltipMode               = HTNDecompositionTooltipMode::REGULAR;
     bool                                                                  mIsDecompositionCurrentTab = false;
-    std::unordered_map<std::string, HTNDecompositionNodeState>            mNodeStates;
-    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mChoicePointNodeStates;
 
     const HTNWorldStatePrinter               mWorldStatePrinter               = HTNWorldStatePrinter();
     const HTNDomainPrinter                   mDomainPrinter                   = HTNDomainPrinter();

@@ -250,6 +250,8 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     if (ImGui::Button("Decompose All"))
     {
+        ResetDecompositionPrinterState();
+
         std::for_each(std::execution::par, mPlanningQueries.begin(), mPlanningQueries.end(), [this](HTNPlanningQuery* ioPlanningQuery) {
             const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
             DecomposePlanningQuery(*ioPlanningQuery);
@@ -335,6 +337,13 @@ void HTNDebuggerWindow::RenderWorldState()
     static ImGuiTextFilter TextFilter;
     TextFilter.Draw("##");
 
+    ImGui::SameLine();
+    HTNImGuiHelpers::HelpMarker("Filter usage:\n"
+                                "  \"\"         display all lines\n"
+                                "  \"xxx\"      display lines containing \"xxx\"\n"
+                                "  \"xxx,yyy\"  display lines containing \"xxx\" or \"yyy\"\n"
+                                "  \"-xxx\"     hide lines containing \"xxx\"");
+
     if (!IsLastWorldStateFileParsingSuccessful())
     {
         return;
@@ -398,6 +407,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
 
     if (ImGui::Button("Decompose"))
     {
+        ResetDecompositionPrinterState();
         DecomposePlanningQuery(ioPlanningQuery);
     }
 
@@ -414,15 +424,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
     const ImVec2 DecompositionChildSize = ImVec2(500.f, 350.f);
     ImGui::BeginChild("DecompositionChild", DecompositionChildSize, false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
 
-    bool ShouldReset = false;
-
-    // TODO salvarez Make it work without delay (and from main)
-    /*
-    if (ImGui::IsKeyDown(ImGuiKey_R))
-    {
-        ShouldReset = true;
-    }
-    */
+    bool ShouldResetDecompositionPrinterState = false;
 
     if (ImGui::BeginMenuBar())
     {
@@ -430,7 +432,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         {
             if (ImGui::MenuItem("Reset", "R"))
             {
-                ShouldReset = true;
+                ShouldResetDecompositionPrinterState = true;
             }
 
             if (HTNImGuiHelpers::IsCurrentItemHovered())
@@ -487,13 +489,21 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
 
     if (ioPlanningQuery.IsLastDecompositionSuccessful())
     {
+        constexpr bool ShouldRepeat          = false;
+        ShouldResetDecompositionPrinterState = ShouldResetDecompositionPrinterState || ImGui::IsKeyPressed(ImGuiKey_R, ShouldRepeat);
+
+        if (ShouldResetDecompositionPrinterState)
+        {
+            ResetDecompositionPrinterState();
+        }
+
         const std::shared_ptr<const HTNDomainNode>& LastDomainNode            = ioPlanningQuery.GetLastDomainNode();
         const std::string&                          LastEntryPointID          = ioPlanningQuery.GetLastEntryPointID();
         const HTNPlanningUnit&                      PlanningUnit              = ioPlanningQuery.GetPlanningUnit();
         const HTNDecompositionSnapshotDebug&        LastDecompositionSnapshot = PlanningUnit.GetLastDecompositionSnapshot();
-        const bool                                  ShouldIgnoreNewNodeOpen   = !mIsDecompositionCurrentTab;
+        const bool                                  ShouldIgnoreImGuiState    = !mIsDecompositionCurrentTab;
         HTNDecompositionPrinterContext              DecompositionPrinterContext =
-            HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, mTooltipMode, ShouldIgnoreNewNodeOpen,
+            HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, mTooltipMode, ShouldIgnoreImGuiState,
                                            mNodeStates, mChoicePointNodeStates, ioSelectedNode);
         mDecompositionPrinter.Print(DecompositionPrinterContext);
     }
@@ -525,5 +535,12 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
 
     ImGui::EndChild();
     ImGui::PopStyleVar();
+}
+
+void HTNDebuggerWindow::ResetDecompositionPrinterState()
+{
+    mNodeStates.clear();
+    mChoicePointNodeStates.clear();
+    mMainSelectedNode = HTNDecompositionNode();
 }
 #endif
