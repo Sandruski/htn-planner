@@ -4,7 +4,7 @@
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/HTNDecompositionPrinter.h"
-#include "Domain/HTNDecompositionWatchTooltipPrinterContext.h"
+#include "Domain/HTNDecompositionTooltipMode.h"
 #include "Domain/HTNDecompositionWatchWindowPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Helpers/HTNDebuggerWindowHelpers.h"

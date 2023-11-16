@@ -3,7 +3,6 @@
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionPrinterContext.h"
-#include "Domain/HTNDecompositionWatchTooltipPrinterContext.h"
 #include "Domain/HTNDecompositionWatchWindowPrinterContext.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/HTNDomainPrinterContext.h"
@@ -486,10 +485,9 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(HTNPlanningQuery&    
         const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = PlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
         const bool                           ShouldIgnoreNewNodeOpen   = !mIsDecompositionCurrentTab;
         HTNDecompositionPrinterContext       DecompositionPrinterContext =
-            HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, mNodeStates, mChoicePointNodeStates,
-                                           ioSelectedNode, mTooltipMode, ShouldIgnoreNewNodeOpen);
+            HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, mTooltipMode, ShouldIgnoreNewNodeOpen,
+                                           mNodeStates, mChoicePointNodeStates, ioSelectedNode);
         mDecompositionPrinter.Print(DecompositionPrinterContext);
-        ioSelectedNode = DecompositionPrinterContext.GetSelectedNode();
     }
 
     ImGui::EndChild();

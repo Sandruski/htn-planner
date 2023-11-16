@@ -9,7 +9,9 @@
 #include <string>
 
 class HTNDecompositionPrinterContext;
+class HTNNodeBase;
 class HTNNodeSnapshotDebug;
+class HTNNodeVisitorContextBase;
 enum class HTNNodeStep : unsigned char;
 
 using HTNNodeTitleFunction    = std::function<void(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep)>;
@@ -44,8 +46,8 @@ public:
     HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext) const final;
 
 private:
-    bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const HTNNodeTitleFunction& inNodeTitleFunction,
-                                  const HTNNodeBehaviorFunction* inNodeBehaviorFunction, const HTNNodeFunction& inNodeFunction,
+    bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const HTNNodeTitleFunction inNodeTitleFunction,
+                                  const HTNNodeBehaviorFunction inNodeBehaviorFunction, const HTNNodeFunction inNodeFunction,
                                   const ImGuiTreeNodeFlags inTreeNodeFlags, HTNNodeVisitorContextBase& ioContext) const;
 
     const HTNDecompositionWatchTooltipPrinter mDecompositionWatchTooltipPrinter;

@@ -2,18 +2,12 @@
 
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionWatchPrinterContextBase.h"
+#include "Domain/HTNDecompositionTooltipMode.h"
 
 #include <memory>
 
 class HTNDecompositionNode;
 class HTNDomainNode;
-
-enum class HTNDecompositionTooltipMode : unsigned char
-{
-    NONE,
-    REGULAR,
-    FULL
-};
 
 class HTNDecompositionWatchTooltipPrinterContext final : public HTNDecompositionWatchPrinterContextBase
 {

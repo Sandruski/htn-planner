@@ -8,12 +8,12 @@
 
 HTNDecompositionPrinterContext::HTNDecompositionPrinterContext(
     const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-    const HTNDecompositionSnapshotDebug& inDecompositionSnapshot, const std::unordered_map<std::string, HTNDecompositionNodeState>& inNodeStates,
-    const std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& inChoicePointNodeStates, const HTNDecompositionNode& inSelectedNode,
-    const HTNDecompositionTooltipMode inTooltipMode, const bool inShouldIgnoreNewNodeOpen)
-    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(&inDecompositionSnapshot), mTooltipMode(inTooltipMode),
-      mShouldIgnoreNewNodeOpen(inShouldIgnoreNewNodeOpen), mNodeStates(inNodeStates), mChoicePointNodeStates(inChoicePointNodeStates),
-      mSelectedNode(inSelectedNode)
+    const HTNDecompositionSnapshotDebug& inDecompositionSnapshot, const HTNDecompositionTooltipMode inTooltipMode,
+    const bool inShouldIgnoreImGuiState, std::unordered_map<std::string, HTNDecompositionNodeState>& ioNodeStates,
+    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates, HTNDecompositionNode& ioSelectedNode)
+    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot), mTooltipMode(inTooltipMode),
+      mShouldIgnoreImGuiState(inShouldIgnoreImGuiState), mNodeStates(ioNodeStates), mChoicePointNodeStates(ioChoicePointNodeStates),
+      mSelectedNode(ioSelectedNode)
 {
 }
 
@@ -35,10 +35,41 @@ bool HTNDecompositionPrinterContext::IsNodeSelected(const std::string& inNodeLab
     return (inNodeLabel == SelectedNodeLabel);
 }
 
-bool HTNDecompositionPrinterContext::IsCurrentDecompositionStepValid() const
+void HTNDecompositionPrinterContext::AddNodeState(const std::string& inNodePath, const HTNDecompositionNodeState& inNodeState)
 {
-    return HTNDecompositionHelpers::IsDecompositionStepValid(mCurrentDecompositionStep);
+    mNodeStates[inNodePath] = inNodeState;
 }
+
+const HTNDecompositionNodeState* HTNDecompositionPrinterContext::FindNodeState(const std::string& inNodePath) const
+{
+    const auto It = mNodeStates.find(inNodePath);
+    return ((It != mNodeStates.end()) ? &It->second : nullptr);
+}
+
+HTNDecompositionNodeState* HTNDecompositionPrinterContext::FindNodeStateMutable(const std::string& inNodePath)
+{
+    const auto It = mNodeStates.find(inNodePath);
+    return ((It != mNodeStates.end()) ? &It->second : nullptr);
+}
+
+void HTNDecompositionPrinterContext::AddChoicePointNodeState(const std::string&                          inNodePath,
+                                                                    const HTNDecompositionChoicePointNodeState& inChoicePointNodeState)
+{
+    mChoicePointNodeStates[inNodePath] = inChoicePointNodeState;
+}
+
+const HTNDecompositionChoicePointNodeState* HTNDecompositionPrinterContext::FindChoicePointNodeState(const std::string& inNodePath) const
+{
+    const auto It = mChoicePointNodeStates.find(inNodePath);
+    return ((It != mChoicePointNodeStates.end()) ? &It->second : nullptr);
+}
+
+HTNDecompositionChoicePointNodeState* HTNDecompositionPrinterContext::FindChoicePointNodeStateMutable(const std::string& inNodePath)
+{
+    const auto It = mChoicePointNodeStates.find(inNodePath);
+    return ((It != mChoicePointNodeStates.end()) ? &It->second : nullptr);
+}
+
 
 HTNNodeStep HTNDecompositionPrinterContext::GetNodeStep(const std::string& inNodePath, const bool inIsChoicePoint) const
 {
@@ -84,5 +115,10 @@ bool HTNDecompositionPrinterContext::IsNodeOpen(const std::string& inNodePath, c
         const HTNDecompositionNodeState& NodeState = mNodeStates.at(inNodePath);
         return NodeState.IsOpen();
     }
+}
+
+bool HTNDecompositionPrinterContext::IsCurrentDecompositionStepValid() const
+{
+    return HTNDecompositionHelpers::IsDecompositionStepValid(mCurrentDecompositionStep);
 }
 #endif
