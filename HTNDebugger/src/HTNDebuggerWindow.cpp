@@ -13,6 +13,7 @@
 #include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
+#include "Helpers/HTNFileHelpers.h"
 #include "HTNFileHelpers.h"
 #include "Helpers/HTNImGuiHelpers.h"
 #include "Planner/HTNDatabaseHook.h"

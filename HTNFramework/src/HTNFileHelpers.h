@@ -6,11 +6,6 @@
 namespace HTNFileHelpers
 {
 std::filesystem::path MakeAbsolutePath(const std::string& inRelativePath);
-
-const std::string WorldStatesDirectoryName = "WorldStates";
-const std::string WorldStateFileExtension  = ".worldstate";
-const std::string DomainsDirectoryName     = "Domains";
-const std::string DomainFileExtension      = ".domain";
 } // namespace HTNFileHelpers
 
 namespace HTNFileHelpers
