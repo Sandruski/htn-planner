@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HTNTypes.h"
+#include "HTNCoreMinimal.h"
 
 #include <initializer_list>
 #include <string>

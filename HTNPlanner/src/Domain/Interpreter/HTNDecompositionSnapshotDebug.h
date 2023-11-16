@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
+#include "HTNCoreMinimal.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 
 #include <map>
@@ -21,7 +22,7 @@ enum class HTNNodeStep : uint8
 using HTNNodeSnapshotCollectionDebug = std::unordered_map<HTNNodeStep, HTNNodeSnapshotDebug>;
 
 // Decomposition step to node snapshot steps
-using HTNNodeSnapshotStepsCollectionDebug = std::map<std::size_t, HTNNodeSnapshotCollectionDebug>;
+using HTNNodeSnapshotStepsCollectionDebug = std::map<size, HTNNodeSnapshotCollectionDebug>;
 
 // Node path to node snapshot history
 using HTNNodeSnapshotHistoryCollectionDebug = std::unordered_map<std::string, HTNNodeSnapshotHistoryDebug>;
@@ -64,11 +65,11 @@ public:
     const HTNNodeSnapshotHistoryDebug* FindNodeSnapshotHistory(const std::string& inNodePath) const;
 
     void        IncrementDecompositionStep();
-    std::size_t GetDecompositionStep() const;
+    size GetDecompositionStep() const;
 
 private:
     HTNNodeSnapshotHistoryCollectionDebug mNodeSnapshotHistoryCollection;
-    std::size_t                           mDecompositionStep = 0;
+    size                           mDecompositionStep = 0;
 };
 
 inline bool HTNNodeSnapshotDebug::GetResult() const
@@ -112,7 +113,7 @@ inline void HTNDecompositionSnapshotDebug::IncrementDecompositionStep()
     ++mDecompositionStep;
 }
 
-inline std::size_t HTNDecompositionSnapshotDebug::GetDecompositionStep() const
+inline size HTNDecompositionSnapshotDebug::GetDecompositionStep() const
 {
     return mDecompositionStep;
 }

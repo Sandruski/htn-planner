@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Helpers/HTNUncopyable.h"
+#include "HTNCoreMinimal.h"
+#include "HTNUncopyable.h"
 
 #include <string>
 

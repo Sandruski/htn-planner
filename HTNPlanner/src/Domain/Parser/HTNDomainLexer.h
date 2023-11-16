@@ -1,5 +1,6 @@
 #pragma once
 
+#include "HTNCoreMinimal.h"
 #include "Parser/HTNLexerBase.h"
 
 class HTNDomainLexerContext;

@@ -4,7 +4,7 @@
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Parser/HTNDomainLexerContext.h"
 #include "Domain/Parser/HTNDomainParserContext.h"
-#include "Helpers/HTNFileHandler.h"
+#include "HTNFileHandler.h"
 #include "Helpers/HTNToken.h"
 
 bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HTNCoreMinimal.h"
+
 #include <string>
 
 /**

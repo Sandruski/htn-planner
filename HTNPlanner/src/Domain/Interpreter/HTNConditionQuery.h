@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HTNCoreMinimal.h"
+
 #include <string>
 #include <vector>
 
@@ -21,5 +23,5 @@ class HTNConditionQueryWorldState final : public HTNConditionQueryBase
 {
 public:
     // Check if the condition is true
-    static bool Check(const HTNWorldState& inWorldState, const std::string& inFactID, const std::size_t inArgumentsIndex, std::vector<HTNAtom>& ioArguments);
+    static bool Check(const HTNWorldState& inWorldState, const std::string& inFactID, const size inArgumentsIndex, std::vector<HTNAtom>& ioArguments);
 };

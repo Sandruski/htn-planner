@@ -1,4 +1,6 @@
-#include "Helpers/HTNFileHandler.h"
+#include "HTNFileHandler.h"
+
+#include "HTNLog.h"
 
 #include <sstream>
 

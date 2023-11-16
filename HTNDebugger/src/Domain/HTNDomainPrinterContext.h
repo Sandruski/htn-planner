@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
+#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 
 #include <memory>

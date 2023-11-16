@@ -13,7 +13,7 @@ const HTNToken* HTNParserContextBase::GetToken(const uint32 inPosition) const
     return ((inPosition < mTokens.size()) ? &mTokens[inPosition] : nullptr);
 }
 
-std::size_t HTNParserContextBase::GetTokensSize() const
+size HTNParserContextBase::GetTokensSize() const
 {
     return mTokens.size();
 }

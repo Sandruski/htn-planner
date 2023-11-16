@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Helpers/HTNAtom.h"
-#include "Helpers/HTNMacros.h"
+#include "HTNCoreMinimal.h"
 
 #include <optional>
 #include <string>

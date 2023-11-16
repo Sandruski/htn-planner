@@ -1,5 +1,6 @@
 #pragma once
 
+#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeBase.h"
 #include "Helpers/HTNAtom.h"
 

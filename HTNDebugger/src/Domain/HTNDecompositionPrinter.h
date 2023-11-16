@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
+#include "HTNCoreMinimal.h"
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionWatchTooltipPrinter.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"

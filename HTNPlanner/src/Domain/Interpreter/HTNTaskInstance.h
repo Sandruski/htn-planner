@@ -1,5 +1,6 @@
 #pragma once
 
+#include "HTNCoreMinimal.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNNodePath.h"
 

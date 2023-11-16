@@ -1,5 +1,6 @@
 #pragma once
 
+#include "HTNCoreMinimal.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Parser/HTNDomainLexer.h"
 #include "Domain/Parser/HTNDomainParser.h"

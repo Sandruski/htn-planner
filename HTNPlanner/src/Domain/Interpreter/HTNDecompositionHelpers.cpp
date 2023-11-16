@@ -50,7 +50,7 @@ bool TryPopSegmentFromPath(std::string& ioPath)
         return false;
     }
 
-    const std::size_t Index = ioPath.find_last_of(kPathSegmentSeparator);
+    const size Index = ioPath.find_last_of(kPathSegmentSeparator);
     if (Index != std::string::npos)
     {
         ioPath.erase(Index);
@@ -65,7 +65,7 @@ bool TryPopSegmentFromPath(std::string& ioPath)
 
 bool FindVariableID(const std::string& inVariablePath, std::string& outVariableID)
 {
-    const std::size_t Index = inVariablePath.find_last_of(kPathSegmentSeparator);
+    const size Index = inVariablePath.find_last_of(kPathSegmentSeparator);
     if (Index == std::string::npos)
     {
         return false;

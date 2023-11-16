@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Helpers/HTNUncopyable.h"
+#include "HTNUncopyable.h"
 
 #include <string>
 #include <fstream>

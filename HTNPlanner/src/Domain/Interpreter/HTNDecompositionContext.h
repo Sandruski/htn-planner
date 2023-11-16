@@ -1,5 +1,6 @@
 #pragma once
 
+#include "HTNCoreMinimal.h"
 #include "Domain/Interpreter/HTNDecompositionRecord.h"
 #include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"

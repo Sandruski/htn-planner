@@ -1,5 +1,6 @@
 #pragma once
 
+#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 
 #include <vector>
@@ -17,7 +18,7 @@ public:
     virtual ~HTNParserContextBase() = 0;
 
     const HTNToken* GetToken(const uint32 inPosition) const;
-    std::size_t     GetTokensSize() const;
+    size     GetTokensSize() const;
 
     void         SetPosition(const uint32 inPosition);
     void IncrementPosition();

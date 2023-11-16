@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HTNCoreMinimal.h"
+
 class HTNParserContextBase;
 class HTNToken;
 enum class HTNTokenType : uint8;

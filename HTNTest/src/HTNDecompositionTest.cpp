@@ -1,5 +1,6 @@
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
-#include "Helpers/HTNFileHelpers.h"
+#include "HTNCoreMinimal.h"
+#include "HTNFileHelpers.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
 #include "Planner/HTNPlanningUnit.h"
@@ -100,7 +101,7 @@ TEST_P(HTNDecompositionTest, IsDecompositionSuccessful)
 TEST_P(HTNDecompositionTest, AreDecompositionsSuccessful)
 {
     std::vector<HTNPlanningUnit> PlanningUnits;
-    constexpr std::size_t        PlanningUnitsSize = 100;
+    constexpr size               PlanningUnitsSize = 100;
     PlanningUnits.resize(PlanningUnitsSize, HTNPlanningUnit("", mDatabaseHook, mPlannerHook));
     const std::string EntryPointID = GetEntryPointID();
     std::for_each(std::execution::par, PlanningUnits.begin(), PlanningUnits.end(), [&](HTNPlanningUnit& inPlanningUnit) {

@@ -12,7 +12,7 @@ const HTNToken* HTNParserBase::ParseToken(const HTNTokenType inTokenType, HTNPar
     if (!Token)
     {
 #if HTN_DEBUG
-        const std::size_t TokensSize       = ioParserContext.GetTokensSize();
+        const size TokensSize       = ioParserContext.GetTokensSize();
         const std::string LastErrorMessage = std::format("Token at [{}] is out of bounds [{}]", Position, TokensSize);
         ioParserContext.SetLastErrorMessage(LastErrorMessage);
         constexpr int32 LastErrorRow = -1;

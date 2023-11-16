@@ -208,8 +208,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
     HTNIndices&             Indices              = Environment.GetIndicesMutable();
 
     const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes     = inMethodNode.GetBranchNodes();
-    const std::size_t                                        BranchNodesSize = BranchNodes.size();
-    for (std::size_t BranchIndex = Indices.AddIndex(CurrentNodePath); BranchIndex < BranchNodesSize; BranchIndex = Indices.GetIndex(CurrentNodePath))
+    const size                                        BranchNodesSize = BranchNodes.size();
+    for (size BranchIndex = Indices.AddIndex(CurrentNodePath); BranchIndex < BranchNodesSize; BranchIndex = Indices.GetIndex(CurrentNodePath))
     {
         // Check branch
         const std::shared_ptr<const HTNBranchNode>& BranchNode = BranchNodes[BranchIndex];
@@ -345,8 +345,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
     // Check fact
     const std::shared_ptr<const HTNIdentifierExpressionNode>& ConditionNodeIDNode = inConditionNode.GetIDNode();
     const std::string                                         FactID = GetNodeValue(*ConditionNodeIDNode, ioContext).GetValue<std::string>();
-    const std::size_t                                         FactArgumentsSize = WorldState.GetFactArgumentsSize(FactID, FactArguments.size());
-    for (std::size_t FactArgumentsIndex = Indices.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsSize;
+    const size                                         FactArgumentsSize = WorldState.GetFactArgumentsSize(FactID, FactArguments.size());
+    for (size FactArgumentsIndex = Indices.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsSize;
          FactArgumentsIndex             = Indices.AddOrIncrementIndex(CurrentNodePath))
     {
         if (!HTNConditionQueryWorldState::Check(WorldState, FactID, FactArgumentsIndex, FactArguments))
@@ -368,7 +368,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
         const HTNVariables Variables = Environment.GetVariables();
 
         // Update variables
-        for (std::size_t i = 0; i < ArgumentNodes.size(); ++i)
+        for (size i = 0; i < ArgumentNodes.size(); ++i)
         {
             const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode = ArgumentNodes[i];
             const HTNAtom                                            FactArgument = FactArguments[i];
@@ -455,7 +455,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 
         // Initialize the input parameters of the axiom node with the arguments of the condition node
         const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& AxiomNodeParameterNodes = AxiomNode->GetParameterNodes();
-        for (std::size_t i = 0; i < AxiomNodeParameterNodes.size(); ++i)
+        for (size i = 0; i < AxiomNodeParameterNodes.size(); ++i)
         {
             const std::shared_ptr<const HTNVariableExpressionNode>& AxiomNodeParameterNode     = AxiomNodeParameterNodes[i];
             const HTNAtom&                                          AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
@@ -480,7 +480,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     }
 
     // Initialize the arguments of the condition node with the output parameters of the axiom node
-    for (std::size_t i = 0; i < AxiomConditionNodeArgumentNodes.size(); ++i)
+    for (size i = 0; i < AxiomConditionNodeArgumentNodes.size(); ++i)
     {
         const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomConditionNodeArgumentNode = AxiomConditionNodeArgumentNodes[i];
         const HTNAtom&                                           AxiomNodeArgument              = AxiomNodeParameters[i];
@@ -520,8 +520,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
     HTNIndices&             Indices              = Environment.GetIndicesMutable();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes     = inAndConditionNode.GetSubConditionNodes();
-    const std::size_t                                               SubConditionNodesSize = SubConditionNodes.size();
-    for (std::size_t SubConditionIndex = Indices.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
+    const size                                               SubConditionNodesSize = SubConditionNodes.size();
+    for (size SubConditionIndex = Indices.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
          SubConditionIndex             = Indices.GetIndex(CurrentNodePath))
     {
         // Check sub-condition
@@ -591,8 +591,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
     HTNIndices&             Indices              = Environment.GetIndicesMutable();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes     = inOrConditionNode.GetSubConditionNodes();
-    const std::size_t                                               SubConditionNodesSize = SubConditionNodes.size();
-    for (std::size_t SubConditionIndex = Indices.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
+    const size                                               SubConditionNodesSize = SubConditionNodes.size();
+    for (size SubConditionIndex = Indices.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
          SubConditionIndex             = Indices.GetIndex(CurrentNodePath))
     {
         // Copy decomposition history
@@ -651,8 +651,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
     HTNIndices&             Indices              = Environment.GetIndicesMutable();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes     = inAltConditionNode.GetSubConditionNodes();
-    const std::size_t                                               SubConditionNodesSize = SubConditionNodes.size();
-    for (std::size_t SubConditionIndex = Indices.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
+    const size                                               SubConditionNodesSize = SubConditionNodes.size();
+    for (size SubConditionIndex = Indices.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
          SubConditionIndex             = Indices.GetIndex(CurrentNodePath))
     {
         // Check sub-condition
@@ -796,7 +796,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
 
     // Initialize the input parameters of the method node with the arguments of the compound task node
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& MethodNodeParameterNodes = MethodNode->GetParameterNodes();
-    for (std::size_t i = 0; i < MethodNodeParameterNodes.size(); ++i)
+    for (size i = 0; i < MethodNodeParameterNodes.size(); ++i)
     {
         const std::shared_ptr<const HTNVariableExpressionNode>& MethodNodeParameterNode  = MethodNodeParameterNodes[i];
         const HTNAtom&                                          CompoundTaskNodeArgument = CompoundTaskNodeArguments[i];

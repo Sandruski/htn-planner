@@ -14,6 +14,15 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNCoreMinimal.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNFileHandler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNFileHelpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNLog.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNMacros.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNTypes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNUncopyable.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\HTNFileHandler.cpp" />
   </ItemGroup>
 </Project>

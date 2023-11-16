@@ -1,9 +1,6 @@
 #pragma once
 
-#include "HTNTypes.h"
 #include "Helpers/HTNAtom.h"
-#include "Helpers/HTNLog.h"
-#include "Helpers/HTNMacros.h"
 
 #include <algorithm>
 #include <cassert>

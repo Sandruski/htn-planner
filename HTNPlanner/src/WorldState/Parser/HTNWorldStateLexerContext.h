@@ -1,5 +1,6 @@
 #pragma once
 
+#include "HTNCoreMinimal.h"
 #include "Parser/HTNLexerContextBase.h"
 
 #include <string>

@@ -1,6 +1,8 @@
 #pragma once
 
 #ifdef HTN_DEBUG
+#include "HTNCoreMinimal.h"
+
 #include "imgui.h"
 
 #include <format>

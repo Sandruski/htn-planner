@@ -7,6 +7,7 @@
 // because it provides a rather limited API to the end-user. We provide this backend for the sake of completeness.
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
+#include "HTNCoreMinimal.h"
 #include "HTNDebuggerWindow.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
@@ -24,7 +25,7 @@
 #endif
 
 // Main code
-int32 main(int32, char**)
+int main(int, char**)
 {
     // Setup SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)

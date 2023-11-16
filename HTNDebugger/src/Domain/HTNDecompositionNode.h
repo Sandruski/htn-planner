@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
+#include "HTNCoreMinimal.h"
 #include "Domain/Interpreter/HTNNodePath.h"
 
 #include <memory>

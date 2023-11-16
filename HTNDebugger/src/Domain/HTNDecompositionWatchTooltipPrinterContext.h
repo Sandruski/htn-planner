@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
+#include "HTNCoreMinimal.h"
 #include "Domain/HTNDecompositionWatchPrinterContextBase.h"
 #include "Domain/HTNDecompositionTooltipMode.h"
 

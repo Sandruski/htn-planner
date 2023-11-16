@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Helpers/HTNAtom.h"
+#include "HTNCoreMinimal.h"
 
 class HTNAtomNode
 {

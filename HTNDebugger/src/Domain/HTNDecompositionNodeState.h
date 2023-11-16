@@ -1,6 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
+#include "HTNCoreMinimal.h"
 #include "Domain/HTNDecompositionHelpers.h"
 
 #include <map>
@@ -59,13 +60,13 @@ public:
 
     HTNNodeStep GetNodeStep() const final;
 
-    void SetIsOpen(const std::size_t inDecompositionStep, const bool inIsOpen);
-    bool IsOpen(const std::size_t inDecompositionStep) const;
+    void SetIsOpen(const size inDecompositionStep, const bool inIsOpen);
+    bool IsOpen(const size inDecompositionStep) const;
     int32  FindOpenDecompositionStepInRange(const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep) const;
 
 private:
     // Decomposition step to whether the node is open or closed
-    std::map<std::size_t, bool> mIsOpen;
+    std::map<size, bool> mIsOpen;
 };
 
 inline void HTNDecompositionNodeStateBase::SetDecompositionStep(const int32 inDecompositionStep)
@@ -88,12 +89,12 @@ inline bool HTNDecompositionNodeState::IsOpen() const
     return mIsOpen;
 }
 
-inline void HTNDecompositionChoicePointNodeState::SetIsOpen(const std::size_t inDecompositionStep, const bool inIsOpen)
+inline void HTNDecompositionChoicePointNodeState::SetIsOpen(const size inDecompositionStep, const bool inIsOpen)
 {
     mIsOpen[inDecompositionStep] = inIsOpen;
 }
 
-inline bool HTNDecompositionChoicePointNodeState::IsOpen(const std::size_t inDecompositionStep) const
+inline bool HTNDecompositionChoicePointNodeState::IsOpen(const size inDecompositionStep) const
 {
     const auto It = mIsOpen.find(inDecompositionStep);
     return ((It != mIsOpen.end()) ? It->second : false);

@@ -28,7 +28,7 @@ HTNDecompositionPrinterContext& GetDecompositionPrinterContext(HTNNodeVisitorCon
     return static_cast<HTNDecompositionPrinterContext&>(ioContext);
 }
 
-bool IsNodeValid(const std::size_t inDecompositionStep, const bool inIsChoicePoint, const int32 inCurrentDecompositionStep,
+bool IsNodeValid(const size inDecompositionStep, const bool inIsChoicePoint, const int32 inCurrentDecompositionStep,
                  const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep)
 {
     // Filter available nodes within range [min, max)
@@ -573,7 +573,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     const bool                                 IsChoicePoint               = NodeSnapshotHistory->IsChoicePoint();
 
     const auto        LastIt                = NodeSnapshotStepsCollection.rbegin();
-    const std::size_t LastDecompositionStep = LastIt->first;
+    const size LastDecompositionStep = LastIt->first;
 
     // Initialize node(s)
     if (IsChoicePoint)
@@ -654,7 +654,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
     for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
     {
-        const std::size_t DecompositionStep = It->first;
+        const size DecompositionStep = It->first;
         if (!IsNodeValid(DecompositionStep, IsChoicePoint, CurrentNodeDecompositionStep, MinDecompositionStep, MaxDecompositionStep))
         {
             continue;
