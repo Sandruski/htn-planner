@@ -15,3 +15,11 @@ The solution contains three projects, HTNPlanner, HTNDemo, and HTNTest. HTNPlann
 - [GoogleTest](https://google.github.io/googletest/)
 - [Premake](https://premake.github.io/)
 - [Optick](https://github.com/bombomby/optick)
+
+## Reference
+- [Exploring HTN Planners
+through Example](https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter12_Exploring_HTN_Planners_through_Example.pdf)
+- [derplanner](https://github.com/alexshafranov/derplanner)
+- [The AI of Horizon Zero Dawn](https://www.guerrilla-games.com/read/the-ai-of-horizon-zero-dawn)
+- [Hierarchical AI for Multiplayer
+Bots in Killzone 3](https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter29_Hierarchical_AI_for_Multiplayer_Bots_in_Killzone_3.pdf)
