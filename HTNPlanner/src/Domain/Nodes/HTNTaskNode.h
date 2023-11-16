@@ -17,7 +17,7 @@ public:
     explicit HTNTaskNodeBase(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
                              const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes);
     explicit HTNTaskNodeBase(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
-                             const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes, const unsigned int inID);
+                             const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes, const uint32 inID);
 
     std::string GetID() const final;
 
@@ -33,11 +33,11 @@ protected:
     std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> mArgumentNodes;
 
 private:
-    unsigned int GenerateID() const;
+    uint32 GenerateID() const;
 
     // ID of the task
     // - Globally unique
-    const unsigned int mID = 0;
+    const uint32 mID = 0;
 };
 
 /**
@@ -49,7 +49,7 @@ public:
     explicit HTNCompoundTaskNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
                                  const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes, const bool inIsTopLevel);
     explicit HTNCompoundTaskNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
-                                 const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes, const unsigned int inID,
+                                 const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes, const uint32 inID,
                                  const bool inIsTopLevel);
 
     HTNAtom Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
@@ -83,9 +83,9 @@ inline const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& HTN
     return mArgumentNodes;
 }
 
-inline unsigned int HTNTaskNodeBase::GenerateID() const
+inline uint32 HTNTaskNodeBase::GenerateID() const
 {
-    static unsigned int mIDGenerator = 0;
+    static uint32 mIDGenerator = 0;
     return ++mIDGenerator;
 }
 

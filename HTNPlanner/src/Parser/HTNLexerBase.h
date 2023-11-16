@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 class HTNLexerContextBase;
-enum class HTNTokenType : unsigned char;
+enum class HTNTokenType : uint8;
 
 /**
  * Breaks a text into a series of tokens

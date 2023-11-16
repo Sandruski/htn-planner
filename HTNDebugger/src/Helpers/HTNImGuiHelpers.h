@@ -7,7 +7,7 @@
 #include <string>
 
 class HTNNodeSnapshotDebug;
-enum class HTNNodeStep : unsigned char;
+enum class HTNNodeStep : uint8;
 
 namespace HTNImGuiHelpers
 {

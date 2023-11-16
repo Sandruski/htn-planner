@@ -6,7 +6,7 @@ namespace HTNWorldStateHelpers
 {
 // Returns the number of fact arguments that are bound
 template<typename T>
-unsigned int CountFactArgumentsBound(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd);
+uint32 CountFactArgumentsBound(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd);
 
 // Maximum number of fact arguments
 constexpr std::size_t kMaxFactArgumentsNum = 10;
@@ -17,9 +17,9 @@ constexpr std::size_t kFactArgumentsContainerSize = kMaxFactArgumentsNum + 1;
 } // namespace HTNWorldStateHelpers
 
 template<typename T>
-unsigned int HTNWorldStateHelpers::CountFactArgumentsBound(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd)
+uint32 HTNWorldStateHelpers::CountFactArgumentsBound(const T& inFactArgumentsBegin, const T& inFactArgumentsEnd)
 {
-    unsigned int FactArgumentsBoundNum = 0;
+    uint32 FactArgumentsBoundNum = 0;
 
     for (auto It = inFactArgumentsBegin; It != inFactArgumentsEnd; ++It)
     {

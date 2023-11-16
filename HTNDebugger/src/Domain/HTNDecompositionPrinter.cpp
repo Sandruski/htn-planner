@@ -28,11 +28,11 @@ HTNDecompositionPrinterContext& GetDecompositionPrinterContext(HTNNodeVisitorCon
     return static_cast<HTNDecompositionPrinterContext&>(ioContext);
 }
 
-bool IsNodeValid(const std::size_t inDecompositionStep, const bool inIsChoicePoint, const int inCurrentDecompositionStep,
-                 const int inMinDecompositionStep, const int inMaxDecompositionStep)
+bool IsNodeValid(const std::size_t inDecompositionStep, const bool inIsChoicePoint, const int32 inCurrentDecompositionStep,
+                 const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep)
 {
     // Filter available nodes within range [min, max)
-    if (!HTNDecompositionHelpers::IsDecompositionStepInRange(static_cast<const int>(inDecompositionStep), inMinDecompositionStep,
+    if (!HTNDecompositionHelpers::IsDecompositionStepInRange(static_cast<const int32>(inDecompositionStep), inMinDecompositionStep,
                                                              inMaxDecompositionStep))
     {
         return false;
@@ -47,7 +47,7 @@ bool IsNodeValid(const std::size_t inDecompositionStep, const bool inIsChoicePoi
                 return false;
             }
         }
-        else if (static_cast<const int>(inDecompositionStep) != inCurrentDecompositionStep) // Print node (choice point or not)
+        else if (static_cast<const int32>(inDecompositionStep) != inCurrentDecompositionStep) // Print node (choice point or not)
         {
             return false;
         }
@@ -585,9 +585,9 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             const bool ShouldRefreshNodeStates = DecompositionPrinterContext.ShouldRefreshNodeStates();
             if (ShouldRefreshNodeStates)
             {
-                const int MinDecompositionStep = DecompositionPrinterContext.GetMinDecompositionStep();
-                const int MaxDecompositionStep = DecompositionPrinterContext.GetMaxDecompositionStep();
-                const int DecompositionStep =
+                const int32 MinDecompositionStep = DecompositionPrinterContext.GetMinDecompositionStep();
+                const int32 MaxDecompositionStep = DecompositionPrinterContext.GetMaxDecompositionStep();
+                const int32 DecompositionStep =
                     CurrentChoicePointNodeState->FindOpenDecompositionStepInRange(MinDecompositionStep, MaxDecompositionStep);
                 CurrentChoicePointNodeState->SetDecompositionStep(DecompositionStep);
             }
@@ -595,7 +595,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         else
         {
             // Default open successful decomposition step
-            const int                                  DecompositionStep    = static_cast<const int>(LastDecompositionStep);
+            const int32                                  DecompositionStep    = static_cast<const int32>(LastDecompositionStep);
             constexpr bool                             IsOpen               = true;
             const HTNDecompositionChoicePointNodeState ChoicePointNodeState = HTNDecompositionChoicePointNodeState(DecompositionStep, IsOpen);
             DecompositionPrinterContext.AddChoicePointNodeState(CurrentNodePathString, ChoicePointNodeState);
@@ -610,7 +610,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             const bool ShouldRefreshNodeStates = DecompositionPrinterContext.ShouldRefreshNodeStates();
             if (ShouldRefreshNodeStates)
             {
-                const int CurrentDecompositionStep = DecompositionPrinterContext.GetCurrentDecompositionStep();
+                const int32 CurrentDecompositionStep = DecompositionPrinterContext.GetCurrentDecompositionStep();
                 if (DecompositionPrinterContext.IsCurrentDecompositionStepValid())
                 {
                     const auto NodeSnapshotStepsCollectionIt = NodeSnapshotStepsCollection.find(CurrentDecompositionStep);
@@ -633,7 +633,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         else
         {
             // Default open current decomposition step
-            constexpr int                   DecompositionStep = HTNDecompositionHelpers::kInvalidDecompositionStep;
+            constexpr int32                   DecompositionStep = HTNDecompositionHelpers::kInvalidDecompositionStep;
             constexpr bool                  IsOpen            = true;
             const HTNDecompositionNodeState NodeState         = HTNDecompositionNodeState(DecompositionStep, IsOpen);
             DecompositionPrinterContext.AddNodeState(CurrentNodePathString, NodeState);
@@ -643,12 +643,12 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
 
     // Get node(s)
     const HTNNodeStep CurrentNodeStep              = DecompositionPrinterContext.GetNodeStep(CurrentNodePathString, IsChoicePoint);
-    const int         CurrentNodeDecompositionStep = DecompositionPrinterContext.GetNodeDecompositionStep(CurrentNodePathString, IsChoicePoint);
+    const int32         CurrentNodeDecompositionStep = DecompositionPrinterContext.GetNodeDecompositionStep(CurrentNodePathString, IsChoicePoint);
     bool              IsCurrentNodeOpen = DecompositionPrinterContext.IsNodeOpen(CurrentNodePathString, CurrentNodeDecompositionStep, IsChoicePoint);
 
     // Print node(s)
-    const int  MinDecompositionStep   = DecompositionPrinterContext.GetMinDecompositionStep();
-    const int  MaxDecompositionStep   = DecompositionPrinterContext.GetMaxDecompositionStep();
+    const int32  MinDecompositionStep   = DecompositionPrinterContext.GetMinDecompositionStep();
+    const int32  MaxDecompositionStep   = DecompositionPrinterContext.GetMaxDecompositionStep();
     const bool ShouldIgnoreImGuiState = DecompositionPrinterContext.ShouldIgnoreImGuiState();
     const bool IsCurrentNodeVisible   = DecompositionPrinterContext.IsCurrentNodeVisible();
 
@@ -687,7 +687,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
             if (IsChoicePoint)
             {
                 IsCurrentNodeOpen =
-                    DecompositionPrinterContext.IsNodeOpen(CurrentNodePathString, static_cast<const int>(DecompositionStep), IsChoicePoint);
+                    DecompositionPrinterContext.IsNodeOpen(CurrentNodePathString, static_cast<const int32>(DecompositionStep), IsChoicePoint);
 
                 // Push arrow color
                 const bool   IsSuccessful = (LastDecompositionStep == DecompositionStep);
@@ -745,20 +745,20 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
         // Choice point determines decomposition step
         if (IsChoicePoint)
         {
-            const int NewCurrentDecompositionStep =
-                IsCurrentNodeOpen ? static_cast<const int>(DecompositionStep) : HTNDecompositionHelpers::kInvalidDecompositionStep;
+            const int32 NewCurrentDecompositionStep =
+                IsCurrentNodeOpen ? static_cast<const int32>(DecompositionStep) : HTNDecompositionHelpers::kInvalidDecompositionStep;
             DecompositionPrinterContext.SetCurrentDecompositionStep(NewCurrentDecompositionStep);
 
             // Set range to filter next nodes
-            const int NewMinDecompositionStep = IsCurrentNodeOpen ? NewCurrentDecompositionStep : std::numeric_limits<int>::max();
+            const int32 NewMinDecompositionStep = IsCurrentNodeOpen ? NewCurrentDecompositionStep : std::numeric_limits<int32>::max();
             DecompositionPrinterContext.SetMinDecompositionStep(NewMinDecompositionStep);
 
             auto NextIt = It;
             ++NextIt;
-            const int NewMaxDecompositionStep =
+            const int32 NewMaxDecompositionStep =
                 IsCurrentNodeOpen
-                    ? ((NodeSnapshotStepsCollection.end() != NextIt) ? static_cast<const int>(NextIt->first) : std::numeric_limits<int>::max())
-                    : std::numeric_limits<int>::min();
+                    ? ((NodeSnapshotStepsCollection.end() != NextIt) ? static_cast<const int32>(NextIt->first) : std::numeric_limits<int32>::max())
+                    : std::numeric_limits<int32>::min();
             DecompositionPrinterContext.SetMaxDecompositionStep(NewMaxDecompositionStep);
         }
 
@@ -809,7 +809,7 @@ bool HTNDecompositionPrinter::PrintNodeSnapshotHistory(const HTNNodeBase& inNode
     const bool ShouldRefreshNodeStates = DecompositionPrinterContext.ShouldRefreshNodeStates();
     if (ShouldRefreshNodeStates)
     {
-        const int CurrentDecompositionStep = DecompositionPrinterContext.GetCurrentDecompositionStep();
+        const int32 CurrentDecompositionStep = DecompositionPrinterContext.GetCurrentDecompositionStep();
         if (IsChoicePoint)
         {
             HTNDecompositionChoicePointNodeState* CurrentNodeState =

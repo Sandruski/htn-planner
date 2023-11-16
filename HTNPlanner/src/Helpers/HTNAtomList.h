@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HTNTypes.h"
+
 #include <initializer_list>
 #include <string>
 
@@ -18,9 +20,9 @@ public:
 
     void Add(const HTNAtom& inData);
 
-    const HTNAtom* Find(const unsigned int inIndex) const;
+    const HTNAtom* Find(const uint32 inIndex) const;
 
-    unsigned int GetSize() const;
+    uint32 GetSize() const;
     bool         IsEmpty() const;
 
     std::string ToString(const bool inShouldDoubleQuoteString) const;
@@ -28,10 +30,10 @@ public:
 private:
     HTNAtomNode* mHead = nullptr;
     HTNAtomNode* mTail = nullptr;
-    unsigned int mSize = 0;
+    uint32 mSize = 0;
 };
 
-inline unsigned int HTNAtomList::GetSize() const
+inline uint32 HTNAtomList::GetSize() const
 {
     return mSize;
 }

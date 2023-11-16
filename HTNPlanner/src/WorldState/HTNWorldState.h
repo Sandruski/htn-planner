@@ -262,7 +262,7 @@ inline void HTNWorldState::RemoveAllFacts()
 template<typename T>
 std::size_t HTNWorldState::Query(const std::string& inFactID, const T& inFactArgumentsBegin, const T& inFactArgumentsEnd) const
 {
-    const unsigned int FactArgumentsBoundNum = HTNWorldStateHelpers::CountFactArgumentsBound(inFactArgumentsBegin, inFactArgumentsEnd);
+    const uint32 FactArgumentsBoundNum = HTNWorldStateHelpers::CountFactArgumentsBound(inFactArgumentsBegin, inFactArgumentsEnd);
     const std::size_t  FactArgumentsSize     = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
     if (FactArgumentsBoundNum == FactArgumentsSize)
     {
@@ -277,7 +277,7 @@ template<typename T>
 bool HTNWorldState::QueryIndex(const std::string& inFactID, const std::size_t inFactArgumentsIndex, const T& ioFactArgumentsBegin,
                                       const T& ioFactArgumentsEnd) const
 {
-    const unsigned int FactArgumentsBoundNum = CountFactArgumentsBound(ioFactArgumentsBegin, ioFactArgumentsEnd);
+    const uint32 FactArgumentsBoundNum = CountFactArgumentsBound(ioFactArgumentsBegin, ioFactArgumentsEnd);
     const std::size_t  FactArgumentsSize     = std::distance(ioFactArgumentsBegin, ioFactArgumentsEnd);
     if (FactArgumentsBoundNum == FactArgumentsSize)
     {

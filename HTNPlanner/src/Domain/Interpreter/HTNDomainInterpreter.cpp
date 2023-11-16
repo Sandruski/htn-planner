@@ -288,7 +288,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVi
     const HTNNodePath& CurrentVariableScopeNodePath = DecompositionContext.GetCurrentVariableScopeNodePath();
 
     const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = inBranchNode.GetTaskNodes();
-    for (int i = static_cast<int>(TaskNodes.size()) - 1; i >= 0; --i)
+    for (int32 i = static_cast<int32>(TaskNodes.size()) - 1; i >= 0; --i)
     {
         const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskNodes[i];
         const HTNTaskInstance TaskInstance = HTNTaskInstance(TaskNode, Environment, CurrentNodePath, CurrentVariableScopeNodePath);

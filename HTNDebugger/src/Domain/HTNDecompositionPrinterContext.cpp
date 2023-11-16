@@ -79,7 +79,7 @@ HTNNodeStep HTNDecompositionPrinterContext::GetNodeStep(const std::string& inNod
     return NodeState.GetNodeStep();
 }
 
-int HTNDecompositionPrinterContext::GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const
+int32 HTNDecompositionPrinterContext::GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const
 {
     const HTNDecompositionNodeStateBase& NodeState = inIsChoicePoint
                                                          ? static_cast<const HTNDecompositionNodeStateBase&>(mChoicePointNodeStates.at(inNodePath))
@@ -103,7 +103,7 @@ int HTNDecompositionPrinterContext::GetNodeDecompositionStep(const std::string& 
     return HTNDecompositionHelpers::kInvalidDecompositionStep;
 }
 
-bool HTNDecompositionPrinterContext::IsNodeOpen(const std::string& inNodePath, const int inDecompositionStep, const bool inIsChoicePoint) const
+bool HTNDecompositionPrinterContext::IsNodeOpen(const std::string& inNodePath, const int32 inDecompositionStep, const bool inIsChoicePoint) const
 {
     if (inIsChoicePoint)
     {

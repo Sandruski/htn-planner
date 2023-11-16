@@ -14,7 +14,7 @@ void HTNLexerBase::LexIdentifier(const std::unordered_map<std::string, HTNTokenT
 {
     OPTICK_EVENT("LexIdentifier");
 
-    const unsigned int StartPosition = ioLexerContext.GetPosition();
+    const uint32 StartPosition = ioLexerContext.GetPosition();
 
     ioLexerContext.AdvancePosition();
 
@@ -23,8 +23,8 @@ void HTNLexerBase::LexIdentifier(const std::unordered_map<std::string, HTNTokenT
         ioLexerContext.AdvancePosition();
     }
 
-    const unsigned int CurrentPosition = ioLexerContext.GetPosition();
-    const unsigned int EndPosition     = CurrentPosition - StartPosition;
+    const uint32 CurrentPosition = ioLexerContext.GetPosition();
+    const uint32 EndPosition     = CurrentPosition - StartPosition;
     const std::string& Text            = ioLexerContext.GetText();
     const std::string  Lexeme          = Text.substr(StartPosition, EndPosition);
     const auto         It              = inKeywords.find(Lexeme);
@@ -47,11 +47,11 @@ void HTNLexerBase::LexNumber(HTNLexerContextBase& ioLexerContext) const
 {
     OPTICK_EVENT("LexNumber");
 
-    const unsigned int StartPosition = ioLexerContext.GetPosition();
+    const uint32 StartPosition = ioLexerContext.GetPosition();
 
 #ifdef HTN_DEBUG
-    const unsigned int StartRow    = ioLexerContext.GetRow();
-    const unsigned int StartColumn = ioLexerContext.GetColumn();
+    const uint32 StartRow    = ioLexerContext.GetRow();
+    const uint32 StartColumn = ioLexerContext.GetColumn();
 #endif
 
     ioLexerContext.AdvancePosition();
@@ -62,7 +62,7 @@ void HTNLexerBase::LexNumber(HTNLexerContextBase& ioLexerContext) const
         ioLexerContext.AdvancePosition();
     }
 
-    const unsigned int CurrentPosition = ioLexerContext.GetPosition();
+    const uint32 CurrentPosition = ioLexerContext.GetPosition();
     const std::string& Text            = ioLexerContext.GetText();
 
     // Check for fractional part
@@ -77,7 +77,7 @@ void HTNLexerBase::LexNumber(HTNLexerContextBase& ioLexerContext) const
             ioLexerContext.AdvancePosition();
         }
 
-        const unsigned int EndPosition = CurrentPosition - StartPosition;
+        const uint32 EndPosition = CurrentPosition - StartPosition;
         const std::string  Lexeme      = Text.substr(StartPosition, EndPosition);
         const float        Number      = std::stof(Lexeme);
         CLOG_HTN_ERROR(std::stod(Lexeme) < std::numeric_limits<float>::min() || std::stod(Lexeme) > std::numeric_limits<float>::max(), StartRow,
@@ -86,9 +86,9 @@ void HTNLexerBase::LexNumber(HTNLexerContextBase& ioLexerContext) const
     }
     else
     {
-        const unsigned int EndPosition = CurrentPosition - StartPosition;
+        const uint32 EndPosition = CurrentPosition - StartPosition;
         const std::string  Lexeme      = Text.substr(StartPosition, EndPosition);
-        const int          Number      = std::stoi(Lexeme);
+        const int32          Number      = std::stoi(Lexeme);
         ioLexerContext.AddToken(Number, HTNTokenType::NUMBER HTN_DEBUG_ONLY(, Lexeme));
     }
 }
@@ -97,7 +97,7 @@ bool HTNLexerBase::LexString(HTNLexerContextBase& ioLexerContext) const
 {
     OPTICK_EVENT("LexString");
 
-    const unsigned int StartPosition = ioLexerContext.GetPosition();
+    const uint32 StartPosition = ioLexerContext.GetPosition();
 
     ioLexerContext.AdvancePosition();
 
@@ -109,15 +109,15 @@ bool HTNLexerBase::LexString(HTNLexerContextBase& ioLexerContext) const
     if (ioLexerContext.GetCharacter() != '"')
     {
 #ifdef HTN_DEBUG
-        const unsigned int Row    = ioLexerContext.GetRow();
-        const unsigned int Column = ioLexerContext.GetColumn();
+        const uint32 Row    = ioLexerContext.GetRow();
+        const uint32 Column = ioLexerContext.GetColumn();
 #endif
         LOG_HTN_ERROR(Row, Column, "Character '\"' not found at end of string");
         return false;
     }
 
-    const unsigned int CurrentPosition = ioLexerContext.GetPosition();
-    const unsigned int EndPosition     = CurrentPosition - StartPosition;
+    const uint32 CurrentPosition = ioLexerContext.GetPosition();
+    const uint32 EndPosition     = CurrentPosition - StartPosition;
 
     ioLexerContext.AdvancePosition();
 

@@ -35,7 +35,7 @@ bool HTNWorldStateParser::ParseFact(HTNWorldState& outWorldState, HTNWorldStateP
 {
     OPTICK_EVENT("ParseFact");
 
-    const unsigned int StartPosition = ioWorldStateParserContext.GetPosition();
+    const uint32 StartPosition = ioWorldStateParserContext.GetPosition();
 
     HTNAtom Identifier;
     if (!ParseIdentifier(Identifier, ioWorldStateParserContext))
@@ -60,7 +60,7 @@ bool HTNWorldStateParser::ParseIdentifier(HTNAtom& outIdentifier, HTNWorldStateP
 {
     OPTICK_EVENT("ParseIdentifier");
 
-    const unsigned int StartPosition = ioWorldStateParserContext.GetPosition();
+    const uint32 StartPosition = ioWorldStateParserContext.GetPosition();
 
     const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, ioWorldStateParserContext);
     if (!IdentifierToken)
@@ -78,7 +78,7 @@ bool HTNWorldStateParser::ParseArgument(HTNAtom& outArgument, HTNWorldStateParse
 {
     OPTICK_EVENT("ParseArgument");
 
-    const unsigned int StartPosition = ioWorldStateParserContext.GetPosition();
+    const uint32 StartPosition = ioWorldStateParserContext.GetPosition();
 
     HTNAtom Argument;
 

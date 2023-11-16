@@ -16,12 +16,12 @@ public:
     explicit HTNParserContextBase(const std::vector<HTNToken>& inTokens);
     virtual ~HTNParserContextBase() = 0;
 
-    const HTNToken* GetToken(const unsigned int inPosition) const;
+    const HTNToken* GetToken(const uint32 inPosition) const;
     std::size_t     GetTokensSize() const;
 
-    void         SetPosition(const unsigned int inPosition);
+    void         SetPosition(const uint32 inPosition);
     void IncrementPosition();
-    unsigned int GetPosition() const;
+    uint32 GetPosition() const;
 
 private:
     //----------------------------------------------------------------------//
@@ -32,28 +32,28 @@ private:
     //----------------------------------------------------------------------//
     // Internal
     //----------------------------------------------------------------------//
-    unsigned int mPosition = 0;
+    uint32 mPosition = 0;
 
 #if HTN_DEBUG
 public:
     void               SetLastErrorMessage(const std::string& inLastErrorMessage);
     const std::string& GetLastErrorMessage() const;
-    void               SetLastErrorRow(const int inLastErrorRow);
-    int                GetLastErrorRow() const;
-    void               SetLastErrorColumn(const int inLastErrorColumn);
-    int                GetLastErrorColumn() const;
+    void               SetLastErrorRow(const int32 inLastErrorRow);
+    int32                GetLastErrorRow() const;
+    void               SetLastErrorColumn(const int32 inLastErrorColumn);
+    int32                GetLastErrorColumn() const;
 
 protected:
     //----------------------------------------------------------------------//
     // Internal
     //----------------------------------------------------------------------//
     std::string mLastErrorMessage;
-    int         mLastErrorRow    = -1;
-    int         mLastErrorColumn = -1;
+    int32         mLastErrorRow    = -1;
+    int32         mLastErrorColumn = -1;
 #endif
 };
 
-inline void HTNParserContextBase::SetPosition(const unsigned int inPosition)
+inline void HTNParserContextBase::SetPosition(const uint32 inPosition)
 {
     mPosition = inPosition;
 }
@@ -63,7 +63,7 @@ inline void HTNParserContextBase::IncrementPosition()
     ++mPosition;
 }
 
-inline unsigned int HTNParserContextBase::GetPosition() const
+inline uint32 HTNParserContextBase::GetPosition() const
 {
     return mPosition;
 }
@@ -79,22 +79,22 @@ inline const std::string& HTNParserContextBase::GetLastErrorMessage() const
     return mLastErrorMessage;
 }
 
-inline void HTNParserContextBase::SetLastErrorRow(const int inLastErrorRow)
+inline void HTNParserContextBase::SetLastErrorRow(const int32 inLastErrorRow)
 {
     mLastErrorRow = inLastErrorRow;
 }
 
-inline int HTNParserContextBase::GetLastErrorRow() const
+inline int32 HTNParserContextBase::GetLastErrorRow() const
 {
     return mLastErrorRow;
 }
 
-inline void HTNParserContextBase::SetLastErrorColumn(const int inLastErrorColumn)
+inline void HTNParserContextBase::SetLastErrorColumn(const int32 inLastErrorColumn)
 {
     mLastErrorColumn = inLastErrorColumn;
 }
 
-inline int HTNParserContextBase::GetLastErrorColumn() const
+inline int32 HTNParserContextBase::GetLastErrorColumn() const
 {
     return mLastErrorColumn;
 }

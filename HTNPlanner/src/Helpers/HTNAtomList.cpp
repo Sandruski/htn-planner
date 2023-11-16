@@ -67,7 +67,7 @@ void HTNAtomList::Add(const HTNAtom& inData)
     ++mSize;
 }
 
-const HTNAtom* HTNAtomList::Find(const unsigned int inIndex) const
+const HTNAtom* HTNAtomList::Find(const uint32 inIndex) const
 {
     if (inIndex >= mSize)
     {
@@ -75,7 +75,7 @@ const HTNAtom* HTNAtomList::Find(const unsigned int inIndex) const
     }
 
     const HTNAtomNode* Current = mHead;
-    for (unsigned int i = 0; i < inIndex; ++i)
+    for (uint32 i = 0; i < inIndex; ++i)
     {
         Current = Current->GetNext();
     }

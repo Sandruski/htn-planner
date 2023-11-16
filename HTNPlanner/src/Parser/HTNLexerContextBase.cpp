@@ -13,9 +13,9 @@ void HTNLexerContextBase::AddToken(const HTNAtom& inValue, const HTNTokenType in
     mTokens.emplace_back(inValue, inType HTN_DEBUG_ONLY(, inLexeme, mRow, mColumn));
 }
 
-char HTNLexerContextBase::GetCharacter(const unsigned int inOffset) const
+char HTNLexerContextBase::GetCharacter(const uint32 inOffset) const
 {
-    const unsigned int Position = mPosition + inOffset;
+    const uint32 Position = mPosition + inOffset;
     if (Position <= mText.length())
     {
         return mText[Position];

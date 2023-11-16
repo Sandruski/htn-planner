@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Helpers/HTNAtomList.h"
+#include "HTNTypes.h"
 
 #include <optional>
 #include <string>
@@ -11,7 +12,7 @@ class HTNAtom
 public:
     HTNAtom() = default;
     HTNAtom(const bool inValue);
-    HTNAtom(const int inValue);
+    HTNAtom(const int32 inValue);
     HTNAtom(const float inValue);
     HTNAtom(const std::string& inValue);
     HTNAtom(const HTNAtomList& inValue);
@@ -34,9 +35,9 @@ public:
     void AddListElement(const HTNAtom& inElement);
 
     // Return the list element
-    const HTNAtom* FindListElement(const unsigned int inElementIdx) const;
+    const HTNAtom* FindListElement(const uint32 inElementIdx) const;
 
-    int  GetListNumItems() const;
+    int32  GetListNumItems() const;
     bool IsListEmpty() const;
 
     // Unbinds this HtnAtom, this can be used in the context of multiresult queries where we might want to reuse the same HtnAtom
@@ -47,7 +48,7 @@ public:
     std::string ToString(const bool inShouldDoubleQuoteString) const;
 
 private:
-    std::optional<std::variant<bool, int, float, std::string, HTNAtomList>> mData;
+    std::optional<std::variant<bool, int32, float, std::string, HTNAtomList>> mData;
 };
 
 inline bool HTNAtom::operator==(const HTNAtom& inOther) const

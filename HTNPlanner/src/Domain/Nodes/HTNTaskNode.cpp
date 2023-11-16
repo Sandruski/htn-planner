@@ -10,7 +10,7 @@ HTNTaskNodeBase::HTNTaskNodeBase(const std::shared_ptr<const HTNIdentifierExpres
 
 HTNTaskNodeBase::HTNTaskNodeBase(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
                                         const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes,
-                                        const unsigned int                                                    inID)
+                                        const uint32                                                    inID)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mID(inID)
 {
 }
@@ -29,7 +29,7 @@ HTNCompoundTaskNode::HTNCompoundTaskNode(const std::shared_ptr<const HTNIdentifi
 
 HTNCompoundTaskNode::HTNCompoundTaskNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
                                                 const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes,
-                                                const unsigned int inID, const bool inIsTopLevel)
+                                                const uint32 inID, const bool inIsTopLevel)
     : HTNTaskNodeBase(inIDNode, inArgumentNodes, inID), mIsTopLevel(inIsTopLevel)
 {
 }

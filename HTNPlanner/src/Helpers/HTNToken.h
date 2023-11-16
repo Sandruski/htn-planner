@@ -7,7 +7,7 @@
 #include <string>
 #include <unordered_map>
 
-enum class HTNTokenType : unsigned char
+enum class HTNTokenType : uint8
 {
     COLON,
     LEFT_PARENTHESIS,
@@ -69,7 +69,7 @@ class HTNToken
 {
 public:
     explicit HTNToken(const HTNAtom&            inValue,
-                      const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme, const unsigned int inRow, const unsigned int inColumn));
+                      const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme, const uint32 inRow, const uint32 inColumn));
 
     const HTNAtom& GetValue() const;
     HTNTokenType   GetType() const;
@@ -81,13 +81,13 @@ private:
 #if HTN_DEBUG
 public:
     const std::string& GetLexeme() const;
-    unsigned int       GetRow() const;
-    unsigned int       GetColumn() const;
+    uint32       GetRow() const;
+    uint32       GetColumn() const;
 
 private:
     std::string  mLexeme;
-    unsigned int mRow    = 0;
-    unsigned int mColumn = 0;
+    uint32 mRow    = 0;
+    uint32 mColumn = 0;
 #endif
 };
 
@@ -107,12 +107,12 @@ inline const std::string& HTNToken::GetLexeme() const
     return mLexeme;
 }
 
-inline unsigned int HTNToken::GetRow() const
+inline uint32 HTNToken::GetRow() const
 {
     return mRow;
 }
 
-inline unsigned int HTNToken::GetColumn() const
+inline uint32 HTNToken::GetColumn() const
 {
     return mColumn;
 }

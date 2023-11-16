@@ -60,7 +60,7 @@ bool HTNDomainParser::ParseDomainNode(std::shared_ptr<const HTNDomainNode>& outD
 {
     OPTICK_EVENT("ParseDomainNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
     {
@@ -126,7 +126,7 @@ bool HTNDomainParser::ParseConstantsNode(std::shared_ptr<const HTNConstantsNode>
 {
     OPTICK_EVENT("ParseConstantsNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
     {
@@ -174,7 +174,7 @@ bool HTNDomainParser::ParseConstantNode(std::shared_ptr<const HTNConstantNode>& 
 {
     OPTICK_EVENT("ParseConstantNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
     {
@@ -211,7 +211,7 @@ bool HTNDomainParser::ParseAxiomNode(std::shared_ptr<const HTNAxiomNode>& outAxi
 {
     OPTICK_EVENT("ParseAxiomNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
     {
@@ -275,7 +275,7 @@ bool HTNDomainParser::ParseMethodNode(std::shared_ptr<const HTNMethodNode>& outM
 {
     OPTICK_EVENT("ParseMethodNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
     {
@@ -345,7 +345,7 @@ bool HTNDomainParser::ParseBranchNode(std::shared_ptr<const HTNBranchNode>& outB
 {
     OPTICK_EVENT("ParseBranchNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
     {
@@ -398,7 +398,7 @@ bool HTNDomainParser::ParseConditionNode(std::shared_ptr<const HTNConditionNodeB
 {
     OPTICK_EVENT("ParseConditionNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
     {
@@ -476,7 +476,7 @@ bool HTNDomainParser::ParseSubConditionNode(std::shared_ptr<const HTNConditionNo
 {
     OPTICK_EVENT("ParseSubConditionNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     std::shared_ptr<const HTNConditionNodeBase> ConditionNode;
     if (!ParseConditionNode(ConditionNode, ioDomainParserContext))
@@ -542,7 +542,7 @@ bool HTNDomainParser::ParseTaskNode(std::shared_ptr<const HTNTaskNodeBase>& outT
 {
     OPTICK_EVENT("ParseTaskNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
     {
@@ -590,7 +590,7 @@ bool HTNDomainParser::ParseArgumentNode(std::shared_ptr<const HTNValueExpression
 {
     OPTICK_EVENT("ParseArgumentNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     std::shared_ptr<const HTNValueExpressionNodeBase> ArgumentNode;
 
@@ -625,7 +625,7 @@ bool HTNDomainParser::ParseVariableExpressionNode(std::shared_ptr<const HTNVaria
 {
     OPTICK_EVENT("ParseVariableExpressionNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     if (!ParseToken(HTNTokenType::QUESTION_MARK, ioDomainParserContext))
     {
@@ -650,7 +650,7 @@ bool HTNDomainParser::ParseConstantExpressionNode(std::shared_ptr<const HTNConst
 {
     OPTICK_EVENT("ParseConstantExpressionNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     if (!ParseToken(HTNTokenType::AT, ioDomainParserContext))
     {
@@ -675,7 +675,7 @@ bool HTNDomainParser::ParseIdentifierExpressionNode(std::shared_ptr<const HTNIde
 {
     OPTICK_EVENT("ParseIdentifierExpressionNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     const HTNToken* IdentifierToken = ParseToken(HTNTokenType::IDENTIFIER, ioDomainParserContext);
     if (!IdentifierToken)
@@ -694,7 +694,7 @@ bool HTNDomainParser::ParseLiteralExpressionNode(std::shared_ptr<const HTNLitera
 {
     OPTICK_EVENT("ParseLiteralExpressionNode");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     HTNAtom Literal;
     if (!ParseLiteral(Literal, ioDomainParserContext))
@@ -712,7 +712,7 @@ bool HTNDomainParser::ParseLiteral(HTNAtom& outLiteral, HTNDomainParserContext& 
 {
     OPTICK_EVENT("ParseLiteral");
 
-    const unsigned int StartPosition = ioDomainParserContext.GetPosition();
+    const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
     HTNAtom Literal;
 

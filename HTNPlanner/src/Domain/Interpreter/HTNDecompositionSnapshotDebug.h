@@ -10,7 +10,7 @@
 class HTNNodeSnapshotDebug;
 class HTNNodeSnapshotHistoryDebug;
 
-enum class HTNNodeStep : unsigned char
+enum class HTNNodeStep : uint8
 {
     START,
     END, // RETRY
@@ -63,12 +63,12 @@ public:
                          const bool inIsChoicePoint);
     const HTNNodeSnapshotHistoryDebug* FindNodeSnapshotHistory(const std::string& inNodePath) const;
 
-    void   IncrementDecompositionStep();
-    size_t GetDecompositionStep() const;
+    void        IncrementDecompositionStep();
+    std::size_t GetDecompositionStep() const;
 
 private:
     HTNNodeSnapshotHistoryCollectionDebug mNodeSnapshotHistoryCollection;
-    size_t                                mDecompositionStep = 0;
+    std::size_t                           mDecompositionStep = 0;
 };
 
 inline bool HTNNodeSnapshotDebug::GetResult() const
@@ -112,7 +112,7 @@ inline void HTNDecompositionSnapshotDebug::IncrementDecompositionStep()
     ++mDecompositionStep;
 }
 
-inline size_t HTNDecompositionSnapshotDebug::GetDecompositionStep() const
+inline std::size_t HTNDecompositionSnapshotDebug::GetDecompositionStep() const
 {
     return mDecompositionStep;
 }

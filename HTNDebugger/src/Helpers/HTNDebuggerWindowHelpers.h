@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
-enum class HTNOperationResult : unsigned char
+enum class HTNOperationResult : uint8
 {
     FAILED    = 0,
     SUCCEEDED = 1,

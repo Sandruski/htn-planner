@@ -12,13 +12,13 @@ class HTNDecompositionPrinterContext;
 class HTNNodeBase;
 class HTNNodeSnapshotDebug;
 class HTNNodeVisitorContextBase;
-enum class HTNNodeStep : unsigned char;
+enum class HTNNodeStep : uint8;
 
 using HTNNodeTitleFunction    = std::function<void(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep)>;
 using HTNNodeBehaviorFunction = std::function<void()>;
 using HTNNodeFunction         = std::function<HTNDecompositionNode(const HTNNodeSnapshotDebug& inNodeSnapshot, const std::string& inNodeLabel)>;
 
-typedef int ImGuiTreeNodeFlags;
+typedef int32 ImGuiTreeNodeFlags;
 
 /**
  * Prints a decomposition

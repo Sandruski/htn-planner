@@ -8,7 +8,7 @@ HTNAtom::HTNAtom(const bool inValue) : mData(inValue)
 {
 }
 
-HTNAtom::HTNAtom(const int inValue) : mData(inValue)
+HTNAtom::HTNAtom(const int32 inValue) : mData(inValue)
 {
 }
 
@@ -44,7 +44,7 @@ void HTNAtom::AddListElement(const HTNAtom& inElement)
     List.Add(inElement);
 }
 
-const HTNAtom* HTNAtom::FindListElement(const unsigned int inElementIdx) const
+const HTNAtom* HTNAtom::FindListElement(const uint32 inElementIdx) const
 {
     if (!IsSet())
     {
@@ -60,7 +60,7 @@ const HTNAtom* HTNAtom::FindListElement(const unsigned int inElementIdx) const
     return List.Find(inElementIdx);
 }
 
-int HTNAtom::GetListNumItems() const
+int32 HTNAtom::GetListNumItems() const
 {
     if (!IsSet())
     {
@@ -103,9 +103,9 @@ std::string HTNAtom::ToString(const bool inShouldDoubleQuoteString) const
     {
         return std::format("{}", GetValue<bool>());
     }
-    else if (IsType<int>())
+    else if (IsType<int32>())
     {
-        return std::to_string(GetValue<int>());
+        return std::to_string(GetValue<int32>());
     }
     else if (IsType<float>())
     {

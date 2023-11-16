@@ -8,7 +8,7 @@ HTNParserContextBase::HTNParserContextBase(const std::vector<HTNToken>& inTokens
 
 HTNParserContextBase::~HTNParserContextBase() = default;
 
-const HTNToken* HTNParserContextBase::GetToken(const unsigned int inPosition) const
+const HTNToken* HTNParserContextBase::GetToken(const uint32 inPosition) const
 {
     return ((inPosition < mTokens.size()) ? &mTokens[inPosition] : nullptr);
 }

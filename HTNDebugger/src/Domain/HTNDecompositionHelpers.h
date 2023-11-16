@@ -4,17 +4,17 @@
 namespace HTNDecompositionHelpers
 {
 // Check if the decomposition step is valid
-bool IsDecompositionStepValid(const int inDecompositionStep);
+bool IsDecompositionStepValid(const int32 inDecompositionStep);
 
 // Check if the decomposition step is in the range [min, max)
-bool IsDecompositionStepInRange(const int inDecompositionStep, const int inMinDecompositionStep, const int inMaxDecompositionStep);
+bool IsDecompositionStepInRange(const int32 inDecompositionStep, const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep);
 
-constexpr int kInvalidDecompositionStep = -1;
+constexpr int32 kInvalidDecompositionStep = -1;
 } // namespace HTNDecompositionPrinterHelpers
 
 namespace HTNDecompositionHelpers
 {
-inline bool IsDecompositionStepValid(const int inDecompositionStep)
+inline bool IsDecompositionStepValid(const int32 inDecompositionStep)
 {
     return (inDecompositionStep != kInvalidDecompositionStep);
 }

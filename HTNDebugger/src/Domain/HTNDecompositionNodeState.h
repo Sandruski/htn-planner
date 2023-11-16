@@ -5,7 +5,7 @@
 
 #include <map>
 
-enum class HTNNodeStep : unsigned char;
+enum class HTNNodeStep : uint8;
 
 /**
  * Base decomposition node state
@@ -14,17 +14,17 @@ class HTNDecompositionNodeStateBase
 {
 public:
     HTNDecompositionNodeStateBase() = default;
-    explicit HTNDecompositionNodeStateBase(const int inDecompositionStep);
+    explicit HTNDecompositionNodeStateBase(const int32 inDecompositionStep);
     virtual ~HTNDecompositionNodeStateBase() = default;
 
-    void SetDecompositionStep(const int inDecompositionStep);
-    int  GetDecompositionStep() const;
+    void SetDecompositionStep(const int32 inDecompositionStep);
+    int32  GetDecompositionStep() const;
 
     virtual HTNNodeStep GetNodeStep() const = 0;
 
 private:
     // Decomposition step of the node
-    int mDecompositionStep = HTNDecompositionHelpers::kInvalidDecompositionStep;
+    int32 mDecompositionStep = HTNDecompositionHelpers::kInvalidDecompositionStep;
 };
 
 /**
@@ -35,7 +35,7 @@ class HTNDecompositionNodeState final : public HTNDecompositionNodeStateBase
 {
 public:
     HTNDecompositionNodeState() = default;
-    explicit HTNDecompositionNodeState(const int inDecompositionStep, const bool inIsOpen);
+    explicit HTNDecompositionNodeState(const int32 inDecompositionStep, const bool inIsOpen);
 
     HTNNodeStep GetNodeStep() const final;
 
@@ -55,25 +55,25 @@ class HTNDecompositionChoicePointNodeState final : public HTNDecompositionNodeSt
 {
 public:
     HTNDecompositionChoicePointNodeState() = default;
-    explicit HTNDecompositionChoicePointNodeState(const int inDecompositionStep, const bool inIsOpen);
+    explicit HTNDecompositionChoicePointNodeState(const int32 inDecompositionStep, const bool inIsOpen);
 
     HTNNodeStep GetNodeStep() const final;
 
     void SetIsOpen(const std::size_t inDecompositionStep, const bool inIsOpen);
     bool IsOpen(const std::size_t inDecompositionStep) const;
-    int  FindOpenDecompositionStepInRange(const int inMinDecompositionStep, const int inMaxDecompositionStep) const;
+    int32  FindOpenDecompositionStepInRange(const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep) const;
 
 private:
     // Decomposition step to whether the node is open or closed
     std::map<std::size_t, bool> mIsOpen;
 };
 
-inline void HTNDecompositionNodeStateBase::SetDecompositionStep(const int inDecompositionStep)
+inline void HTNDecompositionNodeStateBase::SetDecompositionStep(const int32 inDecompositionStep)
 {
     mDecompositionStep = inDecompositionStep;
 }
 
-inline int HTNDecompositionNodeStateBase::GetDecompositionStep() const
+inline int32 HTNDecompositionNodeStateBase::GetDecompositionStep() const
 {
     return mDecompositionStep;
 }

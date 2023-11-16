@@ -8,7 +8,7 @@
 
 class HTNAtom;
 class HTNToken;
-enum class HTNTokenType : unsigned char;
+enum class HTNTokenType : uint8;
 
 class HTNLexerContextBase : public HTNNodeVisitorContextBase
 {
@@ -20,10 +20,10 @@ public:
 
     void AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme));
 
-    char GetCharacter(const unsigned int inLookAhead = 0) const;
+    char GetCharacter(const uint32 inLookAhead = 0) const;
 
     void         AdvancePosition(const bool inIsNewLine = false);
-    unsigned int GetPosition() const;
+    uint32 GetPosition() const;
 
 private:
     //----------------------------------------------------------------------//
@@ -39,19 +39,19 @@ private:
     //----------------------------------------------------------------------//
     // Internal
     //----------------------------------------------------------------------//
-    unsigned int mPosition = 0;
+    uint32 mPosition = 0;
 
 #ifdef HTN_DEBUG
 public:
-    unsigned int GetRow() const;
-    unsigned int GetColumn() const;
+    uint32 GetRow() const;
+    uint32 GetColumn() const;
 
 private:
     //----------------------------------------------------------------------//
     // Internal
     //----------------------------------------------------------------------//
-    unsigned int mRow    = 0;
-    unsigned int mColumn = 0;
+    uint32 mRow    = 0;
+    uint32 mColumn = 0;
 #endif
 };
 
@@ -60,18 +60,18 @@ inline const std::string& HTNLexerContextBase::GetText() const
     return mText;
 }
 
-inline unsigned int HTNLexerContextBase::GetPosition() const
+inline uint32 HTNLexerContextBase::GetPosition() const
 {
     return mPosition;
 }
 
 #ifdef HTN_DEBUG
-inline unsigned int HTNLexerContextBase::GetRow() const
+inline uint32 HTNLexerContextBase::GetRow() const
 {
     return mRow;
 }
 
-inline unsigned int HTNLexerContextBase::GetColumn() const
+inline uint32 HTNLexerContextBase::GetColumn() const
 {
     return mColumn;
 }

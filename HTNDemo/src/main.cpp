@@ -24,7 +24,7 @@
 #endif
 
 // Main code
-int main(int, char**)
+int32 main(int32, char**)
 {
     // Setup SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)

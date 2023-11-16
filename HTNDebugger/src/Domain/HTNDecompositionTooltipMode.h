@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
-enum class HTNDecompositionTooltipMode : unsigned char
+enum class HTNDecompositionTooltipMode : uint8
 {
     NONE,
     REGULAR,

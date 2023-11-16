@@ -15,7 +15,7 @@ class HTNDecompositionNode;
 class HTNDecompositionNodeState;
 class HTNDecompositionSnapshotDebug;
 class HTNDomainNode;
-enum class HTNNodeStep : unsigned char;
+enum class HTNNodeStep : uint8;
 
 class HTNDecompositionPrinterContext final : public HTNNodeVisitorContextBase
 {
@@ -45,21 +45,21 @@ public:
     HTNDecompositionChoicePointNodeState*       FindChoicePointNodeStateMutable(const std::string& inNodePath);
 
     HTNNodeStep GetNodeStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
-    int         GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
-    bool        IsNodeOpen(const std::string& inNodePath, const int inDecompositionStep, const bool inIsChoicePoint) const;
+    int32         GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
+    bool        IsNodeOpen(const std::string& inNodePath, const int32 inDecompositionStep, const bool inIsChoicePoint) const;
 
     const HTNNodePath& GetCurrentNodePath() const;
     HTNNodePath&       GetCurrentNodePathMutable();
     const HTNNodePath& GetCurrentVariableScopeNodePath() const;
     HTNNodePath&       GetCurrentVariableScopeNodePathMutable();
 
-    void SetCurrentDecompositionStep(const int inCurrentDecompositionStep);
-    int  GetCurrentDecompositionStep() const;
+    void SetCurrentDecompositionStep(const int32 inCurrentDecompositionStep);
+    int32  GetCurrentDecompositionStep() const;
     bool IsCurrentDecompositionStepValid() const;
-    void SetMinDecompositionStep(const int inMinDecompositionStep);
-    int  GetMinDecompositionStep() const;
-    void SetMaxDecompositionStep(const int inMaxDecompositionStep);
-    int  GetMaxDecompositionStep() const;
+    void SetMinDecompositionStep(const int32 inMinDecompositionStep);
+    int32  GetMinDecompositionStep() const;
+    void SetMaxDecompositionStep(const int32 inMaxDecompositionStep);
+    int32  GetMaxDecompositionStep() const;
 
     void SetIsCurrentNodeVisible(bool inIsCurrentNodeVisible);
     bool IsCurrentNodeVisible() const;
@@ -98,15 +98,15 @@ private:
     HTNNodePath mCurrentVariableScopeNodePath;
 
     // Current decomposition step
-    int mCurrentDecompositionStep = 0;
+    int32 mCurrentDecompositionStep = 0;
 
     // Minimum decomposition step that the current decomposition step can be
     // - Inclusive
-    int mMinDecompositionStep = std::numeric_limits<int>::min();
+    int32 mMinDecompositionStep = std::numeric_limits<int32>::min();
 
     // Maximum decomposition step that the current decomposition step can be
     // - Exclusive
-    int mMaxDecompositionStep = std::numeric_limits<int>::max();
+    int32 mMaxDecompositionStep = std::numeric_limits<int32>::max();
 
     // Whether the current node is shown or hidden
     bool mIsCurrentNodeVisible = true;
@@ -163,32 +163,32 @@ inline HTNNodePath& HTNDecompositionPrinterContext::GetCurrentVariableScopeNodeP
     return mCurrentVariableScopeNodePath;
 }
 
-inline void HTNDecompositionPrinterContext::SetCurrentDecompositionStep(const int inCurrentDecompositionStep)
+inline void HTNDecompositionPrinterContext::SetCurrentDecompositionStep(const int32 inCurrentDecompositionStep)
 {
     mCurrentDecompositionStep = inCurrentDecompositionStep;
 }
 
-inline int HTNDecompositionPrinterContext::GetCurrentDecompositionStep() const
+inline int32 HTNDecompositionPrinterContext::GetCurrentDecompositionStep() const
 {
     return mCurrentDecompositionStep;
 }
 
-inline void HTNDecompositionPrinterContext::SetMinDecompositionStep(const int inMinDecompositionStep)
+inline void HTNDecompositionPrinterContext::SetMinDecompositionStep(const int32 inMinDecompositionStep)
 {
     mMinDecompositionStep = inMinDecompositionStep;
 }
 
-inline int HTNDecompositionPrinterContext::GetMinDecompositionStep() const
+inline int32 HTNDecompositionPrinterContext::GetMinDecompositionStep() const
 {
     return mMinDecompositionStep;
 }
 
-inline void HTNDecompositionPrinterContext::SetMaxDecompositionStep(const int inMaxDecompositionStep)
+inline void HTNDecompositionPrinterContext::SetMaxDecompositionStep(const int32 inMaxDecompositionStep)
 {
     mMaxDecompositionStep = inMaxDecompositionStep;
 }
 
-inline int HTNDecompositionPrinterContext::GetMaxDecompositionStep() const
+inline int32 HTNDecompositionPrinterContext::GetMaxDecompositionStep() const
 {
     return mMaxDecompositionStep;
 }
