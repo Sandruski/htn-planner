@@ -19,18 +19,18 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
         return;
     }
 
-    const HTNDecompositionNode* Node         = ioDecompositionWatchTooltipPrinterContext.GetNode();
-    const HTNNodeSnapshotDebug* NodeSnapshot = Node->GetNodeSnapshot();
+    const HTNDecompositionNode& Node         = ioDecompositionWatchTooltipPrinterContext.GetNode();
+    const HTNNodeSnapshotDebug* NodeSnapshot = Node.GetNodeSnapshot();
     if (!NodeSnapshot)
     {
         return;
     }
 
     bool                                                                 ShouldPrint       = false;
-    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters    = Node->GetNodeParameters();
+    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters    = Node.GetNodeParameters();
     const bool                                                           HasNodeParameters = !NodeParameters.empty();
     ShouldPrint                                                                            = ShouldPrint || HasNodeParameters;
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments    = Node->GetNodeArguments();
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments    = Node.GetNodeArguments();
     const bool                                                            HasNodeArguments = !NodeArguments.empty();
     ShouldPrint                                                                            = ShouldPrint || HasNodeArguments;
     const std::unordered_map<std::string, HTNAtom>& Variables                              = NodeSnapshot->GetVariables().GetVariables();

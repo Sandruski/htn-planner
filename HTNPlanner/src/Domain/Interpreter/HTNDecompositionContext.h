@@ -74,17 +74,22 @@ public:
     HTNNodePath&       GetCurrentVariableScopeNodePathMutable();
 
 private:
-    // World state
-    // - Queries are not able to modify it
-    const HTNWorldState* mWorldState = nullptr;
+    //----------------------------------------------------------------------//
+    // Input
+    //----------------------------------------------------------------------//
+    const HTNWorldState*                        mWorldState = nullptr;
+    const std::shared_ptr<const HTNDomainNode>& mDomainNode;
+    const std::string&                          mEntryPointID;
 
-    std::shared_ptr<const HTNDomainNode> mDomainNode;
-
-    std::string mEntryPointID;
-
+    //----------------------------------------------------------------------//
+    // Output
+    //----------------------------------------------------------------------//
     // Current decomposition
     HTNDecompositionRecord mCurrentDecomposition;
 
+    //----------------------------------------------------------------------//
+    // Internal
+    //----------------------------------------------------------------------//
     // Record of previous decompositions
     std::vector<HTNDecompositionRecord> mDecompositionHistory;
 
@@ -102,6 +107,9 @@ public:
     const HTNDecompositionSnapshotDebug& GetDecompositionSnapshot() const;
 
 private:
+    //----------------------------------------------------------------------//
+    // Output
+    //----------------------------------------------------------------------//
     HTNDecompositionSnapshotDebug mDecompositionSnapshot;
 #endif
 };

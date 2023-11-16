@@ -68,21 +68,29 @@ public:
     bool ShouldRefreshNodeStates() const;
 
 private:
+    //----------------------------------------------------------------------//
+    // Input
+    //----------------------------------------------------------------------//
     const std::shared_ptr<const HTNDomainNode>& mDomainNode;
-    const std::string&                          mEntryPointID;
-    const HTNDecompositionSnapshotDebug&        mDecompositionSnapshot;
-    const HTNDecompositionTooltipMode           mTooltipMode            = HTNDecompositionTooltipMode::NONE;
-    const bool                                  mShouldIgnoreImGuiState = false;
+    const std::string& mEntryPointID;
+    const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
+    const HTNDecompositionTooltipMode mTooltipMode = HTNDecompositionTooltipMode::NONE;
+    const bool mShouldIgnoreImGuiState = false;
 
+    //----------------------------------------------------------------------//
+    // Input/Output
+    //----------------------------------------------------------------------//
     // Node path to node state
     std::unordered_map<std::string, HTNDecompositionNodeState>& mNodeStates;
 
     // Node path to choice point node state
     std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& mChoicePointNodeStates;
 
-    // Selected node
     HTNDecompositionNode& mSelectedNode;
 
+    //----------------------------------------------------------------------//
+    // Internal
+    //----------------------------------------------------------------------//
     // Path from the root node to the current node being processed
     HTNNodePath mCurrentNodePath;
 

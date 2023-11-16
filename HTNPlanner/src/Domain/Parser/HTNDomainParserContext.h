@@ -17,6 +17,9 @@ public:
     std::shared_ptr<const HTNDomainNode>&       GetDomainNodeMutable();
 
 private:
+    //----------------------------------------------------------------------//
+    // Output
+    //----------------------------------------------------------------------//
     std::shared_ptr<const HTNDomainNode> mDomainNode;
 };
 

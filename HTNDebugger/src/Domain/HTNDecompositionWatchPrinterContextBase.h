@@ -17,15 +17,23 @@ public:
                                                      const HTNDecompositionNode&                 inDecompositionNode);
     virtual ~HTNDecompositionWatchPrinterContextBase() = 0;
 
-    void                                        AddVariablePath(const std::string& inVariablePath);
-    const std::vector<std::string>&             GetNodeVariablePaths() const;
+    void AddVariablePath(const std::string& inVariablePath);
+
     const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
-    const HTNDecompositionNode*                 GetNode() const;
+    const HTNDecompositionNode&                 GetNode() const;
+    const std::vector<std::string>&             GetNodeVariablePaths() const;
 
 private:
-    std::vector<std::string>             mNodeVariablePaths;
-    std::shared_ptr<const HTNDomainNode> mDomainNode;
-    const HTNDecompositionNode*          mNode = nullptr;
+    //----------------------------------------------------------------------//
+    // Input
+    //----------------------------------------------------------------------//
+    const std::shared_ptr<const HTNDomainNode>& mDomainNode;
+    const HTNDecompositionNode& mNode;
+
+    //----------------------------------------------------------------------//
+    // Internal
+    //----------------------------------------------------------------------//
+    std::vector<std::string> mNodeVariablePaths;
 };
 
 inline void HTNDecompositionWatchPrinterContextBase::AddVariablePath(const std::string& inVariablePath)
@@ -33,18 +41,18 @@ inline void HTNDecompositionWatchPrinterContextBase::AddVariablePath(const std::
     mNodeVariablePaths.emplace_back(inVariablePath);
 }
 
-inline const std::vector<std::string>& HTNDecompositionWatchPrinterContextBase::GetNodeVariablePaths() const
-{
-    return mNodeVariablePaths;
-}
-
 inline const std::shared_ptr<const HTNDomainNode>& HTNDecompositionWatchPrinterContextBase::GetDomainNode() const
 {
     return mDomainNode;
 }
 
-inline const HTNDecompositionNode* HTNDecompositionWatchPrinterContextBase::GetNode() const
+inline const HTNDecompositionNode& HTNDecompositionWatchPrinterContextBase::GetNode() const
 {
     return mNode;
+}
+
+inline const std::vector<std::string>& HTNDecompositionWatchPrinterContextBase::GetNodeVariablePaths() const
+{
+    return mNodeVariablePaths;
 }
 #endif

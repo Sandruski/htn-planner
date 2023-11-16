@@ -5,9 +5,7 @@
 
 #include <string>
 
-class HTNWorldState;
-
-struct ImGuiTextFilter;
+class HTNWorldStatePrinterContext;
 
 /**
  * Prints a database representing a world state
@@ -15,7 +13,7 @@ struct ImGuiTextFilter;
 class HTNWorldStatePrinter
 {
 public:
-    bool Print(const HTNWorldState& inWorldState, const ImGuiTextFilter& inTextFilter) const;
+    bool Print(HTNWorldStatePrinterContext& ioWorldStatePrinterContext) const;
 
 private:
     void PrintFactID(const std::string& inFactID) const;

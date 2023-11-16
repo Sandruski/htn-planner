@@ -17,6 +17,7 @@
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
 #include "Planner/HTNPlanningUnit.h"
+#include "WorldState/HTNWorldStatePrinterContext.h"
 
 #include "imgui.h"
 
@@ -330,8 +331,9 @@ void HTNDebuggerWindow::RenderWorldState()
         return;
     }
 
-    const HTNWorldState& WorldState = mDatabaseHook->GetWorldState();
-    mWorldStatePrinter.Print(WorldState, TextFilter);
+    const HTNWorldState&        WorldState               = mDatabaseHook->GetWorldState();
+    HTNWorldStatePrinterContext WorldStatePrinterContext = HTNWorldStatePrinterContext(WorldState, TextFilter);
+    mWorldStatePrinter.Print(WorldStatePrinterContext);
 }
 
 void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(HTNPlanningQuery&                                        inPlanningQuery,

@@ -16,6 +16,9 @@ public:
     HTNWorldState& GetWorldStateMutable();
 
 private:
+    //----------------------------------------------------------------------//
+    // Output
+    //----------------------------------------------------------------------//
     HTNWorldState mWorldState;
 };
 

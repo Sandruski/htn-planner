@@ -15,7 +15,10 @@ public:
     const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 
 private:
-    std::shared_ptr<const HTNDomainNode> mDomainNode;
+    //----------------------------------------------------------------------//
+    // Input
+    //----------------------------------------------------------------------//
+    const std::shared_ptr<const HTNDomainNode>& mDomainNode;
 };
 
 inline const std::shared_ptr<const HTNDomainNode>& HTNDomainPrinterContext::GetDomainNode() const

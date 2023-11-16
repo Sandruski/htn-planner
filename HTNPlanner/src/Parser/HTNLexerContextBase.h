@@ -16,19 +16,30 @@ public:
     explicit HTNLexerContextBase(const std::string& inText);
     virtual ~HTNLexerContextBase() = 0;
 
+    const std::string& GetText() const;
+
     void                         AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme));
     const std::vector<HTNToken>& GetTokens() const;
 
-    const std::string& GetText() const;
-    char               GetCharacter(const unsigned int inLookAhead = 0) const;
+    char GetCharacter(const unsigned int inLookAhead = 0) const;
 
-    void               AdvancePosition(const bool inIsNewLine = false);
-    unsigned int       GetPosition() const;
+    void         AdvancePosition(const bool inIsNewLine = false);
+    unsigned int GetPosition() const;
 
 private:
+    //----------------------------------------------------------------------//
+    // Input
+    //----------------------------------------------------------------------//
+    const std::string& mText;
+
+    //----------------------------------------------------------------------//
+    // Output
+    //----------------------------------------------------------------------//
     std::vector<HTNToken> mTokens;
 
-    std::string  mText;
+    //----------------------------------------------------------------------//
+    // Internal
+    //----------------------------------------------------------------------//
     unsigned int mPosition = 0;
 
 #ifdef HTN_DEBUG
@@ -37,10 +48,18 @@ public:
     unsigned int GetColumn() const;
 
 private:
+    //----------------------------------------------------------------------//
+    // Internal
+    //----------------------------------------------------------------------//
     unsigned int mRow    = 0;
     unsigned int mColumn = 0;
 #endif
 };
+
+inline const std::string& HTNLexerContextBase::GetText() const
+{
+    return mText;
+}
 
 inline void HTNLexerContextBase::AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme))
 {
@@ -50,11 +69,6 @@ inline void HTNLexerContextBase::AddToken(const HTNAtom& inValue, const HTNToken
 inline const std::vector<HTNToken>& HTNLexerContextBase::GetTokens() const
 {
     return mTokens;
-}
-
-inline const std::string& HTNLexerContextBase::GetText() const
-{
-    return mText;
 }
 
 inline unsigned int HTNLexerContextBase::GetPosition() const

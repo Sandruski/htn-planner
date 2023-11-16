@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
-#include "Helpers/HTNToken.h"
 
 #include <vector>
 
 #if HTN_DEBUG
 #include <string>
 #endif
+
+class HTNToken;
 
 class HTNParserContextBase : public HTNNodeVisitorContextBase
 {
@@ -23,8 +24,14 @@ public:
     unsigned int GetPosition() const;
 
 private:
-    std::vector<HTNToken> mTokens;
+    //----------------------------------------------------------------------//
+    // Input
+    //----------------------------------------------------------------------//
+    const std::vector<HTNToken>& mTokens;
 
+    //----------------------------------------------------------------------//
+    // Internal
+    //----------------------------------------------------------------------//
     unsigned int mPosition = 0;
 
 #if HTN_DEBUG
@@ -37,21 +44,14 @@ public:
     int                GetLastErrorColumn() const;
 
 protected:
+    //----------------------------------------------------------------------//
+    // Internal
+    //----------------------------------------------------------------------//
     std::string mLastErrorMessage;
     int         mLastErrorRow    = -1;
     int         mLastErrorColumn = -1;
 #endif
 };
-
-inline const HTNToken* HTNParserContextBase::GetToken(const unsigned int inPosition) const
-{
-    return ((inPosition < mTokens.size()) ? &mTokens[inPosition] : nullptr);
-}
-
-inline std::size_t HTNParserContextBase::GetTokensSize() const
-{
-    return mTokens.size();
-}
 
 inline void HTNParserContextBase::SetPosition(const unsigned int inPosition)
 {

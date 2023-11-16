@@ -19,7 +19,10 @@ public:
     HTNDecompositionTooltipMode GetTooltipMode() const;
 
 private:
-    HTNDecompositionTooltipMode mTooltipMode = HTNDecompositionTooltipMode::NONE;
+    //----------------------------------------------------------------------//
+    // Input
+    //----------------------------------------------------------------------//
+    const HTNDecompositionTooltipMode mTooltipMode = HTNDecompositionTooltipMode::NONE;
 };
 
 inline HTNDecompositionTooltipMode HTNDecompositionWatchTooltipPrinterContext::GetTooltipMode() const

@@ -67,14 +67,14 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
     // Variable value
     {
         const std::string&          VariableID                = inVariableExpressionNode.GetValue().GetValue<std::string>();
-        const HTNDecompositionNode* Node                      = DecompositionWatchPrinterContext.GetNode();
-        const std::string&          NodeVariableScopeNodePath = Node->GetNodeVariableScopeNodePath().GetNodePath();
+        const HTNDecompositionNode& Node                      = DecompositionWatchPrinterContext.GetNode();
+        const std::string&          NodeVariableScopeNodePath = Node.GetNodeVariableScopeNodePath().GetNodePath();
         std::string                 VariablePath;
         const bool MakeVariablePathResult = HTNDecompositionHelpers::MakeVariablePath(VariableID, NodeVariableScopeNodePath, VariablePath);
         assert(MakeVariablePathResult);
         DecompositionWatchPrinterContext.AddVariablePath(VariablePath);
 
-        const HTNVariables& Variables               = Node->GetNodeSnapshot()->GetVariables();
+        const HTNVariables& Variables               = Node.GetNodeSnapshot()->GetVariables();
         const HTNAtom       VariableValue           = Variables.FindVariable(VariablePath);
         constexpr bool      ShouldDoubleQuoteString = true;
         const std::string   VariableValueString     = VariableValue.ToString(ShouldDoubleQuoteString);

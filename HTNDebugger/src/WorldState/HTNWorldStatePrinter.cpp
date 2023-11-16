@@ -1,11 +1,17 @@
 #include "WorldState/HTNWorldStatePrinter.h"
 
 #ifdef HTN_DEBUG
+#include "WorldState/HTNWorldState.h"
+#include "WorldState/HTNWorldStatePrinterContext.h"
+
 #include "imgui.h"
 
-bool HTNWorldStatePrinter::Print(const HTNWorldState& inWorldState, const ImGuiTextFilter& inTextFilter) const
+bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinterContext) const
 {
-    const std::unordered_map<std::string, HTNFactArgumentsTables>& Facts = inWorldState.GetFacts();
+    const HTNWorldState&   WorldState = ioWorldStatePrinterContext.GetWorldState();
+    const ImGuiTextFilter& TextFilter = ioWorldStatePrinterContext.GetTextFilter();
+
+    const std::unordered_map<std::string, HTNFactArgumentsTables>& Facts = WorldState.GetFacts();
     for (const std::pair<std::string, HTNFactArgumentsTables>& Fact : Facts)
     {
         const std::string&            FactID              = Fact.first;
@@ -22,7 +28,7 @@ bool HTNWorldStatePrinter::Print(const HTNWorldState& inWorldState, const ImGuiT
                     FactString.append(std::format(" {}", FactArgument.ToString(ShouldDoubleQuoteString)));
                 }
 
-                if (!inTextFilter.PassFilter(FactString.c_str()))
+                if (!TextFilter.PassFilter(FactString.c_str()))
                 {
                     continue;
                 }
@@ -47,8 +53,8 @@ void HTNWorldStatePrinter::PrintFactArguments(const HTNFactArguments& inFactArgu
     {
         ImGui::SameLine();
 
-        constexpr bool ShouldDoubleQuoteString = true;
-        const std::string     FactArgumentString      = FactArgument.ToString(ShouldDoubleQuoteString);
+        constexpr bool    ShouldDoubleQuoteString = true;
+        const std::string FactArgumentString      = FactArgument.ToString(ShouldDoubleQuoteString);
         ImGui::Text(FactArgumentString.c_str());
     }
 }
