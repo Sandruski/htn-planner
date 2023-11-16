@@ -24,7 +24,7 @@ bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinte
                 std::string FactString = FactID;
                 for (const HTNAtom& FactArgument : FactArgumentsElement)
                 {
-                    constexpr bool ShouldDoubleQuoteString = false;
+                    constexpr bool ShouldDoubleQuoteString = true;
                     FactString.append(std::format(" {}", FactArgument.ToString(ShouldDoubleQuoteString)));
                 }
 
