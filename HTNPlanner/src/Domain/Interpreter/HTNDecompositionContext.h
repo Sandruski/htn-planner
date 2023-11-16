@@ -77,9 +77,9 @@ private:
     //----------------------------------------------------------------------//
     // Input
     //----------------------------------------------------------------------//
-    const HTNWorldState*                        mWorldState = nullptr;
-    const std::shared_ptr<const HTNDomainNode>& mDomainNode;
-    const std::string&                          mEntryPointID;
+    const HTNWorldState*                 mWorldState = nullptr;
+    std::shared_ptr<const HTNDomainNode> mDomainNode;
+    std::string                          mEntryPointID;
 
     //----------------------------------------------------------------------//
     // Output
