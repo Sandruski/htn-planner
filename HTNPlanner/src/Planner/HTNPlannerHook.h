@@ -19,16 +19,16 @@ public:
     // Parses a domain file and builds a domain node
     bool ParseDomainFile(const std::string& inDomainFilePath);
 
-    bool MakePlan(const std::string& inEntryPointID, HTNDecompositionContext& ioDecompositionContext) const;
+    bool MakePlan(HTNDecompositionContext& ioDecompositionContext) const;
 
     const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 
 private:
     std::shared_ptr<const HTNDomainNode> mDomainNode;
 
-    const HTNDomainLexer       mDomainLexer;
-    const HTNDomainParser      mDomainParser;
-    const HTNDomainInterpreter mDomainInterpreter;
+    const HTNDomainLexer mDomainLexer = HTNDomainLexer();
+    const HTNDomainParser mDomainParser = HTNDomainParser();
+    const HTNDomainInterpreter mDomainInterpreter = HTNDomainInterpreter();
 };
 
 inline const std::shared_ptr<const HTNDomainNode>& HTNPlannerHook::GetDomainNode() const

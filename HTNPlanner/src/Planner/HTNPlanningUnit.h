@@ -10,7 +10,6 @@
 #endif
 
 class HTNDatabaseHook;
-class HTNDomainNode;
 class HTNPlannerHook;
 
 // Planning unit structure that holds the planner hook and the database
@@ -22,20 +21,18 @@ public:
     // Execute planning unit top level method
     bool ExecuteTopLevelMethod(const std::string& inEntryPointID);
 
-    const std::string& GetID() const;
+    const std::string&     GetID() const;
+    const HTNDatabaseHook* GetDatabaseHook() const;
+    const HTNPlannerHook*  GetPlannerHook() const;
 
-    const std::shared_ptr<const HTNDomainNode>& GetLastDomainNode() const;
-    const std::string&                          GetLastEntryPointID() const;
-    const HTNDecompositionRecord&               GetLastDecomposition() const;
+    const HTNDecompositionRecord& GetLastDecomposition() const;
 
 private:
     std::string            mID;
     const HTNDatabaseHook* mDatabaseHook = nullptr;
     const HTNPlannerHook*  mPlannerHook  = nullptr;
 
-    std::shared_ptr<const HTNDomainNode> mLastDomainNode;
-    std::string                          mLastEntryPointID;
-    HTNDecompositionRecord               mLastDecomposition;
+    HTNDecompositionRecord mLastDecomposition;
 
 #ifdef HTN_DEBUG
 public:
@@ -51,14 +48,14 @@ inline const std::string& HTNPlanningUnit::GetID() const
     return mID;
 }
 
-inline const std::shared_ptr<const HTNDomainNode>& HTNPlanningUnit::GetLastDomainNode() const
+inline const HTNDatabaseHook* HTNPlanningUnit::GetDatabaseHook() const
 {
-    return mLastDomainNode;
+    return mDatabaseHook;
 }
 
-inline const std::string& HTNPlanningUnit::GetLastEntryPointID() const
+inline const HTNPlannerHook* HTNPlanningUnit::GetPlannerHook() const
 {
-    return mLastEntryPointID;
+    return mPlannerHook;
 }
 
 inline const HTNDecompositionRecord& HTNPlanningUnit::GetLastDecomposition() const

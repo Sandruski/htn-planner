@@ -4,7 +4,9 @@
 #include "Helpers/HTNDebuggerWindowHelpers.h"
 
 #include <string>
+#include <memory>
 
+class HTNDomainNode;
 class HTNPlanningUnit;
 
 class HTNPlanningQuery
@@ -14,18 +16,28 @@ public:
 
     HTNPlanningUnit*       GetPlanningUnitMutable();
     const HTNPlanningUnit* GetPlanningUnit() const;
-    void                   SetEntryPointID(const std::string& inEntryPointID);
-    void                   ClearEntryPointID();
-    const std::string&     GetEntryPointID() const;
-    bool                   IsEntryPointIDEmpty() const;
-    void                   SetLastDecompositionResult(const HTNOperationResult inLastDecompositionResult);
-    HTNOperationResult     GetLastDecompositionResult() const;
-    bool                   IsLastDecompositionSuccessful() const;
+
+    void               SetEntryPointID(const std::string& inEntryPointID);
+    void               ClearEntryPointID();
+    const std::string& GetEntryPointID() const;
+    bool               IsEntryPointIDEmpty() const;
+
+    void               SetLastDecompositionResult(const HTNOperationResult inLastDecompositionResult);
+    HTNOperationResult GetLastDecompositionResult() const;
+    bool               IsLastDecompositionSuccessful() const;
+
+    void                                        SetLastDomainNode(const std::shared_ptr<const HTNDomainNode>& inLastDomainNode);
+    const std::shared_ptr<const HTNDomainNode>& GetLastDomainNode() const;
+    void                                        SetLastEntryPointID(const std::string& inLastEntryPointID);
+    const std::string&                          GetLastEntryPointID() const;
 
 private:
-    HTNPlanningUnit*   mPlanningUnit = nullptr;
-    std::string        mEntryPointID;
-    HTNOperationResult mLastDecompositionResult = HTNOperationResult::NONE;
+    HTNPlanningUnit* mPlanningUnit = nullptr;
+    std::string      mEntryPointID;
+
+    HTNOperationResult                   mLastDecompositionResult = HTNOperationResult::NONE;
+    std::shared_ptr<const HTNDomainNode> mLastDomainNode;
+    std::string                          mLastEntryPointID;
 };
 
 inline const HTNPlanningUnit* HTNPlanningQuery::GetPlanningUnit() const
@@ -71,5 +83,25 @@ inline HTNOperationResult HTNPlanningQuery::GetLastDecompositionResult() const
 inline bool HTNPlanningQuery::IsLastDecompositionSuccessful() const
 {
     return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastDecompositionResult);
+}
+
+inline void HTNPlanningQuery::SetLastDomainNode(const std::shared_ptr<const HTNDomainNode>& inLastDomainNode)
+{
+    mLastDomainNode = inLastDomainNode;
+}
+
+inline const std::shared_ptr<const HTNDomainNode>& HTNPlanningQuery::GetLastDomainNode() const
+{
+    return mLastDomainNode;
+}
+
+inline void HTNPlanningQuery::SetLastEntryPointID(const std::string& inLastEntryPointID)
+{
+    mLastEntryPointID = inLastEntryPointID;
+}
+
+inline const std::string& HTNPlanningQuery::GetLastEntryPointID() const
+{
+    return mLastEntryPointID;
 }
 #endif

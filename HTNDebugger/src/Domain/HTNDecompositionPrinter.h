@@ -50,6 +50,6 @@ private:
                                   const HTNNodeBehaviorFunction inNodeBehaviorFunction, const HTNNodeFunction inNodeFunction,
                                   const ImGuiTreeNodeFlags inTreeNodeFlags, HTNNodeVisitorContextBase& ioContext) const;
 
-    const HTNDecompositionWatchTooltipPrinter mDecompositionWatchTooltipPrinter;
+    const HTNDecompositionWatchTooltipPrinter mDecompositionWatchTooltipPrinter = HTNDecompositionWatchTooltipPrinter();
 };
 #endif

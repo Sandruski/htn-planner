@@ -19,15 +19,12 @@ class HTNDecompositionContext final : public HTNNodeVisitorContextBase
 {
 public:
     HTNDecompositionContext() = default;
-    explicit HTNDecompositionContext(const HTNWorldState& inWorldState);
+    explicit HTNDecompositionContext(const HTNWorldState& inWorldState, const std::shared_ptr<const HTNDomainNode>& inDomainNode,
+                                     const std::string& inEntryPointID);
 
-    const HTNWorldState& GetWorldState() const;
-
-    void                                        SetDomainNode(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
+    const HTNWorldState&                        GetWorldState() const;
     const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
-
-    void               SetEntryPointID(const std::string& inEntryPointID);
-    const std::string& GetEntryPointID() const;
+    const std::string&                          GetEntryPointID() const;
 
     void RecordDecomposition(HTNDecompositionRecord& inDecomposition);
     bool RestoreDecomposition();
@@ -50,9 +47,9 @@ private:
     //----------------------------------------------------------------------//
     // Input
     //----------------------------------------------------------------------//
-    const HTNWorldState&                 mWorldState;
-    std::shared_ptr<const HTNDomainNode> mDomainNode;
-    std::string                          mEntryPointID;
+    const HTNWorldState&                        mWorldState;
+    const std::shared_ptr<const HTNDomainNode>& mDomainNode;
+    const std::string&                          mEntryPointID;
 
     //----------------------------------------------------------------------//
     // Output
@@ -92,19 +89,9 @@ inline const HTNWorldState& HTNDecompositionContext::GetWorldState() const
     return mWorldState;
 }
 
-inline void HTNDecompositionContext::SetDomainNode(const std::shared_ptr<const HTNDomainNode>& inDomainNode)
-{
-    mDomainNode = inDomainNode;
-}
-
 inline const std::shared_ptr<const HTNDomainNode>& HTNDecompositionContext::GetDomainNode() const
 {
     return mDomainNode;
-}
-
-inline void HTNDecompositionContext::SetEntryPointID(const std::string& inEntryPointID)
-{
-    mEntryPointID = inEntryPointID;
 }
 
 inline const std::string& HTNDecompositionContext::GetEntryPointID() const

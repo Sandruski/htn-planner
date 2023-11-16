@@ -11,12 +11,10 @@ HTNPlanningUnit::HTNPlanningUnit(const std::string& inID, const HTNDatabaseHook&
 
 bool HTNPlanningUnit::ExecuteTopLevelMethod(const std::string& inEntryPointID)
 {
-    mLastEntryPointID = inEntryPointID;
-    mLastDomainNode   = mPlannerHook->GetDomainNode();
-
-    const HTNWorldState&    WorldState           = mDatabaseHook->GetWorldState();
-    HTNDecompositionContext DecompositionContext = HTNDecompositionContext(WorldState);
-    const bool              Result               = mPlannerHook->MakePlan(inEntryPointID, DecompositionContext);
+    const HTNWorldState&                        WorldState           = mDatabaseHook->GetWorldState();
+    const std::shared_ptr<const HTNDomainNode>& DomainNode           = mPlannerHook->GetDomainNode();
+    HTNDecompositionContext                     DecompositionContext = HTNDecompositionContext(WorldState, DomainNode, inEntryPointID);
+    const bool                                  Result               = mPlannerHook->MakePlan(DecompositionContext);
 
     mLastDecomposition = DecompositionContext.GetCurrentDecomposition();
 #ifdef HTN_DEBUG

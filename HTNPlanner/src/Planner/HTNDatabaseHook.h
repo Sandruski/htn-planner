@@ -17,8 +17,8 @@ public:
 private:
     HTNWorldState mWorldState;
 
-    const HTNWorldStateLexer  mWorldStateLexer;
-    const HTNWorldStateParser mWorldStateParser;
+    const HTNWorldStateLexer mWorldStateLexer = HTNWorldStateLexer();
+    const HTNWorldStateParser mWorldStateParser = HTNWorldStateParser();
 };
 
 inline const HTNWorldState& HTNDatabaseHook::GetWorldState() const

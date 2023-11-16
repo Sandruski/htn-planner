@@ -1,6 +1,8 @@
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 
-HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldState) : mWorldState(inWorldState)
+HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldState, const std::shared_ptr<const HTNDomainNode>& inDomainNode,
+                                                 const std::string& inEntryPointID)
+    : mWorldState(inWorldState), mDomainNode(inDomainNode), mEntryPointID(inEntryPointID)
 {
 }
 

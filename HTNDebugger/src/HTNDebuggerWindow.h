@@ -26,8 +26,8 @@ class HTNPlanningUnit;
 class HTNDebuggerWindow
 {
 public:
-    explicit HTNDebuggerWindow(HTNDatabaseHook& inDatabaseHook, HTNPlannerHook& inPlannerHook, HTNPlanningUnit& inMainPlanningUnit,
-                               HTNPlanningUnit& inUpperBodyPlanningUnit);
+    explicit HTNDebuggerWindow(HTNDatabaseHook& ioDatabaseHook, HTNPlannerHook& ioPlannerHook, HTNPlanningUnit& ioMainPlanningUnit,
+                               HTNPlanningUnit& ioUpperBodyPlanningUnit);
 
     void Render();
 
@@ -37,7 +37,7 @@ private:
     void RenderDomain();
     void RenderWorldState();
 
-    void RenderDecompositionByPlanningQuery(HTNPlanningQuery& inPlanningQuery, const std::vector<std::shared_ptr<const HTNMethodNode>>* inMethodNodes,
+    void RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>* inMethodNodes, HTNPlanningQuery& ioPlanningQuery,
                                             HTNDecompositionNode& ioSelectedNode);
 
     bool IsLastWorldStateFileParsingSuccessful() const;
@@ -65,10 +65,10 @@ private:
     std::unordered_map<std::string, HTNDecompositionNodeState>            mNodeStates;
     std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mChoicePointNodeStates;
 
-    const HTNWorldStatePrinter               mWorldStatePrinter;
-    const HTNDomainPrinter                   mDomainPrinter;
-    const HTNDecompositionPrinter            mDecompositionPrinter;
-    const HTNDecompositionWatchWindowPrinter mDecompositionWatchWindowPrinter;
+    const HTNWorldStatePrinter               mWorldStatePrinter               = HTNWorldStatePrinter();
+    const HTNDomainPrinter                   mDomainPrinter                   = HTNDomainPrinter();
+    const HTNDecompositionPrinter            mDecompositionPrinter            = HTNDecompositionPrinter();
+    const HTNDecompositionWatchWindowPrinter mDecompositionWatchWindowPrinter = HTNDecompositionWatchWindowPrinter();
 };
 
 inline bool HTNDebuggerWindow::IsLastWorldStateFileParsingSuccessful() const
