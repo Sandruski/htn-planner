@@ -12,10 +12,10 @@ class HTNPlanningUnit;
 class HTNPlanningQuery
 {
 public:
-    explicit HTNPlanningQuery(HTNPlanningUnit* inPlanningUnit);
+    explicit HTNPlanningQuery(HTNPlanningUnit& inPlanningUnit);
 
-    HTNPlanningUnit*       GetPlanningUnitMutable();
-    const HTNPlanningUnit* GetPlanningUnit() const;
+    HTNPlanningUnit&       GetPlanningUnitMutable();
+    const HTNPlanningUnit& GetPlanningUnit() const;
 
     void               SetEntryPointID(const std::string& inEntryPointID);
     void               ClearEntryPointID();
@@ -32,7 +32,7 @@ public:
     const std::string&                          GetLastEntryPointID() const;
 
 private:
-    HTNPlanningUnit* mPlanningUnit = nullptr;
+    HTNPlanningUnit& mPlanningUnit;
     std::string      mEntryPointID;
 
     HTNOperationResult                   mLastDecompositionResult = HTNOperationResult::NONE;
@@ -40,12 +40,12 @@ private:
     std::string                          mLastEntryPointID;
 };
 
-inline const HTNPlanningUnit* HTNPlanningQuery::GetPlanningUnit() const
+inline const HTNPlanningUnit& HTNPlanningQuery::GetPlanningUnit() const
 {
     return mPlanningUnit;
 }
 
-inline HTNPlanningUnit* HTNPlanningQuery::GetPlanningUnitMutable()
+inline HTNPlanningUnit& HTNPlanningQuery::GetPlanningUnitMutable()
 {
     return mPlanningUnit;
 }

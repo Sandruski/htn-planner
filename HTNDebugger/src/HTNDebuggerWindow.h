@@ -43,10 +43,10 @@ private:
     bool IsLastWorldStateFileParsingSuccessful() const;
     bool IsLastDomainFileParsingSuccessful() const;
 
-    HTNDatabaseHook* mDatabaseHook          = nullptr;
-    HTNPlannerHook*  mPlannerHook           = nullptr;
-    HTNPlanningUnit* mMainPlanningUnit      = nullptr;
-    HTNPlanningUnit* mUpperBodyPlanningUnit = nullptr;
+    HTNDatabaseHook& mDatabaseHook;
+    HTNPlannerHook&  mPlannerHook;
+    HTNPlanningUnit& mMainPlanningUnit;
+    HTNPlanningUnit& mUpperBodyPlanningUnit;
 
     std::mutex                     mPlanningQueryMutex;
     HTNPlanningQuery               mMainPlanningQuery      = HTNPlanningQuery(mMainPlanningUnit);

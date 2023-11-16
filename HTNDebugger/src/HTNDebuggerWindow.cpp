@@ -28,12 +28,12 @@ namespace
 {
 void DecomposePlanningQuery(HTNPlanningQuery& ioPlanningQuery)
 {
-    HTNPlanningUnit*         PlanningUnit = ioPlanningQuery.GetPlanningUnitMutable();
+    HTNPlanningUnit&         PlanningUnit = ioPlanningQuery.GetPlanningUnitMutable();
     const std::string&       EntryPointID = ioPlanningQuery.GetEntryPointID();
-    const HTNOperationResult Result       = static_cast<const HTNOperationResult>(PlanningUnit->ExecuteTopLevelMethod(EntryPointID));
+    const HTNOperationResult Result       = static_cast<const HTNOperationResult>(PlanningUnit.ExecuteTopLevelMethod(EntryPointID));
     ioPlanningQuery.SetLastDecompositionResult(Result);
-    const HTNPlannerHook*                       PlannerHook = PlanningUnit->GetPlannerHook();
-    const std::shared_ptr<const HTNDomainNode>& DomainNode  = PlannerHook->GetDomainNode();
+    const HTNPlannerHook&                       PlannerHook = PlanningUnit.GetPlannerHook();
+    const std::shared_ptr<const HTNDomainNode>& DomainNode  = PlannerHook.GetDomainNode();
     ioPlanningQuery.SetLastDomainNode(DomainNode);
     ioPlanningQuery.SetLastEntryPointID(EntryPointID);
 }
@@ -138,8 +138,8 @@ std::vector<std::shared_ptr<const HTNMethodNode>>::const_iterator FindTopLevelMe
 
 HTNDebuggerWindow::HTNDebuggerWindow(HTNDatabaseHook& ioDatabaseHook, HTNPlannerHook& ioPlannerHook, HTNPlanningUnit& ioMainPlanningUnit,
                                      HTNPlanningUnit& ioUpperBodyPlanningUnit)
-    : mDatabaseHook(&ioDatabaseHook), mPlannerHook(&ioPlannerHook), mMainPlanningUnit(&ioMainPlanningUnit),
-      mUpperBodyPlanningUnit(&ioUpperBodyPlanningUnit)
+    : mDatabaseHook(ioDatabaseHook), mPlannerHook(ioPlannerHook), mMainPlanningUnit(ioMainPlanningUnit),
+      mUpperBodyPlanningUnit(ioUpperBodyPlanningUnit)
 {
 }
 
@@ -190,13 +190,13 @@ void HTNDebuggerWindow::RenderActivePlan()
     {
         if (ImGui::BeginTabItem("Main"))
         {
-            RenderActivePlanByPlanningUnit(*mMainPlanningUnit);
+            RenderActivePlanByPlanningUnit(mMainPlanningUnit);
             ImGui::EndTabItem();
         }
 
         if (ImGui::BeginTabItem("Upper Body"))
         {
-            RenderActivePlanByPlanningUnit(*mUpperBodyPlanningUnit);
+            RenderActivePlanByPlanningUnit(mUpperBodyPlanningUnit);
             ImGui::EndTabItem();
         }
 
@@ -206,7 +206,7 @@ void HTNDebuggerWindow::RenderActivePlan()
 
 void HTNDebuggerWindow::RenderDecomposition()
 {
-    const std::shared_ptr<const HTNDomainNode>&              DomainNode  = mPlannerHook->GetDomainNode();
+    const std::shared_ptr<const HTNDomainNode>&              DomainNode  = mPlannerHook.GetDomainNode();
     const std::vector<std::shared_ptr<const HTNMethodNode>>* MethodNodes = nullptr;
     if (DomainNode)
     {
@@ -291,7 +291,7 @@ void HTNDebuggerWindow::RenderDomain()
 
     if (ImGui::Button("Parse"))
     {
-        mLastParseDomainFileResult = static_cast<const HTNOperationResult>(mPlannerHook->ParseDomainFile(mSelectedDomainFilePath.string()));
+        mLastParseDomainFileResult = static_cast<const HTNOperationResult>(mPlannerHook.ParseDomainFile(mSelectedDomainFilePath.string()));
     }
 
     if (ImGui::IsItemHovered())
@@ -308,7 +308,7 @@ void HTNDebuggerWindow::RenderDomain()
         return;
     }
 
-    const std::shared_ptr<const HTNDomainNode>& DomainNode           = mPlannerHook->GetDomainNode();
+    const std::shared_ptr<const HTNDomainNode>& DomainNode           = mPlannerHook.GetDomainNode();
     HTNDomainPrinterContext                     DomainPrinterContext = HTNDomainPrinterContext(DomainNode);
     mDomainPrinter.Print(DomainPrinterContext);
 }
@@ -320,7 +320,7 @@ void HTNDebuggerWindow::RenderWorldState()
     if (ImGui::Button("Parse"))
     {
         mLastParseWorldStateFileResult =
-            static_cast<const HTNOperationResult>(mDatabaseHook->ParseWorldStateFile(mSelectedWorldStateFilePath.string()));
+            static_cast<const HTNOperationResult>(mDatabaseHook.ParseWorldStateFile(mSelectedWorldStateFilePath.string()));
     }
 
     if (ImGui::IsItemHovered())
@@ -340,7 +340,7 @@ void HTNDebuggerWindow::RenderWorldState()
         return;
     }
 
-    const HTNWorldState&        WorldState               = mDatabaseHook->GetWorldState();
+    const HTNWorldState&        WorldState               = mDatabaseHook.GetWorldState();
     HTNWorldStatePrinterContext WorldStatePrinterContext = HTNWorldStatePrinterContext(WorldState, TextFilter);
     mWorldStatePrinter.Print(WorldStatePrinterContext);
 }
@@ -489,8 +489,8 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
     {
         const std::shared_ptr<const HTNDomainNode>& LastDomainNode            = ioPlanningQuery.GetLastDomainNode();
         const std::string&                          LastEntryPointID          = ioPlanningQuery.GetLastEntryPointID();
-        const HTNPlanningUnit*                      PlanningUnit              = ioPlanningQuery.GetPlanningUnit();
-        const HTNDecompositionSnapshotDebug&        LastDecompositionSnapshot = PlanningUnit->GetLastDecompositionSnapshot();
+        const HTNPlanningUnit&                      PlanningUnit              = ioPlanningQuery.GetPlanningUnit();
+        const HTNDecompositionSnapshotDebug&        LastDecompositionSnapshot = PlanningUnit.GetLastDecompositionSnapshot();
         const bool                                  ShouldIgnoreNewNodeOpen   = !mIsDecompositionCurrentTab;
         HTNDecompositionPrinterContext              DecompositionPrinterContext =
             HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, mTooltipMode, ShouldIgnoreNewNodeOpen,

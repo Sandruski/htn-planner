@@ -22,15 +22,15 @@ public:
     bool ExecuteTopLevelMethod(const std::string& inEntryPointID);
 
     const std::string&     GetID() const;
-    const HTNDatabaseHook* GetDatabaseHook() const;
-    const HTNPlannerHook*  GetPlannerHook() const;
+    const HTNDatabaseHook& GetDatabaseHook() const;
+    const HTNPlannerHook&  GetPlannerHook() const;
 
     const HTNDecompositionRecord& GetLastDecomposition() const;
 
 private:
     std::string            mID;
-    const HTNDatabaseHook* mDatabaseHook = nullptr;
-    const HTNPlannerHook*  mPlannerHook  = nullptr;
+    const HTNDatabaseHook& mDatabaseHook;
+    const HTNPlannerHook&  mPlannerHook;
 
     HTNDecompositionRecord mLastDecomposition;
 
@@ -48,12 +48,12 @@ inline const std::string& HTNPlanningUnit::GetID() const
     return mID;
 }
 
-inline const HTNDatabaseHook* HTNPlanningUnit::GetDatabaseHook() const
+inline const HTNDatabaseHook& HTNPlanningUnit::GetDatabaseHook() const
 {
     return mDatabaseHook;
 }
 
-inline const HTNPlannerHook* HTNPlanningUnit::GetPlannerHook() const
+inline const HTNPlannerHook& HTNPlanningUnit::GetPlannerHook() const
 {
     return mPlannerHook;
 }
