@@ -4,6 +4,7 @@
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionNodeScope.h"
+#include "Domain/Interpreter/HTNDecompositionRecord.h"
 #include "Domain/Interpreter/HTNDecompositionVariableScopeNodeScope.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNTaskInstance.h"
@@ -339,16 +340,16 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
     HTNIndices&             Indices              = Environment.GetIndicesMutable();
 
-    const HTNWorldState* WorldState = DecompositionContext.GetWorldState();
+    const HTNWorldState& WorldState = DecompositionContext.GetWorldState();
 
     // Check fact
     const std::shared_ptr<const HTNIdentifierExpressionNode>& ConditionNodeIDNode = inConditionNode.GetIDNode();
     const std::string                                         FactID = GetNodeValue(*ConditionNodeIDNode, ioContext).GetValue<std::string>();
-    const std::size_t                                         FactArgumentsSize = WorldState->GetFactArgumentsSize(FactID, FactArguments.size());
+    const std::size_t                                         FactArgumentsSize = WorldState.GetFactArgumentsSize(FactID, FactArguments.size());
     for (std::size_t FactArgumentsIndex = Indices.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsSize;
          FactArgumentsIndex             = Indices.AddOrIncrementIndex(CurrentNodePath))
     {
-        if (!HTNConditionQueryWorldState::Check(*WorldState, FactID, FactArgumentsIndex, FactArguments))
+        if (!HTNConditionQueryWorldState::Check(WorldState, FactID, FactArgumentsIndex, FactArguments))
         {
             continue;
         }

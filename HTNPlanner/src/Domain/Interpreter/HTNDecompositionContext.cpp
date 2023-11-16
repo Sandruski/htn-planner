@@ -1,6 +1,6 @@
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 
-HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldState) : mWorldState(&inWorldState)
+HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldState) : mWorldState(inWorldState)
 {
 }
 

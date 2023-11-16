@@ -7,6 +7,7 @@
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/HTNDomainPrinterContext.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
+#include "Domain/Interpreter/HTNDecompositionRecord.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
@@ -86,9 +87,8 @@ void RenderOperationResult(const HTNOperationResult inOperationResult)
 
 void RenderActivePlanByPlanningUnit(const HTNPlanningUnit& inPlanningUnit)
 {
-    const HTNDecompositionContext&    LastDecompositionContext = inPlanningUnit.GetLastDecompositionContext();
-    const HTNDecompositionRecord&     CurrentDecomposition     = LastDecompositionContext.GetCurrentDecomposition();
-    const std::vector<HTNTaskResult>& Plan                     = CurrentDecomposition.GetPlan();
+    const HTNDecompositionRecord&     CurrentDecomposition = inPlanningUnit.GetLastDecomposition();
+    const std::vector<HTNTaskResult>& Plan                 = CurrentDecomposition.GetPlan();
     for (const HTNTaskResult& TaskResult : Plan)
     {
         const std::string& TaskID = TaskResult.GetID();
@@ -481,12 +481,12 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(HTNPlanningQuery&    
 
     if (inPlanningQuery.IsLastDecompositionSuccessful())
     {
-        const HTNPlanningUnit*                      PlanningUnit       = inPlanningQuery.GetPlanningUnit();
-        const std::shared_ptr<const HTNDomainNode>& LastDomainNode     = PlanningUnit->GetLastDomainNode();
-        const std::string&                          LastEntryPointID   = PlanningUnit->GetLastEntryPointID();
-        const HTNDecompositionSnapshotDebug& LastDecompositionSnapshot = PlanningUnit->GetLastDecompositionContext().GetDecompositionSnapshot();
-        const bool                           ShouldIgnoreNewNodeOpen   = !mIsDecompositionCurrentTab;
-        HTNDecompositionPrinterContext       DecompositionPrinterContext =
+        const HTNPlanningUnit*                      PlanningUnit              = inPlanningQuery.GetPlanningUnit();
+        const std::shared_ptr<const HTNDomainNode>& LastDomainNode            = PlanningUnit->GetLastDomainNode();
+        const std::string&                          LastEntryPointID          = PlanningUnit->GetLastEntryPointID();
+        const HTNDecompositionSnapshotDebug&        LastDecompositionSnapshot = PlanningUnit->GetLastDecompositionSnapshot();
+        const bool                                  ShouldIgnoreNewNodeOpen   = !mIsDecompositionCurrentTab;
+        HTNDecompositionPrinterContext              DecompositionPrinterContext =
             HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, mTooltipMode, ShouldIgnoreNewNodeOpen,
                                            mNodeStates, mChoicePointNodeStates, ioSelectedNode);
         mDecompositionPrinter.Print(DecompositionPrinterContext);
