@@ -21,16 +21,30 @@ bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinte
             const std::vector<HTNFactArguments>& FactArgumentsContainer = FactArgumentsTable.GetFactArguments();
             for (const HTNFactArguments& FactArgumentsElement : FactArgumentsContainer)
             {
-                std::string FactString = FactID;
+                std::string Text = FactID;
                 for (const HTNAtom& FactArgument : FactArgumentsElement)
                 {
-                    constexpr bool ShouldDoubleQuoteString = true;
-                    FactString.append(std::format(" {}", FactArgument.ToString(ShouldDoubleQuoteString)));
+                    constexpr bool ShouldDoubleQuoteString = false;
+                    Text.append(std::format(" {}", FactArgument.ToString(ShouldDoubleQuoteString)));
                 }
 
-                if (!TextFilter.PassFilter(FactString.c_str()))
+                // Filter text with and without double quotes for usability
+                bool PassFilterResult = TextFilter.PassFilter(Text.c_str());
+                if (!PassFilterResult)
                 {
-                    continue;
+                    Text = FactID;
+                    for (const HTNAtom& FactArgument : FactArgumentsElement)
+                    {
+                        constexpr bool ShouldDoubleQuoteString = true;
+                        Text.append(std::format(" {}", FactArgument.ToString(ShouldDoubleQuoteString)));
+                    }
+
+                    PassFilterResult = TextFilter.PassFilter(Text.c_str());
+
+                    if (!PassFilterResult)
+                    {
+                        continue;
+                    }
                 }
 
                 PrintFactID(FactID);
