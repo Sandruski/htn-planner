@@ -818,7 +818,8 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
                 ImGui::PopStyleColor(1);
             }
 
-            if (HTNImGuiHelpers::IsCurrentItemHovered())
+            constexpr ImGuiHoveredFlags HoveredFlags = HTNImGuiHelpers::kDefaultHoveredFlags;
+            if (HTNImGuiHelpers::IsCurrentItemHovered(HoveredFlags))
             {
                 const std::shared_ptr<const HTNDomainNode>& DomainNode  = DecompositionPrinterContext.GetDomainNode();
                 const HTNDecompositionTooltipMode           TooltipMode = DecompositionPrinterContext.GetTooltipMode();

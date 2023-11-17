@@ -18,7 +18,7 @@ void SelectTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags);
 void SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen);
 bool IsTreeNodeOpen(const std::string& inLabel, const ImGuiTreeNodeFlags inTreeNodeFlags);
 
-bool IsCurrentItemHovered();
+bool IsCurrentItemHovered(const ImGuiHoveredFlags inHoveredFlags);
 bool IsCurrentItemSelected();
 
 ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep);
@@ -37,6 +37,7 @@ const ImGuiSelectableFlags kDefaultSelectableFlags = ImGuiSelectableFlags_None;
 const ImGuiTableFlags      kDefaultTableFlags      = ImGuiTableFlags_RowBg;
 const ImGuiInputTextFlags  kDefaultInputTextFlags  = ImGuiInputTextFlags_CharsNoBlank;
 const ImGuiTreeNodeFlags   kDefaultTreeNodeFlags   = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+const ImGuiHoveredFlags    kDefaultHoveredFlags    = ImGuiHoveredFlags_ForTooltip;
 
 constexpr ImVec4 kFailColor        = ImVec4(1.f, 0.5f, 0.5f, 1.f);
 constexpr ImVec4 kSuccessColor     = ImVec4(0.f, 1.f, 0.f, 1.f);
@@ -53,14 +54,14 @@ inline void SelectTreeNode(ImGuiTreeNodeFlags& outTreeNodeFlags)
     outTreeNodeFlags |= ImGuiTreeNodeFlags_Selected;
 }
 
-inline bool IsCurrentItemHovered()
+inline bool IsCurrentItemHovered(const ImGuiHoveredFlags inHoveredFlags)
 {
-    return ImGui::IsItemHovered();
+    return ImGui::IsItemHovered(inHoveredFlags);
 }
 
 inline bool IsCurrentItemSelected()
 {
-    return IsCurrentItemHovered() && ImGui::IsMouseDoubleClicked(0);
+    return ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0);
 }
 
 inline ImVec4 GetResultColor(const bool inResult)

@@ -13,8 +13,8 @@
 #include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
-#include "Helpers/HTNFileHelpers.h"
 #include "HTNFileHelpers.h"
+#include "Helpers/HTNFileHelpers.h"
 #include "Helpers/HTNImGuiHelpers.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
@@ -146,6 +146,9 @@ HTNDebuggerWindow::HTNDebuggerWindow(HTNDatabaseHook& ioDatabaseHook, HTNPlanner
 
 void HTNDebuggerWindow::Render()
 {
+    // TODO salvarez
+    // const float FontSize = ImGui::GetFontSize();
+
     if (ImGui::Begin("HTN Debugger Window", nullptr, HTNImGuiHelpers::kDefaultWindowFlags))
     {
         if (ImGui::BeginTabBar("Tab Bar", HTNImGuiHelpers::kDefaultTabBarFlags))
@@ -259,7 +262,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         });
     }
 
-    if (ImGui::IsItemHovered())
+    if (HTNImGuiHelpers::IsCurrentItemHovered(HTNImGuiHelpers::kDefaultHoveredFlags))
     {
         ImGui::SetTooltip("Decompose all selected entry points of the parsed domain using the parsed world state");
     }
@@ -297,7 +300,7 @@ void HTNDebuggerWindow::RenderDomain()
         mLastParseDomainFileResult = static_cast<const HTNOperationResult>(mPlannerHook.ParseDomainFile(mSelectedDomainFilePath.string()));
     }
 
-    if (ImGui::IsItemHovered())
+    if (HTNImGuiHelpers::IsCurrentItemHovered(HTNImGuiHelpers::kDefaultHoveredFlags))
     {
         ImGui::SetTooltip("Parse the selected domain file");
     }
@@ -326,7 +329,7 @@ void HTNDebuggerWindow::RenderWorldState()
             static_cast<const HTNOperationResult>(mDatabaseHook.ParseWorldStateFile(mSelectedWorldStateFilePath.string()));
     }
 
-    if (ImGui::IsItemHovered())
+    if (HTNImGuiHelpers::IsCurrentItemHovered(HTNImGuiHelpers::kDefaultHoveredFlags))
     {
         ImGui::SetTooltip("Parse the selected world state file");
     }
@@ -412,7 +415,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         DecomposePlanningQuery(ioPlanningQuery);
     }
 
-    if (ImGui::IsItemHovered())
+    if (HTNImGuiHelpers::IsCurrentItemHovered(HTNImGuiHelpers::kDefaultHoveredFlags))
     {
         ImGui::SetTooltip("Decompose the selected entry point of the parsed domain using the parsed world state");
     }
@@ -421,9 +424,11 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
 
     ImGui::Separator();
 
-    // Decomposition window
-    const ImVec2 DecompositionChildSize = ImVec2(500.f, 350.f);
-    ImGui::BeginChild("DecompositionChild", DecompositionChildSize, false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
+    // Decomposition
+    const ImVec2           DecompositionChildSize   = ImVec2(500.f, 350.f);
+    const ImGuiChildFlags  DecompositionChildFlags  = ImGuiChildFlags_AlwaysUseWindowPadding;
+    const ImGuiWindowFlags DecompositionWindowFlags = ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar;
+    ImGui::BeginChild("DecompositionChild", DecompositionChildSize, DecompositionChildFlags, DecompositionWindowFlags);
 
     bool ShouldResetDecompositionPrinterState = false;
 
@@ -436,7 +441,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
                 ShouldResetDecompositionPrinterState = true;
             }
 
-            if (HTNImGuiHelpers::IsCurrentItemHovered())
+            if (HTNImGuiHelpers::IsCurrentItemHovered(HTNImGuiHelpers::kDefaultHoveredFlags))
             {
                 ImGui::SetTooltip("Display successful decomposition");
             }
@@ -459,7 +464,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
                 }
             }
 
-            if (HTNImGuiHelpers::IsCurrentItemHovered())
+            if (HTNImGuiHelpers::IsCurrentItemHovered(HTNImGuiHelpers::kDefaultHoveredFlags))
             {
                 ImGui::SetTooltip("Display only the parameters or arguments of the hovered line");
             }
@@ -477,7 +482,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
                 }
             }
 
-            if (HTNImGuiHelpers::IsCurrentItemHovered())
+            if (HTNImGuiHelpers::IsCurrentItemHovered(HTNImGuiHelpers::kDefaultHoveredFlags))
             {
                 ImGui::SetTooltip("Display all variables of the hovered line");
             }
@@ -513,8 +518,10 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
 
     // Watch window
     ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-    const ImVec2 WatchWindowChildSize = ImVec2(500.f, 150.f);
-    ImGui::BeginChild("WatchWindowChild", WatchWindowChildSize, true, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
+    const ImVec2           WatchWindowChildSize   = ImVec2(500.f, 150.f);
+    const ImGuiChildFlags  WatchWindowChildFlags  = ImGuiChildFlags_Border;
+    const ImGuiWindowFlags WatchWindowWindowFlags = ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar;
+    ImGui::BeginChild("WatchWindowChild", WatchWindowChildSize, WatchWindowChildFlags, WatchWindowWindowFlags);
 
     if (ImGui::BeginMenuBar())
     {
