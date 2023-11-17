@@ -112,24 +112,21 @@ void PrePrintNode(const std::string& inNodePath, const bool inIsChoicePoint, con
 
 void PostPrintChoicePointNode(const std::string& inNodePath, const bool inIsNodeOpen, HTNDecompositionPrinterContext& ioDecompositionPrinterContext)
 {
-    HTNDecompositionChoicePointNodeState* ChoicePointNodeState = ioDecompositionPrinterContext.FindChoicePointNodeStateMutable(inNodePath);
-    if (!ChoicePointNodeState)
-    {
-        return;
-    }
+    HTNDecompositionChoicePointNodeState& ChoicePointNodeState = ioDecompositionPrinterContext.GetChoicePointNodeStateMutable(inNodePath);
 
-    const int32 PreviousDecompositionStep = ChoicePointNodeState->GetDecompositionStep();
-    const int32 CurrentDecompositionStep  = ioDecompositionPrinterContext.GetCurrentDecompositionStep();
-    ChoicePointNodeState->SetDecompositionStep(CurrentDecompositionStep);
+    const int32 PreviousDecompositionStep = ChoicePointNodeState.GetDecompositionStep();
+
+    const int32 CurrentDecompositionStep = ioDecompositionPrinterContext.GetCurrentDecompositionStep();
+    ChoicePointNodeState.SetDecompositionStep(CurrentDecompositionStep);
 
     const bool IsCurrentDecompositionStepValid = ioDecompositionPrinterContext.IsCurrentDecompositionStepValid();
     if (IsCurrentDecompositionStepValid)
     {
-        ChoicePointNodeState->SetIsOpen(CurrentDecompositionStep, inIsNodeOpen);
+        ChoicePointNodeState.SetIsOpen(CurrentDecompositionStep, inIsNodeOpen);
     }
     else
     {
-        ChoicePointNodeState->SetIsOpen(PreviousDecompositionStep, inIsNodeOpen);
+        ChoicePointNodeState.SetIsOpen(PreviousDecompositionStep, inIsNodeOpen);
     }
 }
 
@@ -138,14 +135,11 @@ void PostPrintRegularNode(const std::string& inNodePath, const bool inIsNodeOpen
                           HTNDecompositionPrinterContext&            ioDecompositionPrinterContext)
 {
 
-    HTNDecompositionNodeState* NodeState = ioDecompositionPrinterContext.FindNodeStateMutable(inNodePath);
-    if (!NodeState)
-    {
-        return;
-    }
+    HTNDecompositionNodeState& NodeState = ioDecompositionPrinterContext.GetNodeStateMutable(inNodePath);
 
-    const int32 CurrentDecompositionStep        = ioDecompositionPrinterContext.GetCurrentDecompositionStep();
-    const bool  IsCurrentDecompositionStepValid = ioDecompositionPrinterContext.IsCurrentDecompositionStepValid();
+    const int32 CurrentDecompositionStep = ioDecompositionPrinterContext.GetCurrentDecompositionStep();
+
+    const bool IsCurrentDecompositionStepValid = ioDecompositionPrinterContext.IsCurrentDecompositionStepValid();
     if (IsCurrentDecompositionStepValid)
     {
         const auto NodeSnapshotStepsCollectionIt = inNodeSnapshotStepsCollection.find(CurrentDecompositionStep);
@@ -155,16 +149,16 @@ void PostPrintRegularNode(const std::string& inNodePath, const bool inIsNodeOpen
             const auto                            NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
             if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
             {
-                NodeState->SetDecompositionStep(CurrentDecompositionStep);
+                NodeState.SetDecompositionStep(CurrentDecompositionStep);
             }
         }
     }
     else
     {
-        NodeState->SetDecompositionStep(CurrentDecompositionStep);
+        NodeState.SetDecompositionStep(CurrentDecompositionStep);
     }
 
-    NodeState->SetIsOpen(inIsNodeOpen);
+    NodeState.SetIsOpen(inIsNodeOpen);
 }
 
 void PostPrintNode(const std::string& inNodePath, const bool inIsChoicePoint, const bool inIsNodeOpen,
@@ -187,8 +181,8 @@ void PostPrintNode(const std::string& inNodePath, const bool inIsChoicePoint, co
     }
 }
 
-bool IsNodeValid(const size inDecompositionStep, const bool inIsChoicePoint, const int32 inCurrentDecompositionStep,
-                 const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep)
+bool IsChoicePointNodeValid(const size inDecompositionStep, const int32 inCurrentDecompositionStep, const int32 inMinDecompositionStep,
+                            const int32 inMaxDecompositionStep)
 {
     // Filter available nodes within range [min, max)
     if (!HTNDecompositionHelpers::IsDecompositionStepInRange(static_cast<const int32>(inDecompositionStep), inMinDecompositionStep,
@@ -196,23 +190,41 @@ bool IsNodeValid(const size inDecompositionStep, const bool inIsChoicePoint, con
     {
         return false;
     }
-    else
+
+    if (HTNDecompositionHelpers::IsDecompositionStepValid(inCurrentDecompositionStep))
     {
-        // Print all choice points
-        if (!HTNDecompositionHelpers::IsDecompositionStepValid(inCurrentDecompositionStep))
-        {
-            if (!inIsChoicePoint)
-            {
-                return false;
-            }
-        }
-        else if (static_cast<const int32>(inDecompositionStep) != inCurrentDecompositionStep) // Print node (choice point or not)
+        if (static_cast<const int32>(inDecompositionStep) != inCurrentDecompositionStep)
         {
             return false;
         }
     }
 
     return true;
+}
+
+bool IsRegularNodeValid(const size inDecompositionStep, const int32 inCurrentDecompositionStep, const int32 inMinDecompositionStep,
+                        const int32 inMaxDecompositionStep)
+{
+    // Filter available nodes within range [min, max)
+    if (!HTNDecompositionHelpers::IsDecompositionStepInRange(static_cast<const int32>(inDecompositionStep), inMinDecompositionStep,
+                                                             inMaxDecompositionStep))
+    {
+        return false;
+    }
+
+    if (static_cast<const int32>(inDecompositionStep) != inCurrentDecompositionStep)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool IsNodeValid(const size inDecompositionStep, const bool inIsChoicePoint, const int32 inCurrentDecompositionStep,
+                 const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep)
+{
+    return (inIsChoicePoint ? IsChoicePointNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep)
+                            : IsRegularNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep));
 }
 } // namespace
 
@@ -820,11 +832,11 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
                 DecompositionPrinterContext.SelectNode(Node);
             }
 
-            // if (IsChoicePoint)
-            //{
-            ImGui::SameLine();
-            ImGui::TextDisabled("%i", DecompositionStep);
-            //}
+            if (IsChoicePoint)
+            {
+                ImGui::SameLine();
+                ImGui::TextDisabled("%i", DecompositionStep);
+            }
 
             if (inNodeTitleFunction)
             {

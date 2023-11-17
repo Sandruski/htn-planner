@@ -1,8 +1,8 @@
 #pragma once
 
 #ifdef HTN_DEBUG
-#include "HTNCoreMinimal.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
+#include "HTNCoreMinimal.h"
 
 #include <map>
 #include <string>
@@ -64,12 +64,12 @@ public:
                          const bool inIsChoicePoint);
     const HTNNodeSnapshotHistoryDebug* FindNodeSnapshotHistory(const std::string& inNodePath) const;
 
-    void        IncrementDecompositionStep();
+    void IncrementDecompositionStep();
     size GetDecompositionStep() const;
 
 private:
     HTNNodeSnapshotHistoryCollectionDebug mNodeSnapshotHistoryCollection;
-    size                           mDecompositionStep = 0;
+    size                                  mDecompositionStep = 0;
 };
 
 inline bool HTNNodeSnapshotDebug::GetResult() const

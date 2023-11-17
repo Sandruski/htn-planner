@@ -1,10 +1,10 @@
 #pragma once
 
 #ifdef HTN_DEBUG
-#include "HTNCoreMinimal.h"
 #include "Domain/HTNDecompositionTooltipMode.h"
 #include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
+#include "HTNCoreMinimal.h"
 
 #include <limits>
 #include <memory>
@@ -39,14 +39,18 @@ public:
     bool IsNodeSelected(const std::string& inNodeLabel) const;
 
     void                             AddNodeState(const std::string& inNodePath, const HTNDecompositionNodeState& inNodeState);
+    const HTNDecompositionNodeState& GetNodeState(const std::string& inNodePath) const;
+    HTNDecompositionNodeState&       GetNodeStateMutable(const std::string& inNodePath);
     const HTNDecompositionNodeState* FindNodeState(const std::string& inNodePath) const;
     HTNDecompositionNodeState*       FindNodeStateMutable(const std::string& inNodePath);
     void AddChoicePointNodeState(const std::string& inNodePath, const HTNDecompositionChoicePointNodeState& inChoicePointNodeState);
+    const HTNDecompositionChoicePointNodeState& GetChoicePointNodeState(const std::string& inNodePath) const;
+    HTNDecompositionChoicePointNodeState&       GetChoicePointNodeStateMutable(const std::string& inNodePath);
     const HTNDecompositionChoicePointNodeState* FindChoicePointNodeState(const std::string& inNodePath) const;
     HTNDecompositionChoicePointNodeState*       FindChoicePointNodeStateMutable(const std::string& inNodePath);
 
     HTNNodeStep GetNodeStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
-    int32         GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
+    int32       GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
     bool        IsNodeOpen(const std::string& inNodePath, const int32 inDecompositionStep, const bool inIsChoicePoint) const;
 
     const HTNNodePath& GetCurrentNodePath() const;
@@ -54,13 +58,13 @@ public:
     const HTNNodePath& GetCurrentVariableScopeNodePath() const;
     HTNNodePath&       GetCurrentVariableScopeNodePathMutable();
 
-    void SetCurrentDecompositionStep(const int32 inCurrentDecompositionStep);
-    int32  GetCurrentDecompositionStep() const;
-    bool IsCurrentDecompositionStepValid() const;
-    void SetMinDecompositionStep(const int32 inMinDecompositionStep);
-    int32  GetMinDecompositionStep() const;
-    void SetMaxDecompositionStep(const int32 inMaxDecompositionStep);
-    int32  GetMaxDecompositionStep() const;
+    void  SetCurrentDecompositionStep(const int32 inCurrentDecompositionStep);
+    int32 GetCurrentDecompositionStep() const;
+    bool  IsCurrentDecompositionStepValid() const;
+    void  SetMinDecompositionStep(const int32 inMinDecompositionStep);
+    int32 GetMinDecompositionStep() const;
+    void  SetMaxDecompositionStep(const int32 inMaxDecompositionStep);
+    int32 GetMaxDecompositionStep() const;
 
     void SetIsCurrentNodeVisible(bool inIsCurrentNodeVisible);
     bool IsCurrentNodeVisible() const;
@@ -73,10 +77,10 @@ private:
     // Input
     //----------------------------------------------------------------------//
     const std::shared_ptr<const HTNDomainNode>& mDomainNode;
-    const std::string& mEntryPointID;
-    const HTNDecompositionSnapshotDebug& mDecompositionSnapshot;
-    const HTNDecompositionTooltipMode mTooltipMode = HTNDecompositionTooltipMode::NONE;
-    const bool mShouldIgnoreImGuiState = false;
+    const std::string&                          mEntryPointID;
+    const HTNDecompositionSnapshotDebug&        mDecompositionSnapshot;
+    const HTNDecompositionTooltipMode           mTooltipMode            = HTNDecompositionTooltipMode::NONE;
+    const bool                                  mShouldIgnoreImGuiState = false;
 
     //----------------------------------------------------------------------//
     // Input/Output
