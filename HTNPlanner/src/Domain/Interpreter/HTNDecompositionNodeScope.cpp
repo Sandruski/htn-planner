@@ -17,7 +17,7 @@ HTNDecompositionNodeScope::~HTNDecompositionNodeScope()
         return;
     }
 
-    // Remove the index associated to the node path
+    // Remove the index associated to the node path when the node goes out of scope to minimize the required storage
     const std::string& NodePath = mNodePath.GetNodePath();
     mIndices.RemoveIndex(NodePath);
 }
