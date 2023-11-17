@@ -18,7 +18,7 @@ HTNDecompositionVariableScopeNodeScope::~HTNDecompositionVariableScopeNodeScope(
         return;
     }
 
-    // Remove the variables associated to the node path when the node goes out of scope to minimize the required storage
+    // Remove the variables associated to the node path when the node goes out of scope to minimize memory storage requirements
     const std::string& NodePath = mNodePath.GetNodePath();
     mVariables.RemoveVariables(NodePath);
 }
