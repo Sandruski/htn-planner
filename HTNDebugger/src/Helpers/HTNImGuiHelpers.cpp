@@ -12,18 +12,23 @@
 
 namespace HTNImGuiHelpers
 {
+void HelpMarker(const std::string& inDescription)
+{
+    ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort) && ImGui::BeginTooltip())
+    {
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(inDescription.c_str());
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
+
 void SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen)
 {
     ImGuiWindow*  CurrentWindow = ImGui::GetCurrentWindow();
     const ImGuiID ID            = CurrentWindow->GetID(inLabel.c_str());
     return ImGui::TreeNodeSetOpen(ID, inIsOpen);
-}
-
-bool IsTreeNodeOpen(const std::string& inLabel, const ImGuiTreeNodeFlags inTreeNodeFlags)
-{
-    ImGuiWindow*  CurrentWindow = ImGui::GetCurrentWindow();
-    const ImGuiID ID            = CurrentWindow->GetID(inLabel.c_str());
-    return ImGui::TreeNodeUpdateNextOpen(ID, inTreeNodeFlags);
 }
 
 ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep)
@@ -59,18 +64,6 @@ ImVec4 GetVariableColor(const std::string& inVariableID)
     else
     {
         return kArgumentColor;
-    }
-}
-
-void HelpMarker(const std::string& inDescription)
-{
-    ImGui::TextDisabled("(?)");
-    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort) && ImGui::BeginTooltip())
-    {
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(inDescription.c_str());
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
     }
 }
 } // namespace HTNImGuiHelpers

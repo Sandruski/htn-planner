@@ -767,13 +767,14 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
         const std::string NodeLabel =
             IsChoicePoint ? std::format("##{}{}", CurrentNodePathString, DecompositionStep) : std::format("##{}", CurrentNodePathString);
         const HTNDecompositionNode Node          = inNodeFunction ? inNodeFunction(NodeSnapshot, NodeLabel) : HTNDecompositionNode();
-        ImGuiTreeNodeFlags         TreeNodeFlags = HTNImGuiHelpers::kDefaultTreeNodeFlags | inTreeNodeFlags;
+        ImGuiTreeNodeFlags         TreeNodeFlags = inTreeNodeFlags | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
         const bool IsNodeSelected = DecompositionPrinterContext.IsNodeSelected(NodeLabel);
         if (IsNodeSelected)
         {
+            TreeNodeFlags |= ImGuiTreeNodeFlags_Selected;
+
             DecompositionPrinterContext.SelectNode(Node);
-            HTNImGuiHelpers::SelectTreeNode(TreeNodeFlags);
         }
 
         if (IsChoicePoint)
@@ -789,7 +790,14 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
             {
                 NewIsCurrentNodeOpen =
                     DecompositionPrinterContext.IsNodeOpen(CurrentNodePathString, static_cast<const int32>(DecompositionStep), IsChoicePoint);
+            }
 
+            HTNImGuiHelpers::SetTreeNodeOpen(NodeLabel, NewIsCurrentNodeOpen);
+
+            const bool WasCurrentNodeOpen = NewIsCurrentNodeOpen;
+
+            if (IsChoicePoint)
+            {
                 // Push arrow color
                 const bool   Result       = NodeSnapshot.GetResult();
                 const bool   IsSuccessful = Result && (LastDecompositionStep == DecompositionStep);
@@ -797,10 +805,13 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
                 ImGui::PushStyleColor(ImGuiCol_Text, ArrowColor);
             }
 
-            HTNImGuiHelpers::SetTreeNodeOpen(NodeLabel, NewIsCurrentNodeOpen);
+            IsOpen = ImGui::TreeNodeEx(NodeLabel.c_str(), TreeNodeFlags);
 
-            const bool WasCurrentNodeOpen = NewIsCurrentNodeOpen;
-            IsOpen                        = ImGui::TreeNodeEx(NodeLabel.c_str(), TreeNodeFlags);
+            if (IsChoicePoint)
+            {
+                // Pop arrow color
+                ImGui::PopStyleColor(1);
+            }
 
             if (!ShouldIgnoreImGuiState)
             {
@@ -812,15 +823,10 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
                 DecompositionPrinterContext.RefreshNodeStates();
             }
 
-            if (IsChoicePoint)
+            constexpr ImGuiHoveredFlags LineHoveredFlags = ImGuiHoveredFlags_ForTooltip;
+            if (ImGui::IsItemHovered(LineHoveredFlags))
             {
-                // Pop arrow color
-                ImGui::PopStyleColor(1);
-            }
-
-            constexpr ImGuiHoveredFlags HoveredFlags = HTNImGuiHelpers::kDefaultHoveredFlags;
-            if (HTNImGuiHelpers::IsCurrentItemHovered(HoveredFlags))
-            {
+                // Watch tooltip
                 const std::shared_ptr<const HTNDomainNode>& DomainNode  = DecompositionPrinterContext.GetDomainNode();
                 const HTNDecompositionTooltipMode           TooltipMode = DecompositionPrinterContext.GetTooltipMode();
                 HTNDecompositionWatchTooltipPrinterContext  DecompositionWatchTooltipPrinterContext =

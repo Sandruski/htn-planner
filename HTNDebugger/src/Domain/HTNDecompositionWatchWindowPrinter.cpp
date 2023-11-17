@@ -20,7 +20,8 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
         return;
     }
 
-    if (ImGui::BeginTable("WatchWindowTable", 2, HTNImGuiHelpers::kDefaultTableFlags))
+    constexpr ImGuiTableFlags WatchWindowTableFlags = ImGuiTableFlags_RowBg | ImGuiTableFlags_NoSavedSettings;
+    if (ImGui::BeginTable("WatchWindowTable", 2, WatchWindowTableFlags))
     {
         // Print node parameters
         const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters = Node.GetNodeParameters();
