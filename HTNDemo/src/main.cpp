@@ -126,8 +126,6 @@ int main(int, char**)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::ShowDemoWindow();
-
 #ifdef HTN_DEBUG
         if (ShowHTNDebuggerWindow)
         {
