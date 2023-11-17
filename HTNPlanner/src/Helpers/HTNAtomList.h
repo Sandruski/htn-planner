@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HTNCoreMinimal.h"
+#include "HTNPlannerMinimal.h"
 
 #include <initializer_list>
 #include <string>

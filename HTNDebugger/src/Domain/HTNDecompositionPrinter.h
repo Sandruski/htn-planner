@@ -4,7 +4,7 @@
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionWatchTooltipPrinter.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
-#include "HTNCoreMinimal.h"
+#include "HTNFrameworkMinimal.h"
 
 #include <functional>
 #include <string>

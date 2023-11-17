@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
-#include "HTNCoreMinimal.h"
+#include "HTNPlannerMinimal.h"
 
 #include <string>
 #include <vector>

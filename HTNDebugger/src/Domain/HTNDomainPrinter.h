@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
-#include "HTNCoreMinimal.h"
+#include "HTNFrameworkMinimal.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 class HTNDomainPrinterContext;

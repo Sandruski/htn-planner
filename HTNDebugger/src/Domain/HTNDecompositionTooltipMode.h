@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG
-#include "HTNCoreMinimal.h"
+#include "HTNFrameworkMinimal.h"
 
 enum class HTNDecompositionTooltipMode : uint8
 {

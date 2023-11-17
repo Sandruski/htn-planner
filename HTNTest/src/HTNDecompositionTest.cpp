@@ -1,5 +1,5 @@
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
-#include "HTNCoreMinimal.h"
+#include "HTNFrameworkMinimal.h"
 #include "Helpers/HTNFileHelpers.h"
 #include "HTNFileHelpers.h"
 #include "Planner/HTNDatabaseHook.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HTNCoreMinimal.h"
+#include "HTNPlannerMinimal.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNTaskInstance.h"
 #include "Domain/Interpreter/HTNTaskResult.h"

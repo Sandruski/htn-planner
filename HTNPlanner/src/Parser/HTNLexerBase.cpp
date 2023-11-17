@@ -3,7 +3,6 @@
 #include "HTNLexerHelpers.h"
 #include "Helpers/HTNToken.h"
 #include "Parser/HTNLexerContextBase.h"
-#include "Helpers/HTNDomainLog.h"
 
 #if HTN_DEBUG
 #include <limits>

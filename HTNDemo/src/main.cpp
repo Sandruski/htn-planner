@@ -7,7 +7,7 @@
 // because it provides a rather limited API to the end-user. We provide this backend for the sake of completeness.
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
-#include "HTNCoreMinimal.h"
+#include "HTNFrameworkMinimal.h"
 #include "HTNDebuggerWindow.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"

@@ -4,7 +4,7 @@
 #include "Domain/HTNDecompositionTooltipMode.h"
 #include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
-#include "HTNCoreMinimal.h"
+#include "HTNFrameworkMinimal.h"
 
 #include <limits>
 #include <memory>

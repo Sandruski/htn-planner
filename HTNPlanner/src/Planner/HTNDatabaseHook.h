@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HTNCoreMinimal.h"
+#include "HTNPlannerMinimal.h"
 #include "WorldState/HTNWorldState.h"
 #include "WorldState/Parser/HTNWorldStateLexer.h"
 #include "WorldState/Parser/HTNWorldStateParser.h"

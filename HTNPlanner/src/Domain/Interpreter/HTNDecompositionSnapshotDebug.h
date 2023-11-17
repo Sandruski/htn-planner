@@ -2,7 +2,7 @@
 
 #ifdef HTN_DEBUG
 #include "Domain/Interpreter/HTNEnvironment.h"
-#include "HTNCoreMinimal.h"
+#include "HTNPlannerMinimal.h"
 
 #include <map>
 #include <string>

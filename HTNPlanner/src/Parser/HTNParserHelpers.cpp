@@ -2,7 +2,6 @@
 
 #ifdef HTN_DEBUG
 #include "Parser/HTNParserContextBase.h"
-#include "Helpers/HTNDomainLog.h"
 #endif
 
 namespace HTNParserHelpers
