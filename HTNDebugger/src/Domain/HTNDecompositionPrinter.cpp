@@ -722,12 +722,6 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
         return false;
     }
 
-    if (!DecompositionPrinterContext.IsCurrentDecompositionStepValid())
-    {
-        // Exit if choice point not selected
-        return false;
-    }
-
     const bool                                 IsChoicePoint               = NodeSnapshotHistory->IsChoicePoint();
     const HTNNodeSnapshotStepsCollectionDebug& NodeSnapshotStepsCollection = NodeSnapshotHistory->GetNodeSnapshotStepsCollection();
 
@@ -785,7 +779,8 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
                     DecompositionPrinterContext.IsNodeOpen(CurrentNodePathString, static_cast<const int32>(DecompositionStep), IsChoicePoint);
 
                 // Push arrow color
-                const bool   IsSuccessful = (LastDecompositionStep == DecompositionStep);
+                const bool   Result       = NodeSnapshot.GetResult();
+                const bool   IsSuccessful = Result && (LastDecompositionStep == DecompositionStep);
                 const ImVec4 ArrowColor   = IsSuccessful ? HTNImGuiHelpers::kSuccessColor : HTNImGuiHelpers::kFailColor;
                 ImGui::PushStyleColor(ImGuiCol_Text, ArrowColor);
             }
