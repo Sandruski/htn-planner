@@ -23,7 +23,8 @@ uint32 HTNWorldStateHelpers::CountFactArgumentsBound(const T inFactArgumentsBegi
 
     for (auto It = inFactArgumentsBegin; It != inFactArgumentsEnd; ++It)
     {
-        if ((*It).IsSet())
+        const HTNAtom& FactArgument = *It;
+        if (FactArgument.IsSet())
         {
             ++FactArgumentsBoundNum;
         }

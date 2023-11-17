@@ -8,7 +8,8 @@ void HTNFactArgumentsTable::RemoveFactArguments(const size inFactArgumentsIndex)
         return;
     }
 
-    const auto It = mFactArguments.begin() + inFactArgumentsIndex;
+    auto It = mFactArguments.begin();
+    std::advance(It, inFactArgumentsIndex);
     mFactArguments.erase(It);
 }
 

@@ -6,6 +6,7 @@
 
 #include <array>
 #include <cassert>
+#include <iterator>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -48,7 +49,7 @@ public:
     bool ContainsFactArguments(const T inFactArgumentsBegin, const T inFactArgumentsEnd) const;
 
     const std::vector<HTNFactArguments>& GetFactArguments() const;
-    size                          GetFactArgumentsSize() const;
+    size                                 GetFactArgumentsSize() const;
 
 private:
     // Adds a row to the table
@@ -84,13 +85,11 @@ public:
     // If all fact arguments are bound, returns true
     // Otherwise, checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
     template<typename T>
-    bool QueryIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin,
-                    const T ioFactArgumentsEnd) const;
+    bool QueryIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin, const T ioFactArgumentsEnd) const;
 
     // Checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
     template<typename T>
-    bool CheckIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin,
-                    const T ioFactArgumentsEnd) const;
+    bool CheckIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin, const T ioFactArgumentsEnd) const;
 
     // Returns the number of tables associated to the fact ID
     size GetFactArgumentsTablesSize(const std::string& inFactID) const;
@@ -157,13 +156,16 @@ bool HTNFactArgumentsTable::Check(const size inFactArgumentsIndex, const T ioFac
     }
 
     const HTNFactArguments& FactArguments     = mFactArguments[inFactArgumentsIndex];
-    const size       FactArgumentsSize = std::distance(ioFactArgumentsBegin, ioFactArgumentsEnd);
+    const size              FactArgumentsSize = std::distance(ioFactArgumentsBegin, ioFactArgumentsEnd);
     assert(FactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
 
     // Check arguments bound
     for (size i = 0; i < FactArgumentsSize; ++i)
     {
-        const HTNAtom& ioFactArgument = *(ioFactArgumentsBegin + i);
+        auto It = ioFactArgumentsBegin;
+        std::advance(It, i);
+
+        const HTNAtom& ioFactArgument = *It;
         if (!ioFactArgument.IsSet())
         {
             continue;
@@ -179,7 +181,10 @@ bool HTNFactArgumentsTable::Check(const size inFactArgumentsIndex, const T ioFac
     // Bind arguments unbound
     for (size i = 0; i < FactArgumentsSize; ++i)
     {
-        HTNAtom& ioFactArgument = *(ioFactArgumentsBegin + i);
+        auto It = ioFactArgumentsBegin;
+        std::advance(It, i);
+
+        HTNAtom& ioFactArgument = *It;
         if (ioFactArgument.IsSet())
         {
             continue;
@@ -202,8 +207,12 @@ bool HTNFactArgumentsTable::ContainsFactArguments(const T inFactArgumentsBegin, 
         bool Result = true;
         for (size i = 0; i < FactArgumentsSize; ++i)
         {
-            const HTNAtom& FactArgument   = FactArguments[i];
-            const HTNAtom& inFactArgument = *(inFactArgumentsBegin + i);
+            const HTNAtom& FactArgument = FactArguments[i];
+
+            auto It = inFactArgumentsBegin;
+            std::advance(It, i);
+
+            const HTNAtom& inFactArgument = *It;
             if (FactArgument != inFactArgument)
             {
                 Result = false;
@@ -233,12 +242,15 @@ inline size HTNFactArgumentsTable::GetFactArgumentsSize() const
 template<typename T>
 void HTNFactArgumentsTable::AddFactArguments(const T inFactArgumentsBegin, const T inFactArgumentsEnd)
 {
-    HTNFactArguments  FactArguments;
-    const size FactArgumentsSize = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
+    HTNFactArguments FactArguments;
+    const size       FactArgumentsSize = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
     assert(FactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
     for (size i = 0; i < FactArgumentsSize; ++i)
     {
-        FactArguments[i] = *(inFactArgumentsBegin + i);
+        auto It = inFactArgumentsBegin;
+        std::advance(It, i);
+
+        FactArguments[i] = *It;
     }
 
     mFactArguments.emplace_back(FactArguments);
@@ -248,7 +260,7 @@ template<typename T>
 void HTNWorldState::AddFact(const std::string& inFactID, const T inFactArgumentsBegin, const T inFactArgumentsEnd)
 {
     HTNFactArgumentsTables& FactArgumentsTables = mFacts[inFactID];
-    const size       FactArgumentsSize   = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
+    const size              FactArgumentsSize   = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
     assert(FactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
     HTNFactArgumentsTable& FactArgumentsTable = FactArgumentsTables[FactArgumentsSize];
     FactArgumentsTable.AddUniqueFactArguments(inFactArgumentsBegin, inFactArgumentsEnd);
@@ -263,7 +275,7 @@ template<typename T>
 size HTNWorldState::Query(const std::string& inFactID, const T inFactArgumentsBegin, const T inFactArgumentsEnd) const
 {
     const uint32 FactArgumentsBoundNum = HTNWorldStateHelpers::CountFactArgumentsBound(inFactArgumentsBegin, inFactArgumentsEnd);
-    const size  FactArgumentsSize     = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
+    const size   FactArgumentsSize     = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
     if (FactArgumentsBoundNum == FactArgumentsSize)
     {
         // All arguments are bound
@@ -275,10 +287,10 @@ size HTNWorldState::Query(const std::string& inFactID, const T inFactArgumentsBe
 
 template<typename T>
 bool HTNWorldState::QueryIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin,
-                                      const T ioFactArgumentsEnd) const
+                               const T ioFactArgumentsEnd) const
 {
     const uint32 FactArgumentsBoundNum = CountFactArgumentsBound(ioFactArgumentsBegin, ioFactArgumentsEnd);
-    const size  FactArgumentsSize     = std::distance(ioFactArgumentsBegin, ioFactArgumentsEnd);
+    const size   FactArgumentsSize     = std::distance(ioFactArgumentsBegin, ioFactArgumentsEnd);
     if (FactArgumentsBoundNum == FactArgumentsSize)
     {
         // All arguments are bound
@@ -290,7 +302,7 @@ bool HTNWorldState::QueryIndex(const std::string& inFactID, const size inFactArg
 
 template<typename T>
 bool HTNWorldState::CheckIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin,
-                                      const T ioFactArgumentsEnd) const
+                               const T ioFactArgumentsEnd) const
 {
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.end())
@@ -300,7 +312,7 @@ bool HTNWorldState::CheckIndex(const std::string& inFactID, const size inFactArg
     }
 
     const HTNFactArgumentsTables& FactArgumentsTables = It->second;
-    const size             FactArgumentsSize   = std::distance(ioFactArgumentsBegin, ioFactArgumentsEnd);
+    const size                    FactArgumentsSize   = std::distance(ioFactArgumentsBegin, ioFactArgumentsEnd);
     assert(FactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
     const HTNFactArgumentsTable& FactArgumentsTable = FactArgumentsTables[FactArgumentsSize];
     return FactArgumentsTable.Check(inFactArgumentsIndex, ioFactArgumentsBegin, ioFactArgumentsEnd);
@@ -317,7 +329,7 @@ bool HTNWorldState::ContainsFactArguments(const std::string& inFactID, const T i
     }
 
     const HTNFactArgumentsTables& FactArgumentsTables = It->second;
-    const size             FactArgumentsSize   = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
+    const size                    FactArgumentsSize   = std::distance(inFactArgumentsBegin, inFactArgumentsEnd);
     assert(FactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
     const HTNFactArgumentsTable& FactArgumentsTable = FactArgumentsTables[FactArgumentsSize];
     return FactArgumentsTable.ContainsFactArguments(inFactArgumentsBegin, inFactArgumentsEnd);

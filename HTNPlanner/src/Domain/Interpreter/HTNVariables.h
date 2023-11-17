@@ -36,12 +36,7 @@ inline void HTNVariables::SetVariable(const std::string& inVariablePath, const H
 inline HTNAtom HTNVariables::FindVariable(const std::string& inVariablePath) const
 {
     const auto It = mVariables.find(inVariablePath);
-    if (It == mVariables.end())
-    {
-        return HTNAtom();
-    }
-
-    return It->second;
+    return ((It != mVariables.end()) ? It->second : HTNAtom());
 }
 
 inline void HTNVariables::RemoveVariable(const std::string& inVariablePath)

@@ -33,7 +33,7 @@ std::string GetSpecialCharacterEscapeSequence(const char inCharacter)
     static const std::unordered_map<char, std::string> SpecialCharactersToEscapeSequences = {{'\t', "\\t"}, {'\n', "\\n"}};
 
     const auto It = SpecialCharactersToEscapeSequences.find(inCharacter);
-    return (It != SpecialCharactersToEscapeSequences.end() ? It->second : std::string(1, inCharacter));
+    return ((It != SpecialCharactersToEscapeSequences.end()) ? It->second : std::string(1, inCharacter));
 }
 
 #ifdef HTN_DEBUG
