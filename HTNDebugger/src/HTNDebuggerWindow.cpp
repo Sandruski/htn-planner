@@ -455,12 +455,15 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
 
     ImGui::Separator();
 
-    const ImVec2& ContentRegionAvail = ImGui::GetContentRegionAvail();
+    const ImVec2      ContentRegionAvail = ImGui::GetContentRegionAvail();
+    const ImGuiStyle& Style              = ImGui::GetStyle();
+    const ImVec2      AvailableSize      = ImVec2(ContentRegionAvail.x, ContentRegionAvail.y - Style.ItemSpacing.y);
 
     // Decomposition
-    const ImVec2           DecompositionChildSize   = ImVec2(ContentRegionAvail.x, 0.7f * ContentRegionAvail.y);
-    const ImGuiChildFlags  DecompositionChildFlags  = ImGuiChildFlags_None;
-    const ImGuiWindowFlags DecompositionWindowFlags = ImGuiWindowFlags_HorizontalScrollbar;
+    constexpr float        DecompositionHeightPercentage = 0.7f;
+    const ImVec2           DecompositionChildSize        = ImVec2(AvailableSize.x, DecompositionHeightPercentage * AvailableSize.y);
+    const ImGuiChildFlags  DecompositionChildFlags       = ImGuiChildFlags_None;
+    const ImGuiWindowFlags DecompositionWindowFlags      = ImGuiWindowFlags_HorizontalScrollbar;
     ImGui::BeginChild("DecompositionChild", DecompositionChildSize, DecompositionChildFlags, DecompositionWindowFlags);
 
     bool ShouldResetDecompositionPrinterState = false;
@@ -553,8 +556,9 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
     ImGui::EndChild();
 
     // Watch window
+    constexpr float WatchWindowHeightPercentage = 1.f - DecompositionHeightPercentage;
     ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-    const ImVec2           WatchWindowChildSize   = ImVec2(ContentRegionAvail.x, 0.3f * ContentRegionAvail.y);
+    const ImVec2           WatchWindowChildSize   = ImVec2(AvailableSize.x, WatchWindowHeightPercentage * AvailableSize.y);
     const ImGuiChildFlags  WatchWindowChildFlags  = ImGuiChildFlags_Border;
     const ImGuiWindowFlags WatchWindowWindowFlags = ImGuiWindowFlags_MenuBar;
     ImGui::BeginChild("WatchWindowChild", WatchWindowChildSize, WatchWindowChildFlags, WatchWindowWindowFlags);
