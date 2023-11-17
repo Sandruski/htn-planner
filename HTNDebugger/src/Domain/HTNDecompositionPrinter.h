@@ -1,10 +1,10 @@
 #pragma once
 
 #ifdef HTN_DEBUG
-#include "HTNCoreMinimal.h"
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionWatchTooltipPrinter.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
+#include "HTNCoreMinimal.h"
 
 #include <functional>
 #include <string>
@@ -47,9 +47,8 @@ public:
     HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext) const final;
 
 private:
-    bool PrintNodeSnapshotHistory(const HTNNodeBase& inNode, const HTNNodeTitleFunction inNodeTitleFunction,
-                                  const HTNNodeBehaviorFunction inNodeBehaviorFunction, const HTNNodeFunction inNodeFunction,
-                                  const ImGuiTreeNodeFlags inTreeNodeFlags, HTNNodeVisitorContextBase& ioContext) const;
+    bool PrintNode(const HTNNodeBase& inNode, const HTNNodeTitleFunction inNodeTitleFunction, const HTNNodeBehaviorFunction inNodeBehaviorFunction,
+                   const HTNNodeFunction inNodeFunction, const ImGuiTreeNodeFlags inTreeNodeFlags, HTNNodeVisitorContextBase& ioContext) const;
 
     const HTNDecompositionWatchTooltipPrinter mDecompositionWatchTooltipPrinter = HTNDecompositionWatchTooltipPrinter();
 };
