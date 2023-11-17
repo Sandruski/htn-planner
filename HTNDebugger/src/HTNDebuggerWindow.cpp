@@ -125,10 +125,10 @@ void RenderActivePlanByPlanningUnit(const HTNPlanningUnit& inPlanningUnit)
     ImGui::EndChild();
 }
 
-std::vector<std::shared_ptr<const HTNMethodNode>>::const_iterator FindTopLevelMethodNodeByID(
-    const std::string& inID, const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes)
+std::shared_ptr<const HTNMethodNode> FindTopLevelMethodNodeByID(const std::string&                                       inID,
+                                                                const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes)
 {
-    return std::find_if(inMethodNodes.begin(), inMethodNodes.end(), [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) {
+    const auto It = std::find_if(inMethodNodes.begin(), inMethodNodes.end(), [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) {
         if (!inMethodNode)
         {
             return false;
@@ -141,6 +141,8 @@ std::vector<std::shared_ptr<const HTNMethodNode>>::const_iterator FindTopLevelMe
 
         return (inID == inMethodNode->GetID());
     });
+
+    return ((It != inMethodNodes.end() ? *It : nullptr));
 }
 } // namespace
 
@@ -239,10 +241,11 @@ void HTNDebuggerWindow::RenderDecomposition()
         {
             if (MethodNodes)
             {
-                const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(HTNDecompositionHelpers::kDefaultMainTopLevelMethodID, *MethodNodes);
-                if (TopLevelMethodNode != MethodNodes->end())
+                const std::shared_ptr<const HTNMethodNode> TopLevelMethodNode =
+                    FindTopLevelMethodNodeByID(HTNDecompositionHelpers::kDefaultMainTopLevelMethodID, *MethodNodes);
+                if (TopLevelMethodNode)
                 {
-                    const std::string EntryPointID = (*TopLevelMethodNode)->GetID();
+                    const std::string EntryPointID = TopLevelMethodNode->GetID();
                     mMainPlanningQuery.SetEntryPointID(EntryPointID);
                 }
             }
@@ -255,10 +258,11 @@ void HTNDebuggerWindow::RenderDecomposition()
         {
             if (MethodNodes)
             {
-                const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(HTNDecompositionHelpers::kDefaultUpperBodyTopLevelMethodID, *MethodNodes);
-                if (TopLevelMethodNode != MethodNodes->end())
+                const std::shared_ptr<const HTNMethodNode> TopLevelMethodNode =
+                    FindTopLevelMethodNodeByID(HTNDecompositionHelpers::kDefaultUpperBodyTopLevelMethodID, *MethodNodes);
+                if (TopLevelMethodNode)
                 {
-                    const std::string EntryPointID = (*TopLevelMethodNode)->GetID();
+                    const std::string EntryPointID = TopLevelMethodNode->GetID();
                     mUpperBodyPlanningQuery.SetEntryPointID(EntryPointID);
                 }
             }
@@ -395,8 +399,8 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
 
     if (inMethodNodes)
     {
-        const auto TopLevelMethodNode = FindTopLevelMethodNodeByID(EntryPointID, *inMethodNodes);
-        if (TopLevelMethodNode == inMethodNodes->end())
+        const std::shared_ptr<const HTNMethodNode> TopLevelMethodNode = FindTopLevelMethodNodeByID(EntryPointID, *inMethodNodes);
+        if (!TopLevelMethodNode)
         {
             ioPlanningQuery.ClearEntryPointID();
         }
