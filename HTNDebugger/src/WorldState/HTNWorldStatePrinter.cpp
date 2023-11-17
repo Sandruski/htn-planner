@@ -6,6 +6,22 @@
 
 #include "imgui.h"
 
+namespace
+{
+std::string MakeFactDescription(const std::string& inFactID, const HTNFactArguments& inFactArguments,
+                                const bool inShouldDoubleQuoteFactArgumentString)
+{
+    std::string FactDescription = inFactID;
+
+    for (const HTNAtom& FactArgument : inFactArguments)
+    {
+        FactDescription.append(std::format(" {}", FactArgument.ToString(inShouldDoubleQuoteFactArgumentString)));
+    }
+
+    return FactDescription;
+}
+} // namespace
+
 bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinterContext) const
 {
     const HTNWorldState&   WorldState = ioWorldStatePrinterContext.GetWorldState();
@@ -21,26 +37,17 @@ bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinte
             const std::vector<HTNFactArguments>& FactArgumentsContainer = FactArgumentsTable.GetFactArguments();
             for (const HTNFactArguments& FactArgumentsElement : FactArgumentsContainer)
             {
-                std::string Text = FactID;
-                for (const HTNAtom& FactArgument : FactArgumentsElement)
-                {
-                    constexpr bool ShouldDoubleQuoteString = false;
-                    Text.append(std::format(" {}", FactArgument.ToString(ShouldDoubleQuoteString)));
-                }
+                bool        ShouldDoubleQuoteFactArgumentString = false;
+                std::string Text = MakeFactDescription(FactID, FactArgumentsElement, ShouldDoubleQuoteFactArgumentString);
 
                 // Filter text with and without double quotes for usability
                 bool PassFilterResult = TextFilter.PassFilter(Text.c_str());
                 if (!PassFilterResult)
                 {
-                    Text = FactID;
-                    for (const HTNAtom& FactArgument : FactArgumentsElement)
-                    {
-                        constexpr bool ShouldDoubleQuoteString = true;
-                        Text.append(std::format(" {}", FactArgument.ToString(ShouldDoubleQuoteString)));
-                    }
+                    ShouldDoubleQuoteFactArgumentString = true;
+                    Text                                = MakeFactDescription(FactID, FactArgumentsElement, ShouldDoubleQuoteFactArgumentString);
 
                     PassFilterResult = TextFilter.PassFilter(Text.c_str());
-
                     if (!PassFilterResult)
                     {
                         continue;
