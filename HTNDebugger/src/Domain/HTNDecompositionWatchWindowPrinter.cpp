@@ -3,7 +3,6 @@
 #ifdef HTN_DEBUG
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionWatchWindowPrinterContext.h"
-#include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Interpreter/HTNVariables.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
@@ -96,9 +95,10 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
             // Variable ID
             ImGui::TableNextColumn();
 
-            std::string VariableID;
-            const bool  FindVariableIDResult = HTNDecompositionHelpers::FindVariableID(VariablePath, VariableID);
-            assert(FindVariableIDResult);
+            const HTNPathHandler VariablePathHandler = HTNPathHandler(VariablePath);
+            std::string          VariableID;
+            const bool           FindLastPathSegmentResult = VariablePathHandler.FindLastPathSegment(VariableID);
+            assert(FindLastPathSegmentResult);
             const std::string VariableIDString = std::format("?{}", VariableID);
             const ImVec4      VariableIDColor  = HTNImGuiHelpers::GetVariableColor(VariableID);
             ImGui::TextColored(VariableIDColor, VariableIDString.c_str());

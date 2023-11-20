@@ -2,7 +2,7 @@
 
 #include "HTNPlannerMinimal.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
-#include "Domain/Interpreter/HTNNodePath.h"
+#include "HTNPathHandler.h"
 
 #include <memory>
 
@@ -12,18 +12,18 @@ class HTNTaskInstance
 {
 public:
     explicit HTNTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode, const HTNEnvironment& inEnvironment,
-                             const HTNNodePath& inNodePath, const HTNNodePath& inVariableScopeNodePath);
+                             const HTNPathHandler& inNodePathHandler, const HTNPathHandler& inVariablesPathHandler);
 
     const std::shared_ptr<const HTNTaskNodeBase>& GetTaskNode() const;
     const HTNEnvironment&                         GetEnvironment() const;
-    const HTNNodePath&                            GetNodePath() const;
-    const HTNNodePath&                            GetVariableScopeNodePath() const;
+    const HTNPathHandler&                         GetNodePathHandler() const;
+    const HTNPathHandler&                         GetVariablesPathHandler() const;
 
 private:
     std::shared_ptr<const HTNTaskNodeBase> mTaskNode;
     HTNEnvironment                         mEnvironment;
-    HTNNodePath                            mNodePath;
-    HTNNodePath                            mVariableScopeNodePath;
+    HTNPathHandler                         mNodePathHandler;
+    HTNPathHandler                         mVariablesPathHandler;
 };
 
 inline const std::shared_ptr<const HTNTaskNodeBase>& HTNTaskInstance::GetTaskNode() const
@@ -36,12 +36,12 @@ inline const HTNEnvironment& HTNTaskInstance::GetEnvironment() const
     return mEnvironment;
 }
 
-inline const HTNNodePath& HTNTaskInstance::GetNodePath() const
+inline const HTNPathHandler& HTNTaskInstance::GetNodePathHandler() const
 {
-    return mNodePath;
+    return mNodePathHandler;
 }
 
-inline const HTNNodePath& HTNTaskInstance::GetVariableScopeNodePath() const
+inline const HTNPathHandler& HTNTaskInstance::GetVariablesPathHandler() const
 {
-    return mVariableScopeNodePath;
+    return mVariablesPathHandler;
 }

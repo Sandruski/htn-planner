@@ -9,11 +9,10 @@
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionRecord.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
-#include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
-#include "HTNFileHelpers.h"
+#include "HTNPathHelpers.h"
 #include "Helpers/HTNFileHelpers.h"
 #include "Helpers/HTNImGuiHelpers.h"
 #include "Planner/HTNDatabaseHook.h"
@@ -43,7 +42,7 @@ void RenderFileSelector(const std::string& inDirectoryName, const std::string& i
 {
     std::vector<std::filesystem::path> FilePaths;
 
-    const std::filesystem::path DirectoryPath = HTNFileHelpers::MakeAbsolutePath(inDirectoryName);
+    const std::filesystem::path DirectoryPath = HTNPathHelpers::MakeAbsolutePath(inDirectoryName);
     for (const std::filesystem::directory_entry& DirectoryEntry : std::filesystem::directory_iterator(DirectoryPath))
     {
         if (!DirectoryEntry.is_regular_file())

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "HTNPlannerMinimal.h"
 #include "Domain/Interpreter/HTNDecompositionRecord.h"
-#include "Domain/Interpreter/HTNNodePath.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
+#include "HTNPathHandler.h"
+#include "HTNPlannerMinimal.h"
 
 #include <memory>
 #include <string>
@@ -36,13 +36,13 @@ public:
     void                                       SetDecompositionHistory(const std::vector<HTNDecompositionRecord>& inDecompositionHistory);
     const std::vector<HTNDecompositionRecord>& GetDecompositionHistory() const;
 
-    void               SetCurrentNodePath(const HTNNodePath& inCurrentNodePath);
-    const HTNNodePath& GetCurrentNodePath() const;
-    HTNNodePath&       GetCurrentNodePathMutable();
+    void                  SetCurrentNodePathHandler(const HTNPathHandler& inCurrentNodePathHandler);
+    const HTNPathHandler& GetCurrentNodePathHandler() const;
+    HTNPathHandler&       GetCurrentNodePathHandlerMutable();
 
-    void               SetCurrentVariableScopeNodePath(const HTNNodePath& inCurrentVariableScopeNodePath);
-    const HTNNodePath& GetCurrentVariableScopeNodePath() const;
-    HTNNodePath&       GetCurrentVariableScopeNodePathMutable();
+    void                  SetCurrentVariablesPathHandler(const HTNPathHandler& inCurrentVariablesPathHandler);
+    const HTNPathHandler& GetCurrentVariablesPathHandler() const;
+    HTNPathHandler&       GetCurrentVariablesPathHandlerMutable();
 
 private:
     //----------------------------------------------------------------------//
@@ -65,10 +65,10 @@ private:
     std::vector<HTNDecompositionRecord> mDecompositionHistory;
 
     // Path from the root node to the current node being processed
-    HTNNodePath mCurrentNodePath;
+    HTNPathHandler mCurrentNodePathHandler;
 
     // Path from the root node to the current node determining the scope of the variables
-    HTNNodePath mCurrentVariableScopeNodePath;
+    HTNPathHandler mCurrentVariablesPathHandler;
 
 #ifdef HTN_DEBUG
 public:
@@ -125,34 +125,34 @@ inline const std::vector<HTNDecompositionRecord>& HTNDecompositionContext::GetDe
     return mDecompositionHistory;
 }
 
-inline void HTNDecompositionContext::SetCurrentNodePath(const HTNNodePath& inCurrentNodePath)
+inline void HTNDecompositionContext::SetCurrentNodePathHandler(const HTNPathHandler& inNodePathHandler)
 {
-    mCurrentNodePath = inCurrentNodePath;
+    mCurrentNodePathHandler = inNodePathHandler;
 }
 
-inline const HTNNodePath& HTNDecompositionContext::GetCurrentNodePath() const
+inline const HTNPathHandler& HTNDecompositionContext::GetCurrentNodePathHandler() const
 {
-    return mCurrentNodePath;
+    return mCurrentNodePathHandler;
 }
 
-inline HTNNodePath& HTNDecompositionContext::GetCurrentNodePathMutable()
+inline HTNPathHandler& HTNDecompositionContext::GetCurrentNodePathHandlerMutable()
 {
-    return mCurrentNodePath;
+    return mCurrentNodePathHandler;
 }
 
-inline void HTNDecompositionContext::SetCurrentVariableScopeNodePath(const HTNNodePath& inCurrentVariableScopeNodePath)
+inline void HTNDecompositionContext::SetCurrentVariablesPathHandler(const HTNPathHandler& inVariablesPathHandler)
 {
-    mCurrentVariableScopeNodePath = inCurrentVariableScopeNodePath;
+    mCurrentVariablesPathHandler = inVariablesPathHandler;
 }
 
-inline const HTNNodePath& HTNDecompositionContext::GetCurrentVariableScopeNodePath() const
+inline const HTNPathHandler& HTNDecompositionContext::GetCurrentVariablesPathHandler() const
 {
-    return mCurrentVariableScopeNodePath;
+    return mCurrentVariablesPathHandler;
 }
 
-inline HTNNodePath& HTNDecompositionContext::GetCurrentVariableScopeNodePathMutable()
+inline HTNPathHandler& HTNDecompositionContext::GetCurrentVariablesPathHandlerMutable()
 {
-    return mCurrentVariableScopeNodePath;
+    return mCurrentVariablesPathHandler;
 }
 
 #ifdef HTN_DEBUG

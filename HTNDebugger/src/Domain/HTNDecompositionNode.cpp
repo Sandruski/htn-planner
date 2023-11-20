@@ -8,17 +8,15 @@ HTNDecompositionNode::HTNDecompositionNode(const HTNNodeSnapshotDebug& inNodeSna
 
 HTNDecompositionNode::HTNDecompositionNode(const HTNNodeSnapshotDebug&                                          inNodeSnapshot,
                                            const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters,
-                                           const HTNNodePath& inNodeVariableScopeNodePath, const std::string& inNodeLabel)
-    : mNodeSnapshot(&inNodeSnapshot), mNodeParameters(inNodeParameters), mNodeVariableScopeNodePath(inNodeVariableScopeNodePath),
-      mNodeLabel(inNodeLabel)
+                                           const HTNPathHandler& inVariablesPathHandler, const std::string& inNodeLabel)
+    : mNodeSnapshot(&inNodeSnapshot), mNodeParameters(inNodeParameters), mVariablesPathHandler(inVariablesPathHandler), mNodeLabel(inNodeLabel)
 {
 }
 
 HTNDecompositionNode::HTNDecompositionNode(const HTNNodeSnapshotDebug&                                           inNodeSnapshot,
                                            const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
-                                           const HTNNodePath& inNodeVariableScopeNodePath, const std::string& inNodeLabel)
-    : mNodeSnapshot(&inNodeSnapshot), mNodeArguments(inNodeArguments), mNodeVariableScopeNodePath(inNodeVariableScopeNodePath),
-      mNodeLabel(inNodeLabel)
+                                           const HTNPathHandler& inVariablesPathHandler, const std::string& inNodeLabel)
+    : mNodeSnapshot(&inNodeSnapshot), mNodeArguments(inNodeArguments), mVariablesPathHandler(inVariablesPathHandler), mNodeLabel(inNodeLabel)
 {
 }
 #endif

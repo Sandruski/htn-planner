@@ -9,6 +9,7 @@
 #include "Domain/Nodes/HTNConstantNode.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
+#include "HTNScope.h"
 #include "Helpers/HTNImGuiHelpers.h"
 
 #include "imgui.h"
@@ -66,12 +67,11 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
 
     // Variable value
     {
-        const std::string&          VariableID                = inVariableExpressionNode.GetValue().GetValue<std::string>();
-        const HTNDecompositionNode& Node                      = DecompositionWatchPrinterContext.GetNode();
-        const std::string&          NodeVariableScopeNodePath = Node.GetNodeVariableScopeNodePath().GetNodePath();
-        std::string                 VariablePath;
-        const bool MakeVariablePathResult = HTNDecompositionHelpers::MakeVariablePath(VariableID, NodeVariableScopeNodePath, VariablePath);
-        assert(MakeVariablePathResult);
+        const std::string&          VariableID           = inVariableExpressionNode.GetValue().GetValue<std::string>();
+        const HTNDecompositionNode& Node                 = DecompositionWatchPrinterContext.GetNode();
+        HTNPathHandler              VariablesPathHandler = Node.GetVariablesPathHandler();
+        const HTNScope              VariableScope        = HTNScope(VariableID, VariablesPathHandler);
+        const std::string&          VariablePath         = VariablesPathHandler.GetPath();
         DecompositionWatchPrinterContext.AddVariablePath(VariablePath);
 
         const HTNVariables& Variables               = Node.GetNodeSnapshot()->GetVariables();

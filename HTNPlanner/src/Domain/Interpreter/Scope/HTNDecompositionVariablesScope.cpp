@@ -1,17 +1,17 @@
-#include "Domain/Interpreter/HTNDecompositionVariableScopeNodeScope.h"
+#include "Domain/Interpreter/Scope/HTNDecompositionVariablesScope.h"
 
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNVariables.h"
 
-HTNDecompositionVariableScopeNodeScope::HTNDecompositionVariableScopeNodeScope(const std::string&       inNodeID,
+HTNDecompositionVariablesScope::HTNDecompositionVariablesScope(const std::string& inNodeID,
                                                                                HTNDecompositionContext& ioDecompositionContext)
-    : HTNNodeScope(inNodeID, ioDecompositionContext.GetCurrentVariableScopeNodePathMutable()),
+    : HTNScope(inNodeID, ioDecompositionContext.GetCurrentVariablesPathHandlerMutable()),
       mVariables(ioDecompositionContext.GetCurrentDecompositionMutable().GetEnvironmentMutable().GetVariablesMutable())
 {
 }
 
-HTNDecompositionVariableScopeNodeScope::~HTNDecompositionVariableScopeNodeScope()
+HTNDecompositionVariablesScope::~HTNDecompositionVariablesScope()
 {
     if (!mResult)
     {
@@ -19,6 +19,6 @@ HTNDecompositionVariableScopeNodeScope::~HTNDecompositionVariableScopeNodeScope(
     }
 
     // Remove the variables associated to the node path when the node goes out of scope to minimize memory storage requirements
-    const std::string& NodePath = mNodePath.GetNodePath();
+    const std::string& NodePath = mPathHandler.GetPath();
     mVariables.RemoveVariables(NodePath);
 }

@@ -71,6 +71,7 @@ public:
 
 inline std::string HTNValueExpressionNodeBase::GetID() const
 {
+    assert(false && "Value expression nodes do not have ID");
     return "";
 }
 

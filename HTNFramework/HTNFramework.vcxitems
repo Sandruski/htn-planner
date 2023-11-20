@@ -15,14 +15,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNFileHandler.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNFileHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNFrameworkMinimal.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNLog.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNMacros.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNPathHandler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNPathHelpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNScope.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNTypes.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\HTNUncopyable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\HTNFileHandler.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\HTNPathHandler.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\HTNPathHelpers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\HTNScope.cpp" />
   </ItemGroup>
 </Project>
