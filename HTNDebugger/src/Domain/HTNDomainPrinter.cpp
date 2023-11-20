@@ -338,7 +338,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNIdentifierExpressionNode&      inIdenti
                                 MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     const HTNAtom&    Value                   = inIdentifierExpressionNode.GetValue();
-    constexpr bool    ShouldDoubleQuoteString = false;
+    static constexpr bool ShouldDoubleQuoteString = false;
     const std::string ValueString             = Value.ToString(ShouldDoubleQuoteString);
     ImGui::Text(ValueString.c_str());
 
@@ -348,7 +348,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNIdentifierExpressionNode&      inIdenti
 HTNAtom HTNDomainPrinter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     const HTNAtom&    Value                   = inLiteralExpressionNode.GetValue();
-    constexpr bool    ShouldDoubleQuoteString = true;
+    static constexpr bool ShouldDoubleQuoteString = true;
     const std::string ValueString             = Value.ToString(ShouldDoubleQuoteString);
     ImGui::Text(ValueString.c_str());
 

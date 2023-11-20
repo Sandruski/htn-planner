@@ -91,7 +91,7 @@ bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
         }
         case '\n': {
             // Newline
-            constexpr bool IsNewLine = true;
+            static constexpr bool IsNewLine = true;
             ioDomainLexerContext.AdvancePosition(IsNewLine);
             break;
         }

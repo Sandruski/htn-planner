@@ -52,7 +52,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
             for (const std::shared_ptr<const HTNVariableExpressionNode>& NodeParameter : NodeParameters)
             {
                 const HTNAtom  Parameter               = GetNodeValue(*NodeParameter, ioDecompositionWatchTooltipPrinterContext);
-                constexpr bool ShouldDoubleQuoteString = false;
+                static constexpr bool ShouldDoubleQuoteString = false;
 
                 // Parameter ID
                 const HTNAtom&    ParameterID       = *Parameter.FindListElement(0);
@@ -81,7 +81,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
             for (const std::shared_ptr<const HTNValueExpressionNodeBase>& NodeArgument : NodeArguments)
             {
                 const HTNAtom  Argument                = GetNodeValue(*NodeArgument, ioDecompositionWatchTooltipPrinterContext);
-                constexpr bool ShouldDoubleQuoteString = false;
+                static constexpr bool ShouldDoubleQuoteString = false;
 
                 // Argument ID
                 const HTNAtom&    ArgumentID       = *Argument.FindListElement(0);
@@ -130,7 +130,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
 
                     // Variable value
                     const HTNAtom&    Variable                = VariablePair.second;
-                    constexpr bool    ShouldDoubleQuoteString = true;
+                    static constexpr bool ShouldDoubleQuoteString = true;
                     const std::string VariableString          = Variable.ToString(ShouldDoubleQuoteString);
                     ImGui::SameLine();
                     ImGui::Text(VariableString.c_str());

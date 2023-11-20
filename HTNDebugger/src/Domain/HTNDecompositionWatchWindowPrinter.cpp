@@ -19,7 +19,7 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
         return;
     }
 
-    constexpr ImGuiTableFlags WatchWindowTableFlags = ImGuiTableFlags_RowBg | ImGuiTableFlags_NoSavedSettings;
+    static constexpr ImGuiTableFlags WatchWindowTableFlags = ImGuiTableFlags_RowBg | ImGuiTableFlags_NoSavedSettings;
     if (ImGui::BeginTable("WatchWindowTable", 2, WatchWindowTableFlags))
     {
         // Print node parameters
@@ -29,7 +29,7 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
             ImGui::TableNextRow();
 
             const HTNAtom  Parameter               = GetNodeValue(*NodeParameter, ioDecompositionWatchWindowPrinterContext);
-            constexpr bool ShouldDoubleQuoteString = false;
+            static constexpr bool ShouldDoubleQuoteString = false;
 
             // Parameter ID
             ImGui::TableNextColumn();
@@ -57,7 +57,7 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
             ImGui::TableNextRow();
 
             const HTNAtom  Argument                = GetNodeValue(*NodeArgument, ioDecompositionWatchWindowPrinterContext);
-            constexpr bool ShouldDoubleQuoteString = false;
+            static constexpr bool ShouldDoubleQuoteString = false;
 
             // Argument ID
             ImGui::TableNextColumn();
@@ -107,7 +107,7 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
             ImGui::TableNextColumn();
 
             const HTNAtom&    Variable                = VariablePair.second;
-            constexpr bool    ShouldDoubleQuoteString = true;
+            static constexpr bool ShouldDoubleQuoteString = true;
             const std::string VariableString          = Variable.ToString(ShouldDoubleQuoteString);
             ImGui::Text(VariableString.c_str());
         }

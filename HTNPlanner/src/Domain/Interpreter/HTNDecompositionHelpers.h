@@ -15,13 +15,13 @@ bool IsParameter(const std::string& inVariableID);
 bool IsAnyArgument(const std::string& inVariableID);
 
 // ID of the top-level compound task node
-constexpr uint32 kTopLevelCompoundTaskNodeID = 0;
+inline constexpr uint32 kTopLevelCompoundTaskNodeID = 0;
 
-const std::string kDefaultMainTopLevelMethodID      = "behave";
-const std::string kDefaultUpperBodyTopLevelMethodID = "behave_upper_body";
+inline const std::string kDefaultMainTopLevelMethodID      = "behave";
+inline const std::string kDefaultUpperBodyTopLevelMethodID = "behave_upper_body";
 
-const std::string kInputParameterPrefix       = "inp_";
-const std::string kOutputParameterPrefix      = "out_";
-const std::string kInputOutputParameterPrefix = "io_";
-const std::string kAnyArgumentPrefix          = "any_";
+inline const std::string kInputParameterPrefix       = "inp_";
+inline const std::string kOutputParameterPrefix      = "out_";
+inline const std::string kInputOutputParameterPrefix = "io_";
+inline const std::string kAnyArgumentPrefix          = "any_";
 } // namespace HTNDecompositionHelpers

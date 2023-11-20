@@ -114,7 +114,7 @@ void RenderActivePlanByPlanningUnit(const HTNPlanningUnit& inPlanningUnit)
         const std::vector<HTNAtom>& Arguments = TaskResult.GetArguments();
         for (const HTNAtom& Argument : Arguments)
         {
-            constexpr bool     ShouldDoubleQuoteString = true;
+            static constexpr bool ShouldDoubleQuoteString = true;
             const std::string& ArgumentString          = Argument.ToString(ShouldDoubleQuoteString);
             ImGui::SameLine();
             ImGui::Text(ArgumentString.c_str());
@@ -155,14 +155,14 @@ HTNDebuggerWindow::HTNDebuggerWindow(HTNDatabaseHook& ioDatabaseHook, HTNPlanner
 void HTNDebuggerWindow::Render()
 {
     // Set the default position and size of the main window
-    constexpr ImGuiCond MainWindowCondition = ImGuiCond_FirstUseEver;
+    static constexpr ImGuiCond MainWindowCondition = ImGuiCond_FirstUseEver;
     const float         FontSize            = ImGui::GetFontSize();
     const ImVec2        MainWindowPosition  = ImVec2(FontSize, FontSize);
     ImGui::SetNextWindowPos(MainWindowPosition, MainWindowCondition);
     const ImVec2 MainWindowSize = ImVec2(36.f * FontSize, 48.f * FontSize);
     ImGui::SetNextWindowSize(MainWindowSize, MainWindowCondition);
 
-    constexpr ImGuiWindowFlags MainWindowFlags = ImGuiWindowFlags_NoSavedSettings;
+    static constexpr ImGuiWindowFlags MainWindowFlags = ImGuiWindowFlags_NoSavedSettings;
     if (ImGui::Begin("HTN Debugger Window", nullptr, MainWindowFlags))
     {
         if (ImGui::BeginTabBar("Tab Bar"))
@@ -278,7 +278,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         });
     }
 
-    constexpr ImGuiHoveredFlags ButtonHoveredFlags = ImGuiHoveredFlags_ForTooltip;
+    static constexpr ImGuiHoveredFlags ButtonHoveredFlags = ImGuiHoveredFlags_ForTooltip;
     if (ImGui::IsItemHovered(ButtonHoveredFlags))
     {
         ImGui::SetTooltip("Decompose all selected entry points of the parsed domain using the parsed world state");
@@ -317,7 +317,7 @@ void HTNDebuggerWindow::RenderDomain()
         mLastParseDomainFileResult = static_cast<const HTNOperationResult>(mPlannerHook.ParseDomainFile(mSelectedDomainFilePath.string()));
     }
 
-    constexpr ImGuiHoveredFlags ButtonHoveredFlags = ImGuiHoveredFlags_ForTooltip;
+    static constexpr ImGuiHoveredFlags ButtonHoveredFlags = ImGuiHoveredFlags_ForTooltip;
     if (ImGui::IsItemHovered(ButtonHoveredFlags))
     {
         ImGui::SetTooltip("Parse the selected domain file");
@@ -354,7 +354,7 @@ void HTNDebuggerWindow::RenderWorldState()
             static_cast<const HTNOperationResult>(mDatabaseHook.ParseWorldStateFile(mSelectedWorldStateFilePath.string()));
     }
 
-    constexpr ImGuiHoveredFlags ButtonHoveredFlags = ImGuiHoveredFlags_ForTooltip;
+    static constexpr ImGuiHoveredFlags ButtonHoveredFlags = ImGuiHoveredFlags_ForTooltip;
     if (ImGui::IsItemHovered(ButtonHoveredFlags))
     {
         ImGui::SetTooltip("Parse the selected world state file");
@@ -448,7 +448,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         DecomposePlanningQuery(ioPlanningQuery);
     }
 
-    constexpr ImGuiHoveredFlags ButtonHoveredFlags = ImGuiHoveredFlags_ForTooltip;
+    static constexpr ImGuiHoveredFlags ButtonHoveredFlags = ImGuiHoveredFlags_ForTooltip;
     if (ImGui::IsItemHovered(ButtonHoveredFlags))
     {
         ImGui::SetTooltip("Decompose the selected entry point of the parsed domain using the parsed world state");
@@ -463,7 +463,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
     const ImVec2      AvailableSize      = ImVec2(ContentRegionAvail.x, ContentRegionAvail.y - Style.ItemSpacing.y);
 
     // Decomposition
-    constexpr float        DecompositionHeightPercentage = 0.7f;
+    static constexpr float  DecompositionHeightPercentage = 0.7f;
     const ImVec2           DecompositionChildSize        = ImVec2(AvailableSize.x, DecompositionHeightPercentage * AvailableSize.y);
     const ImGuiChildFlags  DecompositionChildFlags       = ImGuiChildFlags_None;
     const ImGuiWindowFlags DecompositionWindowFlags      = ImGuiWindowFlags_HorizontalScrollbar;
@@ -480,7 +480,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
                 ShouldResetDecompositionPrinterState = true;
             }
 
-            constexpr ImGuiHoveredFlags MenuItemHoveredFlags = ImGuiHoveredFlags_ForTooltip;
+            static constexpr ImGuiHoveredFlags MenuItemHoveredFlags = ImGuiHoveredFlags_ForTooltip;
             if (ImGui::IsItemHovered(MenuItemHoveredFlags))
             {
                 ImGui::SetTooltip("Display successful decomposition");
@@ -491,7 +491,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
 
         if (ImGui::BeginMenu("Tooltip"))
         {
-            constexpr ImGuiHoveredFlags MenuItemHoveredFlags = ImGuiHoveredFlags_ForTooltip;
+            static constexpr ImGuiHoveredFlags MenuItemHoveredFlags = ImGuiHoveredFlags_ForTooltip;
 
             bool IsRegularTooltipMode = (HTNDecompositionTooltipMode::REGULAR == mTooltipMode);
             if (ImGui::MenuItem("Regular", nullptr, &IsRegularTooltipMode))
@@ -537,7 +537,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
 
     if (ioPlanningQuery.IsLastDecompositionSuccessful())
     {
-        constexpr bool ShouldRepeat          = false;
+        static constexpr bool ShouldRepeat    = false;
         ShouldResetDecompositionPrinterState = ShouldResetDecompositionPrinterState || ImGui::IsKeyPressed(ImGuiKey_R, ShouldRepeat);
 
         if (ShouldResetDecompositionPrinterState)
@@ -559,7 +559,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
     ImGui::EndChild();
 
     // Watch window
-    constexpr float WatchWindowHeightPercentage = 1.f - DecompositionHeightPercentage;
+    static constexpr float WatchWindowHeightPercentage = 1.f - DecompositionHeightPercentage;
     ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
     const ImVec2           WatchWindowChildSize   = ImVec2(AvailableSize.x, WatchWindowHeightPercentage * AvailableSize.y);
     const ImGuiChildFlags  WatchWindowChildFlags  = ImGuiChildFlags_Border;

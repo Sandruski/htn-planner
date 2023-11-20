@@ -11,7 +11,7 @@ class HTNParserContextBase;
 namespace HTNParserHelpers
 {
 // Name of an anonymous namespace
-const std::string kAnonymousNamespaceName = "unnamed";
+inline const std::string kAnonymousNamespaceName = "unnamed";
 
 #ifdef HTN_DEBUG
 void PrintLastErrorMessage(HTNParserContextBase& ioParserContext);

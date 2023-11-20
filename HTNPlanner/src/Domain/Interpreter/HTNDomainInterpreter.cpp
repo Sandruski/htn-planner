@@ -68,9 +68,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
-    constexpr bool        IsChoicePoint = false;
+    static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr bool        IsChoicePoint = false;
 #endif
 
     const std::string                    DomainNodeID         = inDomainNode.GetID();
@@ -128,7 +128,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
         }
     }
 
-    constexpr bool Result = true;
+    static constexpr bool Result = true;
 #ifdef HTN_DEBUG
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -154,9 +154,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisi
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
-    constexpr bool        IsChoicePoint = false;
+    static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr bool        IsChoicePoint = false;
 #endif
 
     const HTNDecompositionNodeScope AxiomNodeScope = HTNDecompositionNodeScope(inAxiomNode.GetID(), DecompositionContext);
@@ -169,7 +169,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisi
     if (!ConditionNode)
     {
         // If empty, it evaluates to true
-        constexpr bool Result = true;
+        static constexpr bool Result = true;
 #ifdef HTN_DEBUG
         RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -191,9 +191,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
-    constexpr bool        IsChoicePoint = false;
+    static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr bool        IsChoicePoint = false;
 #endif
 
     const HTNDecompositionNodeScope MethodNodeScope = HTNDecompositionNodeScope(inMethodNode.GetID(), DecompositionContext);
@@ -243,7 +243,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
         }
     }
 
-    constexpr bool Result = false;
+    static constexpr bool Result = false;
 #ifdef HTN_DEBUG
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -257,9 +257,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVi
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
-    constexpr bool        IsChoicePoint = false;
+    static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr bool        IsChoicePoint = false;
 #endif
 
     const HTNDecompositionNodeScope BranchNodeScope = HTNDecompositionNodeScope(inBranchNode.GetID(), DecompositionContext);
@@ -295,7 +295,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVi
         CurrentDecomposition.PushPendingTaskInstance(TaskInstance);
     }
 
-    constexpr bool Result = true;
+    static constexpr bool Result = true;
 #ifdef HTN_DEBUG
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -309,8 +309,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
 #endif
 
     const HTNDecompositionNodeScope ConditionNodeScope = HTNDecompositionNodeScope(inConditionNode.GetID(), DecompositionContext);
@@ -357,7 +357,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
         // TODO salvarez Detect whether it is a choice point in the domain validator and store the data in the condition node
         if (!ShouldBindFactArguments)
         {
-            constexpr bool Result = true;
+            static constexpr bool Result = true;
 #ifdef HTN_DEBUG
             RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -378,7 +378,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
         const bool IsLastFactEntry = (FactArgumentsIndex == FactArgumentsSize - 1);
         if (IsLastFactEntry)
         {
-            constexpr bool Result = true;
+            static constexpr bool Result = true;
 #ifdef HTN_DEBUG
             RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -393,14 +393,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
         // Record decomposition
         DecompositionContext.RecordDecomposition(NewDecomposition);
 
-        constexpr bool Result = true;
+        static constexpr bool Result = true;
 #ifdef HTN_DEBUG
         RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
         return Result;
     }
 
-    constexpr bool Result = false;
+    static constexpr bool Result = false;
 #ifdef HTN_DEBUG
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -414,9 +414,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
-    constexpr bool        IsChoicePoint = false;
+    static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr bool        IsChoicePoint = false;
 #endif
 
     const HTNDecompositionNodeScope AxiomConditionNodeScope = HTNDecompositionNodeScope(inAxiomConditionNode.GetID(), DecompositionContext);
@@ -432,7 +432,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     if (!AxiomNode)
     {
         HTN_LOG_ERROR("Axiom node [{}] could not be found", AxiomNodeID);
-        constexpr bool Result = false;
+        static constexpr bool Result = false;
 #ifdef HTN_DEBUG
         RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -486,7 +486,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         SetNodeValue(*AxiomConditionNodeArgumentNode, AxiomNodeArgument, ioContext);
     }
 
-    constexpr bool Result = true;
+    static constexpr bool Result = true;
 #ifdef HTN_DEBUG
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -502,9 +502,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
-    constexpr bool        IsChoicePoint = false;
+    static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr bool        IsChoicePoint = false;
 #endif
 
     const HTNDecompositionNodeScope AndConditionNodeScope = HTNDecompositionNodeScope(inAndConditionNode.GetID(), DecompositionContext);
@@ -557,7 +557,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
     }
 
     // If empty, it evaluates to true
-    constexpr bool Result = true;
+    static constexpr bool Result = true;
 #ifdef HTN_DEBUG
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -573,9 +573,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
-    constexpr bool        IsChoicePoint = false;
+    static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr bool        IsChoicePoint = false;
 #endif
 
     const HTNDecompositionNodeScope OrConditionNodeScope = HTNDecompositionNodeScope(inOrConditionNode.GetID(), DecompositionContext);
@@ -617,7 +617,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
     }
 
     // If empty, it evaluates to false
-    constexpr bool Result = false;
+    static constexpr bool Result = false;
 #ifdef HTN_DEBUG
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -633,9 +633,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
-    constexpr bool        IsChoicePoint = false;
+    static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr bool        IsChoicePoint = false;
 #endif
 
     const HTNDecompositionNodeScope AltConditionNodeScope = HTNDecompositionNodeScope(inAltConditionNode.GetID(), DecompositionContext);
@@ -687,7 +687,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
     }
 
     // If empty, it evaluates to false
-    constexpr bool Result = false;
+    static constexpr bool Result = false;
 #ifdef HTN_DEBUG
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -703,9 +703,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
-    constexpr bool        IsChoicePoint = false;
+    static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr bool        IsChoicePoint = false;
 #endif
 
     const HTNDecompositionNodeScope NotConditionNodeScope = HTNDecompositionNodeScope(inNotConditionNode.GetID(), DecompositionContext);
@@ -746,9 +746,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
-    constexpr bool        IsChoicePoint = false;
+    static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr bool        IsChoicePoint = false;
 #endif
 
     const HTNDecompositionNodeScope CompoundTaskNodeScope = HTNDecompositionNodeScope(inCompoundTaskNode.GetID(), DecompositionContext);
@@ -764,7 +764,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     if (!MethodNode)
     {
         HTN_LOG_ERROR("Method node [{}] could not be found", MethodNodeID);
-        constexpr bool Result = false;
+        static constexpr bool Result = false;
 #ifdef HTN_DEBUG
         RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -774,7 +774,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     if (inCompoundTaskNode.IsTopLevel() && !MethodNode->IsTopLevel())
     {
         HTN_LOG_ERROR("Method node [{}] is not top-level", MethodNodeID);
-        constexpr bool Result = false;
+        static constexpr bool Result = false;
 #ifdef HTN_DEBUG
         RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
@@ -815,9 +815,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
 
 #ifdef HTN_DEBUG
-    constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
-    constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
-    constexpr bool        IsChoicePoint = false;
+    static constexpr HTNNodeStep  StartNodeStep = HTNNodeStep::START;
+    static constexpr HTNNodeStep EndNodeStep   = HTNNodeStep::END;
+    static constexpr bool        IsChoicePoint = false;
 #endif
 
     const HTNDecompositionNodeScope PrimitiveTaskNodeScope = HTNDecompositionNodeScope(inPrimitiveTaskNode.GetID(), DecompositionContext);
@@ -843,7 +843,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
     const HTNTaskResult TaskResult = HTNTaskResult(ID, Arguments);
     CurrentDecomposition.AddTaskResultToPlan(TaskResult);
 
-    constexpr bool Result = true;
+    static constexpr bool Result = true;
 #ifdef HTN_DEBUG
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif

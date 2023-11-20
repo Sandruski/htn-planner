@@ -56,7 +56,7 @@ bool HTNWorldStateLexer::Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext
         }
         case '\n': {
             // Newline
-            constexpr bool IsNewLine = true;
+            static constexpr bool IsNewLine = true;
             ioWorldStateLexerContext.AdvancePosition(IsNewLine);
             break;
         }

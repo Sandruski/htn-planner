@@ -102,7 +102,7 @@ TEST_P(HTNDecompositionTest, IsDecompositionSuccessful)
 TEST_P(HTNDecompositionTest, AreDecompositionsSuccessful)
 {
     std::vector<HTNPlanningUnit> PlanningUnits;
-    constexpr size               PlanningUnitsSize = 100;
+    static constexpr size         PlanningUnitsSize = 100;
     PlanningUnits.resize(PlanningUnitsSize, HTNPlanningUnit("", mDatabaseHook, mPlannerHook));
     const std::string EntryPointID = GetEntryPointID();
     std::for_each(std::execution::par, PlanningUnits.begin(), PlanningUnits.end(), [&](HTNPlanningUnit& inPlanningUnit) {

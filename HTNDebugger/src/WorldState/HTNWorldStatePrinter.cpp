@@ -74,7 +74,7 @@ void HTNWorldStatePrinter::PrintFactArguments(const HTNFactArguments& inFactArgu
     {
         ImGui::SameLine();
 
-        constexpr bool    ShouldDoubleQuoteString = true;
+        static constexpr bool ShouldDoubleQuoteString = true;
         const std::string FactArgumentString      = FactArgument.ToString(ShouldDoubleQuoteString);
         ImGui::Text(FactArgumentString.c_str());
     }

@@ -11,7 +11,7 @@ bool IsDecompositionStepValid(const int32 inDecompositionStep);
 // Check if the decomposition step is in the range [min, max)
 bool IsDecompositionStepInRange(const int32 inDecompositionStep, const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep);
 
-constexpr int32 kInvalidDecompositionStep = -1;
+inline constexpr int32 kInvalidDecompositionStep = -1;
 } // namespace HTNDecompositionPrinterHelpers
 
 namespace HTNDecompositionHelpers
