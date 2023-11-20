@@ -41,7 +41,7 @@ void HTNAtom::AddListElement(const HTNAtom& inElement)
     }
 
     HTNAtomList& List = GetValue<HTNAtomList>();
-    List.Add(inElement);
+    List.PushBack(inElement);
 }
 
 const HTNAtom* HTNAtom::FindListElement(const uint32 inElementIdx) const

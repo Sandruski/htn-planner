@@ -17,28 +17,16 @@ public:
     ~HTNAtomList();
 
     bool operator==(const HTNAtomList& inOther) const;
-
-    void Add(const HTNAtom& inData);
+    
+    void PushBack(const HTNAtom& inData);
 
     const HTNAtom* Find(const uint32 inIndex) const;
 
     uint32 GetSize() const;
-    bool         IsEmpty() const;
+    bool   IsEmpty() const;
 
     std::string ToString(const bool inShouldDoubleQuoteString) const;
 
 private:
-    HTNAtomNode* mHead = nullptr;
-    HTNAtomNode* mTail = nullptr;
-    uint32 mSize = 0;
+    HTNAtomNode* mHeadNode = nullptr;
 };
-
-inline uint32 HTNAtomList::GetSize() const
-{
-    return mSize;
-}
-
-inline bool HTNAtomList::IsEmpty() const
-{
-    return (0 == mSize);
-}

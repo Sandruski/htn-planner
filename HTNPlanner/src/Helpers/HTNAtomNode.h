@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Helpers/HTNAtom.h"
 #include "HTNPlannerMinimal.h"
+#include "Helpers/HTNAtom.h"
 
 class HTNAtomNode
 {
@@ -10,13 +10,14 @@ public:
 
     const HTNAtom& GetData() const;
 
-    void SetNext(const HTNAtomNode* inNext);
-
-    const HTNAtomNode* GetNext() const;
+    void               SetNextNode(HTNAtomNode* inNode);
+    const HTNAtomNode* GetNextNode() const;
+    HTNAtomNode*       GetNextNodeMutable();
+    bool               HasNextNode() const;
 
 private:
-    HTNAtom            mData;
-    const HTNAtomNode* mNext = nullptr;
+    HTNAtom      mData;
+    HTNAtomNode* mNextNode = nullptr;
 };
 
 inline const HTNAtom& HTNAtomNode::GetData() const
@@ -24,12 +25,22 @@ inline const HTNAtom& HTNAtomNode::GetData() const
     return mData;
 }
 
-inline void HTNAtomNode::SetNext(const HTNAtomNode* inNext)
+inline void HTNAtomNode::SetNextNode(HTNAtomNode* inNode)
 {
-    mNext = inNext;
+    mNextNode = inNode;
 }
 
-inline const HTNAtomNode* HTNAtomNode::GetNext() const
+inline const HTNAtomNode* HTNAtomNode::GetNextNode() const
 {
-    return mNext;
+    return mNextNode;
+}
+
+inline HTNAtomNode* HTNAtomNode::GetNextNodeMutable()
+{
+    return mNextNode;
+}
+
+inline bool HTNAtomNode::HasNextNode() const
+{
+    return (nullptr != mNextNode);
 }

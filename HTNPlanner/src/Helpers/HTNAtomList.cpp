@@ -6,90 +6,111 @@ HTNAtomList::HTNAtomList(const std::initializer_list<HTNAtom>& inElements)
 {
     for (const HTNAtom& Element : inElements)
     {
-        Add(Element);
+        PushBack(Element);
     }
 }
 
 HTNAtomList::HTNAtomList(const HTNAtomList& inOther)
 {
-    for (const HTNAtomNode* Current = inOther.mHead; Current; Current = Current->GetNext())
+    for (const HTNAtomNode* CurrentNode = inOther.mHeadNode; CurrentNode; CurrentNode = CurrentNode->GetNextNode())
     {
-        Add(Current->GetData());
+        PushBack(CurrentNode->GetData());
     }
 }
 
 HTNAtomList::~HTNAtomList()
 {
-    for (const HTNAtomNode* Current = mHead; Current;)
+    for (const HTNAtomNode* CurrentNode = mHeadNode; CurrentNode;)
     {
-        const HTNAtomNode* Next = Current->GetNext();
-        delete Current;
-        Current = Next;
+        const HTNAtomNode* NextNode = CurrentNode->GetNextNode();
+        delete CurrentNode;
+        CurrentNode = NextNode;
     }
 }
 
 bool HTNAtomList::operator==(const HTNAtomList& inOther) const
 {
-    if (mSize != inOther.mSize)
+    const HTNAtomNode* ThisCurrentNode  = mHeadNode;
+    const HTNAtomNode* OtherCurrentNode = inOther.mHeadNode;
+    while (ThisCurrentNode && OtherCurrentNode)
     {
-        return false;
-    }
-
-    const HTNAtomNode* ThisCurrent  = mHead;
-    const HTNAtomNode* OtherCurrent = inOther.mHead;
-    for (; ThisCurrent && OtherCurrent; ThisCurrent = ThisCurrent->GetNext(), OtherCurrent = OtherCurrent->GetNext())
-    {
-        if (ThisCurrent->GetData() != OtherCurrent->GetData())
+        if (ThisCurrentNode->GetData() != OtherCurrentNode->GetData())
         {
             return false;
         }
+
+        ThisCurrentNode  = ThisCurrentNode->GetNextNode();
+        OtherCurrentNode = OtherCurrentNode->GetNextNode();
     }
 
-    return true;
+    return (!ThisCurrentNode && !OtherCurrentNode);
 }
 
-void HTNAtomList::Add(const HTNAtom& inData)
+void HTNAtomList::PushBack(const HTNAtom& inData)
 {
     HTNAtomNode* Node = new HTNAtomNode(inData);
 
-    if (!mHead)
+    if (!mHeadNode)
     {
-        mHead = Node;
+        mHeadNode = Node;
+        return;
     }
 
-    if (mTail)
+    HTNAtomNode* CurrentNode = mHeadNode;
+    while (CurrentNode->HasNextNode())
     {
-        mTail->SetNext(Node);
+        CurrentNode = CurrentNode->GetNextNodeMutable();
     }
 
-    mTail = Node;
-
-    ++mSize;
+    CurrentNode->SetNextNode(Node);
 }
 
 const HTNAtom* HTNAtomList::Find(const uint32 inIndex) const
 {
-    if (inIndex >= mSize)
+    if (!mHeadNode)
     {
         return nullptr;
     }
 
-    const HTNAtomNode* Current = mHead;
+    const HTNAtomNode* CurrentNode = mHeadNode;
     for (uint32 i = 0; i < inIndex; ++i)
     {
-        Current = Current->GetNext();
+        if (!CurrentNode->HasNextNode())
+        {
+            return nullptr;
+        }
+
+        CurrentNode = CurrentNode->GetNextNode();
     }
 
-    return &Current->GetData();
+    return &CurrentNode->GetData();
+}
+
+uint32 HTNAtomList::GetSize() const
+{
+    uint32 Size = 0;
+
+    for (const HTNAtomNode* CurrentNode = mHeadNode; CurrentNode; CurrentNode = CurrentNode->GetNextNode())
+    {
+        ++Size;
+    }
+
+    return Size;
+}
+
+bool HTNAtomList::IsEmpty() const
+{
+    const uint32 Size = GetSize();
+    return (0 == Size);
 }
 
 std::string HTNAtomList::ToString(const bool inShouldDoubleQuoteString) const
 {
     std::string String = "(";
 
-    for (const HTNAtomNode* Current = mHead; Current; Current = Current->GetNext())
+    for (const HTNAtomNode* CurrentNode = mHeadNode; CurrentNode; CurrentNode = CurrentNode->GetNextNode())
     {
-        String.append(std::format("{} ", Current->GetData().ToString(inShouldDoubleQuoteString)));
+        String.append(std::format("{} ", CurrentNode->GetData().ToString(inShouldDoubleQuoteString)));
     }
 
     // Remove last whitespace

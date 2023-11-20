@@ -60,9 +60,9 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
         const HTNAtom&    VariableID              = inVariableExpressionNode.GetValue();
         constexpr bool    ShouldDoubleQuoteString = false;
         const std::string VariableIDString        = std::format("?{}", VariableID.ToString(ShouldDoubleQuoteString));
-        Result.Add(VariableIDString);
+        Result.PushBack(VariableIDString);
         const ImVec4 VariableIDColor = HTNImGuiHelpers::GetVariableColor(VariableIDString);
-        Result.Add(HTNAtomList({VariableIDColor.x, VariableIDColor.y, VariableIDColor.z, VariableIDColor.w}));
+        Result.PushBack(HTNAtomList({VariableIDColor.x, VariableIDColor.y, VariableIDColor.z, VariableIDColor.w}));
     }
 
     // Variable value
@@ -78,7 +78,7 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
         const HTNAtom       VariableValue           = Variables.FindVariable(VariablePath);
         constexpr bool      ShouldDoubleQuoteString = true;
         const std::string   VariableValueString     = VariableValue.ToString(ShouldDoubleQuoteString);
-        Result.Add(VariableValueString);
+        Result.PushBack(VariableValueString);
     }
 
     return Result;
@@ -95,9 +95,9 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode&
         const HTNAtom&    ConstantID              = inConstantExpressionNode.GetValue();
         constexpr bool    ShouldDoubleQuoteString = false;
         const std::string ConstantIDString        = std::format("@{}", ConstantID.ToString(ShouldDoubleQuoteString));
-        Result.Add(ConstantIDString);
+        Result.PushBack(ConstantIDString);
         constexpr ImVec4 ConstantIDColor = HTNImGuiHelpers::kArgumentColor;
-        Result.Add(HTNAtomList({ConstantIDColor.x, ConstantIDColor.y, ConstantIDColor.z, ConstantIDColor.w}));
+        Result.PushBack(HTNAtomList({ConstantIDColor.x, ConstantIDColor.y, ConstantIDColor.z, ConstantIDColor.w}));
     }
 
     // Constant value
@@ -108,7 +108,7 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode&
         const HTNAtom                               ConstantValue           = GetNodeValue(*ConstantNode, ioContext);
         constexpr bool                              ShouldDoubleQuoteString = true;
         const std::string                           ConstantValueString     = ConstantValue.ToString(ShouldDoubleQuoteString);
-        Result.Add(ConstantValueString);
+        Result.PushBack(ConstantValueString);
     }
 
     return Result;
