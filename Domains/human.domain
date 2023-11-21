@@ -1,45 +1,73 @@
 
 (:domain Human top_level_domain
 
-    //(:include "source:movement")
-
     (:constants
-        (italian "italian")
+        (fruit "fruit")
     )
 
-    (:constants Nationalities
-        (spanish "spanish")
-    )
-
-    (:axiom (find_food ?inp_food_type ?out_food)
-		(and    (food ?inp_food_type ?out_food)
+    (:axiom (is_spoiled ?inp_food)
+		(or     (is_old ?inp_food)
+                (has_mold ?inp_food)
 		)
 	)
 
-    (:axiom (is_spoiled ?inp_food)
-		(and    (or (has_mold ?inp_food)
-                    (is_dry ?inp_food)
-                )
+    (:axiom (find_food ?inp_food_type ?out_food)
+		(and    (item ?out_food)
+                (edible ?out_food)
+                (type ?out_food ?inp_food_type)
 		)
-	)                
+	)
 
-    (:method (behave) top_level_method
-        (branch_eat
-            (and    (food @spanish ?spanish_food)
-                    (food @italian ?italian_food)
-                    (has_mold ?spanish_food)
+     (:method (behave) top_level_method
+
+        (branch_hungry
+            (
             )
-            (   (eat ?spanish_food)
-                (eat ?italian_food)
+            (   (eat @fruit)
             )
         )
     )
 
-    (:method (eat ?inp_food)
-        (branch_eat
+    (:method (eat ?inp_food_type)
+
+        (branch_in_possession
+            (and    (#find_food ?inp_food_type ?food)
+                    (not (#is_spoiled ?food))
+            )
+            (       (!take ?food)
+                    (prepare_food ?food)
+                    (!eat ?food)
+            )
+        )
+
+        (branch_get_from_house
             (
             )
-            (   (!eat ?inp_food)
+            (
+            )
+        )
+
+        (branch_buy_in_store
+            (
+            )
+            (
+            )
+        )
+    )
+
+     (:method (prepare_food ?inp_food)
+
+        (branch_unwrap_food
+            (and    (unwrap ?inp_food)
+            )
+            (       (!unwrap ?inp_food)
+            )
+        )
+
+        (branch_peel_food
+            (and    (peel ?inp_food)
+            )
+            (       (!peel ?inp_food)
             )
         )
     )

@@ -1,8 +1,19 @@
-food "spanish" "tortilla"
-food "spanish" "paella"
-has_mold "paella"
+item "wallet"
+item "sandwich"
+item "apple"
+item "orange"
+item "banana"
 
-food "italian" "pasta"
-food "italian" "pizza"
-food "italian" "gelato"
-has_mold "gelato"
+edible "sandwich"
+edible "apple"
+edible "orange"
+edible "banana"
+
+type "apple" "fruit"
+type "orange" "fruit"
+type "banana" "fruit"
+
+is_old "apple"
+has_mold "orange"
+
+peel "banana"

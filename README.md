@@ -28,7 +28,10 @@ through Example](https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter12_Explori
 Bots in Killzone 3](https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter29_Hierarchical_AI_for_Multiplayer_Bots_in_Killzone_3.pdf)
 
 ## Future Work
-- Call terms
-- Includes
-- Overrides
-- ...
+- Implement call terms (functions defined in C++).
+- Allow to include other domain files.
+- Allow to override methods, axioms, and constants.
+- Implement a domain editor with syntax highlighting.
+- Implement a domain validator.
+- Time-slice the decomposition process.
+- Replace the interpreter with a compiler.
