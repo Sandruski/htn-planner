@@ -30,7 +30,7 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
         {
             ImGui::TableNextRow();
 
-            const HTNAtom  Parameter               = GetNodeValue(*NodeParameter, ioDecompositionWatchWindowPrinterContext);
+            const HTNAtom         Parameter               = GetNodeValue(*NodeParameter, ioDecompositionWatchWindowPrinterContext);
             static constexpr bool ShouldDoubleQuoteString = false;
 
             // Parameter ID
@@ -58,7 +58,7 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
         {
             ImGui::TableNextRow();
 
-            const HTNAtom  Argument                = GetNodeValue(*NodeArgument, ioDecompositionWatchWindowPrinterContext);
+            const HTNAtom         Argument                = GetNodeValue(*NodeArgument, ioDecompositionWatchWindowPrinterContext);
             static constexpr bool ShouldDoubleQuoteString = false;
 
             // Argument ID
@@ -108,9 +108,9 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
             // Variable value
             ImGui::TableNextColumn();
 
-            const HTNAtom&    Variable                = VariablePair.second;
+            const HTNAtom&        Variable                = VariablePair.second;
             static constexpr bool ShouldDoubleQuoteString = true;
-            const std::string VariableString          = Variable.ToString(ShouldDoubleQuoteString);
+            const std::string     VariableString          = Variable.ToString(ShouldDoubleQuoteString);
             ImGui::Text(VariableString.c_str());
         }
 

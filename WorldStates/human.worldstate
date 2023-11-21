@@ -16,5 +16,5 @@ type "banana" "fruit"
 is_old "apple"
 has_mold "orange"
 
-unwrap "sandwich"
-peel "banana"
+is_wrapped "sandwich"
+has_peel "banana"
