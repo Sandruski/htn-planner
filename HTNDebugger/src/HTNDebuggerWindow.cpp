@@ -99,27 +99,38 @@ void RenderOperationResult(const HTNOperationResult inOperationResult)
     }
 }
 
-void RenderActivePlanByPlanningUnit(const HTNPlanningUnit& inPlanningUnit)
+void RenderActivePlanByPlanningQuery(const HTNPlanningQuery& inPlanningQuery)
 {
     const ImVec2           ChildSize   = ImVec2(0.f, 0.f);
     const ImGuiChildFlags  ChildFlags  = ImGuiChildFlags_None;
     const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_HorizontalScrollbar;
     ImGui::BeginChild("Child", ChildSize, ChildFlags, WindowFlags);
 
-    const HTNDecompositionRecord&     CurrentDecomposition = inPlanningUnit.GetLastDecomposition();
-    const std::vector<HTNTaskResult>& Plan                 = CurrentDecomposition.GetPlan();
-    for (const HTNTaskResult& TaskResult : Plan)
+    const bool IsLastDecompositionSuccessful = inPlanningQuery.IsLastDecompositionSuccessful();
+    if (IsLastDecompositionSuccessful)
     {
-        const std::string& TaskID = TaskResult.GetID();
-        ImGui::Text(TaskID.c_str());
+        const HTNPlanningUnit&            PlanningUnit         = inPlanningQuery.GetPlanningUnit();
+        const HTNDecompositionRecord&     CurrentDecomposition = PlanningUnit.GetLastDecomposition();
+        const std::vector<HTNTaskResult>& Plan                 = CurrentDecomposition.GetPlan();
 
-        const std::vector<HTNAtom>& Arguments = TaskResult.GetArguments();
-        for (const HTNAtom& Argument : Arguments)
+        if (Plan.empty())
         {
-            static constexpr bool ShouldDoubleQuoteString = true;
-            const std::string& ArgumentString          = Argument.ToString(ShouldDoubleQuoteString);
-            ImGui::SameLine();
-            ImGui::Text(ArgumentString.c_str());
+            ImGui::Text("Empty plan");
+        }
+
+        for (const HTNTaskResult& TaskResult : Plan)
+        {
+            const std::string& TaskID = TaskResult.GetID();
+            ImGui::Text(TaskID.c_str());
+
+            const std::vector<HTNAtom>& Arguments = TaskResult.GetArguments();
+            for (const HTNAtom& Argument : Arguments)
+            {
+                static constexpr bool ShouldDoubleQuoteString = true;
+                const std::string&    ArgumentString          = Argument.ToString(ShouldDoubleQuoteString);
+                ImGui::SameLine();
+                ImGui::Text(ArgumentString.c_str());
+            }
         }
     }
 
@@ -158,8 +169,8 @@ void HTNDebuggerWindow::Render()
 {
     // Set the default position and size of the main window
     static constexpr ImGuiCond MainWindowCondition = ImGuiCond_FirstUseEver;
-    const float         FontSize            = ImGui::GetFontSize();
-    const ImVec2        MainWindowPosition  = ImVec2(FontSize, FontSize);
+    const float                FontSize            = ImGui::GetFontSize();
+    const ImVec2               MainWindowPosition  = ImVec2(FontSize, FontSize);
     ImGui::SetNextWindowPos(MainWindowPosition, MainWindowCondition);
     const ImVec2 MainWindowSize = ImVec2(36.f * FontSize, 48.f * FontSize);
     ImGui::SetNextWindowSize(MainWindowSize, MainWindowCondition);
@@ -210,13 +221,13 @@ void HTNDebuggerWindow::RenderActivePlan()
     {
         if (ImGui::BeginTabItem("Main"))
         {
-            RenderActivePlanByPlanningUnit(mMainPlanningUnit);
+            RenderActivePlanByPlanningQuery(mMainPlanningQuery);
             ImGui::EndTabItem();
         }
 
         if (ImGui::BeginTabItem("Upper Body"))
         {
-            RenderActivePlanByPlanningUnit(mUpperBodyPlanningUnit);
+            RenderActivePlanByPlanningQuery(mUpperBodyPlanningQuery);
             ImGui::EndTabItem();
         }
 
@@ -456,7 +467,8 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         ImGui::SetTooltip("Decompose the selected entry point of the parsed domain using the parsed world state");
     }
 
-    RenderOperationResult(ioPlanningQuery.GetLastDecompositionResult());
+    const HTNOperationResult LastDecompositionResult = ioPlanningQuery.GetLastDecompositionResult();
+    RenderOperationResult(LastDecompositionResult);
 
     ImGui::Separator();
 
@@ -465,10 +477,10 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
     const ImVec2      AvailableSize      = ImVec2(ContentRegionAvail.x, ContentRegionAvail.y - Style.ItemSpacing.y);
 
     // Decomposition
-    static constexpr float  DecompositionHeightPercentage = 0.7f;
+    static constexpr float DecompositionHeightPercentage = 0.7f;
     const ImVec2           DecompositionChildSize        = ImVec2(AvailableSize.x, DecompositionHeightPercentage * AvailableSize.y);
     const ImGuiChildFlags  DecompositionChildFlags       = ImGuiChildFlags_None;
-    const ImGuiWindowFlags DecompositionWindowFlags       = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_HorizontalScrollbar;
+    const ImGuiWindowFlags DecompositionWindowFlags      = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_HorizontalScrollbar;
     ImGui::BeginChild("DecompositionChild", DecompositionChildSize, DecompositionChildFlags, DecompositionWindowFlags);
 
     bool ShouldResetDecompositionPrinterState = false;
@@ -537,9 +549,10 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         ImGui::EndMenuBar();
     }
 
-    if (ioPlanningQuery.IsLastDecompositionSuccessful())
+    const bool IsLastDecompositionSuccessful = ioPlanningQuery.IsLastDecompositionSuccessful();
+    if (IsLastDecompositionSuccessful)
     {
-        static constexpr bool ShouldRepeat    = false;
+        static constexpr bool ShouldRepeat   = false;
         ShouldResetDecompositionPrinterState = ShouldResetDecompositionPrinterState || ImGui::IsKeyPressed(ImGuiKey_R, ShouldRepeat);
 
         if (ShouldResetDecompositionPrinterState)
@@ -579,7 +592,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         ImGui::EndMenuBar();
     }
 
-    if (ioPlanningQuery.IsLastDecompositionSuccessful())
+    if (IsLastDecompositionSuccessful)
     {
         const std::shared_ptr<const HTNDomainNode>& LastDomainNode = ioPlanningQuery.GetLastDomainNode();
         HTNDecompositionWatchWindowPrinterContext   DecompositionWatchWindowPrinterContext =

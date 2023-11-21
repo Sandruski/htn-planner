@@ -30,7 +30,7 @@
 
     (:method (eat ?inp_food_type)
 
-        (branch_in_possession
+        (branch_food_in_possession
             (and    (#find_food ?inp_food_type ?food)
                     (not (#is_spoiled ?food))
             )
@@ -40,17 +40,17 @@
             )
         )
 
-        (branch_get_from_house
+        (branch_get_food_from_house
             (
             )
-            (
+            ( // Here should go the tasks for getting food from the house
             )
         )
 
-        (branch_buy_in_store
+        (branch_buy_food_in_store
             (
             )
-            (
+            ( // Here should go the tasks for buying food in a store
             )
         )
     )
