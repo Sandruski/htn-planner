@@ -7,14 +7,12 @@ workspace "HTN"
     warnings "Extra"
     flags { "FatalWarnings" }
 
-    defines { "HTN_DEBUG_DECOMPOSITION" }
-
     filter "configurations:Debug"
-        defines { "HTN_DEBUG" }
+        defines { "HTN_DEBUG", "HTN_DEBUG_DECOMPOSITION" }
         symbols "On"
 
     filter "configurations:Release"
-        defines { "HTN_RELEASE" }
+        defines { "HTN_RELEASE", "HTN_DEBUG_DECOMPOSITION" }
         optimize "On"
 
     filter "system:windows"
@@ -28,10 +26,6 @@ project "HTNFramework"
     kind "SharedItems"
     language "C++"
     cppdialect "C++20"
-
-    pchheader "pch.h"
-    pchsource "%{prj.name}/src/pch.cpp"
-    forceincludes "pch.h"
 
     files { "%{prj.name}/src/**.cpp",
             "%{prj.name}/src/**.h" }
@@ -92,29 +86,6 @@ project "HTNDebugger"
 
     links { "HTNFramework", "HTNPlanner" }
 
--- HTNTest
-project "HTNTest"
-    location "HTNTest"
-    kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++20"
-
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("int/" .. outputdir .. "/%{prj.name}")
-
-    pchheader "pch.h"
-    pchsource "%{prj.name}/src/pch.cpp"
-    forceincludes "pch.h"
-
-    files { "%{prj.name}/src/**.cpp",
-            "%{prj.name}/src/**.h" }
-
-    includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNPlanner/src", "ThirdParty/Optick/src" }
-
-    links { "HTNFramework", "HTNPlanner" }
-
-    nuget { "Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1.7" }
-
 -- HTNDemo
 project "HTNDemo"
     location "HTNDemo"
@@ -124,10 +95,6 @@ project "HTNDemo"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("int/" .. outputdir .. "/%{prj.name}")
-
-    pchheader "pch.h"
-    pchsource "%{prj.name}/src/pch.cpp"
-    forceincludes "pch.h"
 
     files { "%{prj.name}/src/**.cpp",
             "%{prj.name}/src/**.h", 
@@ -152,3 +119,22 @@ project "HTNDemo"
 
 	libdirs { "ThirdParty/SDL2/lib/x64" }
     links { "HTNFramework", "HTNPlanner", "HTNDebugger", "SDL2", "SDL2main" }
+
+-- HTNTest
+    project "HTNTest"
+    location "HTNTest"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++20"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("int/" .. outputdir .. "/%{prj.name}")
+
+    files { "%{prj.name}/src/**.cpp",
+            "%{prj.name}/src/**.h" }
+
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNPlanner/src", "ThirdParty/Optick/src" }
+
+    links { "HTNFramework", "HTNPlanner" }
+
+    nuget { "Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1.7" }

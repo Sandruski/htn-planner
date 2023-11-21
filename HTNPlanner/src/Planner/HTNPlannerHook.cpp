@@ -40,6 +40,12 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
 
 bool HTNPlannerHook::MakePlan(HTNDecompositionContext& ioDecompositionContext) const
 {
+    if (!mDomainNode)
+    {
+        HTN_LOG_ERROR("Domain is null");
+        return false;
+    }
+
     if (!mDomainInterpreter.Interpret(ioDecompositionContext))
     {
         HTN_LOG_ERROR("Domain [{}] could not be interpreted", mDomainNode->GetID());

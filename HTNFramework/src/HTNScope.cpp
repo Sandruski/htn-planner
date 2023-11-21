@@ -4,6 +4,8 @@
 
 #include "HTNPathHandler.h"
 
+#include <cassert>
+
 HTNScope::HTNScope(const std::string& inSegment, HTNPathHandler& ioPathHandler) : mPathHandler(ioPathHandler)
 {
     mResult = ioPathHandler.TryPushSegmentToPath(inSegment);

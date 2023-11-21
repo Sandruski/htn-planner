@@ -8,8 +8,13 @@
 #include "Planner/HTNPlannerHook.h"
 #include "Planner/HTNPlanningUnit.h"
 
+#include "optick.h"
+#include "gtest/gtest.h"
+
 #include <execution>
 #include <filesystem>
+#include <format>
+#include <string>
 #include <tuple>
 #include <vector>
 

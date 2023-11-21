@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "Helpers/HTNAtom.h"
-
 #include <algorithm>
 #include <cassert>
 #include <format>
