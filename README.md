@@ -1,16 +1,16 @@
 # HTN
-A hierarchical task network (HTN) planner with a custom domain language.
+This project is a hierarchical task network (HTN) planner library for AI decision-making. It is implemented in C++ and it interprets a custom domain language.
 
 ## Disclaimer
-Note that this project is a work in progress (WIP). As such, certain features may be incomplete or subject to change. Feedback and contributions are welcomed.
+Note that the project is a work in progress (WIP). As such, certain features may be incomplete or subject to change. Feedback and contributions are welcomed.
 
 ## Getting Started
-1. Clone the repository with `git clone https://github.com/Sandruski/HTN`.
-2. Generate the solution by running [GenerateProjectFiles.bat](https://github.com/Sandruski/HTN/blob/main/GenerateProjectFiles.bat). By default, it is generated for Visual Studio 2022. You can change the version of Visual Studio by editing this file.
-3. If you add or remove project files, regenerate the solution by rerunning [GenerateProjectFiles.bat](https://github.com/Sandruski/HTN/blob/main/GenerateProjectFiles.bat).
+1. Clone the repository with `git clone https://github.com/Sandruski/htn-planner`.
+2. Generate the solution by running [GenerateProjectFiles.bat](https://github.com/Sandruski/htn-planner/blob/main/GenerateProjectFiles.bat). By default, it is generated for Visual Studio 2022. You can change the version of Visual Studio by editing this file.
+3. If you add or remove project files, regenerate the solution by rerunning [GenerateProjectFiles.bat](https://github.com/Sandruski/htn-planner/blob/main/GenerateProjectFiles.bat).
 
 ## Usage
-The solution contains three projects, HTNPlanner, HTNDemo, and HTNTest. HTNPlanner is the core planner, HTNDemo is a playground for testing the planner, and HTNTest contains all the unit tests of the planner.
+The solution contains five projects, HTNPlanner, HTNDebugger, HTNDemo, HTNTest, and HTNFramework. HTNPlanner is the planner library, HTNDebugger is a library to debug the planner, HTNDemo is a playground for using the planner, HTNTest contains a set of unit tests for testing the planner using automation, and HTNFramework contains the core functionalities shared across all the projects. The startup project should be configured to either HTNPlanner, as is the default setting, or HTNTest.
 
 ## Third-Party
 - [SDL](https://www.libsdl.org/)
@@ -31,3 +31,4 @@ Bots in Killzone 3](https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter29_Hier
 - Call terms
 - Includes
 - Overrides
+- ...
