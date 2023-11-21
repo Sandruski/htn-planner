@@ -1,10 +1,8 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
-#pragma once
-
-#ifdef HTN_DEBUG_DECOMPOSITION
 #include "Helpers/HTNImGuiHelpers.h"
 
+#ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"

@@ -1,5 +1,7 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
+#include "Domain/HTNDecompositionHelpers.h"
+
 #ifdef HTN_DEBUG_DECOMPOSITION
 namespace HTNDecompositionHelpers
 {
