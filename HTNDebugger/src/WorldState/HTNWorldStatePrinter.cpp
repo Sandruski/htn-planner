@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
 #include "WorldState/HTNWorldStatePrinter.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION

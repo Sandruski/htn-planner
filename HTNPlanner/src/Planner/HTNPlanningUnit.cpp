@@ -1,4 +1,6 @@
-#include "HTNPlanningUnit.h"
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
+#include "Planner/HTNPlanningUnit.h"
 
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Planner/HTNDatabaseHook.h"

@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
 #include "HTNFileHandler.h"
 
 #include "HTNLog.h"

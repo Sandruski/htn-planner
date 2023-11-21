@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
 #include "Parser/HTNLexerContextBase.h"
 
 #include "Helpers/HTNToken.h"

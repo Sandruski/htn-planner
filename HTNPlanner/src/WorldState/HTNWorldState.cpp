@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
 #include "WorldState/HTNWorldState.h"
 
 void HTNFactArgumentsTable::RemoveFactArguments(const size inFactArgumentsIndex)

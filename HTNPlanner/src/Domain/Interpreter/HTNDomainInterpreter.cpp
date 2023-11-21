@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 
 #include "Domain/Interpreter/HTNConditionQuery.h"

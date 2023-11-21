@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
 #include "Domain/Nodes/HTNConstantNode.h"
 
 #include "Domain/Nodes/HTNNodeVisitorBase.h"

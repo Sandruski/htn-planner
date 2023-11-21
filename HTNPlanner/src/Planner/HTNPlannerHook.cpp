@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
 #include "Planner/HTNPlannerHook.h"
 
 #include "Domain/Interpreter/HTNDecompositionContext.h"

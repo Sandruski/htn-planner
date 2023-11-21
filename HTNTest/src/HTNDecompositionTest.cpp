@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "HTNFrameworkMinimal.h"
 #include "HTNPathHelpers.h"

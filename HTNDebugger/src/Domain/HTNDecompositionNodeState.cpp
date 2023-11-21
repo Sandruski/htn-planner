@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
 #include "Domain/HTNDecompositionNodeState.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION

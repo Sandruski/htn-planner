@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
 #include "Domain/Interpreter/HTNVariables.h"
 
 void HTNVariables::RemoveVariables(const std::string& inVariableScopePath)

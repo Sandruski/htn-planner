@@ -1,4 +1,4 @@
-#pragma once
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 namespace HTNDecompositionHelpers

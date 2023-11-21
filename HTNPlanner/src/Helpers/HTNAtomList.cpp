@@ -1,3 +1,5 @@
+// Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
+
 #include "Helpers/HTNAtomList.h"
 
 #include "Helpers/HTNAtomNode.h"
