@@ -1,6 +1,6 @@
 #include "Domain/HTNDecompositionNode.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 HTNDecompositionNode::HTNDecompositionNode(const HTNNodeSnapshotDebug& inNodeSnapshot, const std::string& inNodeLabel)
     : mNodeSnapshot(&inNodeSnapshot), mNodeLabel(inNodeLabel)
 {

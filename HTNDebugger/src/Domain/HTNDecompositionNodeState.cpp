@@ -1,6 +1,6 @@
 #include "Domain/HTNDecompositionNodeState.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 

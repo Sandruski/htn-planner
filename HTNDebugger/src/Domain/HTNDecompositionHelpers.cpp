@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 namespace HTNDecompositionHelpers
 {
 bool IsDecompositionStepInRange(const int32 inDecompositionStep, const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep)

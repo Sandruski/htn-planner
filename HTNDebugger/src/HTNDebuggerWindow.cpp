@@ -1,6 +1,6 @@
 #include "HTNDebuggerWindow.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionPrinterContext.h"
 #include "Domain/HTNDecompositionWatchWindowPrinterContext.h"

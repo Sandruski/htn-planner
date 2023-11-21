@@ -1,6 +1,6 @@
 #include "Domain/HTNDecompositionPrinter.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDecompositionHelpers.h"
 #include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/HTNDecompositionPrinterContext.h"

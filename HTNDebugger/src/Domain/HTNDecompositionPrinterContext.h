@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDecompositionTooltipMode.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "HTNFrameworkMinimal.h"

@@ -4,7 +4,7 @@
 #include "Helpers/HTNToken.h"
 #include "Parser/HTNLexerContextBase.h"
 
-#if HTN_DEBUG
+#ifdef HTN_DEBUG
 #include <limits>
 #endif
 

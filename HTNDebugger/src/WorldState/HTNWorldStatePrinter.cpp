@@ -1,6 +1,6 @@
 #include "WorldState/HTNWorldStatePrinter.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 #include "WorldState/HTNWorldState.h"
 #include "WorldState/HTNWorldStatePrinterContext.h"
 

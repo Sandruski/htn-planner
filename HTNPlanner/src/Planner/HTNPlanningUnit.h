@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #endif
 
@@ -35,7 +35,7 @@ private:
 
     HTNDecompositionRecord mLastDecomposition;
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 public:
     const HTNDecompositionSnapshotDebug& GetLastDecompositionSnapshot() const;
 
@@ -64,7 +64,7 @@ inline const HTNDecompositionRecord& HTNPlanningUnit::GetLastDecomposition() con
     return mLastDecomposition;
 }
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 inline const HTNDecompositionSnapshotDebug& HTNPlanningUnit::GetLastDecompositionSnapshot() const
 {
     return mLastDecompositionSnapshot;

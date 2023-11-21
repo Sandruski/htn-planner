@@ -78,7 +78,7 @@ private:
     HTNAtom      mValue;
     HTNTokenType mType;
 
-#if HTN_DEBUG
+#ifdef HTN_DEBUG
 public:
     const std::string& GetLexeme() const;
     uint32       GetRow() const;
@@ -101,7 +101,7 @@ inline HTNTokenType HTNToken::GetType() const
     return mType;
 }
 
-#if HTN_DEBUG
+#ifdef HTN_DEBUG
 inline const std::string& HTNToken::GetLexeme() const
 {
     return mLexeme;

@@ -1,7 +1,9 @@
 #pragma once
 
+#ifdef HTN_DEBUG
 #include <format>
 #include <iostream>
+#endif
 
 #ifdef HTN_DEBUG
 #define HTN_DOMAIN_LOG(Row, Column, Message, ...)                                                                                                    \

@@ -1,6 +1,6 @@
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 HTNNodeSnapshotDebug::HTNNodeSnapshotDebug(const HTNVariables& inVariables) : mVariables(inVariables)
 {
 }

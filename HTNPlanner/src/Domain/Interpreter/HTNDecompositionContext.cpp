@@ -16,14 +16,14 @@ bool HTNDecompositionContext::RestoreDecomposition()
     mCurrentDecomposition = mDecompositionHistory.back();
     mDecompositionHistory.pop_back();
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
     mDecompositionSnapshot.IncrementDecompositionStep();
 #endif
 
     return true;
 }
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 void HTNDecompositionContext::RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep,
                                                  const bool inIsChoicePoint)
 {

@@ -7,6 +7,8 @@ workspace "HTN"
     warnings "Extra"
     flags { "FatalWarnings" }
 
+    defines { "HTN_DEBUG_DECOMPOSITION" }
+
     filter "configurations:Debug"
         defines { "HTN_DEBUG" }
         symbols "On"
@@ -150,8 +152,3 @@ project "HTNDemo"
 
 	libdirs { "ThirdParty/SDL2/lib/x64" }
     links { "HTNFramework", "HTNPlanner", "HTNDebugger", "SDL2", "SDL2main" }
-	
-	-- TODO JOSE: Make this work properly, we should copy the SDL2.dll in the right target dir, I am pretty sure there is a macro to do that.
-	-- filter "configurations:Debug"
-		-- postbuildcommands { "copy ThirdParty/SDL2/lib/x64/SDL2.dll bin\\Debug-windows-x86_64\\%{prj.name}\\" }
-	

@@ -1,6 +1,6 @@
 #include "Domain/HTNDecompositionWatchTooltipPrinterContext.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 HTNDecompositionWatchTooltipPrinterContext::HTNDecompositionWatchTooltipPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
                                                                                        const HTNDecompositionNode& inDecompositionNode,
                                                                                        const HTNDecompositionTooltipMode           inTooltipMode)

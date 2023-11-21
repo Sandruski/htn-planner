@@ -1,6 +1,6 @@
 #include "Domain/HTNDecompositionWatchPrinterContextBase.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDecompositionNode.h"
 
 HTNDecompositionWatchPrinterContextBase::HTNDecompositionWatchPrinterContextBase(const std::shared_ptr<const HTNDomainNode>& inDomainNode,

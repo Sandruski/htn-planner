@@ -8,10 +8,7 @@
 // For a multi-platform app consider using e.g. SDL+DirectX on Windows and SDL+OpenGL on Linux/OSX.
 
 #include "HTNFrameworkMinimal.h"
-#include "HTNDebuggerWindow.h"
-#include "Planner/HTNDatabaseHook.h"
-#include "Planner/HTNPlannerHook.h"
-#include "Planner/HTNPlanningUnit.h"
+
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer2.h"
@@ -19,6 +16,13 @@
 
 #include <SDL.h>
 #include <stdio.h>
+
+#ifdef HTN_DEBUG_DECOMPOSITION
+#include "HTNDebuggerWindow.h"
+#include "Planner/HTNDatabaseHook.h"
+#include "Planner/HTNPlannerHook.h"
+#include "Planner/HTNPlanningUnit.h"
+#endif
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
@@ -87,21 +91,21 @@ int main(int, char**)
     // ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     // IM_ASSERT(font != NULL);
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
     HTNDatabaseHook   DatabaseHook;
     HTNPlannerHook    PlannerHook;
     HTNPlanningUnit   MainPlanningUnit      = HTNPlanningUnit("Main", DatabaseHook, PlannerHook);
     HTNPlanningUnit   UpperBodyPlanningUnit = HTNPlanningUnit("Upper Body", DatabaseHook, PlannerHook);
     HTNDebuggerWindow DebuggerWindow        = HTNDebuggerWindow(DatabaseHook, PlannerHook, MainPlanningUnit, UpperBodyPlanningUnit);
 
-    bool ShowHTNDebuggerWindow = true;
+    bool ShouldShowHTNDebuggerWindow = true;
 #endif
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Main loop
-    bool Done = false;
-    while (!Done)
+    bool IsDone = false;
+    while (!IsDone)
     {
         OPTICK_FRAME("MainThread");
 
@@ -116,9 +120,9 @@ int main(int, char**)
         {
             ImGui_ImplSDL2_ProcessEvent(&event);
             if (event.type == SDL_QUIT)
-                Done = true;
+                IsDone = true;
             if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
-                Done = true;
+                IsDone = true;
         }
 
         // Start the Dear ImGui frame
@@ -126,8 +130,8 @@ int main(int, char**)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-#ifdef HTN_DEBUG
-        if (ShowHTNDebuggerWindow)
+#ifdef HTN_DEBUG_DECOMPOSITION
+        if (ShouldShowHTNDebuggerWindow)
         {
             DebuggerWindow.Render();
         }

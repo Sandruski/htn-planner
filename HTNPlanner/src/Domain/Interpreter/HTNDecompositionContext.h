@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #endif
 
@@ -70,7 +70,7 @@ private:
     // Path from the root node to the current node determining the scope of the variables
     HTNPathHandler mCurrentVariablesPathHandler;
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 public:
     void RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
     void RecordNodeSnapshot(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
@@ -155,7 +155,7 @@ inline HTNPathHandler& HTNDecompositionContext::GetCurrentVariablesPathHandlerMu
     return mCurrentVariablesPathHandler;
 }
 
-#ifdef HTN_DEBUG
+#ifdef HTN_DEBUG_DECOMPOSITION
 inline const HTNDecompositionSnapshotDebug& HTNDecompositionContext::GetDecompositionSnapshot() const
 {
     return mDecompositionSnapshot;
