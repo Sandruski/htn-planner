@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HTNPlannerMinimal.h"
+#include "HTNFrameworkMinimal.h"
 
 #include <string>
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HTNFrameworkMinimal.h"
+
 // Base class to prevent copying
 class HTNUncopyable
 {

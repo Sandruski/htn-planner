@@ -24,7 +24,7 @@ char HTNLexerContextBase::GetCharacter(const uint32 inOffset) const
     return '\0';
 }
 
-void HTNLexerContextBase::AdvancePosition(const bool inIsNewLine)
+void HTNLexerContextBase::AdvancePosition(HTN_DEBUG_ONLY(const bool inIsNewLine))
 {
     if (mPosition >= mText.length())
     {

@@ -20,9 +20,9 @@ public:
 
     void AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme));
 
-    char GetCharacter(const uint32 inLookAhead = 0) const;
+    char GetCharacter(const uint32 inOffset = 0) const;
 
-    void         AdvancePosition(const bool inIsNewLine = false);
+    void   AdvancePosition(HTN_DEBUG_ONLY(const bool inIsNewLine = false));
     uint32 GetPosition() const;
 
 private:

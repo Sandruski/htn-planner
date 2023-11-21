@@ -23,8 +23,8 @@ void HTNLexerBase::LexIdentifier(const std::unordered_map<std::string, HTNTokenT
         ioLexerContext.AdvancePosition();
     }
 
-    const uint32 CurrentPosition = ioLexerContext.GetPosition();
-    const uint32 EndPosition     = CurrentPosition - StartPosition;
+    const uint32       CurrentPosition = ioLexerContext.GetPosition();
+    const uint32       EndPosition     = CurrentPosition - StartPosition;
     const std::string& Text            = ioLexerContext.GetText();
     const std::string  Lexeme          = Text.substr(StartPosition, EndPosition);
     const auto         It              = inKeywords.find(Lexeme);
@@ -62,11 +62,12 @@ void HTNLexerBase::LexNumber(HTNLexerContextBase& ioLexerContext) const
         ioLexerContext.AdvancePosition();
     }
 
-    const uint32 CurrentPosition = ioLexerContext.GetPosition();
+    const uint32       CurrentPosition = ioLexerContext.GetPosition();
     const std::string& Text            = ioLexerContext.GetText();
 
     // Check for fractional part
-    const char NextCharacter = ioLexerContext.GetCharacter(1);
+    static constexpr uint32 LookAhead     = 1;
+    const char              NextCharacter = ioLexerContext.GetCharacter(LookAhead);
     if (ioLexerContext.GetCharacter() == '.' && HTNLexerHelpers::IsDigit(NextCharacter))
     {
         ioLexerContext.AdvancePosition();
@@ -77,18 +78,18 @@ void HTNLexerBase::LexNumber(HTNLexerContextBase& ioLexerContext) const
             ioLexerContext.AdvancePosition();
         }
 
-        const uint32 EndPosition = CurrentPosition - StartPosition;
-        const std::string  Lexeme      = Text.substr(StartPosition, EndPosition);
-        const float        Number      = std::stof(Lexeme);
-        HTN_DOMAIN_CLOG_ERROR(std::stod(Lexeme) < std::numeric_limits<float>::min() || std::stod(Lexeme) > std::numeric_limits<float>::max(), StartRow,
-                       StartColumn, "Number out of bounds");
+        const uint32      EndPosition = CurrentPosition - StartPosition;
+        const std::string Lexeme      = Text.substr(StartPosition, EndPosition);
+        const float       Number      = std::stof(Lexeme);
+        HTN_DOMAIN_CLOG_ERROR(std::stod(Lexeme) < std::numeric_limits<float>::min() || std::stod(Lexeme) > std::numeric_limits<float>::max(),
+                              StartRow, StartColumn, "Number out of bounds");
         ioLexerContext.AddToken(Number, HTNTokenType::NUMBER HTN_DEBUG_ONLY(, Lexeme));
     }
     else
     {
-        const uint32 EndPosition = CurrentPosition - StartPosition;
-        const std::string  Lexeme      = Text.substr(StartPosition, EndPosition);
-        const int32          Number      = std::stoi(Lexeme);
+        const uint32      EndPosition = CurrentPosition - StartPosition;
+        const std::string Lexeme      = Text.substr(StartPosition, EndPosition);
+        const int32       Number      = std::stoi(Lexeme);
         ioLexerContext.AddToken(Number, HTNTokenType::NUMBER HTN_DEBUG_ONLY(, Lexeme));
     }
 }
@@ -137,5 +138,8 @@ void HTNLexerBase::LexComment(HTNLexerContextBase& ioLexerContext) const
         ioLexerContext.AdvancePosition();
     }
 
-    ioLexerContext.AdvancePosition(true);
+#ifdef HTN_DEBUG
+    static constexpr bool IsNewLine = true;
+#endif
+    ioLexerContext.AdvancePosition(HTN_DEBUG_ONLY(IsNewLine));
 }

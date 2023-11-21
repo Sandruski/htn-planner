@@ -1,5 +1,6 @@
 #pragma once
 
+#include "HTNFrameworkMinimal.h"
 #include "HTNUncopyable.h"
 
 #include <string>

@@ -2,7 +2,7 @@
 workspace "HTN"
     startproject "HTNDemo"
     architecture "x64"
-    configurations { "Debug"--[[, "Release"--]] }
+    configurations { "Debug", "Release" }
 
     warnings "Extra"
     flags { "FatalWarnings" }
@@ -11,9 +11,9 @@ workspace "HTN"
         defines { "HTN_DEBUG" }
         symbols "On"
 
-    --[[filter "configurations:Release"
+    filter "configurations:Release"
         defines { "HTN_RELEASE" }
-        optimize "On"--]]
+        optimize "On"
 
     filter "system:windows"
         systemversion "latest"

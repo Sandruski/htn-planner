@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HTNFrameworkMinimal.h"
+
 #include <filesystem>
 #include <string>
 

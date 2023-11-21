@@ -58,7 +58,8 @@ bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
             break;
         }
         case '/': {
-            const char NextCharacter = ioDomainLexerContext.GetCharacter(1);
+            static constexpr uint32 LookAhead     = 1;
+            const char NextCharacter = ioDomainLexerContext.GetCharacter(LookAhead);
             if (NextCharacter == '/')
             {
                 // Comment
@@ -90,9 +91,11 @@ bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
             break;
         }
         case '\n': {
-            // Newline
+// Newline
+#ifdef HTN_DEBUG
             static constexpr bool IsNewLine = true;
-            ioDomainLexerContext.AdvancePosition(IsNewLine);
+#endif
+            ioDomainLexerContext.AdvancePosition(HTN_DEBUG_ONLY(IsNewLine));
             break;
         }
         default: {

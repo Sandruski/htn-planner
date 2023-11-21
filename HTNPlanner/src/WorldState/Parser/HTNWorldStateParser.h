@@ -13,8 +13,8 @@ public:
     bool Parse(HTNWorldStateParserContext& ioWorldStateParserContext) const;
 
 private:
-    bool ParseFact(HTNWorldState& outWorldState, HTNWorldStateParserContext& ioWorldStateParserContext) const;
+    bool ParseFact(HTNWorldStateParserContext& ioWorldStateParserContext, HTNWorldState& outWorldState) const;
 
-    bool ParseIdentifier(HTNAtom& outIdentifier, HTNWorldStateParserContext& ioWorldStateParserContext) const;
-    bool ParseArgument(HTNAtom& outArgument, HTNWorldStateParserContext& ioWorldStateParserContext) const;
+    bool ParseIdentifier(HTNWorldStateParserContext& ioWorldStateParserContext, HTNAtom& outIdentifier) const;
+    bool ParseArgument(HTNWorldStateParserContext& ioWorldStateParserContext, HTNAtom& outArgument) const;
 };

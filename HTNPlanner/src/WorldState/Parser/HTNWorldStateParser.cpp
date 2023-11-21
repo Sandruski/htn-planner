@@ -19,7 +19,7 @@ bool HTNWorldStateParser::Parse(HTNWorldStateParserContext& ioWorldStateParserCo
     HTNWorldState& WorldState = ioWorldStateParserContext.GetWorldStateMutable();
     while (!ParseToken(HTNTokenType::END_OF_FILE, ioWorldStateParserContext))
     {
-        if (!ParseFact(WorldState, ioWorldStateParserContext))
+        if (!ParseFact(ioWorldStateParserContext, WorldState))
         {
 #ifdef HTN_DEBUG
             HTNParserHelpers::PrintLastErrorMessage(ioWorldStateParserContext);
@@ -31,14 +31,14 @@ bool HTNWorldStateParser::Parse(HTNWorldStateParserContext& ioWorldStateParserCo
     return true;
 }
 
-bool HTNWorldStateParser::ParseFact(HTNWorldState& outWorldState, HTNWorldStateParserContext& ioWorldStateParserContext) const
+bool HTNWorldStateParser::ParseFact(HTNWorldStateParserContext& ioWorldStateParserContext, HTNWorldState& outWorldState) const
 {
     OPTICK_EVENT("ParseFact");
 
     const uint32 StartPosition = ioWorldStateParserContext.GetPosition();
 
     HTNAtom Identifier;
-    if (!ParseIdentifier(Identifier, ioWorldStateParserContext))
+    if (!ParseIdentifier(ioWorldStateParserContext, Identifier))
     {
         ioWorldStateParserContext.SetPosition(StartPosition);
         return false;
@@ -46,7 +46,7 @@ bool HTNWorldStateParser::ParseFact(HTNWorldState& outWorldState, HTNWorldStateP
 
     std::vector<HTNAtom> Arguments;
     HTNAtom              Argument;
-    while (ParseArgument(Argument, ioWorldStateParserContext))
+    while (ParseArgument(ioWorldStateParserContext, Argument))
     {
         Arguments.emplace_back(Argument);
     }
@@ -56,7 +56,7 @@ bool HTNWorldStateParser::ParseFact(HTNWorldState& outWorldState, HTNWorldStateP
     return true;
 }
 
-bool HTNWorldStateParser::ParseIdentifier(HTNAtom& outIdentifier, HTNWorldStateParserContext& ioWorldStateParserContext) const
+bool HTNWorldStateParser::ParseIdentifier(HTNWorldStateParserContext& ioWorldStateParserContext, HTNAtom& outIdentifier) const
 {
     OPTICK_EVENT("ParseIdentifier");
 
@@ -74,7 +74,7 @@ bool HTNWorldStateParser::ParseIdentifier(HTNAtom& outIdentifier, HTNWorldStateP
     return true;
 }
 
-bool HTNWorldStateParser::ParseArgument(HTNAtom& outArgument, HTNWorldStateParserContext& ioWorldStateParserContext) const
+bool HTNWorldStateParser::ParseArgument(HTNWorldStateParserContext& ioWorldStateParserContext, HTNAtom& outArgument) const
 {
     OPTICK_EVENT("ParseArgument");
 
@@ -85,7 +85,7 @@ bool HTNWorldStateParser::ParseArgument(HTNAtom& outArgument, HTNWorldStateParse
     if (ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioWorldStateParserContext))
     {
         HTNAtom ArgumentElement;
-        while (ParseArgument(ArgumentElement, ioWorldStateParserContext))
+        while (ParseArgument(ioWorldStateParserContext, ArgumentElement))
         {
             Argument.AddListElement(ArgumentElement);
         }

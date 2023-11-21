@@ -1,7 +1,7 @@
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "HTNFrameworkMinimal.h"
+#include "HTNPathHelpers.h"
 #include "Helpers/HTNFileHelpers.h"
-#include "HTNFileHelpers.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
 #include "Planner/HTNPlanningUnit.h"
@@ -55,7 +55,7 @@ void HTNDecompositionTest::TearDownTestCase()
 {
     OPTICK_STOP_CAPTURE();
     const std::string CaptureFileRelativePath = std::format("{}{}", CapturesDirectoryName, CaptureFileName);
-    const std::string CaptureFileAbsolutePath = HTNFileHelpers::MakeAbsolutePath(CaptureFileRelativePath).string();
+    const std::string CaptureFileAbsolutePath = HTNPathHelpers::MakeAbsolutePath(CaptureFileRelativePath).string();
     OPTICK_SAVE_CAPTURE(CaptureFileAbsolutePath.c_str());
 }
 
@@ -64,14 +64,14 @@ void HTNDecompositionTest::SetUp()
     const std::string WorldStateFileName = GetWorldStateFileName();
     const std::string WorldStateFileRelativePath =
         MakeFilePath(HTNFileHelpers::WorldStatesDirectoryName, WorldStateFileName, HTNFileHelpers::WorldStateFileExtension);
-    const std::string WorldStateFileAbsolutePath = HTNFileHelpers::MakeAbsolutePath(WorldStateFileRelativePath).string();
+    const std::string WorldStateFileAbsolutePath = HTNPathHelpers::MakeAbsolutePath(WorldStateFileRelativePath).string();
     const bool        ParseWorldStateFileResult  = mDatabaseHook.ParseWorldStateFile(WorldStateFileAbsolutePath);
     ASSERT_TRUE(ParseWorldStateFileResult);
 
     const std::string DomainFileName = GetDomainFileName();
     const std::string DomainFileRelativePath =
         MakeFilePath(HTNFileHelpers::DomainsDirectoryName, DomainFileName, HTNFileHelpers::DomainFileExtension);
-    const std::string DomainFileAbsolutePath = HTNFileHelpers::MakeAbsolutePath(DomainFileRelativePath).string();
+    const std::string DomainFileAbsolutePath = HTNPathHelpers::MakeAbsolutePath(DomainFileRelativePath).string();
     const bool        ParseDomainFileResult  = mPlannerHook.ParseDomainFile(DomainFileAbsolutePath);
     ASSERT_TRUE(ParseDomainFileResult);
 }
@@ -102,7 +102,7 @@ TEST_P(HTNDecompositionTest, IsDecompositionSuccessful)
 TEST_P(HTNDecompositionTest, AreDecompositionsSuccessful)
 {
     std::vector<HTNPlanningUnit> PlanningUnits;
-    static constexpr size         PlanningUnitsSize = 100;
+    static constexpr size        PlanningUnitsSize = 100;
     PlanningUnits.resize(PlanningUnitsSize, HTNPlanningUnit("", mDatabaseHook, mPlannerHook));
     const std::string EntryPointID = GetEntryPointID();
     std::for_each(std::execution::par, PlanningUnits.begin(), PlanningUnits.end(), [&](HTNPlanningUnit& inPlanningUnit) {

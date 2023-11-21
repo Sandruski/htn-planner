@@ -28,7 +28,8 @@ bool HTNWorldStateLexer::Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext
             break;
         }
         case '/': {
-            const char NextCharacter = ioWorldStateLexerContext.GetCharacter(1);
+            static constexpr uint32 LookAhead     = 1;
+            const char              NextCharacter = ioWorldStateLexerContext.GetCharacter(LookAhead);
             if (NextCharacter == '/')
             {
                 // Comment
@@ -55,9 +56,11 @@ bool HTNWorldStateLexer::Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext
             break;
         }
         case '\n': {
-            // Newline
+// Newline
+#ifdef HTN_DEBUG
             static constexpr bool IsNewLine = true;
-            ioWorldStateLexerContext.AdvancePosition(IsNewLine);
+#endif
+            ioWorldStateLexerContext.AdvancePosition(HTN_DEBUG_ONLY(IsNewLine));
             break;
         }
         default: {

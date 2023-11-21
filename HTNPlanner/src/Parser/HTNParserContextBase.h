@@ -1,7 +1,7 @@
 #pragma once
 
-#include "HTNPlannerMinimal.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
+#include "HTNPlannerMinimal.h"
 
 #include <vector>
 
@@ -18,10 +18,10 @@ public:
     virtual ~HTNParserContextBase() = 0;
 
     const HTNToken* GetToken(const uint32 inPosition) const;
-    size     GetTokensSize() const;
+    size            GetTokensSize() const;
 
-    void         SetPosition(const uint32 inPosition);
-    void IncrementPosition();
+    void   SetPosition(const uint32 inPosition);
+    void   IncrementPosition();
     uint32 GetPosition() const;
 
 private:
@@ -40,17 +40,17 @@ public:
     void               SetLastErrorMessage(const std::string& inLastErrorMessage);
     const std::string& GetLastErrorMessage() const;
     void               SetLastErrorRow(const int32 inLastErrorRow);
-    int32                GetLastErrorRow() const;
+    int32              GetLastErrorRow() const;
     void               SetLastErrorColumn(const int32 inLastErrorColumn);
-    int32                GetLastErrorColumn() const;
+    int32              GetLastErrorColumn() const;
 
 protected:
     //----------------------------------------------------------------------//
     // Internal
     //----------------------------------------------------------------------//
     std::string mLastErrorMessage;
-    int32         mLastErrorRow    = -1;
-    int32         mLastErrorColumn = -1;
+    int32       mLastErrorRow    = -1;
+    int32       mLastErrorColumn = -1;
 #endif
 };
 
