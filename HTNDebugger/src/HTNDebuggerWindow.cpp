@@ -466,7 +466,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
     static constexpr float  DecompositionHeightPercentage = 0.7f;
     const ImVec2           DecompositionChildSize        = ImVec2(AvailableSize.x, DecompositionHeightPercentage * AvailableSize.y);
     const ImGuiChildFlags  DecompositionChildFlags       = ImGuiChildFlags_None;
-    const ImGuiWindowFlags DecompositionWindowFlags      = ImGuiWindowFlags_HorizontalScrollbar;
+    const ImGuiWindowFlags DecompositionWindowFlags       = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_HorizontalScrollbar;
     ImGui::BeginChild("DecompositionChild", DecompositionChildSize, DecompositionChildFlags, DecompositionWindowFlags);
 
     bool ShouldResetDecompositionPrinterState = false;
