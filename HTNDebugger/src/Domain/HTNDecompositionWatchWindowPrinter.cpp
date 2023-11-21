@@ -36,13 +36,12 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
             // Parameter ID
             ImGui::TableNextColumn();
 
-            const HTNAtom&    ParameterID       = *Parameter.FindListElement(0);
-            const std::string ParameterIDString = ParameterID.ToString(ShouldDoubleQuoteString);
-            const HTNAtom&    ParameterIDColor  = *Parameter.FindListElement(1);
+            const std::string ParameterID      = Parameter.FindListElement(0)->ToString(ShouldDoubleQuoteString);
+            const HTNAtom&    ParameterIDColor = *Parameter.FindListElement(1);
             const ImVec4      ParameterIDImGuiColor =
                 ImVec4(ParameterIDColor.FindListElement(0)->GetValue<float>(), ParameterIDColor.FindListElement(1)->GetValue<float>(),
                        ParameterIDColor.FindListElement(2)->GetValue<float>(), ParameterIDColor.FindListElement(3)->GetValue<float>());
-            ImGui::TextColored(ParameterIDImGuiColor, ParameterIDString.c_str());
+            ImGui::TextColored(ParameterIDImGuiColor, ParameterID.c_str());
 
             // Parameter value
             ImGui::TableNextColumn();
@@ -64,13 +63,12 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
             // Argument ID
             ImGui::TableNextColumn();
 
-            const HTNAtom&    ArgumentID       = *Argument.FindListElement(0);
-            const std::string ArgumentIDString = ArgumentID.ToString(ShouldDoubleQuoteString);
-            const HTNAtom&    ArgumentIDColor  = *Argument.FindListElement(1);
+            const std::string ArgumentID      = Argument.FindListElement(0)->ToString(ShouldDoubleQuoteString);
+            const HTNAtom&    ArgumentIDColor = *Argument.FindListElement(1);
             const ImVec4      ArgumentIDImGuiColor =
                 ImVec4(ArgumentIDColor.FindListElement(0)->GetValue<float>(), ArgumentIDColor.FindListElement(1)->GetValue<float>(),
                        ArgumentIDColor.FindListElement(2)->GetValue<float>(), ArgumentIDColor.FindListElement(3)->GetValue<float>());
-            ImGui::TextColored(ArgumentIDImGuiColor, ArgumentIDString.c_str());
+            ImGui::TextColored(ArgumentIDImGuiColor, ArgumentID.c_str());
 
             // Argument value
             ImGui::TableNextColumn();

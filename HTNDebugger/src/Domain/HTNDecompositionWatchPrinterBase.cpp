@@ -29,9 +29,8 @@ HTNDecompositionWatchPrinterBase::~HTNDecompositionWatchPrinterBase() = default;
 HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext) const
 {
     // Constant value
-    const std::shared_ptr<const HTNLiteralExpressionNode>& ValueNode  = inConstantNode.GetValueNode();
-    const HTNAtom                                          ValueValue = *GetNodeValue(*ValueNode, ioContext).FindListElement(0);
-    return ValueValue;
+    const std::shared_ptr<const HTNLiteralExpressionNode>& ValueNode = inConstantNode.GetValueNode();
+    return *GetNodeValue(*ValueNode, ioContext).FindListElement(0);
 }
 
 HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode&         inLiteralExpressionNode,
@@ -40,8 +39,8 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode& 
     const HTNAtom& Literal = inLiteralExpressionNode.GetValue();
 
     // Literal ID
-    const bool         ShouldDoubleQuoteIDString = false;
-    const std::string& LiteralIDString           = Literal.ToString(ShouldDoubleQuoteIDString);
+    const bool              ShouldDoubleQuoteIDString = false;
+    const std::string&      LiteralIDString           = Literal.ToString(ShouldDoubleQuoteIDString);
     static constexpr ImVec4 LiteralIDColor            = HTNImGuiHelpers::kArgumentColor;
 
     // Literal value
@@ -59,9 +58,9 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
 
     // Variable ID
     {
-        const HTNAtom&    VariableID              = inVariableExpressionNode.GetValue();
+        const HTNAtom&        VariableID              = inVariableExpressionNode.GetValue();
         static constexpr bool ShouldDoubleQuoteString = false;
-        const std::string VariableIDString        = std::format("?{}", VariableID.ToString(ShouldDoubleQuoteString));
+        const std::string     VariableIDString        = std::format("?{}", VariableID.ToString(ShouldDoubleQuoteString));
         Result.PushBack(VariableIDString);
         const ImVec4 VariableIDColor = HTNImGuiHelpers::GetVariableColor(VariableIDString);
         Result.PushBack(HTNAtomList({VariableIDColor.x, VariableIDColor.y, VariableIDColor.z, VariableIDColor.w}));
@@ -76,10 +75,10 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
         const std::string&          VariablePath         = VariablesPathHandler.GetPath();
         DecompositionWatchPrinterContext.AddVariablePath(VariablePath);
 
-        const HTNVariables& Variables               = Node.GetNodeSnapshot()->GetVariables();
-        const HTNAtom       VariableValue           = Variables.FindVariable(VariablePath);
+        const HTNVariables&   Variables               = Node.GetNodeSnapshot()->GetVariables();
+        const HTNAtom         VariableValue           = Variables.FindVariable(VariablePath);
         static constexpr bool ShouldDoubleQuoteString = true;
-        const std::string   VariableValueString     = VariableValue.ToString(ShouldDoubleQuoteString);
+        const std::string     VariableValueString     = VariableValue.ToString(ShouldDoubleQuoteString);
         Result.PushBack(VariableValueString);
     }
 
@@ -94,9 +93,9 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode&
 
     // Constant ID
     {
-        const HTNAtom&    ConstantID              = inConstantExpressionNode.GetValue();
+        const HTNAtom&        ConstantID              = inConstantExpressionNode.GetValue();
         static constexpr bool ShouldDoubleQuoteString = false;
-        const std::string ConstantIDString        = std::format("@{}", ConstantID.ToString(ShouldDoubleQuoteString));
+        const std::string     ConstantIDString        = std::format("@{}", ConstantID.ToString(ShouldDoubleQuoteString));
         Result.PushBack(ConstantIDString);
         static constexpr ImVec4 ConstantIDColor = HTNImGuiHelpers::kArgumentColor;
         Result.PushBack(HTNAtomList({ConstantIDColor.x, ConstantIDColor.y, ConstantIDColor.z, ConstantIDColor.w}));
@@ -107,10 +106,9 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode&
         const std::string&                          ConstantID              = inConstantExpressionNode.GetValue().GetValue<std::string>();
         const std::shared_ptr<const HTNDomainNode>& DomainNode              = DecompositionWatchPrinterContext.GetDomainNode();
         std::shared_ptr<const HTNConstantNode>      ConstantNode            = DomainNode->FindConstantNodeByID(ConstantID);
-        const HTNAtom                               ConstantValue           = GetNodeValue(*ConstantNode, ioContext);
-        static constexpr bool                        ShouldDoubleQuoteString = true;
-        const std::string                           ConstantValueString     = ConstantValue.ToString(ShouldDoubleQuoteString);
-        Result.PushBack(ConstantValueString);
+        static constexpr bool                       ShouldDoubleQuoteString = true;
+        const std::string                           ConstantValue = GetNodeValue(*ConstantNode, ioContext).ToString(ShouldDoubleQuoteString);
+        Result.PushBack(ConstantValue);
     }
 
     return Result;
