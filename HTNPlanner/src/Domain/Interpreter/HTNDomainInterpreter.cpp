@@ -480,7 +480,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
             const std::string&                                      Variable         = AxiomNodeParameterNode->GetValue().GetValue<std::string>();
             const bool                                              IsInputParameter = HTNDecompositionHelpers::IsInputParameter(Variable);
             const bool IsInputOutputParameter                                        = HTNDecompositionHelpers::IsInputOutputParameter(Variable);
-            if (!IsInputParameter)
+            if (!IsInputParameter && !IsInputOutputParameter)
             {
 #ifdef HTN_VALIDATE_DOMAIN
                 // Check that the parameter is input, output, or input/output
