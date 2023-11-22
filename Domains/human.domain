@@ -11,7 +11,7 @@
 		)
 	)
 
-    (:axiom (find_edible_item ?inp_item_type ?out_item)
+    (:axiom (find_edible_item ?inp_item_type ?io_item)
 		(and    (item ?out_item)
                 (edible ?out_item)
                 (type ?out_item ?inp_item_type)
@@ -20,10 +20,12 @@
 
      (:method (behave) top_level_method
 
-        (branch_hungry
-            (
+             (branch_test
+            (and    (item ?food)
+                    (#find_edible_item @fruit ?food)
             )
-            (   (eat_food @fruit)
+            (       
+                    (!eat ?food)
             )
         )
     )

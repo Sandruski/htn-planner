@@ -331,6 +331,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
     }
 
 #ifdef HTN_DEBUG_DECOMPOSITION
+    // Detect whether this condition node is a choice point
+    // TODO salvarez Move to a validation step after parsing
     const bool IsChoicePoint = ShouldBindFactArguments;
 #endif
 
@@ -356,7 +358,6 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
             continue;
         }
 
-        // TODO salvarez Detect whether it is a choice point in the domain validator and store the data in the condition node
         if (!ShouldBindFactArguments)
         {
             static constexpr bool Result = true;
@@ -441,14 +442,16 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         return Result;
     }
 
-    // TODO salvarez Check the number of arguments of an axiom condition node is the same as the number of parameters of the axiom node that it calls in the domain validator
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& AxiomConditionNodeArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
     const size                                                           AxiomConditionNodeArgumentNodesSize = AxiomConditionNodeArgumentNodes.size();
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& AxiomNodeParameterNodes             = AxiomNode->GetParameterNodes();
     const size                                                           AxiomNodeParameterNodesSize         = AxiomNodeParameterNodes.size();
+#ifdef HTN_VALIDATE_DOMAIN
+    // Check the number of arguments of an axiom condition node is the same as the number of parameters of the axiom node that it calls
+    // TODO salvarez Move to a validation step after parsing
     if (AxiomConditionNodeArgumentNodesSize != AxiomNodeParameterNodesSize)
     {
-        HTN_LOG_ERROR("Axiom node of {} parameter(s) cannot be called by axiom condition node of {} argument(s)", AxiomNodeParameterNodesSize,
+        HTN_LOG_ERROR("Axiom node of [{}] parameter(s) cannot be called by axiom condition node of [{}] argument(s)", AxiomNodeParameterNodesSize,
                       AxiomConditionNodeArgumentNodesSize);
         static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
@@ -456,9 +459,10 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 #endif
         return Result;
     }
+#endif
 
     std::vector<HTNAtom> AxiomConditionNodeArguments;
-    AxiomConditionNodeArguments.reserve(AxiomConditionNodeArgumentNodes.size());
+    AxiomConditionNodeArguments.reserve(AxiomConditionNodeArgumentNodesSize);
     for (const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomConditionNodeArgumentNode : AxiomConditionNodeArgumentNodes)
     {
         const HTNAtom AxiomConditionNodeArgument = GetNodeValue(*AxiomConditionNodeArgumentNode, ioContext);
@@ -469,11 +473,51 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     {
         const HTNDecompositionVariablesScope AxiomVariablesScope = HTNDecompositionVariablesScope(AxiomNodeID, DecompositionContext);
 
-        // Initialize the input parameters of the axiom node with the arguments of the condition node
+        // Initialize the input parameters of the axiom node with the arguments of the axiom condition node
         for (size i = 0; i < AxiomNodeParameterNodesSize; ++i)
         {
-            const std::shared_ptr<const HTNVariableExpressionNode>& AxiomNodeParameterNode     = AxiomNodeParameterNodes[i];
-            const HTNAtom&                                          AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
+            const std::shared_ptr<const HTNVariableExpressionNode>& AxiomNodeParameterNode = AxiomNodeParameterNodes[i];
+            const std::string&                                      Variable         = AxiomNodeParameterNode->GetValue().GetValue<std::string>();
+            const bool                                              IsInputParameter = HTNDecompositionHelpers::IsInputParameter(Variable);
+            const bool IsInputOutputParameter                                        = HTNDecompositionHelpers::IsInputOutputParameter(Variable);
+            if (!IsInputParameter && !IsInputOutputParameter)
+            {
+#ifdef HTN_VALIDATE_DOMAIN
+                // Check that the parameter is input, output, or input/output
+                const bool IsOutputParameter = HTNDecompositionHelpers::IsOutputParameter(Variable);
+                if (!IsOutputParameter)
+                {
+                    HTN_LOG_ERROR("Axiom node's parameter [{}] is not input, output, or input/output ", Variable);
+                    static constexpr bool Result = false;
+#ifdef HTN_DEBUG_DECOMPOSITION
+                    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+#endif
+                    return Result;
+                }
+#endif
+                continue;
+            }
+
+            const HTNAtom& AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
+#ifdef HTN_VALIDATE_DOMAIN
+            // Check that the argument for the input or input/output parameter is bound
+            // TODO salvarez Move to a validation step after parsing
+            if (!AxiomConditionNodeArgument.IsSet())
+            {
+#ifdef HTN_DEBUG_DECOMPOSITION
+                static constexpr bool    ShouldDoubleQuoteString = false;
+                static const std::string ParameterType           = IsInputParameter ? "input" : "input/output";
+#endif
+                HTN_LOG_ERROR("Axiom node's {} parameter [{}] cannot be initialized with axiom condition node's argument [{}] because it is unbound",
+                              ParameterType, Variable, AxiomConditionNodeArgumentNodes[i]->GetValue().ToString(ShouldDoubleQuoteString));
+                static constexpr bool Result = false;
+#ifdef HTN_DEBUG_DECOMPOSITION
+                RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+#endif
+                return Result;
+            }
+#endif
+
             SetNodeValue(*AxiomNodeParameterNode, AxiomConditionNodeArgument, ioContext);
         }
 
@@ -486,7 +530,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
             return Result;
         }
 
-        AxiomNodeParameters.reserve(AxiomNodeParameterNodes.size());
+        AxiomNodeParameters.reserve(AxiomNodeParameterNodesSize);
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomNodeParameterNode : AxiomNodeParameterNodes)
         {
             const HTNAtom AxiomNodeParameter = GetNodeValue(*AxiomNodeParameterNode, ioContext);
@@ -494,12 +538,43 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         }
     }
 
-    // Initialize the arguments of the condition node with the output parameters of the axiom node
-    for (size i = 0; i < AxiomConditionNodeArgumentNodes.size(); ++i)
+    // Initialize the arguments of the axiom condition node with the output parameters of the axiom node
+    for (size i = 0; i < AxiomConditionNodeArgumentNodesSize; ++i)
     {
+        const std::shared_ptr<const HTNVariableExpressionNode>& AxiomNodeParameterNode = AxiomNodeParameterNodes[i];
+        const std::string&                                      Variable               = AxiomNodeParameterNode->GetValue().GetValue<std::string>();
+        const bool                                              IsOutputParameter      = HTNDecompositionHelpers::IsOutputParameter(Variable);
+        const bool                                              IsInputOutputParameter = HTNDecompositionHelpers::IsInputOutputParameter(Variable);
+        if (!IsOutputParameter && !IsInputOutputParameter)
+        {
+            continue;
+        }
+
         const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomConditionNodeArgumentNode = AxiomConditionNodeArgumentNodes[i];
-        const HTNAtom&                                           AxiomNodeArgument              = AxiomNodeParameters[i];
-        SetNodeValue(*AxiomConditionNodeArgumentNode, AxiomNodeArgument, ioContext);
+
+#ifdef HTN_VALIDATE_DOMAIN
+        // Check that the argument for the output parameter is unbound
+        // TODO salvarez Move to a validation step after parsing
+        const HTNAtom& AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
+        if (AxiomConditionNodeArgument.IsSet())
+        {
+#ifdef HTN_DEBUG_DECOMPOSITION
+            static constexpr bool    ShouldDoubleQuoteString = false;
+            static const std::string ParameterType           = IsOutputParameter ? "output" : "input/output";
+#endif
+            HTN_LOG_ERROR(
+                "Axiom condition node's argument [{}] cannot be initialized with axiom node's {} parameter [{}] because it is already bound",
+                AxiomConditionNodeArgumentNode->GetValue().ToString(ShouldDoubleQuoteString), ParameterType, Variable);
+            static constexpr bool Result = false;
+#ifdef HTN_DEBUG_DECOMPOSITION
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+#endif
+            return Result;
+        }
+#endif
+
+        const HTNAtom& AxiomNodeParameter = AxiomNodeParameters[i];
+        SetNodeValue(*AxiomConditionNodeArgumentNode, AxiomNodeParameter, ioContext);
     }
 
     static constexpr bool Result = true;
@@ -797,14 +872,16 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
         return Result;
     }
 
-    // TODO salvarez Check the number of arguments of a compound task node is the same as the number of parameters of the method node that it calls in the domain validator
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& CompoundTaskNodeArgumentNodes     = inCompoundTaskNode.GetArgumentNodes();
-    const size                                                            CompoundTaskNodeArgumentNodesSize = CompoundTaskNodeArgumentNodes.size();
-    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  MethodNodeParameterNodes          = MethodNode->GetParameterNodes();
-    const size                                                            MethodNodeParameterNodesSize      = MethodNodeParameterNodes.size();
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& CompoundTaskNodeArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
+    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  MethodNodeParameterNodes      = MethodNode->GetParameterNodes();
+    const size                                                            MethodNodeParameterNodesSize  = MethodNodeParameterNodes.size();
+#ifdef HTN_VALIDATE_DOMAIN
+    // Check the number of arguments of a compound task node is the same as the number of parameters of the method node that it calls
+    // TODO salvarez Move to a validation step after parsing
+    const size CompoundTaskNodeArgumentNodesSize = CompoundTaskNodeArgumentNodes.size();
     if (CompoundTaskNodeArgumentNodesSize != MethodNodeParameterNodesSize)
     {
-        HTN_LOG_ERROR("Method node of {} parameter(s) cannot be called by compound task node of {} argument(s)", MethodNodeParameterNodesSize,
+        HTN_LOG_ERROR("Method node of [{}] parameter(s) cannot be called by compound task node of [{}] argument(s)", MethodNodeParameterNodesSize,
                       CompoundTaskNodeArgumentNodesSize);
         static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
@@ -812,6 +889,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
 #endif
         return Result;
     }
+#endif
 
     std::vector<HTNAtom> CompoundTaskNodeArguments;
     CompoundTaskNodeArguments.reserve(CompoundTaskNodeArgumentNodes.size());
@@ -824,10 +902,43 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     const HTNDecompositionVariablesScope MethodVariablesScope = HTNDecompositionVariablesScope(MethodNodeID, DecompositionContext);
 
     // Initialize the input parameters of the method node with the arguments of the compound task node
-    for (size i = 0; i < MethodNodeParameterNodes.size(); ++i)
+    for (size i = 0; i < MethodNodeParameterNodesSize; ++i)
     {
-        const std::shared_ptr<const HTNVariableExpressionNode>& MethodNodeParameterNode  = MethodNodeParameterNodes[i];
-        const HTNAtom&                                          CompoundTaskNodeArgument = CompoundTaskNodeArguments[i];
+        const std::shared_ptr<const HTNVariableExpressionNode>& MethodNodeParameterNode = MethodNodeParameterNodes[i];
+        const std::string&                                      Variable                = MethodNodeParameterNode->GetValue().GetValue<std::string>();
+        if (!HTNDecompositionHelpers::IsInputParameter(Variable))
+        {
+#ifdef HTN_VALIDATE_DOMAIN
+            // Check that the parameter is input
+            HTN_LOG_ERROR("Method node's parameter [{}] is not input", Variable);
+            static constexpr bool Result = false;
+#ifdef HTN_DEBUG_DECOMPOSITION
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+#endif
+            return Result;
+#endif
+            continue;
+        }
+
+        const HTNAtom& CompoundTaskNodeArgument = CompoundTaskNodeArguments[i];
+#ifdef HTN_VALIDATE_DOMAIN
+        // Check that the argument for the input parameter is bound
+        // TODO salvarez Move to a validation step after parsing
+        if (!CompoundTaskNodeArgument.IsSet())
+        {
+#ifdef HTN_DEBUG_DECOMPOSITION
+            static constexpr bool ShouldDoubleQuoteString = false;
+#endif
+            HTN_LOG_ERROR("Method's input parameter [{}] cannot be initialized with compound task node's argument [{}] because it is unbound",
+                          Variable, CompoundTaskNodeArgumentNodes[i]->GetValue().ToString(ShouldDoubleQuoteString));
+            static constexpr bool Result = false;
+#ifdef HTN_DEBUG_DECOMPOSITION
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+#endif
+            return Result;
+        }
+#endif
+
         SetNodeValue(*MethodNodeParameterNode, CompoundTaskNodeArgument, ioContext);
     }
 

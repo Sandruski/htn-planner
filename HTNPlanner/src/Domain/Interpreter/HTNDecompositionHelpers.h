@@ -13,6 +13,9 @@ namespace HTNDecompositionHelpers
 {
 std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const std::string& inEntryPointID);
 
+bool IsInputParameter(const std::string& inVariableID);
+bool IsOutputParameter(const std::string& inVariableID);
+bool IsInputOutputParameter(const std::string& inVariableID);
 bool IsParameter(const std::string& inVariableID);
 bool IsAnyArgument(const std::string& inVariableID);
 

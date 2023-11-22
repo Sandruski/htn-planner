@@ -10,6 +10,9 @@
 class HTNAtom;
 class HTNAtomNode;
 
+/*
+ * Singly linked list of atoms
+ */
 class HTNAtomList
 {
 public:

@@ -15,10 +15,24 @@ std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const st
                                                  IsTopLevel);
 }
 
+bool IsInputParameter(const std::string& inVariableID)
+{
+    return (inVariableID.find(kInputParameterPrefix) != std::string::npos);
+}
+
+bool IsOutputParameter(const std::string& inVariableID)
+{
+    return (inVariableID.find(kOutputParameterPrefix) != std::string::npos);
+}
+
+bool IsInputOutputParameter(const std::string& inVariableID)
+{
+    return (inVariableID.find(kInputOutputParameterPrefix) != std::string::npos);
+}
+
 bool IsParameter(const std::string& inVariableID)
 {
-    return (inVariableID.find(kInputParameterPrefix) != std::string::npos) || (inVariableID.find(kOutputParameterPrefix) != std::string::npos) ||
-           (inVariableID.find(kInputOutputParameterPrefix) != std::string::npos);
+    return (IsInputParameter(inVariableID) || IsOutputParameter(inVariableID) || IsInputOutputParameter(inVariableID));
 }
 
 bool IsAnyArgument(const std::string& inVariableID)
