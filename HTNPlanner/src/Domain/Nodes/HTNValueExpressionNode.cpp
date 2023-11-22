@@ -8,12 +8,6 @@ HTNValueExpressionNodeBase::HTNValueExpressionNodeBase(const HTNAtom& inValue) :
 {
 }
 
-std::string HTNValueExpressionNodeBase::ToString() const
-{
-    static constexpr bool ShouldDoubleQuoteString = false;
-    return mValue.ToString(ShouldDoubleQuoteString);
-}
-
 HTNIdentifierExpressionNode::HTNIdentifierExpressionNode(const HTNAtom& inValue) : HTNValueExpressionNodeBase(inValue)
 {
 }

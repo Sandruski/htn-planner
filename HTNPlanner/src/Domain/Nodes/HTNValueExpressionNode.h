@@ -19,7 +19,6 @@ public:
     std::string GetID() const final;
 
     const HTNAtom& GetValue() const;
-    std::string    ToString() const;
 
 protected:
     // Value

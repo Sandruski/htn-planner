@@ -339,20 +339,18 @@ HTNAtom HTNDomainPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode,
 HTNAtom HTNDomainPrinter::Visit(const HTNIdentifierExpressionNode&      inIdentifierExpressionNode,
                                 MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
-    const HTNAtom&    Value                   = inIdentifierExpressionNode.GetValue();
     static constexpr bool ShouldDoubleQuoteString = false;
-    const std::string ValueString             = Value.ToString(ShouldDoubleQuoteString);
-    ImGui::Text(ValueString.c_str());
+    const std::string     IdentifierString        = inIdentifierExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
+    ImGui::Text(IdentifierString.c_str());
 
     return true;
 }
 
 HTNAtom HTNDomainPrinter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
-    const HTNAtom&    Value                   = inLiteralExpressionNode.GetValue();
     static constexpr bool ShouldDoubleQuoteString = true;
-    const std::string ValueString             = Value.ToString(ShouldDoubleQuoteString);
-    ImGui::Text(ValueString.c_str());
+    const std::string     LiteralString           = inLiteralExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
+    ImGui::Text(LiteralString.c_str());
 
     return true;
 }
@@ -362,7 +360,9 @@ HTNAtom HTNDomainPrinter::Visit(const HTNVariableExpressionNode& inVariableExpre
     PrintKeyword("?");
 
     ImGui::SameLine(0.f, 0.f);
-    ImGui::Text(inVariableExpressionNode.ToString().c_str());
+    static constexpr bool ShouldDoubleQuoteString = false;
+    const std::string     VariableString          = inVariableExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
+    ImGui::Text(VariableString.c_str());
 
     return true;
 }
@@ -372,7 +372,9 @@ HTNAtom HTNDomainPrinter::Visit(const HTNConstantExpressionNode& inConstantExpre
     PrintKeyword("@");
 
     ImGui::SameLine(0.f, 0.f);
-    ImGui::Text(inConstantExpressionNode.ToString().c_str());
+    static constexpr bool ShouldDoubleQuoteString = false;
+    const std::string     ConstantString          = inConstantExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
+    ImGui::Text(ConstantString.c_str());
 
     return true;
 }

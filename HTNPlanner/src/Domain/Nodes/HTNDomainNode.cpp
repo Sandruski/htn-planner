@@ -24,7 +24,8 @@ HTNAtom HTNDomainNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVi
 
 std::string HTNDomainNode::GetID() const
 {
-    return mIDNode->ToString();
+    static constexpr bool ShoudDoubleQuoteString = false;
+    return mIDNode->GetValue().ToString(ShoudDoubleQuoteString);
 }
 
 std::shared_ptr<const HTNConstantNode> HTNDomainNode::FindConstantNodeByID(const std::string& inConstantNodeID) const
