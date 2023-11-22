@@ -117,8 +117,10 @@ project "HTNDemo"
 
     includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNPlanner/src", "HTNDebugger/src", "ThirdParty/Optick/src", "ThirdParty/SDL2/include", "ThirdParty/imgui", "ThirdParty/imgui/backends" }
 
-	libdirs { "ThirdParty/SDL2/lib/x64" }
+	libdirs { "ThirdParty/SDL2/lib/%{cfg.architecture}" }
     links { "HTNFramework", "HTNPlanner", "HTNDebugger", "SDL2", "SDL2main" }
+
+    postbuildcommands { "{COPYFILE} ../ThirdParty/SDL2/lib/%{cfg.architecture}/SDL2.dll %{cfg.targetdir}" }
 
 -- HTNTest
     project "HTNTest"
