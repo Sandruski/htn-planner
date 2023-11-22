@@ -687,8 +687,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNVariableExpressionNode&        i
 {
     static constexpr bool ShouldDoubleQuoteString = false;
     const std::string     VariableString          = std::format("?{}", inVariableExpressionNode.GetValue().ToString(ShouldDoubleQuoteString));
-    const std::string&    Variable                = inVariableExpressionNode.GetValue().GetValue<std::string>();
-    const ImVec4          VariableColor           = HTNImGuiHelpers::GetVariableColor(Variable);
+    const std::string&    VariableID                = inVariableExpressionNode.GetValue().GetValue<std::string>();
+    const ImVec4          VariableColor           = HTNImGuiHelpers::GetVariableColor(VariableID);
     return HTNAtomList({VariableString, HTNAtomList({VariableColor.x, VariableColor.y, VariableColor.z, VariableColor.w})});
 }
 
