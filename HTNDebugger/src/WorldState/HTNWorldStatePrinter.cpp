@@ -30,7 +30,7 @@ bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinte
     const ImGuiTextFilter& TextFilter = ioWorldStatePrinterContext.GetTextFilter();
 
     const std::unordered_map<std::string, HTNFactArgumentsTables>& Facts = WorldState.GetFacts();
-    for (const std::pair<std::string, HTNFactArgumentsTables>& Fact : Facts)
+    for (const std::pair<const std::string, HTNFactArgumentsTables>& Fact : Facts)
     {
         const std::string&            FactID              = Fact.first;
         const HTNFactArgumentsTables& FactArgumentsTables = Fact.second;

@@ -81,7 +81,7 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
         // Print remaining variables
         const std::vector<std::string>&                 NodeVariablePaths = ioDecompositionWatchWindowPrinterContext.GetNodeVariablePaths();
         const std::unordered_map<std::string, HTNAtom>& Variables         = NodeSnapshot->GetVariables().GetVariables();
-        for (const std::pair<std::string, HTNAtom>& VariablePair : Variables)
+        for (const std::pair<const std::string, HTNAtom>& VariablePair : Variables)
         {
             const std::string& VariablePath = VariablePair.first;
             const auto         It           = std::find(NodeVariablePaths.begin(), NodeVariablePaths.end(), VariablePath);
