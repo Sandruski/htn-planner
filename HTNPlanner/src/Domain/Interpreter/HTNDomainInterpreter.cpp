@@ -480,14 +480,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
             const std::string&                                      Variable         = AxiomNodeParameterNode->GetValue().GetValue<std::string>();
             const bool                                              IsInputParameter = HTNDecompositionHelpers::IsInputParameter(Variable);
             const bool IsInputOutputParameter                                        = HTNDecompositionHelpers::IsInputOutputParameter(Variable);
-            if (!IsInputParameter && !IsInputOutputParameter)
+            if (!IsInputParameter)
             {
 #ifdef HTN_VALIDATE_DOMAIN
                 // Check that the parameter is input, output, or input/output
                 const bool IsOutputParameter = HTNDecompositionHelpers::IsOutputParameter(Variable);
                 if (!IsOutputParameter)
                 {
-                    HTN_LOG_ERROR("Axiom node's parameter [{}] is not input, output, or input/output ", Variable);
+                    HTN_LOG_ERROR("Axiom node's parameter [{}] is not input, output, or input/output", Variable);
                     static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
                     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
@@ -500,21 +500,25 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 
             const HTNAtom& AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
 #ifdef HTN_VALIDATE_DOMAIN
-            // Check that the argument for the input or input/output parameter is bound
+            // Check that the argument for the input parameter is bound
             // TODO salvarez Move to a validation step after parsing
-            if (!AxiomConditionNodeArgument.IsSet())
+            if (IsInputParameter)
             {
+                if (!AxiomConditionNodeArgument.IsSet())
+                {
 #ifdef HTN_DEBUG_DECOMPOSITION
-                static constexpr bool    ShouldDoubleQuoteString = false;
-                static const std::string ParameterType           = IsInputParameter ? "input" : "input/output";
+                    static constexpr bool    ShouldDoubleQuoteString = false;
+                    static const std::string ParameterType           = IsInputParameter ? "input" : "input/output";
 #endif
-                HTN_LOG_ERROR("Axiom node's {} parameter [{}] cannot be initialized with axiom condition node's argument [{}] because it is unbound",
-                              ParameterType, Variable, AxiomConditionNodeArgumentNodes[i]->GetValue().ToString(ShouldDoubleQuoteString));
-                static constexpr bool Result = false;
+                    HTN_LOG_ERROR(
+                        "Axiom node's {} parameter [{}] cannot be initialized with axiom condition node's argument [{}] because it is unbound",
+                        ParameterType, Variable, AxiomConditionNodeArgumentNodes[i]->GetValue().ToString(ShouldDoubleQuoteString));
+                    static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-                RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+                    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
-                return Result;
+                    return Result;
+                }
             }
 #endif
 
@@ -555,21 +559,24 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 #ifdef HTN_VALIDATE_DOMAIN
         // Check that the argument for the output parameter is unbound
         // TODO salvarez Move to a validation step after parsing
-        const HTNAtom& AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
-        if (AxiomConditionNodeArgument.IsSet())
+        if (IsOutputParameter)
         {
+            const HTNAtom& AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
+            if (AxiomConditionNodeArgument.IsSet())
+            {
 #ifdef HTN_DEBUG_DECOMPOSITION
-            static constexpr bool    ShouldDoubleQuoteString = false;
-            static const std::string ParameterType           = IsOutputParameter ? "output" : "input/output";
+                static constexpr bool    ShouldDoubleQuoteString = false;
+                static const std::string ParameterType           = IsOutputParameter ? "output" : "input/output";
 #endif
-            HTN_LOG_ERROR(
-                "Axiom condition node's argument [{}] cannot be initialized with axiom node's {} parameter [{}] because it is already bound",
-                AxiomConditionNodeArgumentNode->GetValue().ToString(ShouldDoubleQuoteString), ParameterType, Variable);
-            static constexpr bool Result = false;
+                HTN_LOG_ERROR(
+                    "Axiom condition node's argument [{}] cannot be initialized with axiom node's {} parameter [{}] because it is already bound",
+                    AxiomConditionNodeArgumentNode->GetValue().ToString(ShouldDoubleQuoteString), ParameterType, Variable);
+                static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+                RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
-            return Result;
+                return Result;
+            }
         }
 #endif
 
