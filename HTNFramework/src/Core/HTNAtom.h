@@ -18,7 +18,6 @@ public:
     HTNAtom(const float inValue);
     HTNAtom(const std::string& inValue);
     HTNAtom(const HTNAtomList& inValue);
-    ~HTNAtom();
 
     bool operator==(const HTNAtom& inOther) const;
 

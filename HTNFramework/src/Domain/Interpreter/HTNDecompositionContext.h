@@ -12,11 +12,18 @@
 #include <vector>
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
+#include "Domain/Interpreter/HTNDecompositionResult.h"
 #endif
 
+class HTNDecompositionRecord;
 class HTNDomainNode;
 class HTNWorldState;
+
+#ifdef HTN_DEBUG_DECOMPOSITION
+enum class HTNNodeStep : uint8;
+#endif
+
+using HTNDecompositionRecordHistory = std::vector<HTNDecompositionRecord>;
 
 class HTNDecompositionContext final : public HTNNodeVisitorContextBase
 {
@@ -35,8 +42,8 @@ public:
     const HTNDecompositionRecord& GetCurrentDecomposition() const;
     HTNDecompositionRecord&       GetCurrentDecompositionMutable();
 
-    void                                       SetDecompositionHistory(const std::vector<HTNDecompositionRecord>& inDecompositionHistory);
-    const std::vector<HTNDecompositionRecord>& GetDecompositionHistory() const;
+    void                                 SetDecompositionRecordHistory(const HTNDecompositionRecordHistory& inDecompositionRecordHistory);
+    const HTNDecompositionRecordHistory& GetDecompositionRecordHistory() const;
 
     void                  SetCurrentNodePathHandler(const HTNPathHandler& inCurrentNodePathHandler);
     const HTNPathHandler& GetCurrentNodePathHandler() const;
@@ -64,7 +71,7 @@ private:
     // Internal
     //----------------------------------------------------------------------//
     // Record of previous decompositions
-    std::vector<HTNDecompositionRecord> mDecompositionHistory;
+    HTNDecompositionRecordHistory mDecompositionRecordHistory;
 
     // Path from the root node to the current node being processed
     HTNPathHandler mCurrentNodePathHandler;
@@ -74,16 +81,16 @@ private:
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 public:
-    void RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
-    void RecordNodeSnapshot(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
+    void RecordNodeResult(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
+    void RecordNodeResult(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
 
-    const HTNDecompositionSnapshotDebug& GetDecompositionSnapshot() const;
+    const HTNDecompositionResult& GetDecompositionResult() const;
 
 private:
     //----------------------------------------------------------------------//
     // Output
     //----------------------------------------------------------------------//
-    HTNDecompositionSnapshotDebug mDecompositionSnapshot;
+    HTNDecompositionResult mDecompositionResult;
 #endif
 };
 
@@ -104,7 +111,7 @@ inline const std::string& HTNDecompositionContext::GetEntryPointID() const
 
 inline void HTNDecompositionContext::RecordDecomposition(const HTNDecompositionRecord& inDecomposition)
 {
-    mDecompositionHistory.emplace_back(inDecomposition);
+    mDecompositionRecordHistory.emplace_back(inDecomposition);
 }
 
 inline const HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecomposition() const
@@ -117,14 +124,14 @@ inline HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecompositionM
     return mCurrentDecomposition;
 }
 
-inline void HTNDecompositionContext::SetDecompositionHistory(const std::vector<HTNDecompositionRecord>& inDecompositionHistory)
+inline void HTNDecompositionContext::SetDecompositionRecordHistory(const HTNDecompositionRecordHistory& inDecompositionHistory)
 {
-    mDecompositionHistory = inDecompositionHistory;
+    mDecompositionRecordHistory = inDecompositionHistory;
 }
 
-inline const std::vector<HTNDecompositionRecord>& HTNDecompositionContext::GetDecompositionHistory() const
+inline const HTNDecompositionRecordHistory& HTNDecompositionContext::GetDecompositionRecordHistory() const
 {
-    return mDecompositionHistory;
+    return mDecompositionRecordHistory;
 }
 
 inline void HTNDecompositionContext::SetCurrentNodePathHandler(const HTNPathHandler& inNodePathHandler)
@@ -158,8 +165,8 @@ inline HTNPathHandler& HTNDecompositionContext::GetCurrentVariablesPathHandlerMu
 }
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-inline const HTNDecompositionSnapshotDebug& HTNDecompositionContext::GetDecompositionSnapshot() const
+inline const HTNDecompositionResult& HTNDecompositionContext::GetDecompositionResult() const
 {
-    return mDecompositionSnapshot;
+    return mDecompositionResult;
 }
 #endif

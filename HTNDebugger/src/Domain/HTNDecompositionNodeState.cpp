@@ -3,8 +3,7 @@
 #include "Domain/HTNDecompositionNodeState.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/HTNDecompositionHelpers.h"
-#include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
+#include "Domain/Interpreter/HTNNodeStep.h"
 
 HTNDecompositionNodeStateBase::HTNDecompositionNodeStateBase(const int32 inDecompositionStep) : mDecompositionStep(inDecompositionStep)
 {

@@ -6,14 +6,15 @@
 #include "Domain/HTNDecompositionHelpers.h"
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionNodeState.h"
-#include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
+#include "Domain/Interpreter/HTNDecompositionResult.h"
+#include "Domain/Interpreter/HTNNodeStep.h"
 
 HTNDecompositionPrinterContext::HTNDecompositionPrinterContext(
-    const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-    const HTNDecompositionSnapshotDebug& inDecompositionSnapshot, const HTNDecompositionTooltipMode inTooltipMode,
+    const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID, const HTNDecompositionResult& inDecompositionResult,
+    const HTNDecompositionTooltipMode inTooltipMode,
     const bool inShouldIgnoreImGuiState, std::unordered_map<std::string, HTNDecompositionNodeState>& ioNodeStates,
     std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates, HTNDecompositionNode& ioSelectedNode)
-    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot), mTooltipMode(inTooltipMode),
+    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionResult(inDecompositionResult), mTooltipMode(inTooltipMode),
       mShouldIgnoreImGuiState(inShouldIgnoreImGuiState), mNodeStates(ioNodeStates), mChoicePointNodeStates(ioChoicePointNodeStates),
       mSelectedNode(ioSelectedNode)
 {

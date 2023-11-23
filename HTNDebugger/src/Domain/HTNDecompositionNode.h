@@ -3,13 +3,13 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNCoreMinimal.h"
 #include "Core/HTNPathHandler.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 #include <vector>
 
-class HTNNodeSnapshotDebug;
+class HTNNodeResult;
 class HTNValueExpressionNodeBase;
 class HTNVariableExpressionNode;
 
@@ -17,15 +17,15 @@ class HTNDecompositionNode
 {
 public:
     HTNDecompositionNode() = default;
-    explicit HTNDecompositionNode(const HTNNodeSnapshotDebug& inNodeSnapshot, const std::string& inNodeLabel);
-    explicit HTNDecompositionNode(const HTNNodeSnapshotDebug&                                          inNodeSnapshot,
+    explicit HTNDecompositionNode(const HTNNodeResult& inNodeResult, const std::string& inNodeLabel);
+    explicit HTNDecompositionNode(const HTNNodeResult&                                                 inNodeResult,
                                   const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters,
                                   const HTNPathHandler& inVariablesPathHandler, const std::string& inNodeLabel);
-    explicit HTNDecompositionNode(const HTNNodeSnapshotDebug&                                           inNodeSnapshot,
+    explicit HTNDecompositionNode(const HTNNodeResult&                                                  inNodeResult,
                                   const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
                                   const HTNPathHandler& inVariablesPathHandler, const std::string& inNodeLabel);
 
-    const HTNNodeSnapshotDebug*                                           GetNodeSnapshot() const;
+    const HTNNodeResult*                                                  GetNodeResult() const;
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  GetNodeParameters() const;
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetNodeArguments() const;
     const HTNPathHandler&                                                 GetVariablesPathHandler() const;
@@ -33,16 +33,16 @@ public:
     const std::string&                                                    GetNodeLabel() const;
 
 private:
-    const HTNNodeSnapshotDebug*                                    mNodeSnapshot = nullptr;
+    const HTNNodeResult*                                           mNodeResult = nullptr;
     std::vector<std::shared_ptr<const HTNVariableExpressionNode>>  mNodeParameters;
     std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> mNodeArguments;
     HTNPathHandler                                                 mVariablesPathHandler;
     std::string                                                    mNodeLabel;
 };
 
-inline const HTNNodeSnapshotDebug* HTNDecompositionNode::GetNodeSnapshot() const
+inline const HTNNodeResult* HTNDecompositionNode::GetNodeResult() const
 {
-    return mNodeSnapshot;
+    return mNodeResult;
 }
 
 inline const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& HTNDecompositionNode::GetNodeParameters() const

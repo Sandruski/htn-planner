@@ -6,7 +6,8 @@
 #include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/HTNDomainHelpers.h"
-#include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
+#include "Domain/Interpreter/HTNNodeResult.h"
+#include "Domain/Interpreter/HTNNodeStep.h"
 
 #include "imgui_internal.h"
 
@@ -31,7 +32,7 @@ void SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen)
     return ImGui::TreeNodeSetOpen(ID, inIsOpen);
 }
 
-ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeStep inNodeStep)
+ImVec4 GetNodeColor(const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep)
 {
     switch (inNodeStep)
     {
@@ -39,7 +40,7 @@ ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeSte
         return kNoResultColor;
     }
     case HTNNodeStep::END: {
-        const bool Result = inNodeSnapshot.GetResult();
+        const bool Result = inNodeResult.GetResult();
         return GetResultColor(Result);
     }
     default: {

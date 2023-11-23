@@ -26,10 +26,6 @@ HTNAtom::HTNAtom(const HTNAtomList& inValue) : mData(inValue)
 {
 }
 
-HTNAtom::~HTNAtom()
-{
-}
-
 void HTNAtom::AddListElement(const HTNAtom& inElement)
 {
     if (!IsBound())

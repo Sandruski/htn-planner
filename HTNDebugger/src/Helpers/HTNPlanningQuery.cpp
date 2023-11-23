@@ -9,8 +9,8 @@ HTNPlanningQuery::HTNPlanningQuery(HTNPlanningUnit& ioPlanningUnit) : mPlanningU
 {
 }
 
-bool HTNPlanningQuery::IsLastDecompositionSuccessful() const
+bool HTNPlanningQuery::IsLastDecompositionOperationSuccessful() const
 {
-    return HTNOperationResultHelpers::IsOperationSuccessful(mLastDecompositionResult);
+    return HTNOperationResultHelpers::IsOperationSuccessful(mLastDecompositionOperationResult);
 }
 #endif

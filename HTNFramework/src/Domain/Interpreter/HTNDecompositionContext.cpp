@@ -2,6 +2,10 @@
 
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 
+#ifdef HTN_DEBUG_DECOMPOSITION
+#include "Domain/Interpreter/HTNNodeResult.h"
+#endif
+
 HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldState, const std::shared_ptr<const HTNDomainNode>& inDomainNode,
                                                  const std::string& inEntryPointID)
     : mWorldState(inWorldState), mDomainNode(inDomainNode), mEntryPointID(inEntryPointID)
@@ -10,36 +14,36 @@ HTNDecompositionContext::HTNDecompositionContext(const HTNWorldState& inWorldSta
 
 bool HTNDecompositionContext::RestoreDecomposition()
 {
-    if (mDecompositionHistory.empty())
+    if (mDecompositionRecordHistory.empty())
     {
         return false;
     }
 
-    mCurrentDecomposition = mDecompositionHistory.back();
-    mDecompositionHistory.pop_back();
+    mCurrentDecomposition = mDecompositionRecordHistory.back();
+    mDecompositionRecordHistory.pop_back();
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    mDecompositionSnapshot.IncrementDecompositionStep();
+    mDecompositionResult.IncrementDecompositionStep();
 #endif
 
     return true;
 }
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-void HTNDecompositionContext::RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep,
-                                                 const bool inIsChoicePoint)
+void HTNDecompositionContext::RecordNodeResult(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep,
+                                               const bool inIsChoicePoint)
 {
-    const HTNEnvironment&      Environment  = mCurrentDecomposition.GetEnvironment();
-    const HTNVariables&        Variables    = Environment.GetVariables();
-    const HTNNodeSnapshotDebug NodeSnapshot = HTNNodeSnapshotDebug(Variables, inResult);
-    mDecompositionSnapshot.AddNodeSnapshot(inNodePath, NodeSnapshot, inNodeStep, inIsChoicePoint);
+    const HTNEnvironment& Environment = mCurrentDecomposition.GetEnvironment();
+    const HTNVariables&   Variables   = Environment.GetVariables();
+    const HTNNodeResult   NodeResult  = HTNNodeResult(Variables, inResult);
+    mDecompositionResult.AddNodeResult(inNodePath, NodeResult, inNodeStep, inIsChoicePoint);
 }
 
-void HTNDecompositionContext::RecordNodeSnapshot(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint)
+void HTNDecompositionContext::RecordNodeResult(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint)
 {
-    const HTNEnvironment&      Environment  = mCurrentDecomposition.GetEnvironment();
-    const HTNVariables&        Variables    = Environment.GetVariables();
-    const HTNNodeSnapshotDebug NodeSnapshot = HTNNodeSnapshotDebug(Variables);
-    mDecompositionSnapshot.AddNodeSnapshot(inNodePath, NodeSnapshot, inNodeStep, inIsChoicePoint);
+    const HTNEnvironment& Environment = mCurrentDecomposition.GetEnvironment();
+    const HTNVariables&   Variables   = Environment.GetVariables();
+    const HTNNodeResult   NodeResult  = HTNNodeResult(Variables);
+    mDecompositionResult.AddNodeResult(inNodePath, NodeResult, inNodeStep, inIsChoicePoint);
 }
 #endif

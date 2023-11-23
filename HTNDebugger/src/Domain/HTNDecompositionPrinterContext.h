@@ -3,10 +3,10 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
+#include "Core/HTNPathHandler.h"
 #include "Domain/HTNDecompositionTooltipMode.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "HTNCoreMinimal.h"
-#include "Core/HTNPathHandler.h"
 
 #include <limits>
 #include <memory>
@@ -16,7 +16,7 @@
 class HTNDecompositionChoicePointNodeState;
 class HTNDecompositionNode;
 class HTNDecompositionNodeState;
-class HTNDecompositionSnapshotDebug;
+class HTNDecompositionResult;
 class HTNDomainNode;
 enum class HTNNodeStep : uint8;
 
@@ -24,15 +24,15 @@ class HTNDecompositionPrinterContext final : public HTNNodeVisitorContextBase
 {
 public:
     explicit HTNDecompositionPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                                            const HTNDecompositionSnapshotDebug& inDecompositionSnapshot,
-                                            const HTNDecompositionTooltipMode inTooltipMode, const bool inShouldIgnoreImGuiState,
+                                            const HTNDecompositionResult& inDecompositionResult, const HTNDecompositionTooltipMode inTooltipMode,
+                                            const bool                                                             inShouldIgnoreImGuiState,
                                             std::unordered_map<std::string, HTNDecompositionNodeState>&            ioNodeStates,
                                             std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates,
                                             HTNDecompositionNode&                                                  ioSelectedNode);
 
     const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
     const std::string&                          GetEntryPointID() const;
-    const HTNDecompositionSnapshotDebug&        GetDecompositionSnapshot() const;
+    const HTNDecompositionResult&               GetDecompositionResult() const;
     HTNDecompositionTooltipMode                 GetTooltipMode() const;
     bool                                        ShouldIgnoreImGuiState() const;
 
@@ -80,7 +80,7 @@ private:
     //----------------------------------------------------------------------//
     const std::shared_ptr<const HTNDomainNode>& mDomainNode;
     const std::string&                          mEntryPointID;
-    const HTNDecompositionSnapshotDebug&        mDecompositionSnapshot;
+    const HTNDecompositionResult&               mDecompositionResult;
     const HTNDecompositionTooltipMode           mTooltipMode            = HTNDecompositionTooltipMode::NONE;
     const bool                                  mShouldIgnoreImGuiState = false;
 
@@ -135,9 +135,9 @@ inline const std::string& HTNDecompositionPrinterContext::GetEntryPointID() cons
     return mEntryPointID;
 }
 
-inline const HTNDecompositionSnapshotDebug& HTNDecompositionPrinterContext::GetDecompositionSnapshot() const
+inline const HTNDecompositionResult& HTNDecompositionPrinterContext::GetDecompositionResult() const
 {
-    return mDecompositionSnapshot;
+    return mDecompositionResult;
 }
 
 inline HTNDecompositionTooltipMode HTNDecompositionPrinterContext::GetTooltipMode() const

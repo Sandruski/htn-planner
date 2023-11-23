@@ -45,8 +45,8 @@ private:
 
     void ResetDecompositionPrinterState();
 
-    bool IsLastWorldStateFileParsingSuccessful() const;
-    bool IsLastDomainFileParsingSuccessful() const;
+    bool IsLastWorldStateFileParsingOperationSuccessful() const;
+    bool IsLastDomainFileParsingOperationSuccessful() const;
 
     HTNDatabaseHook& mDatabaseHook;
     HTNPlannerHook&  mPlannerHook;
@@ -62,13 +62,13 @@ private:
     // WorldState Printer
     //----------------------------------------------------------------------//
     std::filesystem::path mSelectedWorldStateFilePath;
-    HTNOperationResult    mLastParseWorldStateFileResult = HTNOperationResult::NONE;
+    HTNOperationResult    mLastParseWorldStateFileOperationResult = HTNOperationResult::NONE;
 
     //----------------------------------------------------------------------//
     // Domain Printer
     //----------------------------------------------------------------------//
     std::filesystem::path mSelectedDomainFilePath;
-    HTNOperationResult    mLastParseDomainFileResult = HTNOperationResult::NONE;
+    HTNOperationResult    mLastParseDomainFileOperationResult = HTNOperationResult::NONE;
 
     //----------------------------------------------------------------------//
     // Decomposition Printer

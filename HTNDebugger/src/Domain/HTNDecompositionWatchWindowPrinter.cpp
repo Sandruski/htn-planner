@@ -5,7 +5,7 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionWatchWindowPrinterContext.h"
-#include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
+#include "Domain/Interpreter/HTNNodeResult.h"
 #include "Domain/Interpreter/HTNVariables.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Helpers/HTNImGuiHelpers.h"
@@ -33,8 +33,8 @@ enum HTNVariableExpressionNodeColorResult : uint8
 void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinterContext& ioDecompositionWatchWindowPrinterContext) const
 {
     const HTNDecompositionNode& Node         = ioDecompositionWatchWindowPrinterContext.GetNode();
-    const HTNNodeSnapshotDebug* NodeSnapshot = Node.GetNodeSnapshot();
-    if (!NodeSnapshot)
+    const HTNNodeResult* NodeResult = Node.GetNodeResult();
+    if (!NodeResult)
     {
         return;
     }
@@ -96,7 +96,7 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
 
         // Print remaining variables
         const std::vector<std::string>&                 NodeVariablePaths = ioDecompositionWatchWindowPrinterContext.GetNodeVariablePaths();
-        const std::unordered_map<std::string, HTNAtom>& Variables         = NodeSnapshot->GetVariables().GetVariables();
+        const std::unordered_map<std::string, HTNAtom>& Variables         = NodeResult->GetVariables().GetVariables();
         for (const std::pair<const std::string, HTNAtom>& VariablePair : Variables)
         {
             const std::string& VariablePath = VariablePair.first;

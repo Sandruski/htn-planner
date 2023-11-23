@@ -25,9 +25,9 @@ public:
     const std::string& GetEntryPointID() const;
     bool               IsEntryPointIDEmpty() const;
 
-    void               SetLastDecompositionResult(const HTNOperationResult inLastDecompositionResult);
-    HTNOperationResult GetLastDecompositionResult() const;
-    bool               IsLastDecompositionSuccessful() const;
+    void               SetLastDecompositionOperationResult(const HTNOperationResult inLastDecompositionOperationResult);
+    HTNOperationResult GetLastDecompositionOperationResult() const;
+    bool               IsLastDecompositionOperationSuccessful() const;
 
     void                                        SetLastDomainNode(const std::shared_ptr<const HTNDomainNode>& inLastDomainNode);
     const std::shared_ptr<const HTNDomainNode>& GetLastDomainNode() const;
@@ -38,7 +38,7 @@ private:
     HTNPlanningUnit& mPlanningUnit;
     std::string      mEntryPointID;
 
-    HTNOperationResult                   mLastDecompositionResult = HTNOperationResult::NONE;
+    HTNOperationResult                   mLastDecompositionOperationResult = HTNOperationResult::NONE;
     std::shared_ptr<const HTNDomainNode> mLastDomainNode;
     std::string                          mLastEntryPointID;
 };
@@ -73,14 +73,14 @@ inline bool HTNPlanningQuery::IsEntryPointIDEmpty() const
     return mEntryPointID.empty();
 }
 
-inline void HTNPlanningQuery::SetLastDecompositionResult(const HTNOperationResult inLastDecompositionResult)
+inline void HTNPlanningQuery::SetLastDecompositionOperationResult(const HTNOperationResult inLastDecompositionOperationResult)
 {
-    mLastDecompositionResult = inLastDecompositionResult;
+    mLastDecompositionOperationResult = inLastDecompositionOperationResult;
 }
 
-inline HTNOperationResult HTNPlanningQuery::GetLastDecompositionResult() const
+inline HTNOperationResult HTNPlanningQuery::GetLastDecompositionOperationResult() const
 {
-    return mLastDecompositionResult;
+    return mLastDecompositionOperationResult;
 }
 
 inline void HTNPlanningQuery::SetLastDomainNode(const std::shared_ptr<const HTNDomainNode>& inLastDomainNode)
