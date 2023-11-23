@@ -3,14 +3,14 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNFrameworkMinimal.h"
+#include "HTNCoreMinimal.h"
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/HTNDecompositionTooltipMode.h"
 #include "Domain/HTNDecompositionWatchWindowPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
-#include "Helpers/HTNDebuggerWindowHelpers.h"
+#include "Helpers/HTNOperationResult.h"
 #include "Helpers/HTNPlanningQuery.h"
 #include "WorldState/HTNWorldStatePrinter.h"
 
@@ -85,14 +85,4 @@ private:
     const HTNDecompositionPrinter            mDecompositionPrinter            = HTNDecompositionPrinter();
     const HTNDecompositionWatchWindowPrinter mDecompositionWatchWindowPrinter = HTNDecompositionWatchWindowPrinter();
 };
-
-inline bool HTNDebuggerWindow::IsLastWorldStateFileParsingSuccessful() const
-{
-    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastParseWorldStateFileResult);
-}
-
-inline bool HTNDebuggerWindow::IsLastDomainFileParsingSuccessful() const
-{
-    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastParseDomainFileResult);
-}
 #endif

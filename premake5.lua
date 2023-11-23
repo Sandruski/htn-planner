@@ -23,18 +23,6 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- HTNFramework
 project "HTNFramework"
     location "HTNFramework"
-    kind "SharedItems"
-    language "C++"
-    cppdialect "C++20"
-
-    files { "%{prj.name}/src/**.cpp",
-            "%{prj.name}/src/**.h" }
-
-    includedirs { "%{prj.name}/src" }
-
--- HTNPlanner
-project "HTNPlanner"
-    location "HTNPlanner"
     kind "StaticLib"
     language "C++"
     cppdialect "C++20"
@@ -53,8 +41,6 @@ project "HTNPlanner"
             "ThirdParty/Optick/src/**.h" }
 
     includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/Optick/src" }
-
-    links { "HTNFramework" }
 
 -- HTNDebugger
 project "HTNDebugger"
@@ -82,9 +68,9 @@ project "HTNDebugger"
 			"ThirdParty/imgui/imgui_tables.cpp", 
 			"ThirdParty/imgui/imgui_widgets.cpp" }
 
-    includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNPlanner/src", "ThirdParty/imgui" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/imgui" }
 
-    links { "HTNFramework", "HTNPlanner" }
+    links { "HTNFramework" }
 
 -- HTNDemo
 project "HTNDemo"
@@ -115,10 +101,10 @@ project "HTNDemo"
             "ThirdParty/Optick/src/**.cpp",
             "ThirdParty/Optick/src/**.h" }
 
-    includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNPlanner/src", "HTNDebugger/src", "ThirdParty/Optick/src", "ThirdParty/SDL2/include", "ThirdParty/imgui", "ThirdParty/imgui/backends" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNDebugger/src", "ThirdParty/Optick/src", "ThirdParty/SDL2/include", "ThirdParty/imgui", "ThirdParty/imgui/backends" }
 
 	libdirs { "ThirdParty/SDL2/lib/%{cfg.architecture}" }
-    links { "HTNFramework", "HTNPlanner", "HTNDebugger", "SDL2", "SDL2main" }
+    links { "HTNFramework", "HTNDebugger", "SDL2", "SDL2main" }
 
     postbuildcommands { "{COPYFILE} ../ThirdParty/SDL2/lib/%{cfg.architecture}/SDL2.dll %{cfg.targetdir}" }
 
@@ -135,8 +121,8 @@ project "HTNDemo"
     files { "%{prj.name}/src/**.cpp",
             "%{prj.name}/src/**.h" }
 
-    includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNPlanner/src", "ThirdParty/Optick/src" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/Optick/src" }
 
-    links { "HTNFramework", "HTNPlanner" }
+    links { "HTNFramework" }
 
     nuget { "Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn:1.8.1.7" }

@@ -18,7 +18,7 @@
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "Domain/Nodes/HTNTaskNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
-#include "HTNScope.h"
+#include "Core/HTNScope.h"
 #include "Helpers/HTNImGuiHelpers.h"
 
 #include "imgui.h"
@@ -38,11 +38,6 @@ enum HTNVariableExpressionNodeColorResult : uint8
     Z,
     W
 };
-
-HTNDecompositionPrinterContext& GetDecompositionPrinterContext(HTNNodeVisitorContextBase& ioContext)
-{
-    return static_cast<HTNDecompositionPrinterContext&>(ioContext);
-}
 
 void PrePrintChoicePointNode(const std::string& inNodePath, const size inLastDecompositionStep,
                              HTNDecompositionPrinterContext& ioDecompositionPrinterContext)
@@ -241,6 +236,11 @@ bool IsNodeValid(const size inDecompositionStep, const bool inIsChoicePoint, con
 {
     return (inIsChoicePoint ? IsChoicePointNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep)
                             : IsRegularNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep));
+}
+
+HTNDecompositionPrinterContext& GetDecompositionPrinterContext(HTNNodeVisitorContextBase& ioContext)
+{
+    return static_cast<HTNDecompositionPrinterContext&>(ioContext);
 }
 } // namespace
 

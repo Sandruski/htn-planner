@@ -1,9 +1,8 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
 #include "Domain/Interpreter/HTNDecompositionHelpers.h"
-#include "HTNFrameworkMinimal.h"
-#include "HTNPathHelpers.h"
-#include "Helpers/HTNFileHelpers.h"
+#include "Core/HTNFileHelpers.h"
+#include "HTNCoreMinimal.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
 #include "Planner/HTNPlanningUnit.h"
@@ -17,16 +16,6 @@
 #include <string>
 #include <tuple>
 #include <vector>
-
-namespace
-{
-std::string MakeFilePath(const std::string& inDirectoryName, const std::string& inFileName, const std::string& inFileExtension);
-
-const std::string TestDirectoryName = "Test";
-
-const std::string CaptureFileName       = "test";
-const std::string CapturesDirectoryName = "Captures\\";
-} // namespace
 
 class HTNDecompositionTest : public testing::TestWithParam<std::tuple<std::string, std::string, std::string>>
 {
@@ -45,14 +34,6 @@ protected:
     HTNPlannerHook  mPlannerHook;
 };
 
-namespace
-{
-std::string MakeFilePath(const std::string& inDirectoryName, const std::string& inFileName, const std::string& inFileExtension)
-{
-    return std::format("{}/{}/{}{}", inDirectoryName, TestDirectoryName, inFileName, inFileExtension);
-}
-} // namespace
-
 void HTNDecompositionTest::SetUpTestCase()
 {
     OPTICK_START_CAPTURE();
@@ -61,24 +42,27 @@ void HTNDecompositionTest::SetUpTestCase()
 void HTNDecompositionTest::TearDownTestCase()
 {
     OPTICK_STOP_CAPTURE();
-    const std::string CaptureFileRelativePath = std::format("{}{}", CapturesDirectoryName, CaptureFileName);
-    const std::string CaptureFileAbsolutePath = HTNPathHelpers::MakeAbsolutePath(CaptureFileRelativePath).string();
+    const std::string CaptureFileRelativePath = std::format("{}/{}", HTNFileHelpers::kCapturesDirectoryName, HTNFileHelpers::kCaptureFileName);
+    const std::string CaptureFileAbsolutePath = HTNFileHelpers::MakeAbsolutePath(CaptureFileRelativePath).string();
     OPTICK_SAVE_CAPTURE(CaptureFileAbsolutePath.c_str());
 }
 
 void HTNDecompositionTest::SetUp()
 {
+    const std::string WorldStatesTestDirectoryName =
+        std::format("{}/{}", HTNFileHelpers::kWorldStatesDirectoryName, HTNFileHelpers::kTestDirectoryName);
     const std::string WorldStateFileName = GetWorldStateFileName();
     const std::string WorldStateFileRelativePath =
-        MakeFilePath(HTNFileHelpers::WorldStatesDirectoryName, WorldStateFileName, HTNFileHelpers::WorldStateFileExtension);
-    const std::string WorldStateFileAbsolutePath = HTNPathHelpers::MakeAbsolutePath(WorldStateFileRelativePath).string();
+        HTNFileHelpers::MakeFilePath(WorldStatesTestDirectoryName, WorldStateFileName, HTNFileHelpers::kWorldStateFileExtension);
+    const std::string WorldStateFileAbsolutePath = HTNFileHelpers::MakeAbsolutePath(WorldStateFileRelativePath).string();
     const bool        ParseWorldStateFileResult  = mDatabaseHook.ParseWorldStateFile(WorldStateFileAbsolutePath);
     ASSERT_TRUE(ParseWorldStateFileResult);
 
-    const std::string DomainFileName = GetDomainFileName();
+    const std::string DomainsTestDirectoryName = std::format("{}/{}", HTNFileHelpers::kDomainsDirectoryName, HTNFileHelpers::kTestDirectoryName);
+    const std::string DomainFileName           = GetDomainFileName();
     const std::string DomainFileRelativePath =
-        MakeFilePath(HTNFileHelpers::DomainsDirectoryName, DomainFileName, HTNFileHelpers::DomainFileExtension);
-    const std::string DomainFileAbsolutePath = HTNPathHelpers::MakeAbsolutePath(DomainFileRelativePath).string();
+        HTNFileHelpers::MakeFilePath(DomainsTestDirectoryName, DomainFileName, HTNFileHelpers::kDomainFileExtension);
+    const std::string DomainFileAbsolutePath = HTNFileHelpers::MakeAbsolutePath(DomainFileRelativePath).string();
     const bool        ParseDomainFileResult  = mPlannerHook.ParseDomainFile(DomainFileAbsolutePath);
     ASSERT_TRUE(ParseDomainFileResult);
 }

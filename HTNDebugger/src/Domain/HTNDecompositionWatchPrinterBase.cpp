@@ -11,7 +11,7 @@
 #include "Domain/Nodes/HTNConstantNode.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
-#include "HTNScope.h"
+#include "Core/HTNScope.h"
 #include "Helpers/HTNImGuiHelpers.h"
 
 #include "imgui.h"

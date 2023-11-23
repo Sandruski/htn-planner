@@ -14,8 +14,10 @@
 #include "Domain/Interpreter/HTNTaskResult.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNMethodNode.h"
-#include "HTNPathHelpers.h"
-#include "Helpers/HTNFileHelpers.h"
+#include "Core/HTNFileHelpers.h"
+#include "Core/HTNPathHelpers.h"
+#include "Helpers/HTNDebuggerWindowHelpers.h"
+#include "Core/HTNFileHelpers.h"
 #include "Helpers/HTNImGuiHelpers.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
@@ -28,63 +30,18 @@
 
 namespace
 {
-void DecomposePlanningQuery(HTNPlanningQuery& ioPlanningQuery)
-{
-    HTNPlanningUnit&         PlanningUnit = ioPlanningQuery.GetPlanningUnitMutable();
-    const std::string&       EntryPointID = ioPlanningQuery.GetEntryPointID();
-    const HTNOperationResult Result       = static_cast<const HTNOperationResult>(PlanningUnit.ExecuteTopLevelMethod(EntryPointID));
-    ioPlanningQuery.SetLastDecompositionResult(Result);
-    const HTNPlannerHook&                       PlannerHook = PlanningUnit.GetPlannerHook();
-    const std::shared_ptr<const HTNDomainNode>& DomainNode  = PlannerHook.GetDomainNode();
-    ioPlanningQuery.SetLastDomainNode(DomainNode);
-    ioPlanningQuery.SetLastEntryPointID(EntryPointID);
-}
-
-void CollectFilePathsRecursively(const std::filesystem::path& inDirectoryPath, const std::string& inFileExtension,
-                                 std::vector<std::filesystem::path>& outFilePaths)
-{
-    for (const std::filesystem::directory_entry& DirectoryEntry : std::filesystem::directory_iterator(inDirectoryPath))
-    {
-        if (DirectoryEntry.is_directory())
-        {
-            const std::filesystem::path DirectoryPath = DirectoryEntry.path();
-            CollectFilePathsRecursively(DirectoryPath, inFileExtension, outFilePaths);
-        }
-        else if (DirectoryEntry.is_regular_file())
-        {
-            const std::filesystem::path FilePath = DirectoryEntry.path();
-            if (FilePath.extension() != inFileExtension)
-            {
-                continue;
-            }
-
-            outFilePaths.emplace_back(FilePath);
-        }
-    }
-}
-
-std::string MakeFilePathDisplayName(const std::filesystem::path& inFilePath, const std::filesystem::path& inDirectoryPath)
-{
-    std::string FilePathDisplayName = inFilePath.lexically_relative(inDirectoryPath).replace_extension().string();
-
-    // Convert backslashes to forward slashes
-    std::replace(FilePathDisplayName.begin(), FilePathDisplayName.end(), '\\', '/');
-
-    return FilePathDisplayName;
-}
-
 void RenderFileSelector(const std::string& inDirectoryName, const std::string& inFileExtension, std::filesystem::path& ioSelectedFilePath)
 {
-    const std::filesystem::path        DirectoryPath = HTNPathHelpers::MakeAbsolutePath(inDirectoryName);
+    const std::filesystem::path        DirectoryPath = HTNFileHelpers::MakeAbsolutePath(inDirectoryName);
     std::vector<std::filesystem::path> FilePaths;
-    CollectFilePathsRecursively(DirectoryPath, inFileExtension, FilePaths);
+    HTNFileHelpers::CollectFilePathsRecursively(DirectoryPath, inFileExtension, FilePaths);
 
-    const std::string SelectedFilePathDisplayName = MakeFilePathDisplayName(ioSelectedFilePath, DirectoryPath);
+    const std::string SelectedFilePathDisplayName = HTNFileHelpers::MakeFilePathDisplayName(ioSelectedFilePath, DirectoryPath);
     if (ImGui::BeginCombo("File", SelectedFilePathDisplayName.c_str()))
     {
         for (const std::filesystem::path& FilePath : FilePaths)
         {
-            const std::string FilePathDisplayName = MakeFilePathDisplayName(FilePath, DirectoryPath);
+            const std::string FilePathDisplayName = HTNFileHelpers::MakeFilePathDisplayName(FilePath, DirectoryPath);
             const bool        IsFileSelected      = (ioSelectedFilePath == FilePath);
             if (ImGui::Selectable(FilePathDisplayName.c_str(), IsFileSelected))
             {
@@ -117,6 +74,18 @@ void RenderOperationResult(const HTNOperationResult inOperationResult)
         ImGui::SameLine();
         ImGui::TextColored(Color, "SUCCEEDED");
     }
+}
+
+void DecomposePlanningQuery(HTNPlanningQuery& ioPlanningQuery)
+{
+    HTNPlanningUnit&         PlanningUnit = ioPlanningQuery.GetPlanningUnitMutable();
+    const std::string&       EntryPointID = ioPlanningQuery.GetEntryPointID();
+    const HTNOperationResult Result       = static_cast<const HTNOperationResult>(PlanningUnit.ExecuteTopLevelMethod(EntryPointID));
+    ioPlanningQuery.SetLastDecompositionResult(Result);
+    const HTNPlannerHook&                       PlannerHook = PlanningUnit.GetPlannerHook();
+    const std::shared_ptr<const HTNDomainNode>& DomainNode  = PlannerHook.GetDomainNode();
+    ioPlanningQuery.SetLastDomainNode(DomainNode);
+    ioPlanningQuery.SetLastEntryPointID(EntryPointID);
 }
 
 void RenderActivePlanByPlanningQuery(const HTNPlanningQuery& inPlanningQuery)
@@ -343,7 +312,7 @@ void HTNDebuggerWindow::RenderDecomposition()
 
 void HTNDebuggerWindow::RenderDomain()
 {
-    RenderFileSelector(HTNFileHelpers::DomainsDirectoryName, HTNFileHelpers::DomainFileExtension, mSelectedDomainFilePath);
+    RenderFileSelector(HTNFileHelpers::kDomainsDirectoryName, HTNFileHelpers::kDomainFileExtension, mSelectedDomainFilePath);
 
     if (ImGui::Button("Parse"))
     {
@@ -379,7 +348,7 @@ void HTNDebuggerWindow::RenderDomain()
 
 void HTNDebuggerWindow::RenderWorldState()
 {
-    RenderFileSelector(HTNFileHelpers::WorldStatesDirectoryName, HTNFileHelpers::WorldStateFileExtension, mSelectedWorldStateFilePath);
+    RenderFileSelector(HTNFileHelpers::kWorldStatesDirectoryName, HTNFileHelpers::kWorldStateFileExtension, mSelectedWorldStateFilePath);
 
     if (ImGui::Button("Parse"))
     {
@@ -628,5 +597,15 @@ void HTNDebuggerWindow::ResetDecompositionPrinterState()
     mNodeStates.clear();
     mChoicePointNodeStates.clear();
     mMainSelectedNode = HTNDecompositionNode();
+}
+
+bool HTNDebuggerWindow::IsLastWorldStateFileParsingSuccessful() const
+{
+    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastParseWorldStateFileResult);
+}
+
+bool HTNDebuggerWindow::IsLastDomainFileParsingSuccessful() const
+{
+    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastParseDomainFileResult);
 }
 #endif

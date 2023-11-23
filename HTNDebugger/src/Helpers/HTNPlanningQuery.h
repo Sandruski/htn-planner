@@ -3,8 +3,8 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNFrameworkMinimal.h"
-#include "Helpers/HTNDebuggerWindowHelpers.h"
+#include "HTNCoreMinimal.h"
+#include "Helpers/HTNOperationResult.h"
 
 #include <string>
 #include <memory>
@@ -81,11 +81,6 @@ inline void HTNPlanningQuery::SetLastDecompositionResult(const HTNOperationResul
 inline HTNOperationResult HTNPlanningQuery::GetLastDecompositionResult() const
 {
     return mLastDecompositionResult;
-}
-
-inline bool HTNPlanningQuery::IsLastDecompositionSuccessful() const
-{
-    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastDecompositionResult);
 }
 
 inline void HTNPlanningQuery::SetLastDomainNode(const std::shared_ptr<const HTNDomainNode>& inLastDomainNode)

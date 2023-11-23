@@ -5,8 +5,8 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDecompositionTooltipMode.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
-#include "HTNFrameworkMinimal.h"
-#include "HTNPathHandler.h"
+#include "HTNCoreMinimal.h"
+#include "Core/HTNPathHandler.h"
 
 #include <limits>
 #include <memory>

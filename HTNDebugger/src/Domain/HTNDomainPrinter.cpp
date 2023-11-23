@@ -22,12 +22,6 @@ void PrintKeyword(const std::string& inKeyword)
 {
     ImGui::TextDisabled(inKeyword.c_str());
 }
-
-void PrintTopLevelKeyword()
-{
-    ImGui::SameLine();
-    PrintKeyword("top_level");
-}
 } // namespace
 
 bool HTNDomainPrinter::Print(HTNDomainPrinterContext& ioDomainPrinterContext) const
@@ -52,7 +46,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisito
 
     if (inDomainNode.IsTopLevel())
     {
-        PrintTopLevelKeyword();
+        ImGui::SameLine();
+        PrintKeyword("top_level");
     }
 
     ImGui::Indent();
@@ -146,7 +141,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVisito
 
     if (inMethodNode.IsTopLevel())
     {
-        PrintTopLevelKeyword();
+        ImGui::SameLine();
+        PrintKeyword("top_level");
     }
 
     ImGui::Indent();

@@ -3,8 +3,8 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNFrameworkMinimal.h"
-#include "HTNPathHandler.h"
+#include "HTNCoreMinimal.h"
+#include "Core/HTNPathHandler.h"
 
 #include <memory>
 #include <vector>

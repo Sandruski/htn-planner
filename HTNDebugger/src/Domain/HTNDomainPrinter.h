@@ -3,7 +3,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNFrameworkMinimal.h"
+#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 class HTNDomainPrinterContext;

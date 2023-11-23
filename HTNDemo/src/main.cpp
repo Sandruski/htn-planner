@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
-#include "HTNFrameworkMinimal.h"
+#include "HTNCoreMinimal.h"
 
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
