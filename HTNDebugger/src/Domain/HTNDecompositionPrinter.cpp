@@ -25,6 +25,20 @@
 
 namespace
 {
+enum HTNVariableExpressionNodeResult : uint8
+{
+    STRING,
+    COLOR
+};
+
+enum HTNVariableExpressionNodeColorResult : uint8
+{
+    X,
+    Y,
+    Z,
+    W
+};
+
 HTNDecompositionPrinterContext& GetDecompositionPrinterContext(HTNNodeVisitorContextBase& ioContext)
 {
     return static_cast<HTNDecompositionPrinterContext&>(ioContext);
@@ -273,9 +287,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeV
     HTNPathHandler& CurrentVariablesPathHandler = DecompositionPrinterContext.GetCurrentVariablesPathHandlerMutable();
     const HTNScope  AxiomVariablesScope         = HTNScope(inAxiomNode.GetID(), CurrentVariablesPathHandler);
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode                  = inAxiomNode.GetIDNode();
-    static constexpr bool                                     ShouldDoubleQuoteString = false;
-    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).ToString(ShouldDoubleQuoteString);
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inAxiomNode.GetIDNode();
+    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).GetValue<std::string>();
 
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& ParameterNodes = inAxiomNode.GetParameterNodes();
 
@@ -286,14 +299,15 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeV
 
         for (const std::shared_ptr<const HTNVariableExpressionNode>& ParameterNode : ParameterNodes)
         {
-            const HTNAtom     Parameter        = GetNodeValue(*ParameterNode, ioContext);
-            const std::string ParameterIDString      = Parameter.FindListElement(0)->ToString(ShouldDoubleQuoteString);
-            const HTNAtom&    ParameterIDColor = *Parameter.FindListElement(1);
-            const ImVec4      ParameterIDImGuiColor =
-                ImVec4(ParameterIDColor.FindListElement(0)->GetValue<float>(), ParameterIDColor.FindListElement(1)->GetValue<float>(),
-                       ParameterIDColor.FindListElement(2)->GetValue<float>(), ParameterIDColor.FindListElement(3)->GetValue<float>());
+            const HTNAtom     Parameter           = GetNodeValue(*ParameterNode, ioContext);
+            const std::string ParameterString     = Parameter.GetListElement(HTNVariableExpressionNodeResult::STRING).GetValue<std::string>();
+            const HTNAtom&    ParameterColor      = Parameter.GetListElement(HTNVariableExpressionNodeResult::COLOR);
+            const ImVec4      ParameterImGuiColor = ImVec4(ParameterColor.GetListElement(HTNVariableExpressionNodeColorResult::X).GetValue<float>(),
+                                                           ParameterColor.GetListElement(HTNVariableExpressionNodeColorResult::Y).GetValue<float>(),
+                                                           ParameterColor.GetListElement(HTNVariableExpressionNodeColorResult::Z).GetValue<float>(),
+                                                           ParameterColor.GetListElement(HTNVariableExpressionNodeColorResult::W).GetValue<float>());
             ImGui::SameLine();
-            ImGui::TextColored(ParameterIDImGuiColor, ParameterIDString.c_str());
+            ImGui::TextColored(ParameterImGuiColor, ParameterString.c_str());
         }
     };
 
@@ -319,9 +333,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode, HTNNod
     HTNPathHandler& CurrentVariablesPathHandler = DecompositionPrinterContext.GetCurrentVariablesPathHandlerMutable();
     const HTNScope  MethodVariablesScope        = HTNScope(inMethodNode.GetID(), CurrentVariablesPathHandler);
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode                  = inMethodNode.GetIDNode();
-    static constexpr bool                                     ShouldDoubleQuoteString = false;
-    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).ToString(ShouldDoubleQuoteString);
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inMethodNode.GetIDNode();
+    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).GetValue<std::string>();
 
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& ParameterNodes = inMethodNode.GetParameterNodes();
 
@@ -332,14 +345,15 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode, HTNNod
 
         for (const std::shared_ptr<const HTNVariableExpressionNode>& ParameterNode : ParameterNodes)
         {
-            const HTNAtom     Parameter        = GetNodeValue(*ParameterNode, ioContext);
-            const std::string ParameterIDString      = Parameter.FindListElement(0)->ToString(ShouldDoubleQuoteString);
-            const HTNAtom&    ParameterIDColor = *Parameter.FindListElement(1);
-            const ImVec4      ParameterIDImGuiColor =
-                ImVec4(ParameterIDColor.FindListElement(0)->GetValue<float>(), ParameterIDColor.FindListElement(1)->GetValue<float>(),
-                       ParameterIDColor.FindListElement(2)->GetValue<float>(), ParameterIDColor.FindListElement(3)->GetValue<float>());
+            const HTNAtom     Parameter           = GetNodeValue(*ParameterNode, ioContext);
+            const std::string ParameterString     = Parameter.GetListElement(HTNVariableExpressionNodeResult::STRING).GetValue<std::string>();
+            const HTNAtom&    ParameterColor      = Parameter.GetListElement(HTNVariableExpressionNodeResult::COLOR);
+            const ImVec4      ParameterImGuiColor = ImVec4(ParameterColor.GetListElement(HTNVariableExpressionNodeColorResult::X).GetValue<float>(),
+                                                           ParameterColor.GetListElement(HTNVariableExpressionNodeColorResult::Y).GetValue<float>(),
+                                                           ParameterColor.GetListElement(HTNVariableExpressionNodeColorResult::Z).GetValue<float>(),
+                                                           ParameterColor.GetListElement(HTNVariableExpressionNodeColorResult::W).GetValue<float>());
             ImGui::SameLine();
-            ImGui::TextColored(ParameterIDImGuiColor, ParameterIDString.c_str());
+            ImGui::TextColored(ParameterImGuiColor, ParameterString.c_str());
         }
     };
 
@@ -361,9 +375,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode, HTNNod
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioContext) const
 {
-    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode                  = inBranchNode.GetIDNode();
-    static constexpr bool                                     ShouldDoubleQuoteString = false;
-    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).ToString(ShouldDoubleQuoteString);
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inBranchNode.GetIDNode();
+    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).GetValue<std::string>();
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
                                                        MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
@@ -396,9 +409,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode, 
 {
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioContext);
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode                  = inConditionNode.GetIDNode();
-    static constexpr bool                                     ShouldDoubleQuoteString = false;
-    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).ToString(ShouldDoubleQuoteString);
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inConditionNode.GetIDNode();
+    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).GetValue<std::string>();
 
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inConditionNode.GetArgumentNodes();
 
@@ -409,14 +421,15 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode, 
 
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
         {
-            const HTNAtom     Argument        = GetNodeValue(*ArgumentNode, ioContext);
-            const std::string ArgumentIDString      = Argument.FindListElement(0)->ToString(ShouldDoubleQuoteString);
-            const HTNAtom&    ArgumentIDColor = *Argument.FindListElement(1);
-            const ImVec4      ArgumentIDImGuiColor =
-                ImVec4(ArgumentIDColor.FindListElement(0)->GetValue<float>(), ArgumentIDColor.FindListElement(1)->GetValue<float>(),
-                       ArgumentIDColor.FindListElement(2)->GetValue<float>(), ArgumentIDColor.FindListElement(3)->GetValue<float>());
+            const HTNAtom     Argument           = GetNodeValue(*ArgumentNode, ioContext);
+            const std::string ArgumentString     = Argument.GetListElement(HTNVariableExpressionNodeResult::STRING).GetValue<std::string>();
+            const HTNAtom&    ArgumentColor      = Argument.GetListElement(HTNVariableExpressionNodeResult::COLOR);
+            const ImVec4      ArgumentImGuiColor = ImVec4(ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::X).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::Y).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::Z).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::W).GetValue<float>());
             ImGui::SameLine();
-            ImGui::TextColored(ArgumentIDImGuiColor, ArgumentIDString.c_str());
+            ImGui::TextColored(ArgumentImGuiColor, ArgumentString.c_str());
         }
     };
 
@@ -435,9 +448,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
 {
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioContext);
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode                  = inAxiomConditionNode.GetIDNode();
-    static constexpr bool                                     ShouldDoubleQuoteString = false;
-    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).ToString(ShouldDoubleQuoteString);
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inAxiomConditionNode.GetIDNode();
+    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).GetValue<std::string>();
 
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
 
@@ -448,14 +460,15 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
 
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
         {
-            const HTNAtom     Argument        = GetNodeValue(*ArgumentNode, ioContext);
-            const std::string ArgumentIDString      = Argument.FindListElement(0)->ToString(ShouldDoubleQuoteString);
-            const HTNAtom&    ArgumentIDColor = *Argument.FindListElement(1);
-            const ImVec4      ArgumentIDImGuiColor =
-                ImVec4(ArgumentIDColor.FindListElement(0)->GetValue<float>(), ArgumentIDColor.FindListElement(1)->GetValue<float>(),
-                       ArgumentIDColor.FindListElement(2)->GetValue<float>(), ArgumentIDColor.FindListElement(3)->GetValue<float>());
+            const HTNAtom     Argument           = GetNodeValue(*ArgumentNode, ioContext);
+            const std::string ArgumentString     = Argument.GetListElement(HTNVariableExpressionNodeResult::STRING).GetValue<std::string>();
+            const HTNAtom&    ArgumentColor      = Argument.GetListElement(HTNVariableExpressionNodeResult::COLOR);
+            const ImVec4      ArgumentImGuiColor = ImVec4(ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::X).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::Y).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::Z).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::W).GetValue<float>());
             ImGui::SameLine();
-            ImGui::TextColored(ArgumentIDImGuiColor, ArgumentIDString.c_str());
+            ImGui::TextColored(ArgumentImGuiColor, ArgumentString.c_str());
         }
     };
 
@@ -583,9 +596,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
 {
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioContext);
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode                  = inCompoundTaskNode.GetIDNode();
-    static constexpr bool                                     ShouldDoubleQuoteString = false;
-    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).ToString(ShouldDoubleQuoteString);
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inCompoundTaskNode.GetIDNode();
+    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).GetValue<std::string>();
 
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
 
@@ -596,14 +608,15 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
 
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
         {
-            const HTNAtom     Argument        = GetNodeValue(*ArgumentNode, ioContext);
-            const std::string ArgumentIDString      = Argument.FindListElement(0)->ToString(ShouldDoubleQuoteString);
-            const HTNAtom&    ArgumentIDColor = *Argument.FindListElement(1);
-            const ImVec4      ArgumentIDImGuiColor =
-                ImVec4(ArgumentIDColor.FindListElement(0)->GetValue<float>(), ArgumentIDColor.FindListElement(1)->GetValue<float>(),
-                       ArgumentIDColor.FindListElement(2)->GetValue<float>(), ArgumentIDColor.FindListElement(3)->GetValue<float>());
+            const HTNAtom     Argument           = GetNodeValue(*ArgumentNode, ioContext);
+            const std::string ArgumentString     = Argument.GetListElement(HTNVariableExpressionNodeResult::STRING).GetValue<std::string>();
+            const HTNAtom&    ArgumentColor      = Argument.GetListElement(HTNVariableExpressionNodeResult::COLOR);
+            const ImVec4      ArgumentImGuiColor = ImVec4(ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::X).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::Y).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::Z).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::W).GetValue<float>());
             ImGui::SameLine();
-            ImGui::TextColored(ArgumentIDImGuiColor, ArgumentIDString.c_str());
+            ImGui::TextColored(ArgumentImGuiColor, ArgumentString.c_str());
         }
     };
 
@@ -630,9 +643,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
 {
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioContext);
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode                  = inPrimitiveTaskNode.GetIDNode();
-    static constexpr bool                                     ShouldDoubleQuoteString = false;
-    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).ToString(ShouldDoubleQuoteString);
+    const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inPrimitiveTaskNode.GetIDNode();
+    const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).GetValue<std::string>();
 
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
 
@@ -643,14 +655,15 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
 
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
         {
-            const HTNAtom     Argument        = GetNodeValue(*ArgumentNode, ioContext);
-            const std::string ArgumentIDString      = Argument.FindListElement(0)->ToString(ShouldDoubleQuoteString);
-            const HTNAtom&    ArgumentIDColor = *Argument.FindListElement(1);
-            const ImVec4      ArgumentIDImGuiColor =
-                ImVec4(ArgumentIDColor.FindListElement(0)->GetValue<float>(), ArgumentIDColor.FindListElement(1)->GetValue<float>(),
-                       ArgumentIDColor.FindListElement(2)->GetValue<float>(), ArgumentIDColor.FindListElement(3)->GetValue<float>());
+            const HTNAtom     Argument           = GetNodeValue(*ArgumentNode, ioContext);
+            const std::string ArgumentString     = Argument.GetListElement(HTNVariableExpressionNodeResult::STRING).GetValue<std::string>();
+            const HTNAtom&    ArgumentColor      = Argument.GetListElement(HTNVariableExpressionNodeResult::COLOR);
+            const ImVec4      ArgumentImGuiColor = ImVec4(ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::X).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::Y).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::Z).GetValue<float>(),
+                                                          ArgumentColor.GetListElement(HTNVariableExpressionNodeColorResult::W).GetValue<float>());
             ImGui::SameLine();
-            ImGui::TextColored(ArgumentIDImGuiColor, ArgumentIDString.c_str());
+            ImGui::TextColored(ArgumentImGuiColor, ArgumentString.c_str());
         }
     };
 
@@ -687,7 +700,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNVariableExpressionNode&        i
 {
     static constexpr bool ShouldDoubleQuoteString = false;
     const std::string     VariableString          = std::format("?{}", inVariableExpressionNode.GetValue().ToString(ShouldDoubleQuoteString));
-    const std::string&    VariableID                = inVariableExpressionNode.GetValue().GetValue<std::string>();
+    const std::string&    VariableID              = inVariableExpressionNode.GetValue().GetValue<std::string>();
     const ImVec4          VariableColor           = HTNImGuiHelpers::GetVariableColor(VariableID);
     return HTNAtomList({VariableString, HTNAtomList({VariableColor.x, VariableColor.y, VariableColor.z, VariableColor.w})});
 }

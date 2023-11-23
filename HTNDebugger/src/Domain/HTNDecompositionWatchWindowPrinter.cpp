@@ -12,6 +12,24 @@
 
 #include "imgui.h"
 
+namespace
+{
+enum HTNVariableExpressionNodeResult : uint8
+{
+    ID_STRING,
+    ID_COLOR,
+    VALUE_STRING
+};
+
+enum HTNVariableExpressionNodeColorResult : uint8
+{
+    X,
+    Y,
+    Z,
+    W
+};
+} // namespace
+
 void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinterContext& ioDecompositionWatchWindowPrinterContext) const
 {
     const HTNDecompositionNode& Node         = ioDecompositionWatchWindowPrinterContext.GetNode();
@@ -30,23 +48,23 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
         {
             ImGui::TableNextRow();
 
-            const HTNAtom         Parameter               = GetNodeValue(*NodeParameter, ioDecompositionWatchWindowPrinterContext);
-            static constexpr bool ShouldDoubleQuoteString = false;
+            const HTNAtom Parameter = GetNodeValue(*NodeParameter, ioDecompositionWatchWindowPrinterContext);
 
             // Parameter ID
             ImGui::TableNextColumn();
 
-            const std::string ParameterIDString = Parameter.FindListElement(0)->ToString(ShouldDoubleQuoteString);
-            const HTNAtom&    ParameterIDColor  = *Parameter.FindListElement(1);
-            const ImVec4      ParameterIDImGuiColor =
-                ImVec4(ParameterIDColor.FindListElement(0)->GetValue<float>(), ParameterIDColor.FindListElement(1)->GetValue<float>(),
-                       ParameterIDColor.FindListElement(2)->GetValue<float>(), ParameterIDColor.FindListElement(3)->GetValue<float>());
+            const std::string ParameterIDString = Parameter.GetListElement(HTNVariableExpressionNodeResult::ID_STRING).GetValue<std::string>();
+            const HTNAtom&    ParameterIDColor  = Parameter.GetListElement(HTNVariableExpressionNodeResult::ID_COLOR);
+            const ImVec4 ParameterIDImGuiColor  = ImVec4(ParameterIDColor.GetListElement(HTNVariableExpressionNodeColorResult::X).GetValue<float>(),
+                                                         ParameterIDColor.GetListElement(HTNVariableExpressionNodeColorResult::Y).GetValue<float>(),
+                                                         ParameterIDColor.GetListElement(HTNVariableExpressionNodeColorResult::Z).GetValue<float>(),
+                                                         ParameterIDColor.GetListElement(HTNVariableExpressionNodeColorResult::W).GetValue<float>());
             ImGui::TextColored(ParameterIDImGuiColor, ParameterIDString.c_str());
 
             // Parameter value
             ImGui::TableNextColumn();
 
-            const std::string ParameterValueString = Parameter.FindListElement(2)->ToString(ShouldDoubleQuoteString);
+            const std::string ParameterValueString = Parameter.GetListElement(HTNVariableExpressionNodeResult::VALUE_STRING).GetValue<std::string>();
             ImGui::Text(ParameterValueString.c_str());
         }
 
@@ -56,23 +74,23 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
         {
             ImGui::TableNextRow();
 
-            const HTNAtom         Argument                = GetNodeValue(*NodeArgument, ioDecompositionWatchWindowPrinterContext);
-            static constexpr bool ShouldDoubleQuoteString = false;
+            const HTNAtom Argument = GetNodeValue(*NodeArgument, ioDecompositionWatchWindowPrinterContext);
 
             // Argument ID
             ImGui::TableNextColumn();
 
-            const std::string ArgumentIDString = Argument.FindListElement(0)->ToString(ShouldDoubleQuoteString);
-            const HTNAtom&    ArgumentIDColor  = *Argument.FindListElement(1);
-            const ImVec4      ArgumentIDImGuiColor =
-                ImVec4(ArgumentIDColor.FindListElement(0)->GetValue<float>(), ArgumentIDColor.FindListElement(1)->GetValue<float>(),
-                       ArgumentIDColor.FindListElement(2)->GetValue<float>(), ArgumentIDColor.FindListElement(3)->GetValue<float>());
+            const std::string ArgumentIDString     = Argument.GetListElement(HTNVariableExpressionNodeResult::ID_STRING).GetValue<std::string>();
+            const HTNAtom&    ArgumentIDColor      = Argument.GetListElement(HTNVariableExpressionNodeResult::ID_COLOR);
+            const ImVec4      ArgumentIDImGuiColor = ImVec4(ArgumentIDColor.GetListElement(HTNVariableExpressionNodeColorResult::X).GetValue<float>(),
+                                                            ArgumentIDColor.GetListElement(HTNVariableExpressionNodeColorResult::Y).GetValue<float>(),
+                                                            ArgumentIDColor.GetListElement(HTNVariableExpressionNodeColorResult::Z).GetValue<float>(),
+                                                            ArgumentIDColor.GetListElement(HTNVariableExpressionNodeColorResult::W).GetValue<float>());
             ImGui::TextColored(ArgumentIDImGuiColor, ArgumentIDString.c_str());
 
             // Argument value
             ImGui::TableNextColumn();
 
-            const std::string ArgumentValueString = Argument.FindListElement(2)->ToString(ShouldDoubleQuoteString);
+            const std::string ArgumentValueString = Argument.GetListElement(HTNVariableExpressionNodeResult::VALUE_STRING).GetValue<std::string>();
             ImGui::Text(ArgumentValueString.c_str());
         }
 

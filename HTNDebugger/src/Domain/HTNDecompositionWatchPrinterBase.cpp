@@ -18,6 +18,12 @@
 
 namespace
 {
+enum HTNVariableExpressionNodeResult : uint8
+{
+    STRING,
+    COLOR
+};
+
 HTNDecompositionWatchPrinterContextBase& GetDecompositionWatchPrinterContext(HTNNodeVisitorContextBase& ioContext)
 {
     return static_cast<HTNDecompositionWatchPrinterContextBase&>(ioContext);
@@ -30,7 +36,7 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantNode& inConstan
 {
     // Constant value
     const std::shared_ptr<const HTNLiteralExpressionNode>& ValueNode = inConstantNode.GetValueNode();
-    return *GetNodeValue(*ValueNode, ioContext).FindListElement(0);
+    return GetNodeValue(*ValueNode, ioContext).GetListElement(HTNVariableExpressionNodeResult::STRING);
 }
 
 HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode&         inLiteralExpressionNode,

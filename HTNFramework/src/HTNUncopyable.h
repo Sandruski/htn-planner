@@ -8,12 +8,11 @@
 class HTNUncopyable
 {
 protected:
-    // Make constructor and destructor protected to allow construction and destruction
+    // Allow construction and destruction
     HTNUncopyable()  = default;
     ~HTNUncopyable() = default;
 
-private:
-    // Make copy constructor and copy assignment operator private to prevent copying
-    HTNUncopyable(const HTNUncopyable& inOther);
-    HTNUncopyable& operator=(const HTNUncopyable& inOther);
+    // Prevent copying
+    HTNUncopyable(const HTNUncopyable& inOther)            = delete;
+    HTNUncopyable& operator=(const HTNUncopyable& inOther) = delete;
 };

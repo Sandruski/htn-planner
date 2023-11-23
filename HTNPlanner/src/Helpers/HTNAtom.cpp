@@ -46,7 +46,13 @@ void HTNAtom::AddListElement(const HTNAtom& inElement)
     List.PushBack(inElement);
 }
 
-const HTNAtom* HTNAtom::FindListElement(const uint32 inElementIdx) const
+const HTNAtom& HTNAtom::GetListElement(const uint32 inIndex) const
+{
+    const HTNAtomList& List = GetValue<HTNAtomList>();
+    return List.Get(inIndex);
+}
+
+const HTNAtom* HTNAtom::FindListElement(const uint32 inIndex) const
 {
     if (!IsSet())
     {
@@ -59,7 +65,7 @@ const HTNAtom* HTNAtom::FindListElement(const uint32 inElementIdx) const
     }
 
     const HTNAtomList& List = GetValue<HTNAtomList>();
-    return List.Find(inElementIdx);
+    return List.Find(inIndex);
 }
 
 int32 HTNAtom::GetListNumItems() const

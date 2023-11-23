@@ -22,9 +22,10 @@ public:
     ~HTNAtomList();
 
     bool operator==(const HTNAtomList& inOther) const;
-    
+
     void PushBack(const HTNAtom& inData);
 
+    const HTNAtom& Get(const uint32 inIndex) const;
     const HTNAtom* Find(const uint32 inIndex) const;
 
     uint32 GetSize() const;

@@ -67,6 +67,17 @@ void HTNAtomList::PushBack(const HTNAtom& inData)
     CurrentNode->SetNextNode(Node);
 }
 
+const HTNAtom& HTNAtomList::Get(const uint32 inIndex) const
+{
+    const HTNAtomNode* CurrentNode = mHeadNode;
+    for (uint32 i = 0; i < inIndex; ++i)
+    {
+        CurrentNode = CurrentNode->GetNextNode();
+    }
+
+    return CurrentNode->GetData();
+}
+
 const HTNAtom* HTNAtomList::Find(const uint32 inIndex) const
 {
     if (!mHeadNode)

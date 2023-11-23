@@ -37,7 +37,8 @@ public:
     void AddListElement(const HTNAtom& inElement);
 
     // Return the list element
-    const HTNAtom* FindListElement(const uint32 inElementIdx) const;
+    const HTNAtom& GetListElement(const uint32 inIndex) const;
+    const HTNAtom* FindListElement(const uint32 inIndex) const;
 
     int32  GetListNumItems() const;
     bool IsListEmpty() const;
