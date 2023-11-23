@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
-#include "Domain/Interpreter/HTNDecompositionHelpers.h"
+#include "Domain/HTNDomainHelpers.h"
 #include "Core/HTNFileHelpers.h"
 #include "HTNCoreMinimal.h"
 #include "Planner/HTNDatabaseHook.h"
@@ -9,6 +9,7 @@
 
 #include "optick.h"
 #include "gtest/gtest.h"
+#include "gtest/gtest-param-test.h"
 
 #include <execution>
 #include <filesystem>
@@ -103,4 +104,4 @@ TEST_P(HTNDecompositionTest, AreDecompositionsSuccessful)
 }
 
 INSTANTIATE_TEST_CASE_P(Human, HTNDecompositionTest,
-                        testing::Values(std::make_tuple("human", "human", HTNDecompositionHelpers::kDefaultMainTopLevelMethodID)));
+                        testing::Values(std::make_tuple("human", "human", HTNDomainHelpers::kDefaultMainTopLevelMethodID)));
