@@ -2,7 +2,7 @@
 
 #include "WorldState/Parser/HTNWorldStateLexer.h"
 
-#include "Core/HTNToken.h"
+#include "Core/HTNTokenType.h"
 #include "Parser/HTNLexerHelpers.h"
 #include "WorldState/Parser/HTNWorldStateLexerContext.h"
 

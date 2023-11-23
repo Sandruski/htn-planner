@@ -4,6 +4,8 @@
 
 #include "WorldState/HTNWorldState.h"
 
+HTNConditionQueryBase::~HTNConditionQueryBase() = default;
+
 bool HTNConditionQueryWorldState::Check(const HTNWorldState& inWorldState, const std::string& inFactID, const size inArgumentsIndex,
                                       std::vector<HTNAtom>& ioArguments)
 {

@@ -3,18 +3,20 @@
 #include "Parser/HTNParserBase.h"
 
 #include "Core/HTNToken.h"
+#include "Core/HTNTokenType.h"
+#include "Core/HTNTokenHelpers.h"
 #include "Parser/HTNParserContextBase.h"
 
 HTNParserBase::~HTNParserBase() = default;
 
 const HTNToken* HTNParserBase::ParseToken(const HTNTokenType inTokenType, HTNParserContextBase& ioParserContext) const
 {
-    const uint32 Position = ioParserContext.GetPosition();
-    const HTNToken*    Token    = ioParserContext.GetToken(Position);
+    const uint32    Position = ioParserContext.GetPosition();
+    const HTNToken* Token    = ioParserContext.GetToken(Position);
     if (!Token)
     {
 #if HTN_DEBUG
-        const size TokensSize       = ioParserContext.GetTokensSize();
+        const size        TokensSize       = ioParserContext.GetTokensSize();
         const std::string LastErrorMessage = std::format("Token at [{}] is out of bounds [{}]", Position, TokensSize);
         ioParserContext.SetLastErrorMessage(LastErrorMessage);
         static constexpr int32 LastErrorRow = -1;
@@ -29,8 +31,9 @@ const HTNToken* HTNParserBase::ParseToken(const HTNTokenType inTokenType, HTNPar
     if (inTokenType != TokenType)
     {
 #if HTN_DEBUG
-        const std::string LastErrorMessage = std::format("Token [{}] is of type [{}] instead of [{}]", Token->GetLexeme(),
-                                                         GetTokenTypeString(Token->GetType()), GetTokenTypeString(inTokenType));
+        const std::string LastErrorMessage =
+            std::format("Token [{}] is of type [{}] instead of [{}]", Token->GetLexeme(), HTNTokenHelpers::GetTokenTypeString(Token->GetType()),
+                        HTNTokenHelpers::GetTokenTypeString(inTokenType));
         ioParserContext.SetLastErrorMessage(LastErrorMessage);
         const int32 LastErrorRow = Token->GetRow();
         ioParserContext.SetLastErrorRow(LastErrorRow);

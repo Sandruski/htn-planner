@@ -116,7 +116,6 @@ int32 HTNDecompositionPrinterContext::GetNodeDecompositionStep(const std::string
     case HTNNodeStep::END: {
         return NodeState.GetDecompositionStep();
     }
-    case HTNNodeStep::NONE:
     default: {
         assert(false);
     }

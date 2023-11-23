@@ -3,7 +3,7 @@
 #include "Domain/Parser/HTNDomainLexer.h"
 
 #include "Domain/Parser/HTNDomainLexerContext.h"
-#include "Core/HTNToken.h"
+#include "Core/HTNTokenType.h"
 #include "Parser/HTNLexerHelpers.h"
 
 bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const

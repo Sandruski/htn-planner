@@ -16,8 +16,7 @@ class HTNNodeSnapshotHistoryDebug;
 enum class HTNNodeStep : uint8
 {
     START,
-    END, // RETRY
-    NONE
+    END // RETRY
 };
 
 // Node step to node snapshot

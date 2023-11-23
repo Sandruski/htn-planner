@@ -13,6 +13,7 @@
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Domain/Parser/HTNDomainParserContext.h"
 #include "Core/HTNToken.h"
+#include "Core/HTNTokenType.h"
 #include "Parser/HTNParserHelpers.h"
 
 /*

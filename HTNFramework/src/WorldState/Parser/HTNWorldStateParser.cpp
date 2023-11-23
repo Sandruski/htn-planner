@@ -3,6 +3,7 @@
 #include "WorldState/Parser/HTNWorldStateParser.h"
 
 #include "Core/HTNToken.h"
+#include "Core/HTNTokenType.h"
 #include "Parser/HTNParserHelpers.h"
 #include "WorldState/HTNWorldState.h"
 #include "WorldState/Parser/HTNWorldStateParserContext.h"

@@ -18,7 +18,7 @@ class HTNDecompositionNodeStateBase
 public:
     HTNDecompositionNodeStateBase() = default;
     explicit HTNDecompositionNodeStateBase(const int32 inDecompositionStep);
-    virtual ~HTNDecompositionNodeStateBase() = default;
+    virtual ~HTNDecompositionNodeStateBase() = 0;
 
     void SetDecompositionStep(const int32 inDecompositionStep);
     int32  GetDecompositionStep() const;

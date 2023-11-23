@@ -13,7 +13,7 @@ class HTNWorldState;
 class HTNConditionQueryBase
 {
 public:
-    virtual ~HTNConditionQueryBase() = default;
+    virtual ~HTNConditionQueryBase() = 0;
 };
 
 /**

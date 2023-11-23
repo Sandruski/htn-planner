@@ -42,7 +42,6 @@ ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeSte
         const bool Result = inNodeSnapshot.GetResult();
         return GetResultColor(Result);
     }
-    case HTNNodeStep::NONE:
     default: {
         assert(false);
     }
