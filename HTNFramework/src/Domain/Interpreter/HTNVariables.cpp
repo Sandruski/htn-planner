@@ -2,14 +2,14 @@
 
 #include "Domain/Interpreter/HTNVariables.h"
 
-void HTNVariables::RemoveVariables(const std::string& inVariableScopePath)
+void HTNVariables::RemoveVariables(const std::string& inVariablesPath)
 {
     for (auto It = mVariables.begin(); It != mVariables.end();)
     {
         const std::string& VariablePath = It->first;
 
         // Check if variable path is prefixed by variable scope path
-        const size Index = VariablePath.find(inVariableScopePath);
+        const size Index = VariablePath.find(inVariablesPath);
         if (Index != 0)
         {
             ++It;

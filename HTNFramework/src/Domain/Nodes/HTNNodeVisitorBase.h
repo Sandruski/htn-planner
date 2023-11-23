@@ -38,28 +38,28 @@ class HTNNodeVisitorBase
 public:
     virtual ~HTNNodeVisitorBase() = 0;
 
-    virtual HTNAtom Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNConstantsNode& inConstantsNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNMethodNode& inMethodNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNConditionNode& inConditionNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNAxiomConditionNode& inAxiomConditionNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTNNodeVisitorContextBase& ioContext) const;
+    virtual HTNAtom Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNConstantsNode& inConstantsNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNMethodNode& inMethodNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNConditionNode& inConditionNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNAxiomConditionNode& inAxiomConditionNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
     virtual void    Visit(const HTNVariableExpressionNode& inVariableExpressionNode, const HTNAtom& inVariableExpressionNodeValue,
-                          HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioContext) const;
-    virtual HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext) const;
+                          HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
 
 protected:
-    void    SetNodeValue(const HTNNodeBase& inNode, const HTNAtom& inNodeValue, HTNNodeVisitorContextBase& ioContext) const;
-    HTNAtom GetNodeValue(const HTNNodeBase& inNode, HTNNodeVisitorContextBase& ioContext) const;
+    void    SetNodeValue(const HTNNodeBase& inNode, const HTNAtom& inNodeValue, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    HTNAtom GetNodeValue(const HTNNodeBase& inNode, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
 };

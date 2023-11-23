@@ -168,7 +168,7 @@ bool HTNFactArgumentsTable::Check(const size inFactArgumentsIndex, const T ioFac
         std::advance(It, i);
 
         const HTNAtom& ioFactArgument = *It;
-        if (!ioFactArgument.IsSet())
+        if (!ioFactArgument.IsBound())
         {
             continue;
         }
@@ -187,7 +187,7 @@ bool HTNFactArgumentsTable::Check(const size inFactArgumentsIndex, const T ioFac
         std::advance(It, i);
 
         HTNAtom& ioFactArgument = *It;
-        if (ioFactArgument.IsSet())
+        if (ioFactArgument.IsBound())
         {
             continue;
         }

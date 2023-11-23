@@ -4,12 +4,12 @@
 
 HTNNodeBase::~HTNNodeBase() = default;
 
-void HTNNodeBase::Accept(HTN_MAYBE_UNUSED const HTNNodeVisitorBase& ioNodeVisitor, HTN_MAYBE_UNUSED const HTNAtom& inNodeValue,
-                         HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+void HTNNodeBase::Accept(HTN_MAYBE_UNUSED const HTNNodeVisitorBase& inNodeVisitor, HTN_MAYBE_UNUSED const HTNAtom& inNodeValue,
+                         HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioNodeVisitorContext) const
 {
 }
 
-HTNAtom HTNNodeBase::Accept(HTN_MAYBE_UNUSED const HTNNodeVisitorBase& ioNodeVisitor, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNNodeBase::Accept(HTN_MAYBE_UNUSED const HTNNodeVisitorBase& inNodeVisitor, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioNodeVisitorContext) const
 {
     return HTNAtom();
 }

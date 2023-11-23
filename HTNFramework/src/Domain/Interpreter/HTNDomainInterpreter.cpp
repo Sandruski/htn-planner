@@ -24,9 +24,9 @@
 
 namespace
 {
-HTNDecompositionContext& GetDecompositionContext(HTNNodeVisitorContextBase& ioContext)
+HTNDecompositionContext& GetDecompositionContext(HTNNodeVisitorContextBase& ioDecompositionContext)
 {
-    return static_cast<HTNDecompositionContext&>(ioContext);
+    return static_cast<HTNDecompositionContext&>(ioDecompositionContext);
 }
 
 #ifdef HTN_DEBUG_DECOMPOSITION
@@ -63,11 +63,11 @@ bool HTNDomainInterpreter::Interpret(HTNDecompositionContext& ioDecompositionCon
  * Depth first search on a graph
  * Domain is a graph that may contain cycles because of backtracking
  */
-HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetDomainNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -120,7 +120,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
         CurrentDecomposition.SetEnvironment(TaskInstance.GetEnvironment());
 
         const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskInstance.GetTaskNode();
-        const bool                                    Result   = GetNodeValue(*TaskNode, ioContext).GetValue<bool>();
+        const bool                                    Result   = GetNodeValue(*TaskNode, ioDecompositionContext).GetValue<bool>();
         if (!Result)
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
@@ -137,23 +137,23 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetConstantNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
     const HTNDecompositionNodeScope ConstantNodeScope = HTNDecompositionNodeScope(inConstantNode.GetID(), DecompositionContext);
 
     const std::shared_ptr<const HTNLiteralExpressionNode>& ValueNode = inConstantNode.GetValueNode();
-    return GetNodeValue(*ValueNode, ioContext);
+    return GetNodeValue(*ValueNode, ioDecompositionContext);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetAxiomNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -179,18 +179,18 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisi
     }
 
     // Check condition
-    const bool Result = GetNodeValue(*ConditionNode, ioContext).GetValue<bool>();
+    const bool Result = GetNodeValue(*ConditionNode, ioDecompositionContext).GetValue<bool>();
 #ifdef HTN_DEBUG_DECOMPOSITION
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetMethodNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -215,7 +215,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
     {
         // Check branch
         const std::shared_ptr<const HTNBranchNode>& BranchNode = BranchNodes[BranchIndex];
-        const bool                                  Result     = GetNodeValue(*BranchNode, ioContext).GetValue<bool>();
+        const bool                                  Result     = GetNodeValue(*BranchNode, ioDecompositionContext).GetValue<bool>();
         if (Result)
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
@@ -252,11 +252,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetBranchNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -273,7 +273,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVi
     const std::shared_ptr<const HTNConditionNodeBase>& CurrentPreConditionNode = inBranchNode.GetPreConditionNode();
     if (CurrentPreConditionNode)
     {
-        const bool Result = GetNodeValue(*CurrentPreConditionNode, ioContext).GetValue<bool>();
+        const bool Result = GetNodeValue(*CurrentPreConditionNode, ioDecompositionContext).GetValue<bool>();
         if (!Result)
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
@@ -304,11 +304,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVi
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetConditionNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -327,8 +327,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
     bool ShouldBindFactArguments = false;
     for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
     {
-        const HTNAtom Argument  = GetNodeValue(*ArgumentNode, ioContext);
-        ShouldBindFactArguments = ShouldBindFactArguments || !Argument.IsSet();
+        const HTNAtom Argument  = GetNodeValue(*ArgumentNode, ioDecompositionContext);
+        ShouldBindFactArguments = ShouldBindFactArguments || !Argument.IsBound();
         FactArguments.emplace_back(Argument);
     }
 
@@ -360,7 +360,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
         }
 
         const HTNAtom& Argument = FactArguments[i];
-        if (!Argument.IsSet())
+        if (!Argument.IsBound())
         {
             continue;
         }
@@ -386,7 +386,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
 
     // Check fact
     const std::shared_ptr<const HTNIdentifierExpressionNode>& ConditionNodeIDNode = inConditionNode.GetIDNode();
-    const std::string                                         FactID = GetNodeValue(*ConditionNodeIDNode, ioContext).GetValue<std::string>();
+    const std::string                                         FactID = GetNodeValue(*ConditionNodeIDNode, ioDecompositionContext).GetValue<std::string>();
     const size                                                FactArgumentsSize = WorldState.GetFactArgumentsSize(FactID, FactArguments.size());
     for (size FactArgumentsIndex = Indices.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsSize;
          FactArgumentsIndex      = Indices.AddOrIncrementIndex(CurrentNodePath))
@@ -413,7 +413,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
         {
             const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode = ArgumentNodes[i];
             const HTNAtom                                            FactArgument = FactArguments[i];
-            SetNodeValue(*ArgumentNode, FactArgument, ioContext);
+            SetNodeValue(*ArgumentNode, FactArgument, ioDecompositionContext);
         }
 
         const bool IsLastFactEntry = (FactArgumentsIndex == FactArgumentsSize - 1);
@@ -448,11 +448,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetAxiomConditionNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -468,7 +468,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 
     const std::shared_ptr<const HTNDomainNode>&               DomainNode               = DecompositionContext.GetDomainNode();
     const std::shared_ptr<const HTNIdentifierExpressionNode>& AxiomConditionNodeIDNode = inAxiomConditionNode.GetIDNode();
-    const std::string                         AxiomNodeID = GetNodeValue(*AxiomConditionNodeIDNode, ioContext).GetValue<std::string>();
+    const std::string                         AxiomNodeID = GetNodeValue(*AxiomConditionNodeIDNode, ioDecompositionContext).GetValue<std::string>();
     const std::shared_ptr<const HTNAxiomNode> AxiomNode   = DomainNode->FindAxiomNodeByID(AxiomNodeID);
     if (!AxiomNode)
     {
@@ -503,7 +503,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     AxiomConditionNodeArguments.reserve(AxiomConditionNodeArgumentNodesSize);
     for (const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomConditionNodeArgumentNode : AxiomConditionNodeArgumentNodes)
     {
-        const HTNAtom AxiomConditionNodeArgument = GetNodeValue(*AxiomConditionNodeArgumentNode, ioContext);
+        const HTNAtom AxiomConditionNodeArgument = GetNodeValue(*AxiomConditionNodeArgumentNode, ioDecompositionContext);
         AxiomConditionNodeArguments.emplace_back(AxiomConditionNodeArgument);
     }
 
@@ -542,7 +542,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
             // TODO salvarez Move to a validation step after parsing
             if (IsInputParameter)
             {
-                if (!AxiomConditionNodeArgument.IsSet())
+                if (!AxiomConditionNodeArgument.IsBound())
                 {
 #ifdef HTN_DEBUG_DECOMPOSITION
                     static constexpr bool    ShouldDoubleQuoteString = false;
@@ -560,10 +560,10 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
             }
 #endif
 
-            SetNodeValue(*AxiomNodeParameterNode, AxiomConditionNodeArgument, ioContext);
+            SetNodeValue(*AxiomNodeParameterNode, AxiomConditionNodeArgument, ioDecompositionContext);
         }
 
-        const bool Result = GetNodeValue(*AxiomNode, ioContext).GetValue<bool>();
+        const bool Result = GetNodeValue(*AxiomNode, ioDecompositionContext).GetValue<bool>();
         if (!Result)
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
@@ -575,7 +575,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         AxiomNodeParameters.reserve(AxiomNodeParameterNodesSize);
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomNodeParameterNode : AxiomNodeParameterNodes)
         {
-            const HTNAtom AxiomNodeParameter = GetNodeValue(*AxiomNodeParameterNode, ioContext);
+            const HTNAtom AxiomNodeParameter = GetNodeValue(*AxiomNodeParameterNode, ioDecompositionContext);
             AxiomNodeParameters.emplace_back(AxiomNodeParameter);
         }
     }
@@ -600,7 +600,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         if (IsOutputParameter)
         {
             const HTNAtom& AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
-            if (AxiomConditionNodeArgument.IsSet())
+            if (AxiomConditionNodeArgument.IsBound())
             {
 #ifdef HTN_DEBUG_DECOMPOSITION
                 static constexpr bool    ShouldDoubleQuoteString = false;
@@ -619,7 +619,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 #endif
 
         const HTNAtom& AxiomNodeParameter = AxiomNodeParameters[i];
-        SetNodeValue(*AxiomConditionNodeArgumentNode, AxiomNodeParameter, ioContext);
+        SetNodeValue(*AxiomConditionNodeArgumentNode, AxiomNodeParameter, ioDecompositionContext);
     }
 
     static constexpr bool Result = true;
@@ -631,11 +631,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 
 // YES bindings
 // YES backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetAndConditionNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -661,7 +661,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
     {
         // Check sub-condition
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = SubConditionNodes[SubConditionIndex];
-        const bool                                         Result           = GetNodeValue(*SubConditionNode, ioContext).GetValue<bool>();
+        const bool                                         Result           = GetNodeValue(*SubConditionNode, ioDecompositionContext).GetValue<bool>();
         if (!Result)
         {
             if (SubConditionIndex == 0) // First sub-condition
@@ -702,11 +702,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
 
 // YES bindings
 // NO backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetOrConditionNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -735,7 +735,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
 
         // Check sub-condition
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = SubConditionNodes[SubConditionIndex];
-        const bool                                         Result           = GetNodeValue(*SubConditionNode, ioContext).GetValue<bool>();
+        const bool                                         Result           = GetNodeValue(*SubConditionNode, ioDecompositionContext).GetValue<bool>();
 
         // Reset decomposition history
         DecompositionContext.SetDecompositionHistory(DecompositionHistory);
@@ -762,11 +762,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
 
 // YES bindings
 // YES backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetAltConditionNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -792,7 +792,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
     {
         // Check sub-condition
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = SubConditionNodes[SubConditionIndex];
-        const bool                                         Result           = GetNodeValue(*SubConditionNode, ioContext).GetValue<bool>();
+        const bool                                         Result           = GetNodeValue(*SubConditionNode, ioDecompositionContext).GetValue<bool>();
         if (Result)
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
@@ -832,11 +832,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
 
 // NO bindings
 // NO backtracking
-HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetNotConditionNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -861,7 +861,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
 
     // Check sub-condition
     const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = inNotConditionNode.GetSubConditionNode();
-    const bool                                         Result           = !GetNodeValue(*SubConditionNode, ioContext).GetValue<bool>();
+    const bool                                         Result           = !GetNodeValue(*SubConditionNode, ioDecompositionContext).GetValue<bool>();
 
     // Reset variables
     Environment.SetVariables(Variables);
@@ -875,11 +875,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetCompoundTaskNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -895,7 +895,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
 
     const std::shared_ptr<const HTNDomainNode>&               DomainNode             = DecompositionContext.GetDomainNode();
     const std::shared_ptr<const HTNIdentifierExpressionNode>& CompoundTaskNodeIDNode = inCompoundTaskNode.GetIDNode();
-    const std::string                                         MethodNodeID = GetNodeValue(*CompoundTaskNodeIDNode, ioContext).GetValue<std::string>();
+    const std::string                                         MethodNodeID = GetNodeValue(*CompoundTaskNodeIDNode, ioDecompositionContext).GetValue<std::string>();
     const std::shared_ptr<const HTNMethodNode>                MethodNode   = DomainNode->FindMethodNodeByID(MethodNodeID);
     if (!MethodNode)
     {
@@ -940,7 +940,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     CompoundTaskNodeArguments.reserve(CompoundTaskNodeArgumentNodes.size());
     for (const std::shared_ptr<const HTNValueExpressionNodeBase>& CompoundTaskNodeArgumentNode : CompoundTaskNodeArgumentNodes)
     {
-        const HTNAtom CompoundTaskNodeArgument = GetNodeValue(*CompoundTaskNodeArgumentNode, ioContext);
+        const HTNAtom CompoundTaskNodeArgument = GetNodeValue(*CompoundTaskNodeArgumentNode, ioDecompositionContext);
         CompoundTaskNodeArguments.emplace_back(CompoundTaskNodeArgument);
     }
 
@@ -970,7 +970,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
 #ifdef HTN_VALIDATE_DOMAIN
         // Check that the argument for the input parameter is bound
         // TODO salvarez Move to a validation step after parsing
-        if (!CompoundTaskNodeArgument.IsSet())
+        if (!CompoundTaskNodeArgument.IsBound())
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
             static constexpr bool ShouldDoubleQuoteString = false;
@@ -985,21 +985,21 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
         }
 #endif
 
-        SetNodeValue(*MethodNodeParameterNode, CompoundTaskNodeArgument, ioContext);
+        SetNodeValue(*MethodNodeParameterNode, CompoundTaskNodeArgument, ioDecompositionContext);
     }
 
-    const bool Result = GetNodeValue(*MethodNode, ioContext).GetValue<bool>();
+    const bool Result = GetNodeValue(*MethodNode, ioDecompositionContext).GetValue<bool>();
 #ifdef HTN_DEBUG_DECOMPOSITION
     RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetPrimitiveTaskNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     static constexpr HTNNodeStep StartNodeStep = HTNNodeStep::START;
@@ -1016,14 +1016,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inPrimitiveTaskNode.GetIDNode();
-    const std::string                                         ID     = GetNodeValue(*IDNode, ioContext).GetValue<std::string>();
+    const std::string                                         ID     = GetNodeValue(*IDNode, ioDecompositionContext).GetValue<std::string>();
 
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
     std::vector<HTNAtom>                                                  Arguments;
     Arguments.reserve(ArgumentNodes.size());
     for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
     {
-        const HTNAtom Argument = GetNodeValue(*ArgumentNode, ioContext);
+        const HTNAtom Argument = GetNodeValue(*ArgumentNode, ioDecompositionContext);
         Arguments.emplace_back(Argument);
     }
 
@@ -1038,14 +1038,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
 }
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNIdentifierExpressionNode&      inIdentifierExpressionNode,
-                                    HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+                                    HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetIdentifierExpressionNodeValue");
 
     return inIdentifierExpressionNode.GetValue();
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetLiteralExpressionNodeValue");
 
@@ -1053,11 +1053,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExp
 }
 
 void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, const HTNAtom& inVariableExpressionNodeValue,
-                                 HTNNodeVisitorContextBase& ioContext) const
+                                 HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("SetVariableExpressionNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
     const std::string     VariableID                  = inVariableExpressionNode.GetValue().GetValue<std::string>();
     const HTNPathHandler& CurrentVariablesPathHandler = DecompositionContext.GetCurrentVariablesPathHandler();
@@ -1071,11 +1071,11 @@ void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpr
     Variables.SetVariable(CurrentVariablePath, inVariableExpressionNodeValue);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetVariableExpressionNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
     const std::string     VariableID                  = inVariableExpressionNode.GetValue().GetValue<std::string>();
     const HTNPathHandler& CurrentVariablesPathHandler = DecompositionContext.GetCurrentVariablesPathHandler();
@@ -1089,11 +1089,11 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableE
     return Variables.FindVariable(CurrentVariablePath);
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetConstantExpressionNodeValue");
 
-    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioContext);
+    HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
     const std::shared_ptr<const HTNDomainNode>& DomainNode     = DecompositionContext.GetDomainNode();
     const std::string&                          ConstantNodeID = inConstantExpressionNode.GetValue().GetValue<std::string>();
@@ -1104,5 +1104,5 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantE
         return HTNAtom();
     }
 
-    return GetNodeValue(*ConstantNode, ioContext);
+    return GetNodeValue(*ConstantNode, ioDecompositionContext);
 }

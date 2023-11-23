@@ -22,17 +22,6 @@ public:
 
     bool operator==(const HTNAtom& inOther) const;
 
-    template<typename T>
-    const T& GetValue() const;
-
-    template<typename T>
-    T& GetValue();
-
-    template<typename T>
-    bool IsType() const;
-
-    bool IsSet() const;
-
     // Adds a new element to this list type
     void AddListElement(const HTNAtom& inElement);
 
@@ -40,12 +29,23 @@ public:
     const HTNAtom& GetListElement(const uint32 inIndex) const;
     const HTNAtom* FindListElement(const uint32 inIndex) const;
 
-    int32 GetListNumItems() const;
+    int32 GetListSize() const;
     bool  IsListEmpty() const;
+
+    template<typename T>
+    const T& GetValue() const;
+
+    template<typename T>
+    T& GetValueMutable();
+
+    template<typename T>
+    bool IsType() const;
 
     // Unbinds this HtnAtom, this can be used in the context of multiresult queries where we might want to reuse the same HtnAtom
     // multiple times because the backtracking mechanism (we will talk about this later) is making us reevaluate the planner.
-    void UnBind();
+    void Unbind();
+
+    bool IsBound() const;
 
     // Returns a string optionally delimited by double quotes
     std::string ToString(const bool inShouldDoubleQuoteString) const;
@@ -66,7 +66,7 @@ inline const T& HTNAtom::GetValue() const
 }
 
 template<typename T>
-inline T& HTNAtom::GetValue()
+inline T& HTNAtom::GetValueMutable()
 {
     return std::get<T>(mData.value());
 }
@@ -77,12 +77,12 @@ inline bool HTNAtom::IsType() const
     return std::holds_alternative<T>(mData.value());
 }
 
-inline bool HTNAtom::IsSet() const
-{
-    return mData.has_value();
-}
-
-inline void HTNAtom::UnBind()
+inline void HTNAtom::Unbind()
 {
     mData.reset();
+}
+
+inline bool HTNAtom::IsBound() const
+{
+    return mData.has_value();
 }

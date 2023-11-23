@@ -12,40 +12,40 @@ HTNIdentifierExpressionNode::HTNIdentifierExpressionNode(const HTNAtom& inValue)
 {
 }
 
-HTNAtom HTNIdentifierExpressionNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNIdentifierExpressionNode::Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const
 {
-    return ioNodeVisitor.Visit(*this, ioContext);
+    return inNodeVisitor.Visit(*this, ioNodeVisitorContext);
 }
 
 HTNLiteralExpressionNode::HTNLiteralExpressionNode(const HTNAtom& inValue) : HTNValueExpressionNodeBase(inValue)
 {
 }
 
-HTNAtom HTNLiteralExpressionNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNLiteralExpressionNode::Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const
 {
-    return ioNodeVisitor.Visit(*this, ioContext);
+    return inNodeVisitor.Visit(*this, ioNodeVisitorContext);
 }
 
 HTNVariableExpressionNode::HTNVariableExpressionNode(const HTNAtom& inValue) : HTNValueExpressionNodeBase(inValue)
 {
 }
 
-void HTNVariableExpressionNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, const HTNAtom& inNodeValue,
-                                       HTNNodeVisitorContextBase& ioContext) const
+void HTNVariableExpressionNode::Accept(const HTNNodeVisitorBase& inNodeVisitor, const HTNAtom& inNodeValue,
+                                       HTNNodeVisitorContextBase& ioNodeVisitorContext) const
 {
-    return ioNodeVisitor.Visit(*this, inNodeValue, ioContext);
+    return inNodeVisitor.Visit(*this, inNodeValue, ioNodeVisitorContext);
 }
 
-HTNAtom HTNVariableExpressionNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNVariableExpressionNode::Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const
 {
-    return ioNodeVisitor.Visit(*this, ioContext);
+    return inNodeVisitor.Visit(*this, ioNodeVisitorContext);
 }
 
 HTNConstantExpressionNode::HTNConstantExpressionNode(const HTNAtom& inValue) : HTNValueExpressionNodeBase(inValue)
 {
 }
 
-HTNAtom HTNConstantExpressionNode::Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNConstantExpressionNode::Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const
 {
-    return ioNodeVisitor.Visit(*this, ioContext);
+    return inNodeVisitor.Visit(*this, ioNodeVisitorContext);
 }

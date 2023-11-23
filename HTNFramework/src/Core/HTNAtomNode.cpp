@@ -2,6 +2,6 @@
 
 #include "Core/HTNAtomNode.h"
 
-HTNAtomNode::HTNAtomNode(const HTNAtom& inData) : mData(inData)
+HTNAtomNode::HTNAtomNode(const HTNAtom& inValue) : mData(inValue)
 {
 }

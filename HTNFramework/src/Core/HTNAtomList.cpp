@@ -48,9 +48,9 @@ bool HTNAtomList::operator==(const HTNAtomList& inOther) const
     return (!ThisCurrentNode && !OtherCurrentNode);
 }
 
-void HTNAtomList::PushBack(const HTNAtom& inData)
+void HTNAtomList::PushBack(const HTNAtom& inValue)
 {
-    HTNAtomNode* Node = new HTNAtomNode(inData);
+    HTNAtomNode* Node = new HTNAtomNode(inValue);
 
     if (!mHeadNode)
     {

@@ -23,7 +23,7 @@ public:
 
     bool operator==(const HTNAtomList& inOther) const;
 
-    void PushBack(const HTNAtom& inData);
+    void PushBack(const HTNAtom& inValue);
 
     const HTNAtom& Get(const uint32 inIndex) const;
     const HTNAtom* Find(const uint32 inIndex) const;

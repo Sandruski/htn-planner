@@ -32,7 +32,7 @@ HTNAtom::~HTNAtom()
 
 void HTNAtom::AddListElement(const HTNAtom& inElement)
 {
-    if (!IsSet())
+    if (!IsBound())
     {
         mData = HTNAtomList();
     }
@@ -42,7 +42,7 @@ void HTNAtom::AddListElement(const HTNAtom& inElement)
         return;
     }
 
-    HTNAtomList& List = GetValue<HTNAtomList>();
+    HTNAtomList& List = GetValueMutable<HTNAtomList>();
     List.PushBack(inElement);
 }
 
@@ -54,7 +54,7 @@ const HTNAtom& HTNAtom::GetListElement(const uint32 inIndex) const
 
 const HTNAtom* HTNAtom::FindListElement(const uint32 inIndex) const
 {
-    if (!IsSet())
+    if (!IsBound())
     {
         return nullptr;
     }
@@ -68,9 +68,9 @@ const HTNAtom* HTNAtom::FindListElement(const uint32 inIndex) const
     return List.Find(inIndex);
 }
 
-int32 HTNAtom::GetListNumItems() const
+int32 HTNAtom::GetListSize() const
 {
-    if (!IsSet())
+    if (!IsBound())
     {
         return -1;
     }
@@ -86,7 +86,7 @@ int32 HTNAtom::GetListNumItems() const
 
 bool HTNAtom::IsListEmpty() const
 {
-    if (!IsSet())
+    if (!IsBound())
     {
         return true;
     }
@@ -102,7 +102,7 @@ bool HTNAtom::IsListEmpty() const
 
 std::string HTNAtom::ToString(const bool inShouldDoubleQuoteString) const
 {
-    if (!IsSet())
+    if (!IsBound())
     {
         return "";
     }

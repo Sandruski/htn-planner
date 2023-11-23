@@ -25,7 +25,7 @@ public:
                            const std::vector<std::shared_ptr<const HTNAxiomNode>>&     inAxiomNodes,
                            const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel);
 
-    HTNAtom Accept(const HTNNodeVisitorBase& ioNodeVisitor, HTNNodeVisitorContextBase& ioContext) const final;
+    HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
     std::string GetID() const final;
 
@@ -43,9 +43,6 @@ private:
     // Node representing the ID of the domain
     // - Globally unique // TODO salvarez Unique within its project
     std::shared_ptr<const HTNIdentifierExpressionNode> mIDNode;
-
-    // TODO salvarez mIncludes with HTNIncludeNode
-    // TODO salvarez HTNProjectStructure node to store all domains
 
     // Nodes representing the constants of the domain
     std::vector<std::shared_ptr<const HTNConstantsNode>> mConstantNodes;

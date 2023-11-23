@@ -8,7 +8,7 @@
 class HTNAtomNode
 {
 public:
-    explicit HTNAtomNode(const HTNAtom& inData);
+    explicit HTNAtomNode(const HTNAtom& inValue);
 
     const HTNAtom& GetData() const;
 

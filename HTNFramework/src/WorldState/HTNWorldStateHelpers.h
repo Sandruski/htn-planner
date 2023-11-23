@@ -28,7 +28,7 @@ uint32 CountFactArgumentsBound(const T inFactArgumentsBegin, const T inFactArgum
     for (auto It = inFactArgumentsBegin; It != inFactArgumentsEnd; ++It)
     {
         const HTNAtom& FactArgument = *It;
-        if (FactArgument.IsSet())
+        if (FactArgument.IsBound())
         {
             ++FactArgumentsBoundNum;
         }

@@ -2,9 +2,9 @@
 
 #pragma once
 
+#include "Core/HTNPathHandler.h"
 #include "Domain/Interpreter/HTNDecompositionRecord.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
-#include "Core/HTNPathHandler.h"
 #include "HTNCoreMinimal.h"
 
 #include <memory>
@@ -29,7 +29,7 @@ public:
     const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
     const std::string&                          GetEntryPointID() const;
 
-    void RecordDecomposition(HTNDecompositionRecord& inDecomposition);
+    void RecordDecomposition(const HTNDecompositionRecord& inDecomposition);
     bool RestoreDecomposition();
 
     const HTNDecompositionRecord& GetCurrentDecomposition() const;
@@ -102,7 +102,7 @@ inline const std::string& HTNDecompositionContext::GetEntryPointID() const
     return mEntryPointID;
 }
 
-inline void HTNDecompositionContext::RecordDecomposition(HTNDecompositionRecord& inDecomposition)
+inline void HTNDecompositionContext::RecordDecomposition(const HTNDecompositionRecord& inDecomposition)
 {
     mDecompositionHistory.emplace_back(inDecomposition);
 }

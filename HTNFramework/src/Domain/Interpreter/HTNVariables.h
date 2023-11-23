@@ -20,8 +20,8 @@ public:
     // Removes an existing variable
     void RemoveVariable(const std::string& inVariablePath);
 
-    // Removes all existing variables under the scope path
-    void RemoveVariables(const std::string& inVariableScopePath);
+    // Removes all existing variables under the variables path
+    void RemoveVariables(const std::string& inVariablesPath);
 
     const std::unordered_map<std::string, HTNAtom>& GetVariables() const;
 
