@@ -40,7 +40,7 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantNode& inConstan
 }
 
 HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode&         inLiteralExpressionNode,
-                                                MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+                                                HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     const HTNAtom& Literal = inLiteralExpressionNode.GetValue();
 

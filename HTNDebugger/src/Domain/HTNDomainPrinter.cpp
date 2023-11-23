@@ -333,7 +333,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode,
 }
 
 HTNAtom HTNDomainPrinter::Visit(const HTNIdentifierExpressionNode&      inIdentifierExpressionNode,
-                                MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+                                HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     static constexpr bool ShouldDoubleQuoteString = false;
     const std::string     IdentifierString        = inIdentifierExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
@@ -342,7 +342,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNIdentifierExpressionNode&      inIdenti
     return true;
 }
 
-HTNAtom HTNDomainPrinter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainPrinter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     static constexpr bool ShouldDoubleQuoteString = true;
     const std::string     LiteralString           = inLiteralExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
@@ -351,7 +351,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNLiteralExpressionNode& inLiteralExpress
     return true;
 }
 
-HTNAtom HTNDomainPrinter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainPrinter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     PrintKeyword("?");
 
@@ -363,7 +363,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNVariableExpressionNode& inVariableExpre
     return true;
 }
 
-HTNAtom HTNDomainPrinter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainPrinter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     PrintKeyword("@");
 

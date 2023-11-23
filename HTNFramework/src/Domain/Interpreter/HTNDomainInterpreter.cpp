@@ -1038,14 +1038,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
 }
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNIdentifierExpressionNode&      inIdentifierExpressionNode,
-                                    MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+                                    HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetIdentifierExpressionNodeValue");
 
     return inIdentifierExpressionNode.GetValue();
 }
 
-HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+HTNAtom HTNDomainInterpreter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     OPTICK_EVENT("GetLiteralExpressionNodeValue");
 

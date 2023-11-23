@@ -2,7 +2,7 @@
 
 #pragma once
 
-#define MAYBE_UNUSED [[maybe_unused]]
+#define HTN_MAYBE_UNUSED [[maybe_unused]]
 
 #ifdef HTN_DEBUG
 #define HTN_DEBUG_ONLY(...) __VA_ARGS__

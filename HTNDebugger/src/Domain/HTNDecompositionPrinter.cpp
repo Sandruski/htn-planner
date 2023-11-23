@@ -338,8 +338,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode, HTNNod
 
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& ParameterNodes = inMethodNode.GetParameterNodes();
 
-    const HTNNodeTitleFunction NodeTitleFunction = [&](MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
-                                                       MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
+    const HTNNodeTitleFunction NodeTitleFunction = [&](HTN_MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
+                                                       HTN_MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
         ImGui::SameLine();
         ImGui::Text(IDString.c_str());
 
@@ -378,8 +378,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode, HTNNod
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inBranchNode.GetIDNode();
     const std::string                                         IDString = GetNodeValue(*IDNode, ioContext).GetValue<std::string>();
 
-    const HTNNodeTitleFunction NodeTitleFunction = [&](MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
-                                                       MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
+    const HTNNodeTitleFunction NodeTitleFunction = [&](HTN_MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
+                                                       HTN_MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
         ImGui::SameLine();
         ImGui::Text(IDString.c_str());
     };
@@ -601,8 +601,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
 
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inCompoundTaskNode.GetArgumentNodes();
 
-    const HTNNodeTitleFunction NodeTitleFunction = [&](MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
-                                                       MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
+    const HTNNodeTitleFunction NodeTitleFunction = [&](HTN_MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
+                                                       HTN_MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
         ImGui::SameLine();
         ImGui::Text(IDString.c_str());
 
@@ -648,8 +648,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
 
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inPrimitiveTaskNode.GetArgumentNodes();
 
-    const HTNNodeTitleFunction NodeTitleFunction = [&](MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
-                                                       MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
+    const HTNNodeTitleFunction NodeTitleFunction = [&](HTN_MAYBE_UNUSED const HTNNodeSnapshotDebug& inNodeSnapshot,
+                                                       HTN_MAYBE_UNUSED const HTNNodeStep           inNodeStep) {
         ImGui::SameLine();
         ImGui::Text(IDString.c_str());
 
@@ -679,7 +679,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNIdentifierExpressionNode&      inIdentifierExpressionNode,
-                                       MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+                                       HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     static constexpr bool ShouldDoubleQuoteString = false;
     const std::string     IdentifierString        = inIdentifierExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
@@ -687,7 +687,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNIdentifierExpressionNode&      i
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNLiteralExpressionNode&         inLiteralExpressionNode,
-                                       MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+                                       HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     static constexpr bool   ShouldDoubleQuoteString = true;
     const std::string       LiteralString           = inLiteralExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
@@ -696,7 +696,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNLiteralExpressionNode&         i
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNVariableExpressionNode&        inVariableExpressionNode,
-                                       MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+                                       HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     static constexpr bool ShouldDoubleQuoteString = false;
     const std::string     VariableString          = std::format("?{}", inVariableExpressionNode.GetValue().ToString(ShouldDoubleQuoteString));
@@ -706,7 +706,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNVariableExpressionNode&        i
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNConstantExpressionNode&        inConstantExpressionNode,
-                                       MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
+                                       HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioContext) const
 {
     static constexpr bool   ShouldDoubleQuoteString = false;
     const std::string       ConstantString          = std::format("@{}", inConstantExpressionNode.GetValue().ToString(ShouldDoubleQuoteString));
