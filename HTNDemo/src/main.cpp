@@ -2,13 +2,13 @@
 
 #include "HTNCoreMinimal.h"
 
+#include "SDL.h"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer2.h"
 #include "optick.h"
 
-#include <SDL.h>
-#include <stdio.h>
+#include <cstdio>
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "HTNDebuggerWindow.h"
@@ -37,52 +37,35 @@ int main(int, char**)
 #endif
 
     // Create window with SDL_Renderer graphics context
-    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window*     window       = SDL_CreateWindow("HTN Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
-    SDL_Renderer*   renderer     = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-    if (renderer == NULL)
+    const SDL_WindowFlags WindowFlags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Window*           Window      = SDL_CreateWindow("HTN Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, WindowFlags);
+    SDL_Renderer*         Renderer    = SDL_CreateRenderer(Window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    if (!Renderer)
     {
         SDL_Log("Error creating SDL_Renderer!");
         return 0;
     }
-    // SDL_RendererInfo info;
-    // SDL_GetRendererInfo(renderer, &info);
-    // SDL_Log("Current SDL_Renderer: %s", info.name);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
+
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+
+    ImGuiIO& IO = ImGui::GetIO();
+    IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    IO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    // ImGui::StyleColorsLight();
 
     // Setup Platform/Renderer backends
-    ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
-    ImGui_ImplSDLRenderer2_Init(renderer);
+    ImGui_ImplSDL2_InitForSDLRenderer(Window, Renderer);
+    ImGui_ImplSDLRenderer2_Init(Renderer);
 
-    // Load Fonts
-    // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select
-    // them.
-    // - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
-    // - If the file cannot be loaded, the function will return NULL. Please handle those errors in your application (e.g. use an assertion, or
-    // display an error and quit).
-    // - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling
-    // ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
-    // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
-    // - Read 'docs/FONTS.md' for more instructions and details.
-    // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-    // io.Fonts->AddFontDefault();
-    // io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
-    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
-    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
-    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-    // ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
-    // IM_ASSERT(font != NULL);
+    const ImVec4 ClearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    // Main loop
+    bool IsDone = false;
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     HTNDatabaseHook   DatabaseHook;
@@ -94,28 +77,23 @@ int main(int, char**)
     bool ShouldShowHTNDebuggerWindow = true;
 #endif
 
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-    // Main loop
-    bool IsDone = false;
     while (!IsDone)
     {
         OPTICK_FRAME("MainThread");
 
-        // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse
-        // data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the
-        // keyboard data. Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
+        SDL_Event Event;
+        while (SDL_PollEvent(&Event))
         {
-            ImGui_ImplSDL2_ProcessEvent(&event);
-            if (event.type == SDL_QUIT)
+            ImGui_ImplSDL2_ProcessEvent(&Event);
+            if (Event.type == SDL_QUIT)
+            {
                 IsDone = true;
-            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
+            }
+
+            if (Event.type == SDL_WINDOWEVENT && Event.window.event == SDL_WINDOWEVENT_CLOSE && Event.window.windowID == SDL_GetWindowID(Window))
+            {
                 IsDone = true;
+            }
         }
 
         // Start the Dear ImGui frame
@@ -132,12 +110,12 @@ int main(int, char**)
 
         // Rendering
         ImGui::Render();
-        SDL_RenderSetScale(renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-        SDL_SetRenderDrawColor(renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255),
-                               (Uint8)(clear_color.w * 255));
-        SDL_RenderClear(renderer);
+        SDL_RenderSetScale(Renderer, IO.DisplayFramebufferScale.x, IO.DisplayFramebufferScale.y);
+        SDL_SetRenderDrawColor(Renderer, static_cast<Uint8>(ClearColor.x * 255), static_cast<Uint8>(ClearColor.y * 255),
+                               static_cast<Uint8>(ClearColor.z * 255), static_cast<Uint8>(ClearColor.w * 255));
+        SDL_RenderClear(Renderer);
         ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(Renderer);
     }
 
     // Cleanup
@@ -145,8 +123,8 @@ int main(int, char**)
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(Renderer);
+    SDL_DestroyWindow(Window);
     SDL_Quit();
 
     return 0;

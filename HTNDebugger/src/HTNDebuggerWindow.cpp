@@ -126,7 +126,7 @@ void RenderActivePlanByPlanningQuery(const HTNPlanningQuery& inPlanningQuery)
     ImGui::EndChild();
 }
 
-std::shared_ptr<const HTNMethodNode> FindTopLevelMethodNodeByID(const std::string&                                       inID,
+std::shared_ptr<const HTNMethodNode> FindTopLevelMethodNodeByID(const std::string&                                       inMethodNodeID,
                                                                 const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes)
 {
     const auto It = std::find_if(inMethodNodes.begin(), inMethodNodes.end(), [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) {
@@ -140,7 +140,7 @@ std::shared_ptr<const HTNMethodNode> FindTopLevelMethodNodeByID(const std::strin
             return false;
         }
 
-        return (inID == inMethodNode->GetID());
+        return (inMethodNodeID == inMethodNode->GetID());
     });
 
     return ((It != inMethodNodes.end() ? *It : nullptr));

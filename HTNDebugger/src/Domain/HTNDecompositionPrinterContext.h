@@ -68,7 +68,7 @@ public:
     void  SetMaxDecompositionStep(const int32 inMaxDecompositionStep);
     int32 GetMaxDecompositionStep() const;
 
-    void SetIsCurrentNodeVisible(bool inIsCurrentNodeVisible);
+    void SetIsCurrentNodeVisible(const bool inIsCurrentNodeVisible);
     bool IsCurrentNodeVisible() const;
     bool IsSelectedNodeSelected() const;
     void RefreshNodeStates();
@@ -200,7 +200,7 @@ inline int32 HTNDecompositionPrinterContext::GetMaxDecompositionStep() const
     return mMaxDecompositionStep;
 }
 
-inline void HTNDecompositionPrinterContext::SetIsCurrentNodeVisible(bool inIsCurrentNodeVisible)
+inline void HTNDecompositionPrinterContext::SetIsCurrentNodeVisible(const bool inIsCurrentNodeVisible)
 {
     mIsCurrentNodeVisible = inIsCurrentNodeVisible;
 }

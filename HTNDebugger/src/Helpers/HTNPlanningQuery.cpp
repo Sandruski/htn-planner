@@ -5,7 +5,7 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Helpers/HTNOperationResultHelpers.h"
 
-HTNPlanningQuery::HTNPlanningQuery(HTNPlanningUnit& inPlanningUnit) : mPlanningUnit(inPlanningUnit)
+HTNPlanningQuery::HTNPlanningQuery(HTNPlanningUnit& ioPlanningUnit) : mPlanningUnit(ioPlanningUnit)
 {
 }
 

@@ -15,7 +15,7 @@ class HTNPlanningUnit;
 class HTNPlanningQuery
 {
 public:
-    explicit HTNPlanningQuery(HTNPlanningUnit& inPlanningUnit);
+    explicit HTNPlanningQuery(HTNPlanningUnit& ioPlanningUnit);
 
     HTNPlanningUnit&       GetPlanningUnitMutable();
     const HTNPlanningUnit& GetPlanningUnit() const;

@@ -11,13 +11,13 @@
 namespace
 {
 std::string MakeFactDescription(const std::string& inFactID, const HTNFactArguments& inFactArguments,
-                                const bool inShouldDoubleQuoteFactArgumentString)
+                                const bool inShouldDoubleQuoteString)
 {
     std::string FactDescription = inFactID;
 
     for (const HTNAtom& FactArgument : inFactArguments)
     {
-        FactDescription.append(std::format(" {}", FactArgument.ToString(inShouldDoubleQuoteFactArgumentString)));
+        FactDescription.append(std::format(" {}", FactArgument.ToString(inShouldDoubleQuoteString)));
     }
 
     return FactDescription;
@@ -39,15 +39,15 @@ bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinte
             const std::vector<HTNFactArguments>& FactArgumentsContainer = FactArgumentsTable.GetFactArguments();
             for (const HTNFactArguments& FactArgumentsElement : FactArgumentsContainer)
             {
-                bool        ShouldDoubleQuoteFactArgumentString = false;
-                std::string Text = MakeFactDescription(FactID, FactArgumentsElement, ShouldDoubleQuoteFactArgumentString);
+                bool        ShouldDoubleQuoteString = false;
+                std::string Text                    = MakeFactDescription(FactID, FactArgumentsElement, ShouldDoubleQuoteString);
 
                 // Filter text with and without double quotes for usability
                 bool PassFilterResult = TextFilter.PassFilter(Text.c_str());
                 if (!PassFilterResult)
                 {
-                    ShouldDoubleQuoteFactArgumentString = true;
-                    Text                                = MakeFactDescription(FactID, FactArgumentsElement, ShouldDoubleQuoteFactArgumentString);
+                    ShouldDoubleQuoteString = true;
+                    Text                                = MakeFactDescription(FactID, FactArgumentsElement, ShouldDoubleQuoteString);
 
                     PassFilterResult = TextFilter.PassFilter(Text.c_str());
                     if (!PassFilterResult)
