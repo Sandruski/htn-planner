@@ -40,33 +40,53 @@ void DecomposePlanningQuery(HTNPlanningQuery& ioPlanningQuery)
     ioPlanningQuery.SetLastEntryPointID(EntryPointID);
 }
 
+void CollectFilePathsRecursively(const std::filesystem::path& inDirectoryPath, const std::string& inFileExtension,
+                                 std::vector<std::filesystem::path>& outFilePaths)
+{
+    for (const std::filesystem::directory_entry& DirectoryEntry : std::filesystem::directory_iterator(inDirectoryPath))
+    {
+        if (DirectoryEntry.is_directory())
+        {
+            const std::filesystem::path DirectoryPath = DirectoryEntry.path();
+            CollectFilePathsRecursively(DirectoryPath, inFileExtension, outFilePaths);
+        }
+        else if (DirectoryEntry.is_regular_file())
+        {
+            const std::filesystem::path FilePath = DirectoryEntry.path();
+            if (FilePath.extension() != inFileExtension)
+            {
+                continue;
+            }
+
+            outFilePaths.emplace_back(FilePath);
+        }
+    }
+}
+
+std::string MakeFilePathDisplayName(const std::filesystem::path& inFilePath, const std::filesystem::path& inDirectoryPath)
+{
+    std::string FilePathDisplayName = inFilePath.lexically_relative(inDirectoryPath).replace_extension().string();
+
+    // Convert backslashes to forward slashes
+    std::replace(FilePathDisplayName.begin(), FilePathDisplayName.end(), '\\', '/');
+
+    return FilePathDisplayName;
+}
+
 void RenderFileSelector(const std::string& inDirectoryName, const std::string& inFileExtension, std::filesystem::path& ioSelectedFilePath)
 {
+    const std::filesystem::path        DirectoryPath = HTNPathHelpers::MakeAbsolutePath(inDirectoryName);
     std::vector<std::filesystem::path> FilePaths;
+    CollectFilePathsRecursively(DirectoryPath, inFileExtension, FilePaths);
 
-    const std::filesystem::path DirectoryPath = HTNPathHelpers::MakeAbsolutePath(inDirectoryName);
-    for (const std::filesystem::directory_entry& DirectoryEntry : std::filesystem::directory_iterator(DirectoryPath))
-    {
-        if (!DirectoryEntry.is_regular_file())
-        {
-            continue;
-        }
-
-        const std::filesystem::path FilePath = DirectoryEntry.path();
-        if (FilePath.extension() != inFileExtension)
-        {
-            continue;
-        }
-
-        FilePaths.emplace_back(FilePath);
-    }
-
-    if (ImGui::BeginCombo("File", ioSelectedFilePath.filename().stem().string().c_str()))
+    const std::string SelectedFilePathDisplayName = MakeFilePathDisplayName(ioSelectedFilePath, DirectoryPath);
+    if (ImGui::BeginCombo("File", SelectedFilePathDisplayName.c_str()))
     {
         for (const std::filesystem::path& FilePath : FilePaths)
         {
-            const bool IsFileSelected = (ioSelectedFilePath == FilePath);
-            if (ImGui::Selectable(FilePath.filename().stem().string().c_str(), IsFileSelected))
+            const std::string FilePathDisplayName = MakeFilePathDisplayName(FilePath, DirectoryPath);
+            const bool        IsFileSelected      = (ioSelectedFilePath == FilePath);
+            if (ImGui::Selectable(FilePathDisplayName.c_str(), IsFileSelected))
             {
                 ioSelectedFilePath = FilePath;
             }
