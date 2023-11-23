@@ -8,7 +8,7 @@
 #include "Domain/HTNDecompositionWatchWindowPrinterContext.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/HTNDomainPrinterContext.h"
-#include "Domain/Interpreter/HTNDecompositionHelpers.h"
+#include "Domain/HTNDomainHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionRecord.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
@@ -16,7 +16,7 @@
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "Core/HTNFileHelpers.h"
 #include "Core/HTNPathHelpers.h"
-#include "Helpers/HTNDebuggerWindowHelpers.h"
+#include "Helpers/HTNOperationResultHelpers.h"
 #include "Core/HTNFileHelpers.h"
 #include "Helpers/HTNImGuiHelpers.h"
 #include "Planner/HTNDatabaseHook.h"
@@ -243,7 +243,7 @@ void HTNDebuggerWindow::RenderDecomposition()
             if (MethodNodes)
             {
                 const std::shared_ptr<const HTNMethodNode> TopLevelMethodNode =
-                    FindTopLevelMethodNodeByID(HTNDecompositionHelpers::kDefaultMainTopLevelMethodID, *MethodNodes);
+                    FindTopLevelMethodNodeByID(HTNDomainHelpers::kDefaultMainTopLevelMethodID, *MethodNodes);
                 if (TopLevelMethodNode)
                 {
                     const std::string EntryPointID = TopLevelMethodNode->GetID();
@@ -260,7 +260,7 @@ void HTNDebuggerWindow::RenderDecomposition()
             if (MethodNodes)
             {
                 const std::shared_ptr<const HTNMethodNode> TopLevelMethodNode =
-                    FindTopLevelMethodNodeByID(HTNDecompositionHelpers::kDefaultUpperBodyTopLevelMethodID, *MethodNodes);
+                    FindTopLevelMethodNodeByID(HTNDomainHelpers::kDefaultUpperBodyTopLevelMethodID, *MethodNodes);
                 if (TopLevelMethodNode)
                 {
                     const std::string EntryPointID = TopLevelMethodNode->GetID();
@@ -601,11 +601,11 @@ void HTNDebuggerWindow::ResetDecompositionPrinterState()
 
 bool HTNDebuggerWindow::IsLastWorldStateFileParsingSuccessful() const
 {
-    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastParseWorldStateFileResult);
+    return HTNOperationResultHelpers::IsOperationSuccessful(mLastParseWorldStateFileResult);
 }
 
 bool HTNDebuggerWindow::IsLastDomainFileParsingSuccessful() const
 {
-    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastParseDomainFileResult);
+    return HTNOperationResultHelpers::IsOperationSuccessful(mLastParseDomainFileResult);
 }
 #endif

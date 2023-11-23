@@ -3,7 +3,7 @@
 #include "Helpers/HTNPlanningQuery.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Helpers/HTNDebuggerWindowHelpers.h"
+#include "Helpers/HTNOperationResultHelpers.h"
 
 HTNPlanningQuery::HTNPlanningQuery(HTNPlanningUnit& inPlanningUnit) : mPlanningUnit(inPlanningUnit)
 {
@@ -11,6 +11,6 @@ HTNPlanningQuery::HTNPlanningQuery(HTNPlanningUnit& inPlanningUnit) : mPlanningU
 
 bool HTNPlanningQuery::IsLastDecompositionSuccessful() const
 {
-    return HTNDebuggerWindowHelpers::IsOperationSuccessful(mLastDecompositionResult);
+    return HTNOperationResultHelpers::IsOperationSuccessful(mLastDecompositionResult);
 }
 #endif

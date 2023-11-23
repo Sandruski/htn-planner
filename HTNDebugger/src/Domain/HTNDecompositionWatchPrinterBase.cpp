@@ -5,7 +5,6 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionWatchPrinterContextBase.h"
-#include "Domain/Interpreter/HTNDecompositionHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Interpreter/HTNVariables.h"
 #include "Domain/Nodes/HTNConstantNode.h"

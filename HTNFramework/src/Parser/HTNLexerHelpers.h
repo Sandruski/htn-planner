@@ -19,6 +19,6 @@ bool        IsAlphaNumeric(const char inCharacter);
 std::string GetSpecialCharacterEscapeSequence(const char inCharacter);
 
 #ifdef HTN_DEBUG
-void PrintErrorMessage(const std::string& inMessage, HTNLexerContextBase& ioLexerContext);
+void PrintErrorMessage(const std::string& inMessage, const HTNLexerContextBase& inLexerContext);
 #endif
 } // namespace HTNLexerHelpers

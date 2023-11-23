@@ -7,7 +7,7 @@
 #include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/HTNDecompositionPrinterContext.h"
 #include "Domain/HTNDecompositionWatchTooltipPrinterContext.h"
-#include "Domain/Interpreter/HTNDecompositionHelpers.h"
+#include "Domain/HTNDomainHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 #include "Domain/Nodes/HTNAxiomNode.h"
 #include "Domain/Nodes/HTNBranchNode.h"
@@ -276,7 +276,7 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode, HTNNod
 
     // Top-level compound task node
     const std::string&                               EntryPointID             = DecompositionPrinterContext.GetEntryPointID();
-    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDecompositionHelpers::MakeTopLevelCompoundTaskNode(EntryPointID);
+    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDomainHelpers::MakeTopLevelCompoundTaskNode(EntryPointID);
     return GetNodeValue(*TopLevelCompoundTaskNode, ioContext).GetValue<bool>();
 }
 

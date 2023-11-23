@@ -38,11 +38,12 @@ std::string GetSpecialCharacterEscapeSequence(const char inCharacter)
 }
 
 #ifdef HTN_DEBUG
-void PrintErrorMessage(const std::string& inMessage, HTNLexerContextBase& ioLexerContext)
+void PrintErrorMessage(const std::string& inMessage, const HTNLexerContextBase& inLexerContext)
 {
-    const uint32 Row    = ioLexerContext.GetRow();
-    const uint32 Column = ioLexerContext.GetColumn();
+    const uint32 Row    = inLexerContext.GetRow();
+    const uint32 Column = inLexerContext.GetColumn();
     HTN_DOMAIN_LOG_ERROR(Row, Column, "{}", inMessage);
 }
 #endif
 } // namespace HTNLexerHelpers
+

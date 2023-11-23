@@ -9,11 +9,11 @@
 namespace HTNParserHelpers
 {
 #ifdef HTN_DEBUG
-void PrintLastErrorMessage(HTNParserContextBase& ioParserContext)
+void PrintLastErrorMessage(const HTNParserContextBase& inParserContext)
 {
-    const int32          LastErrorRow     = ioParserContext.GetLastErrorRow();
-    const int32          LastErrorColumn  = ioParserContext.GetLastErrorColumn();
-    const std::string& LastErrorMessage = ioParserContext.GetLastErrorMessage();
+    const int32        LastErrorRow     = inParserContext.GetLastErrorRow();
+    const int32        LastErrorColumn  = inParserContext.GetLastErrorColumn();
+    const std::string& LastErrorMessage = inParserContext.GetLastErrorMessage();
     HTN_DOMAIN_LOG_ERROR(LastErrorRow, LastErrorColumn, "{}", LastErrorMessage);
 }
 #endif

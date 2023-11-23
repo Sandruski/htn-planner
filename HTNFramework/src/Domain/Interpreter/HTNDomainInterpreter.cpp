@@ -4,7 +4,7 @@
 
 #include "Domain/Interpreter/HTNConditionQuery.h"
 #include "Domain/Interpreter/HTNDecompositionContext.h"
-#include "Domain/Interpreter/HTNDecompositionHelpers.h"
+#include "Domain/HTNDomainHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionRecord.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNTaskInstance.h"
@@ -99,7 +99,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
 
-    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode = HTNDecompositionHelpers::MakeTopLevelCompoundTaskNode(EntryPointID);
+    const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode    = HTNDomainHelpers::MakeTopLevelCompoundTaskNode(EntryPointID);
     const HTNPathHandler&                            CurrentNodePathHandler   = DecompositionContext.GetCurrentNodePathHandler();
     const HTNPathHandler&                            CurrentVariablesPathHandler = DecompositionContext.GetCurrentVariablesPathHandler();
     const HTNTaskInstance                            TopLevelCompoundTaskInstance =
@@ -353,7 +353,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
         }
 
         const std::string& VariableID    = ArgumentNode->GetValue().GetValue<std::string>();
-        const bool         IsAnyArgument = HTNDecompositionHelpers::IsAnyArgument(VariableID);
+        const bool         IsAnyArgument = HTNDomainHelpers::IsAnyArgument(VariableID);
         if (!IsAnyArgument)
         {
             continue;
@@ -516,13 +516,13 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         {
             const std::shared_ptr<const HTNVariableExpressionNode>& AxiomNodeParameterNode = AxiomNodeParameterNodes[i];
             const std::string&                                      VariableID       = AxiomNodeParameterNode->GetValue().GetValue<std::string>();
-            const bool                                              IsInputParameter = HTNDecompositionHelpers::IsInputParameter(VariableID);
-            const bool IsInputOutputParameter                                        = HTNDecompositionHelpers::IsInputOutputParameter(VariableID);
+            const bool                                              IsInputParameter = HTNDomainHelpers::IsInputParameter(VariableID);
+            const bool                                              IsInputOutputParameter = HTNDomainHelpers::IsInputOutputParameter(VariableID);
             if (!IsInputParameter && !IsInputOutputParameter)
             {
 #ifdef HTN_VALIDATE_DOMAIN
                 // Check that the parameter is input, output, or input/output
-                const bool IsOutputParameter = HTNDecompositionHelpers::IsOutputParameter(VariableID);
+                const bool IsOutputParameter = HTNDomainHelpers::IsOutputParameter(VariableID);
                 if (!IsOutputParameter)
                 {
                     HTN_LOG_ERROR("Axiom node's parameter [{}] is not input, output, or input/output", VariableID);
@@ -585,8 +585,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     {
         const std::shared_ptr<const HTNVariableExpressionNode>& AxiomNodeParameterNode = AxiomNodeParameterNodes[i];
         const std::string&                                      VariableID             = AxiomNodeParameterNode->GetValue().GetValue<std::string>();
-        const bool                                              IsOutputParameter      = HTNDecompositionHelpers::IsOutputParameter(VariableID);
-        const bool                                              IsInputOutputParameter = HTNDecompositionHelpers::IsInputOutputParameter(VariableID);
+        const bool                                              IsOutputParameter      = HTNDomainHelpers::IsOutputParameter(VariableID);
+        const bool                                              IsInputOutputParameter = HTNDomainHelpers::IsInputOutputParameter(VariableID);
         if (!IsOutputParameter && !IsInputOutputParameter)
         {
             continue;
@@ -951,7 +951,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     {
         const std::shared_ptr<const HTNVariableExpressionNode>& MethodNodeParameterNode = MethodNodeParameterNodes[i];
         const std::string&                                      VariableID              = MethodNodeParameterNode->GetValue().GetValue<std::string>();
-        const bool                                              IsInputParameter        = HTNDecompositionHelpers::IsInputParameter(VariableID);
+        const bool                                              IsInputParameter        = HTNDomainHelpers::IsInputParameter(VariableID);
         if (!IsInputParameter)
         {
 #ifdef HTN_VALIDATE_DOMAIN

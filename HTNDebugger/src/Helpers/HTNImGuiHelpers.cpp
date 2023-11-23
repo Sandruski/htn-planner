@@ -5,7 +5,7 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/HTNDecompositionPrinter.h"
-#include "Domain/Interpreter/HTNDecompositionHelpers.h"
+#include "Domain/HTNDomainHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionSnapshotDebug.h"
 
 #include "imgui_internal.h"
@@ -52,11 +52,11 @@ ImVec4 GetNodeColor(const HTNNodeSnapshotDebug& inNodeSnapshot, const HTNNodeSte
 
 ImVec4 GetVariableColor(const std::string& inVariableID)
 {
-    if (HTNDecompositionHelpers::IsParameter(inVariableID))
+    if (HTNDomainHelpers::IsParameter(inVariableID))
     {
         return kParameterColor;
     }
-    else if (HTNDecompositionHelpers::IsAnyArgument(inVariableID))
+    else if (HTNDomainHelpers::IsAnyArgument(inVariableID))
     {
         return kAnyArgumentColor;
     }

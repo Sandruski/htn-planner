@@ -15,6 +15,7 @@
 #include "Core/HTNToken.h"
 #include "Core/HTNTokenType.h"
 #include "Parser/HTNParserHelpers.h"
+#include "Domain/HTNDomainHelpers.h"
 
 /*
 Backus Naur Form (BNF):
@@ -152,7 +153,7 @@ bool HTNDomainParser::ParseConstantsNode(std::shared_ptr<const HTNConstantsNode>
     std::shared_ptr<const HTNIdentifierExpressionNode> IDNode;
     if (!ParseIdentifierExpressionNode(IDNode, ioDomainParserContext))
     {
-        IDNode = std::make_shared<HTNIdentifierExpressionNode>(HTNParserHelpers::kAnonymousNamespaceName);
+        IDNode = std::make_shared<HTNIdentifierExpressionNode>(HTNDomainHelpers::kAnonymousNamespaceID);
     }
 
     std::vector<std::shared_ptr<const HTNConstantNode>> ConstantNodes;

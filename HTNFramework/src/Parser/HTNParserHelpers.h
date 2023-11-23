@@ -4,18 +4,13 @@
 
 #include "HTNCoreMinimal.h"
 
-#include <string>
-
 #ifdef HTN_DEBUG
 class HTNParserContextBase;
 #endif
 
 namespace HTNParserHelpers
 {
-// Name of an anonymous namespace
-inline const std::string kAnonymousNamespaceName = "unnamed";
-
 #ifdef HTN_DEBUG
-void PrintLastErrorMessage(HTNParserContextBase& ioParserContext);
+void PrintLastErrorMessage(const HTNParserContextBase& inParserContext);
 #endif
 } // namespace HTNParserHelpers

@@ -7,8 +7,8 @@
 
 enum class HTNOperationResult : uint8;
 
-namespace HTNDebuggerWindowHelpers
+namespace HTNOperationResultHelpers
 {
 bool IsOperationSuccessful(const HTNOperationResult inOperationResult);
-} // namespace HTNDebuggerWindowHelpers
+} // namespace HTNOperationResultHelpers
 #endif
