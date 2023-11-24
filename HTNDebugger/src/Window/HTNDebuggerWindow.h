@@ -41,9 +41,13 @@ private:
     void RenderWorldState();
 
     void RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, HTNPlanningQuery& ioPlanningQuery,
-                                            HTNNodeInstance& ioSelectedNode);
+                                            std::unordered_map<std::string, HTNNodeState>&                         ioNodeStates,
+                                            std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates,
+                                            HTNNodeInstance&                                                       ioSelectedNodeInstance);
 
-    void ResetDecompositionPrinterState();
+    void ResetDecompositionState(std::unordered_map<std::string, HTNNodeState>&                         ioNodeStates,
+                                 std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates,
+                                 HTNNodeInstance&                                                       ioSelectedNodeInstance);
 
     HTN_NODISCARD bool IsLastWorldStateFileParsingOperationSuccessful() const;
     HTN_NODISCARD bool IsLastDomainFileParsingOperationSuccessful() const;
@@ -73,8 +77,10 @@ private:
     //----------------------------------------------------------------------//
     // Decomposition Printer
     //----------------------------------------------------------------------//
-    std::unordered_map<std::string, HTNNodeState>                         mNodeStates;
-    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mChoicePointNodeStates;
+    std::unordered_map<std::string, HTNNodeState>                         mMainNodeStates;
+    std::unordered_map<std::string, HTNNodeState>                         mUpperBodyNodeStates;
+    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mMainChoicePointNodeStates;
+    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mUpperBodyChoicePointNodeStates;
     HTNNodeInstance                                                       mMainSelectedNodeInstance;
     HTNNodeInstance                                                       mUpperBodySelectedNodeInstance;
     HTNDecompositionTooltipMode                                           mTooltipMode               = HTNDecompositionTooltipMode::REGULAR;
