@@ -12,24 +12,6 @@
 
 #include "imgui.h"
 
-namespace
-{
-enum HTNVariableExpressionNodeResult : uint8
-{
-    ID_STRING,
-    ID_COLOR,
-    VALUE_STRING
-};
-
-enum HTNVariableExpressionNodeColorResult : uint8
-{
-    X,
-    Y,
-    Z,
-    W
-};
-} // namespace
-
 void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinterContext& ioDecompositionWatchWindowPrinterContext) const
 {
     const HTNDecompositionNode& Node         = ioDecompositionWatchWindowPrinterContext.GetNode();
@@ -48,24 +30,13 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
         {
             ImGui::TableNextRow();
 
-            const HTNAtom Parameter = GetNodeValue(*NodeParameter, ioDecompositionWatchWindowPrinterContext);
-
             // Parameter ID
             ImGui::TableNextColumn();
-
-            const std::string ParameterIDString = Parameter.GetListElement(HTNVariableExpressionNodeResult::ID_STRING).GetValue<std::string>();
-            const HTNAtom&    ParameterIDColor  = Parameter.GetListElement(HTNVariableExpressionNodeResult::ID_COLOR);
-            const ImVec4 ParameterIDImGuiColor  = ImVec4(ParameterIDColor.GetListElement(HTNVariableExpressionNodeColorResult::X).GetValue<float>(),
-                                                         ParameterIDColor.GetListElement(HTNVariableExpressionNodeColorResult::Y).GetValue<float>(),
-                                                         ParameterIDColor.GetListElement(HTNVariableExpressionNodeColorResult::Z).GetValue<float>(),
-                                                         ParameterIDColor.GetListElement(HTNVariableExpressionNodeColorResult::W).GetValue<float>());
-            ImGui::TextColored(ParameterIDImGuiColor, ParameterIDString.c_str());
+            PrintColoredValueIDExpressionNode(NodeParameter, ioDecompositionWatchWindowPrinterContext);
 
             // Parameter value
             ImGui::TableNextColumn();
-
-            const std::string ParameterValueString = Parameter.GetListElement(HTNVariableExpressionNodeResult::VALUE_STRING).GetValue<std::string>();
-            ImGui::Text(ParameterValueString.c_str());
+            PrintValueValueExpressionNode(NodeParameter, ioDecompositionWatchWindowPrinterContext);
         }
 
         // Print node arguments
@@ -74,24 +45,13 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
         {
             ImGui::TableNextRow();
 
-            const HTNAtom Argument = GetNodeValue(*NodeArgument, ioDecompositionWatchWindowPrinterContext);
-
             // Argument ID
             ImGui::TableNextColumn();
-
-            const std::string ArgumentIDString     = Argument.GetListElement(HTNVariableExpressionNodeResult::ID_STRING).GetValue<std::string>();
-            const HTNAtom&    ArgumentIDColor      = Argument.GetListElement(HTNVariableExpressionNodeResult::ID_COLOR);
-            const ImVec4      ArgumentIDImGuiColor = ImVec4(ArgumentIDColor.GetListElement(HTNVariableExpressionNodeColorResult::X).GetValue<float>(),
-                                                            ArgumentIDColor.GetListElement(HTNVariableExpressionNodeColorResult::Y).GetValue<float>(),
-                                                            ArgumentIDColor.GetListElement(HTNVariableExpressionNodeColorResult::Z).GetValue<float>(),
-                                                            ArgumentIDColor.GetListElement(HTNVariableExpressionNodeColorResult::W).GetValue<float>());
-            ImGui::TextColored(ArgumentIDImGuiColor, ArgumentIDString.c_str());
+            PrintColoredValueIDExpressionNode(NodeArgument, ioDecompositionWatchWindowPrinterContext);
 
             // Argument value
             ImGui::TableNextColumn();
-
-            const std::string ArgumentValueString = Argument.GetListElement(HTNVariableExpressionNodeResult::VALUE_STRING).GetValue<std::string>();
-            ImGui::Text(ArgumentValueString.c_str());
+            PrintValueValueExpressionNode(NodeArgument, ioDecompositionWatchWindowPrinterContext);
         }
 
         // Print remaining variables

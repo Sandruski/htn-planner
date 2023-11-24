@@ -17,10 +17,19 @@
 
 namespace
 {
-enum HTNVariableExpressionNodeResult : uint8
+enum HTNValueExpressionNodeResult : uint8
 {
-    STRING,
-    COLOR
+    ID_STRING,
+    ID_COLOR,
+    VALUE_STRING
+};
+
+enum HTNValueExpressionNodeColorResult : uint8
+{
+    X,
+    Y,
+    Z,
+    W
 };
 
 HTNDecompositionWatchPrinterContextBase& GetDecompositionWatchPrinterContext(HTNNodeVisitorContextBase& ioDecompositionWatchPrinterContext)
@@ -36,7 +45,7 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantNode&     inCon
 {
     // Constant value
     const std::shared_ptr<const HTNLiteralExpressionNode>& ValueNode = inConstantNode.GetValueNode();
-    return GetNodeValue(*ValueNode, ioDecompositionWatchPrinterContext).GetListElement(HTNVariableExpressionNodeResult::STRING);
+    return GetNodeValue(*ValueNode, ioDecompositionWatchPrinterContext).GetListElement(HTNValueExpressionNodeResult::ID_STRING);
 }
 
 HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNLiteralExpressionNode&             inLiteralExpressionNode,
@@ -121,5 +130,27 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode&
     }
 
     return Result;
+}
+
+void HTNDecompositionWatchPrinterBase::PrintColoredValueIDExpressionNode(
+    const std::shared_ptr<const HTNValueExpressionNodeBase>& inValueExpressionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
+{
+    const HTNAtom      Value           = GetNodeValue(*inValueExpressionNode, ioDomainPrinterContext);
+    const std::string& ValueString     = Value.GetListElement(HTNValueExpressionNodeResult::ID_STRING).GetValue<std::string>();
+    const HTNAtom&     ValueColor      = Value.GetListElement(HTNValueExpressionNodeResult::ID_COLOR);
+    const ImVec4       ValueImGuiColor = ImVec4(ValueColor.GetListElement(HTNValueExpressionNodeColorResult::X).GetValue<float>(),
+                                                ValueColor.GetListElement(HTNValueExpressionNodeColorResult::Y).GetValue<float>(),
+                                                ValueColor.GetListElement(HTNValueExpressionNodeColorResult::Z).GetValue<float>(),
+                                                ValueColor.GetListElement(HTNValueExpressionNodeColorResult::W).GetValue<float>());
+    ImGui::TextColored(ValueImGuiColor, ValueString.c_str());
+}
+
+void HTNDecompositionWatchPrinterBase::PrintValueValueExpressionNode(
+    const std::shared_ptr<const HTNValueExpressionNodeBase>& inValueExpressionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
+{
+    const std::string ValueString = GetNodeValue(*inValueExpressionNode, ioDomainPrinterContext)
+                                         .GetListElement(HTNValueExpressionNodeResult::VALUE_STRING)
+                                         .GetValue<std::string>();
+    ImGui::Text(ValueString.c_str());
 }
 #endif

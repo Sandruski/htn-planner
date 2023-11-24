@@ -3,8 +3,13 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
+#include "HTNCoreMinimal.h"
+
+#include <memory>
+
+class HTNNodeVisitorContextBase;
+class HTNValueExpressionNodeBase;
 
 class HTNDecompositionWatchPrinterBase : public HTNNodeVisitorBase
 {
@@ -17,5 +22,11 @@ public:
                   HTNNodeVisitorContextBase&       ioDecompositionWatchPrinterContext) const final;
     HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode,
                   HTNNodeVisitorContextBase&       ioDecompositionWatchPrinterContext) const final;
+
+protected:
+    void PrintColoredValueIDExpressionNode(const std::shared_ptr<const HTNValueExpressionNodeBase>& inValueExpressionNode,
+                                           HTNNodeVisitorContextBase&                               ioDecompositionWatchPrinterContext) const;
+    void PrintValueValueExpressionNode(const std::shared_ptr<const HTNValueExpressionNodeBase>& inValueExpressionNode,
+                                       HTNNodeVisitorContextBase&                               ioDecompositionWatchPrinterContext) const;
 };
 #endif

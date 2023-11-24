@@ -19,7 +19,9 @@ bool IsInputOutputParameter(const std::string& inVariableID);
 bool IsParameter(const std::string& inVariableID);
 bool IsAnyArgument(const std::string& inVariableID);
 
+inline const std::string kAnonymousNamespaceID             = "unnamed";
+const std::string        kTopLevelDomainID                 = "top_level_domain";
+const std::string        kTopLevelMethodID                 = "top_level_method";
 inline const std::string kDefaultMainTopLevelMethodID      = "behave";
 inline const std::string kDefaultUpperBodyTopLevelMethodID = "behave_upper_body";
-inline const std::string kAnonymousNamespaceID             = "unnamed";
 } // namespace HTNDomainHelpers

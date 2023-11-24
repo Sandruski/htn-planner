@@ -4,14 +4,14 @@
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "HTNCoreMinimal.h"
-#include "Domain/Nodes/HTNNodeVisitorBase.h"
+#include "Domain/HTNDomainPrinterBase.h"
 
 class HTNDomainPrinterContext;
 
 /**
  * Prints a domain
  */
-class HTNDomainPrinter final : public HTNNodeVisitorBase
+class HTNDomainPrinter final : public HTNDomainPrinterBase
 {
 public:
     bool Print(HTNDomainPrinterContext& ioDomainPrinterContext) const;
@@ -30,9 +30,5 @@ public:
     HTNAtom Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const final;
     HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const final;
     HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const final;
-    HTNAtom Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const final;
-    HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const final;
-    HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const final;
-    HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const final;
 };
 #endif

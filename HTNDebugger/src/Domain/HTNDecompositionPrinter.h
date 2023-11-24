@@ -5,7 +5,7 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionWatchTooltipPrinter.h"
-#include "Domain/Nodes/HTNNodeVisitorBase.h"
+#include "Domain/HTNDomainPrinterBase.h"
 #include "HTNCoreMinimal.h"
 
 #include <functional>
@@ -26,7 +26,7 @@ typedef int32 ImGuiTreeNodeFlags;
 /**
  * Prints a decomposition
  */
-class HTNDecompositionPrinter final : public HTNNodeVisitorBase
+class HTNDecompositionPrinter final : public HTNDomainPrinterBase
 {
 public:
     bool Print(HTNDecompositionPrinterContext& ioDecompositionPrinterContext) const;
@@ -43,11 +43,6 @@ public:
     HTNAtom Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const final;
     HTNAtom Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const final;
     HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const final;
-    HTNAtom Visit(const HTNIdentifierExpressionNode& inIdentifierExpressionNode,
-                  HTNNodeVisitorContextBase&         ioDecompositionPrinterContext) const final;
-    HTNAtom Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const final;
-    HTNAtom Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const final;
-    HTNAtom Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const final;
 
 private:
     bool PrintNode(const HTNNodeBase& inNode, const HTNNodeTitleFunction inNodeTitleFunction, const HTNNodeBehaviorFunction inNodeBehaviorFunction,
