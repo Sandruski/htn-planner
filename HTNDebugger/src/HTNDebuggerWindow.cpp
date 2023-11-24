@@ -8,7 +8,6 @@
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionPrinterContext.h"
 #include "Domain/HTNDecompositionWatchWindowPrinterContext.h"
-#include "Domain/HTNDomainHelpers.h"
 #include "Domain/HTNDomainPrinter.h"
 #include "Domain/HTNDomainPrinterContext.h"
 #include "Domain/Interpreter/HTNDecompositionRecord.h"
@@ -34,6 +33,26 @@ void RenderFileSelector(const std::string& inDirectoryName, const std::string& i
     const std::filesystem::path        DirectoryPath = HTNFileHelpers::MakeAbsolutePath(inDirectoryName);
     std::vector<std::filesystem::path> FilePaths;
     HTNFileHelpers::CollectFilePathsRecursively(DirectoryPath, inFileExtension, FilePaths);
+
+    // Refresh selected file path
+    if (!ioSelectedFilePath.empty())
+    {
+        const auto It = std::find_if(FilePaths.begin(), FilePaths.end(),
+                                     [&](const std::filesystem::path& inFilePath) { return (ioSelectedFilePath == inFilePath); });
+
+        if (It == FilePaths.end())
+        {
+            ioSelectedFilePath.clear();
+        }
+    }
+
+    if (ioSelectedFilePath.empty())
+    {
+        if (!FilePaths.empty())
+        {
+            ioSelectedFilePath = FilePaths[0];
+        }
+    }
 
     const std::string SelectedFilePathDisplayName = HTNFileHelpers::MakeFilePathDisplayName(ioSelectedFilePath, DirectoryPath);
     if (ImGui::BeginCombo("File", SelectedFilePathDisplayName.c_str()))
@@ -124,26 +143,6 @@ void RenderActivePlanByPlanningQuery(const HTNPlanningQuery& inPlanningQuery)
 
     ImGui::EndChild();
 }
-
-std::shared_ptr<const HTNMethodNode> FindTopLevelMethodNodeByID(const std::string&                                       inMethodNodeID,
-                                                                const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes)
-{
-    const auto It = std::find_if(inMethodNodes.begin(), inMethodNodes.end(), [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) {
-        if (!inMethodNode)
-        {
-            return false;
-        }
-
-        if (!inMethodNode->IsTopLevel())
-        {
-            return false;
-        }
-
-        return (inMethodNodeID == inMethodNode->GetID());
-    });
-
-    return ((It != inMethodNodes.end() ? *It : nullptr));
-}
 } // namespace
 
 HTNDebuggerWindow::HTNDebuggerWindow(HTNDatabaseHook& ioDatabaseHook, HTNPlannerHook& ioPlannerHook, HTNPlanningUnit& ioMainPlanningUnit,
@@ -225,50 +224,6 @@ void HTNDebuggerWindow::RenderActivePlan()
 
 void HTNDebuggerWindow::RenderDecomposition()
 {
-    const std::shared_ptr<const HTNDomainNode>&              DomainNode  = mPlannerHook.GetDomainNode();
-    const std::vector<std::shared_ptr<const HTNMethodNode>>* MethodNodes = nullptr;
-    if (DomainNode)
-    {
-        if (DomainNode->IsTopLevel())
-        {
-            MethodNodes = &DomainNode->GetMethodNodes();
-        }
-    }
-
-    {
-        const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
-        if (mMainPlanningQuery.IsEntryPointIDEmpty())
-        {
-            if (MethodNodes)
-            {
-                const std::shared_ptr<const HTNMethodNode> TopLevelMethodNode =
-                    FindTopLevelMethodNodeByID(HTNDomainHelpers::kDefaultMainTopLevelMethodID, *MethodNodes);
-                if (TopLevelMethodNode)
-                {
-                    const std::string EntryPointID = TopLevelMethodNode->GetID();
-                    mMainPlanningQuery.SetEntryPointID(EntryPointID);
-                }
-            }
-        }
-    }
-
-    {
-        const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
-        if (mUpperBodyPlanningQuery.IsEntryPointIDEmpty())
-        {
-            if (MethodNodes)
-            {
-                const std::shared_ptr<const HTNMethodNode> TopLevelMethodNode =
-                    FindTopLevelMethodNodeByID(HTNDomainHelpers::kDefaultUpperBodyTopLevelMethodID, *MethodNodes);
-                if (TopLevelMethodNode)
-                {
-                    const std::string EntryPointID = TopLevelMethodNode->GetID();
-                    mUpperBodyPlanningQuery.SetEntryPointID(EntryPointID);
-                }
-            }
-        }
-    }
-
     if (ImGui::Button("Decompose All"))
     {
         ResetDecompositionPrinterState();
@@ -287,6 +242,16 @@ void HTNDebuggerWindow::RenderDecomposition()
 
     if (ImGui::BeginTabBar("Decomposition"))
     {
+        std::vector<std::shared_ptr<const HTNMethodNode>> MethodNodes;
+        const std::shared_ptr<const HTNDomainNode>&       DomainNode = mPlannerHook.GetDomainNode();
+        if (DomainNode)
+        {
+            if (DomainNode->IsTopLevel())
+            {
+                MethodNodes = DomainNode->GetMethodNodes();
+            }
+        }
+
         if (ImGui::BeginTabItem("Main"))
         {
             {
@@ -392,51 +357,62 @@ void HTNDebuggerWindow::RenderWorldState()
     ImGui::EndChild();
 }
 
-void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>* inMethodNodes,
+void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes,
                                                            HTNPlanningQuery& ioPlanningQuery, HTNDecompositionNode& ioSelectedNode)
 {
-    const std::string& EntryPointID = ioPlanningQuery.GetEntryPointID();
-
-    if (inMethodNodes)
+    // Refresh selected entry point ID
+    if (!ioPlanningQuery.IsEntryPointIDEmpty())
     {
-        const std::shared_ptr<const HTNMethodNode> TopLevelMethodNode = FindTopLevelMethodNodeByID(EntryPointID, *inMethodNodes);
-        if (!TopLevelMethodNode)
+        const std::string& EntryPointID = ioPlanningQuery.GetEntryPointID();
+        const auto It = std::find_if(inMethodNodes.begin(), inMethodNodes.end(), [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) {
+            if (!inMethodNode->IsTopLevel())
+            {
+                return false;
+            }
+
+            const std::string MethodID = inMethodNode->GetID();
+            return (EntryPointID == MethodID);
+        });
+
+        if (It == inMethodNodes.end())
         {
             ioPlanningQuery.ClearEntryPointID();
         }
     }
-    else
+
+    if (ioPlanningQuery.IsEntryPointIDEmpty())
     {
-        ioPlanningQuery.ClearEntryPointID();
+        const auto It = std::find_if(inMethodNodes.begin(), inMethodNodes.end(),
+                                     [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) { return inMethodNode->IsTopLevel(); });
+
+        if (It != inMethodNodes.end())
+        {
+            const std::shared_ptr<const HTNMethodNode>& TopLevelMethodNode = *It;
+            const std::string                           EntryPointID       = TopLevelMethodNode->GetID();
+            ioPlanningQuery.SetEntryPointID(EntryPointID);
+        }
     }
 
+    const std::string& EntryPointID = ioPlanningQuery.GetEntryPointID();
     if (ImGui::BeginCombo("Entry Point", EntryPointID.c_str()))
     {
-        if (inMethodNodes)
+        for (const std::shared_ptr<const HTNMethodNode>& MethodNode : inMethodNodes)
         {
-            for (const std::shared_ptr<const HTNMethodNode>& MethodNode : *inMethodNodes)
+            if (!MethodNode->IsTopLevel())
             {
-                if (!MethodNode)
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                if (!MethodNode->IsTopLevel())
-                {
-                    continue;
-                }
+            const std::string MethodNodeID = MethodNode->GetID();
+            const bool        IsSelected   = (EntryPointID == MethodNodeID);
+            if (ImGui::Selectable(MethodNodeID.c_str(), IsSelected))
+            {
+                ioPlanningQuery.SetEntryPointID(MethodNodeID);
+            }
 
-                const std::string MethodNodeID = MethodNode->GetID();
-                const bool        IsSelected   = (EntryPointID == MethodNodeID);
-                if (ImGui::Selectable(MethodNodeID.c_str(), IsSelected))
-                {
-                    ioPlanningQuery.SetEntryPointID(MethodNodeID);
-                }
-
-                if (IsSelected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
+            if (IsSelected)
+            {
+                ImGui::SetItemDefaultFocus();
             }
         }
 

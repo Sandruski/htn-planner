@@ -3,13 +3,13 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNCoreMinimal.h"
 #include "Domain/HTNDecompositionNode.h"
 #include "Domain/HTNDecompositionNodeState.h"
 #include "Domain/HTNDecompositionPrinter.h"
 #include "Domain/HTNDecompositionTooltipMode.h"
 #include "Domain/HTNDecompositionWatchWindowPrinter.h"
 #include "Domain/HTNDomainPrinter.h"
+#include "HTNCoreMinimal.h"
 #include "Helpers/HTNOperationResult.h"
 #include "Helpers/HTNPlanningQuery.h"
 #include "WorldState/HTNWorldStatePrinter.h"
@@ -40,7 +40,7 @@ private:
     void RenderDomain();
     void RenderWorldState();
 
-    void RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>* inMethodNodes, HTNPlanningQuery& ioPlanningQuery,
+    void RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, HTNPlanningQuery& ioPlanningQuery,
                                             HTNDecompositionNode& ioSelectedNode);
 
     void ResetDecompositionPrinterState();
