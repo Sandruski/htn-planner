@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "optick.h"
+
 #include <algorithm>
 #include <cassert>
 #include <format>

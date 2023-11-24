@@ -58,6 +58,9 @@ project "HTNDebugger"
 
     files { "%{prj.name}/src/**.cpp",
             "%{prj.name}/src/**.h",
+            -- Optick
+            "ThirdParty/Optick/src/**.cpp",
+            "ThirdParty/Optick/src/**.h",
             -- ImGui
 			"ThirdParty/imgui/imconfig.h", 
 			"ThirdParty/imgui/imgui.cpp", 
@@ -68,7 +71,7 @@ project "HTNDebugger"
 			"ThirdParty/imgui/imgui_tables.cpp", 
 			"ThirdParty/imgui/imgui_widgets.cpp" }
 
-    includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/imgui" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/Optick/src", "ThirdParty/imgui" }
 
     links { "HTNFramework" }
 
@@ -84,6 +87,9 @@ project "HTNDemo"
 
     files { "%{prj.name}/src/**.cpp",
             "%{prj.name}/src/**.h", 
+            -- Optick
+            "ThirdParty/Optick/src/**.cpp",
+            "ThirdParty/Optick/src/**.h",
             -- ImGui
 			"ThirdParty/imgui/imconfig.h", 
 			"ThirdParty/imgui/imgui.cpp", 
@@ -96,10 +102,7 @@ project "HTNDemo"
 			"ThirdParty/imgui/backends/imgui_impl_sdl2.h", 
 			"ThirdParty/imgui/backends/imgui_impl_sdl2.cpp", 
 			"ThirdParty/imgui/backends/imgui_impl_sdlrenderer2.h", 
-			"ThirdParty/imgui/backends/imgui_impl_sdlrenderer2.cpp",
-            -- Optick
-            "ThirdParty/Optick/src/**.cpp",
-            "ThirdParty/Optick/src/**.h" }
+			"ThirdParty/imgui/backends/imgui_impl_sdlrenderer2.cpp" }
 
     includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNDebugger/src", "ThirdParty/Optick/src", "ThirdParty/SDL2/include", "ThirdParty/imgui", "ThirdParty/imgui/backends" }
 

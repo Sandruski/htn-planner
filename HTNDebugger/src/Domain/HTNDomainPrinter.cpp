@@ -26,6 +26,8 @@ void PrintKeyword(const std::string& inKeyword)
 
 bool HTNDomainPrinter::Print(HTNDomainPrinterContext& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("PrintDomain");
+
     const std::shared_ptr<const HTNDomainNode>& DomainNode = ioDomainPrinterContext.GetDomainNode();
     if (!DomainNode)
     {
@@ -38,6 +40,8 @@ bool HTNDomainPrinter::Print(HTNDomainPrinterContext& ioDomainPrinterContext) co
 
 HTNAtom HTNDomainPrinter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetDomainNode");
+
     PrintKeyword("domain");
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inDomainNode.GetIDNode();
@@ -75,6 +79,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisito
 
 HTNAtom HTNDomainPrinter::Visit(const HTNConstantsNode& inConstantsNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetConstantsNode");
+
     PrintKeyword("constants");
 
     if (const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inConstantsNode.GetIDNode())
@@ -96,6 +102,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNConstantsNode& inConstantsNode, HTNNode
 
 HTNAtom HTNDomainPrinter::Visit(const HTNConstantNode& inConstantNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetConstantNode");
+
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inConstantNode.GetIDNode();
     GetNodeValue(*IDNode, ioDomainPrinterContext);
 
@@ -108,6 +116,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNConstantNode& inConstantNode, HTNNodeVi
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetAxiomNode");
+
     PrintKeyword("axiom");
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inAxiomNode.GetIDNode();
@@ -133,6 +143,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisitorC
 
 HTNAtom HTNDomainPrinter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetMethodNode");
+
     PrintKeyword("method");
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inMethodNode.GetIDNode();
@@ -165,6 +177,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVisito
 
 HTNAtom HTNDomainPrinter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetBranchNode");
+
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inBranchNode.GetIDNode();
     GetNodeValue(*IDNode, ioDomainPrinterContext);
 
@@ -186,6 +200,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVisito
 
 HTNAtom HTNDomainPrinter::Visit(const HTNConditionNode& inConditionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetConditionNode");
+
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inConditionNode.GetIDNode();
     GetNodeValue(*IDNode, ioDomainPrinterContext);
 
@@ -203,6 +219,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNConditionNode& inConditionNode, HTNNode
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetAxiomConditionNode");
+
     PrintKeyword("#");
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inAxiomConditionNode.GetIDNode();
@@ -223,6 +241,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNod
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetAndConditionNode");
+
     PrintKeyword("and");
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAndConditionNode.GetSubConditionNodes();
@@ -244,6 +264,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAndConditionNode& inAndConditionNode, H
 
 HTNAtom HTNDomainPrinter::Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetOrConditionNode");
+
     PrintKeyword("or");
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inOrConditionNode.GetSubConditionNodes();
@@ -265,6 +287,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNOrConditionNode& inOrConditionNode, HTN
 
 HTNAtom HTNDomainPrinter::Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetAltConditionNode");
+
     PrintKeyword("alt");
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes = inAltConditionNode.GetSubConditionNodes();
@@ -286,6 +310,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNAltConditionNode& inAltConditionNode, H
 
 HTNAtom HTNDomainPrinter::Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetNotConditionNode");
+
     PrintKeyword("not");
 
     const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = inNotConditionNode.GetSubConditionNode();
@@ -297,6 +323,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNNotConditionNode& inNotConditionNode, H
 
 HTNAtom HTNDomainPrinter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetCompoundTaskNode");
+
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inCompoundTaskNode.GetIDNode();
     GetNodeValue(*IDNode, ioDomainPrinterContext);
 
@@ -314,6 +342,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode, H
 
 HTNAtom HTNDomainPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetPrimitiveTaskNode");
+
     PrintKeyword("!");
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode = inPrimitiveTaskNode.GetIDNode();
@@ -335,6 +365,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode,
 HTNAtom HTNDomainPrinter::Visit(const HTNIdentifierExpressionNode&      inIdentifierExpressionNode,
                                 HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetIdentifierExpressionNode");
+
     static constexpr bool ShouldDoubleQuoteString = false;
     const std::string     IdentifierString        = inIdentifierExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
     ImGui::Text(IdentifierString.c_str());
@@ -344,6 +376,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNIdentifierExpressionNode&      inIdenti
 
 HTNAtom HTNDomainPrinter::Visit(const HTNLiteralExpressionNode& inLiteralExpressionNode, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetLiteralExpressionNode");
+
     static constexpr bool ShouldDoubleQuoteString = true;
     const std::string     LiteralString           = inLiteralExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
     ImGui::Text(LiteralString.c_str());
@@ -353,6 +387,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNLiteralExpressionNode& inLiteralExpress
 
 HTNAtom HTNDomainPrinter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetVariableExpressionNode");
+
     PrintKeyword("?");
 
     ImGui::SameLine(0.f, 0.f);
@@ -365,6 +401,8 @@ HTNAtom HTNDomainPrinter::Visit(const HTNVariableExpressionNode& inVariableExpre
 
 HTNAtom HTNDomainPrinter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
+    OPTICK_EVENT("GetConstantExpressionNode");
+
     PrintKeyword("@");
 
     ImGui::SameLine(0.f, 0.f);

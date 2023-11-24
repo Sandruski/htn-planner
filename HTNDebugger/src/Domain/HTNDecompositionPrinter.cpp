@@ -246,6 +246,8 @@ HTNDecompositionPrinterContext& GetDecompositionPrinterContext(HTNNodeVisitorCon
 
 bool HTNDecompositionPrinter::Print(HTNDecompositionPrinterContext& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("PrintDecomposition");
+
     const std::shared_ptr<const HTNDomainNode>& DomainNode = ioDecompositionPrinterContext.GetDomainNode();
     if (!DomainNode)
     {
@@ -266,6 +268,8 @@ bool HTNDecompositionPrinter::Print(HTNDecompositionPrinterContext& ioDecomposit
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetDomainNodeValue");
+
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioDecompositionPrinterContext);
 
     const std::string DomainNodeID                = inDomainNode.GetID();
@@ -282,6 +286,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode, HTNNod
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetAxiomNodeValue");
+
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioDecompositionPrinterContext);
 
     HTNPathHandler& CurrentVariablesPathHandler = DecompositionPrinterContext.GetCurrentVariablesPathHandlerMutable();
@@ -328,6 +334,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeV
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetMethodNodeValue");
+
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioDecompositionPrinterContext);
 
     HTNPathHandler& CurrentVariablesPathHandler = DecompositionPrinterContext.GetCurrentVariablesPathHandlerMutable();
@@ -375,6 +383,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode, HTNNod
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetBranchNodeValue");
+
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inBranchNode.GetIDNode();
     const std::string                                         IDString = GetNodeValue(*IDNode, ioDecompositionPrinterContext).GetValue<std::string>();
 
@@ -407,6 +417,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode, HTNNod
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetConditionNodeValue");
+
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioDecompositionPrinterContext);
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inConditionNode.GetIDNode();
@@ -447,6 +459,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode, 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode,
                                        HTNNodeVisitorContextBase&   ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetAxiomConditionNodeValue");
+
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioDecompositionPrinterContext);
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inAxiomConditionNode.GetIDNode();
@@ -494,6 +508,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetAndConditionNodeValue");
+
     const std::string ID = "and";
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep) {
@@ -520,6 +536,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndCondition
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetOrConditionNodeValue");
+
     const std::string ID = "or";
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep) {
@@ -546,6 +564,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNo
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetAltConditionNodeValue");
+
     const std::string ID = "alt";
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep) {
@@ -572,6 +592,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltCondition
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetNotConditionNodeValue");
+
     const std::string ID = "not";
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep) {
@@ -595,6 +617,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotCondition
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetCompoundTaskNodeValue");
+
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioDecompositionPrinterContext);
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inCompoundTaskNode.GetIDNode();
@@ -643,6 +667,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
 HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode,
                                        HTNNodeVisitorContextBase&  ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetPrimitiveTaskNodeValue");
+
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioDecompositionPrinterContext);
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>& IDNode   = inPrimitiveTaskNode.GetIDNode();
@@ -683,6 +709,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
 HTNAtom HTNDecompositionPrinter::Visit(const HTNIdentifierExpressionNode&          inIdentifierExpressionNode,
                                        HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetIdentifierExpressionNodeValue");
+
     static constexpr bool ShouldDoubleQuoteString = false;
     const std::string     IdentifierString        = inIdentifierExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
     return IdentifierString;
@@ -691,6 +719,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNIdentifierExpressionNode&       
 HTNAtom HTNDecompositionPrinter::Visit(const HTNLiteralExpressionNode&             inLiteralExpressionNode,
                                        HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetLiteralExpressionNodeValue");
+
     static constexpr bool   ShouldDoubleQuoteString = true;
     const std::string       LiteralString           = inLiteralExpressionNode.GetValue().ToString(ShouldDoubleQuoteString);
     static constexpr ImVec4 LiteralColor            = HTNImGuiHelpers::kArgumentColor;
@@ -700,6 +730,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNLiteralExpressionNode&          
 HTNAtom HTNDecompositionPrinter::Visit(const HTNVariableExpressionNode&            inVariableExpressionNode,
                                        HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetVariableExpressionNodeValue");
+
     static constexpr bool ShouldDoubleQuoteString = false;
     const std::string     VariableString          = std::format("?{}", inVariableExpressionNode.GetValue().ToString(ShouldDoubleQuoteString));
     const std::string&    VariableID              = inVariableExpressionNode.GetValue().GetValue<std::string>();
@@ -710,6 +742,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNVariableExpressionNode&         
 HTNAtom HTNDecompositionPrinter::Visit(const HTNConstantExpressionNode&            inConstantExpressionNode,
                                        HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
+    OPTICK_EVENT("GetConstantExpressionNodeValue");
+
     static constexpr bool   ShouldDoubleQuoteString = false;
     const std::string       ConstantString          = std::format("@{}", inConstantExpressionNode.GetValue().ToString(ShouldDoubleQuoteString));
     static constexpr ImVec4 ConstantColor           = HTNImGuiHelpers::kArgumentColor;

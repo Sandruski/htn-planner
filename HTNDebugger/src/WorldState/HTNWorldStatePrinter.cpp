@@ -26,6 +26,8 @@ std::string MakeFactDescription(const std::string& inFactID, const HTNFactArgume
 
 bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinterContext) const
 {
+    OPTICK_EVENT("PrintWorldState");
+
     const HTNWorldState&   WorldState = ioWorldStatePrinterContext.GetWorldState();
     const ImGuiTextFilter& TextFilter = ioWorldStatePrinterContext.GetTextFilter();
 
@@ -67,11 +69,15 @@ bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinte
 
 void HTNWorldStatePrinter::PrintFactID(const std::string& inFactID) const
 {
+    OPTICK_EVENT("PrintFactID");
+
     ImGui::Text(inFactID.c_str());
 }
 
 void HTNWorldStatePrinter::PrintFactArguments(const HTNFactArguments& inFactArguments) const
 {
+    OPTICK_EVENT("PrintFactArguments");
+
     for (const HTNAtom& FactArgument : inFactArguments)
     {
         ImGui::SameLine();

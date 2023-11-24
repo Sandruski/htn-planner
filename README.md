@@ -33,7 +33,7 @@ Bots in Killzone 3](https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter29_Hier
 - Implement call terms (functions defined in C++).
 - Allow to include other domain files.
 - Allow to override methods, axioms, and constants.
-- Implement a domain editor with syntax highlighting.
+- Allow to edit and export domains and world states in a custom editor with syntax highlighting.
 - Implement a domain validator.
 - Time-slice the decomposition process.
 - Replace the interpreter with a compiler.
