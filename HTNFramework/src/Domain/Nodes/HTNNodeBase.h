@@ -19,8 +19,9 @@ class HTNNodeBase
 public:
     virtual ~HTNNodeBase() = 0;
 
-    virtual void    Accept(const HTNNodeVisitorBase& inNodeVisitor, const HTNAtom& inNodeValue, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
-    virtual HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    virtual void Accept(const HTNNodeVisitorBase& inNodeVisitor, const HTNAtom& inNodeValue, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+    HTN_NODISCARD virtual HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
 
-    virtual std::string GetID() const = 0;
+    // TODO salvarez Use string interning as an optimization
+    HTN_NODISCARD virtual std::string GetID() const = 0;
 };

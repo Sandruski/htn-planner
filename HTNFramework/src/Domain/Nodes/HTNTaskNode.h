@@ -22,7 +22,7 @@ public:
     explicit HTNTaskNodeBase(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
                              const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes, const uint32 inID);
 
-    std::string GetID() const final;
+    HTN_NODISCARD std::string GetID() const final;
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>&             GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetArgumentNodes() const;
@@ -55,7 +55,7 @@ public:
                                  const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes, const uint32 inID,
                                  const bool inIsTopLevel);
 
-    HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
+    HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
     bool IsTopLevel() const;
 
@@ -73,7 +73,7 @@ public:
     explicit HTNPrimitiveTaskNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
                                   const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes);
 
-    HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
+    HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 };
 
 inline const std::shared_ptr<const HTNIdentifierExpressionNode>& HTNTaskNodeBase::GetIDNode() const

@@ -16,7 +16,7 @@ class HTNValueExpressionNodeBase : public HTNNodeBase
 public:
     explicit HTNValueExpressionNodeBase(const HTNAtom& inValue);
 
-    std::string GetID() const final;
+    HTN_NODISCARD std::string GetID() const final;
 
     const HTNAtom& GetValue() const;
 
@@ -33,7 +33,7 @@ class HTNIdentifierExpressionNode final : public HTNValueExpressionNodeBase
 public:
     explicit HTNIdentifierExpressionNode(const HTNAtom& inValue);
 
-    HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
+    HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 };
 
 /**
@@ -44,7 +44,7 @@ class HTNLiteralExpressionNode final : public HTNValueExpressionNodeBase
 public:
     explicit HTNLiteralExpressionNode(const HTNAtom& inValue);
 
-    HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
+    HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 };
 
 /**
@@ -56,7 +56,7 @@ public:
     explicit HTNVariableExpressionNode(const HTNAtom& inValue);
 
     void    Accept(const HTNNodeVisitorBase& inNodeVisitor, const HTNAtom& inNodeValue, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
-    HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
+    HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 };
 
 /**
@@ -67,7 +67,7 @@ class HTNConstantExpressionNode final : public HTNValueExpressionNodeBase
 public:
     explicit HTNConstantExpressionNode(const HTNAtom& inValue);
 
-    HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
+    HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 };
 
 inline std::string HTNValueExpressionNodeBase::GetID() const

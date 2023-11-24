@@ -20,9 +20,9 @@ public:
     explicit HTNConstantsNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&  inIDNode,
                               const std::vector<std::shared_ptr<const HTNConstantNode>>& inConstantNodes);
 
-    HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
+    HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
-    std::string GetID() const final;
+    HTN_NODISCARD std::string GetID() const final;
 
     const std::shared_ptr<const HTNIdentifierExpressionNode>&  GetIDNode() const;
     const std::vector<std::shared_ptr<const HTNConstantNode>>& GetConstantNodes() const;
