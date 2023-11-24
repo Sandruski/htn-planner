@@ -226,8 +226,8 @@ bool IsRegularNodeValid(const size inDecompositionStep, const int32 inCurrentDec
 bool IsNodeValid(const size inDecompositionStep, const bool inIsChoicePoint, const int32 inCurrentDecompositionStep,
                  const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep)
 {
-    return (inIsChoicePoint ? IsChoicePointNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep)
-                            : IsRegularNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep));
+    return inIsChoicePoint ? IsChoicePointNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep)
+                            : IsRegularNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep);
 }
 
 HTNDecompositionPrinterContext& GetDecompositionPrinterContext(HTNNodeVisitorContextBase& ioDecompositionPrinterContext)

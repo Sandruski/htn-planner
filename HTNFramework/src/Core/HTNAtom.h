@@ -55,7 +55,7 @@ private:
 
 inline bool HTNAtom::operator==(const HTNAtom& inOther) const
 {
-    return (mData == inOther.mData);
+    return mData == inOther.mData;
 }
 
 template<typename T>

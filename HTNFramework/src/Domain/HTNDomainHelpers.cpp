@@ -19,29 +19,29 @@ std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const st
 bool IsInputParameter(const std::string& inVariableID)
 {
     static const std::string InputParameterPrefix = "inp_";
-    return (inVariableID.find(InputParameterPrefix) != std::string::npos);
+    return inVariableID.find(InputParameterPrefix) != std::string::npos;
 }
 
 bool IsOutputParameter(const std::string& inVariableID)
 {
     static const std::string OutputParameterPrefix = "out_";
-    return (inVariableID.find(OutputParameterPrefix) != std::string::npos);
+    return inVariableID.find(OutputParameterPrefix) != std::string::npos;
 }
 
 bool IsInputOutputParameter(const std::string& inVariableID)
 {
     static const std::string InputOutputParameterPrefix = "io_";
-    return (inVariableID.find(InputOutputParameterPrefix) != std::string::npos);
+    return inVariableID.find(InputOutputParameterPrefix) != std::string::npos;
 }
 
 bool IsParameter(const std::string& inVariableID)
 {
-    return (IsInputParameter(inVariableID) || IsOutputParameter(inVariableID) || IsInputOutputParameter(inVariableID));
+    return IsInputParameter(inVariableID) || IsOutputParameter(inVariableID) || IsInputOutputParameter(inVariableID);
 }
 
 bool IsAnyArgument(const std::string& inVariableID)
 {
     static const std::string AnyArgumentPrefix = "any_";
-    return (inVariableID.find(AnyArgumentPrefix) != std::string::npos);
+    return inVariableID.find(AnyArgumentPrefix) != std::string::npos;
 }
 } // namespace HTNDomainHelpers

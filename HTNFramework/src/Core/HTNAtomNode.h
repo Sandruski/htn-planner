@@ -44,5 +44,5 @@ inline HTNAtomNode* HTNAtomNode::GetNextNodeMutable()
 
 inline bool HTNAtomNode::HasNextNode() const
 {
-    return (nullptr != mNextNode);
+    return nullptr != mNextNode;
 }

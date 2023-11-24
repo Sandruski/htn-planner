@@ -20,7 +20,7 @@ namespace HTNDecompositionHelpers
 {
 inline bool IsDecompositionStepValid(const int32 inDecompositionStep)
 {
-    return (inDecompositionStep != kInvalidDecompositionStep);
+    return inDecompositionStep != kInvalidDecompositionStep;
 }
 } // namespace HTNDecompositionHelpers
 #endif

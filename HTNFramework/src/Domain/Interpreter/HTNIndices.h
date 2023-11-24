@@ -65,7 +65,7 @@ inline void HTNIndices::RemoveIndex(const std::string& inNodePath)
 inline size HTNIndices::GetIndex(const std::string& inNodePath) const
 {
     const auto It = mIndices.find(inNodePath);
-    return ((It != mIndices.end()) ? It->second : std::numeric_limits<size>::max());
+    return (It != mIndices.end()) ? It->second : std::numeric_limits<size>::max();
 }
 
 inline const std::unordered_map<std::string, size>& HTNIndices::GetIndices() const

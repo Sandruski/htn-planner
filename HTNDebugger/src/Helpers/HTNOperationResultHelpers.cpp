@@ -9,7 +9,7 @@ namespace HTNOperationResultHelpers
 {
 bool IsOperationSuccessful(const HTNOperationResult inOperationResult)
 {
-    return (inOperationResult == HTNOperationResult::SUCCEEDED);
+    return inOperationResult == HTNOperationResult::SUCCEEDED;
 }
 } // namespace HTNOperationResultHelpers
 #endif

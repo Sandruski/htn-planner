@@ -417,7 +417,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
             SetNodeValue(*ArgumentNode, FactArgument, ioDecompositionContext);
         }
 
-        const bool IsLastFactEntry = (FactArgumentsIndex == FactArgumentsSize - 1);
+        const bool IsLastFactEntry = FactArgumentsIndex == (FactArgumentsSize - 1);
         if (IsLastFactEntry)
         {
             static constexpr bool Result = true;

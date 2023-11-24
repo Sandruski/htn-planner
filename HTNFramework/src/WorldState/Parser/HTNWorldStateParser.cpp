@@ -9,11 +9,11 @@
 #include "WorldState/Parser/HTNWorldStateParserContext.h"
 
 /*
-Backus Naur Form (BNF):
-<fact> ::= <identifier> <argument>*
-<identifier> ::= 'identifier'
-<argument> ::= ('(' <argument>+ ')') | 'true' | 'false' | 'number' | 'string'
-*/
+ * Backus Naur Form (BNF)
+ * <fact> ::= <identifier> <argument>*
+ * <identifier> ::= 'identifier'
+ * <argument> ::= ('(' <argument>+ ')') | 'true' | 'false' | 'number' | 'string'
+ */
 
 bool HTNWorldStateParser::Parse(HTNWorldStateParserContext& ioWorldStateParserContext) const
 {

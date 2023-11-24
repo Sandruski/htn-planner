@@ -37,7 +37,7 @@ int main(int, char**)
 #endif
 
     // Create window with SDL_Renderer graphics context
-    const SDL_WindowFlags WindowFlags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    const SDL_WindowFlags WindowFlags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_Window*           Window      = SDL_CreateWindow("HTN Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, WindowFlags);
     SDL_Renderer*         Renderer    = SDL_CreateRenderer(Window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     if (!Renderer)

@@ -45,7 +45,7 @@ bool HTNAtomList::operator==(const HTNAtomList& inOther) const
         OtherCurrentNode = OtherCurrentNode->GetNextNode();
     }
 
-    return (!ThisCurrentNode && !OtherCurrentNode);
+    return !ThisCurrentNode && !OtherCurrentNode;
 }
 
 void HTNAtomList::PushBack(const HTNAtom& inValue)
@@ -114,7 +114,7 @@ uint32 HTNAtomList::GetSize() const
 bool HTNAtomList::IsEmpty() const
 {
     const uint32 Size = GetSize();
-    return (0 == Size);
+    return 0 == Size;
 }
 
 std::string HTNAtomList::ToString(const bool inShouldDoubleQuoteString) const

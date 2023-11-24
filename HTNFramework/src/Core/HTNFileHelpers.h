@@ -30,6 +30,6 @@ namespace HTNFileHelpers
 inline std::filesystem::path MakeAbsolutePath(const std::string& inRelativePath)
 {
     const std::filesystem::path ParentPath = std::filesystem::current_path().parent_path();
-    return (ParentPath / std::filesystem::path(inRelativePath));
+    return ParentPath / std::filesystem::path(inRelativePath);
 }
 } // namespace HTNFileHelpers

@@ -99,6 +99,6 @@ inline void HTNDecompositionChoicePointNodeState::SetIsOpen(const size inDecompo
 inline bool HTNDecompositionChoicePointNodeState::IsOpen(const size inDecompositionStep) const
 {
     const auto It = mIsOpen.find(inDecompositionStep);
-    return ((It != mIsOpen.end()) ? It->second : false);
+    return (It != mIsOpen.end()) ? It->second : false;
 }
 #endif

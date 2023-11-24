@@ -12,7 +12,7 @@ HTNParserContextBase::~HTNParserContextBase() = default;
 
 const HTNToken* HTNParserContextBase::GetToken(const uint32 inPosition) const
 {
-    return ((inPosition < mTokens.size()) ? &mTokens[inPosition] : nullptr);
+    return (inPosition < mTokens.size()) ? &mTokens[inPosition] : nullptr;
 }
 
 size HTNParserContextBase::GetTokensSize() const

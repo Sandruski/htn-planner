@@ -38,7 +38,7 @@ void RenderFileSelector(const std::string& inDirectoryName, const std::string& i
     if (!ioSelectedFilePath.empty())
     {
         const auto It = std::find_if(FilePaths.begin(), FilePaths.end(),
-                                     [&](const std::filesystem::path& inFilePath) { return (ioSelectedFilePath == inFilePath); });
+                                     [&](const std::filesystem::path& inFilePath) { return ioSelectedFilePath == inFilePath; });
 
         if (It == FilePaths.end())
         {
@@ -60,7 +60,7 @@ void RenderFileSelector(const std::string& inDirectoryName, const std::string& i
         for (const std::filesystem::path& FilePath : FilePaths)
         {
             const std::string FilePathDisplayName = HTNFileHelpers::MakeFilePathDisplayName(FilePath, DirectoryPath);
-            const bool        IsFileSelected      = (ioSelectedFilePath == FilePath);
+            const bool        IsFileSelected      = ioSelectedFilePath == FilePath;
             if (ImGui::Selectable(FilePathDisplayName.c_str(), IsFileSelected))
             {
                 ioSelectedFilePath = FilePath;
@@ -371,7 +371,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
             }
 
             const std::string MethodID = inMethodNode->GetID();
-            return (EntryPointID == MethodID);
+            return EntryPointID == MethodID;
         });
 
         if (It == inMethodNodes.end())
@@ -404,7 +404,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
             }
 
             const std::string MethodNodeID = MethodNode->GetID();
-            const bool        IsSelected   = (EntryPointID == MethodNodeID);
+            const bool        IsSelected   = EntryPointID == MethodNodeID;
             if (ImGui::Selectable(MethodNodeID.c_str(), IsSelected))
             {
                 ioPlanningQuery.SetEntryPointID(MethodNodeID);
@@ -471,7 +471,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         {
             static constexpr ImGuiHoveredFlags MenuItemHoveredFlags = ImGuiHoveredFlags_ForTooltip;
 
-            bool IsRegularTooltipMode = (HTNDecompositionTooltipMode::REGULAR == mTooltipMode);
+            bool IsRegularTooltipMode = HTNDecompositionTooltipMode::REGULAR == mTooltipMode;
             if (ImGui::MenuItem("Regular", nullptr, &IsRegularTooltipMode))
             {
                 if (IsRegularTooltipMode)
@@ -489,7 +489,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
                 ImGui::SetTooltip("Display only the parameters or arguments of the hovered line");
             }
 
-            bool IsFullTooltipMode = (HTNDecompositionTooltipMode::FULL == mTooltipMode);
+            bool IsFullTooltipMode = HTNDecompositionTooltipMode::FULL == mTooltipMode;
             if (ImGui::MenuItem("Full", nullptr, &IsFullTooltipMode))
             {
                 if (IsFullTooltipMode)
