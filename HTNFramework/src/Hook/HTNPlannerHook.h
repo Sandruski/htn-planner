@@ -22,6 +22,8 @@ public:
     // Parses a domain file and builds a domain node
     bool ParseDomainFile(const std::string& inDomainFilePath);
 
+    // This member function is const, so it cannot modify member variables, and receives the data that it can modify via a context
+    // This makes it safe to be called in parallel, which allows to run multiple decompositions simultaneously
     bool MakePlan(HTNDecompositionContext& ioDecompositionContext) const;
 
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
