@@ -29,15 +29,15 @@ public:
 
     HTN_NODISCARD std::string GetID() const final;
 
-    std::shared_ptr<const HTNConstantNode> FindConstantNodeByID(const std::string& inConstantNodeID) const;
-    std::shared_ptr<const HTNAxiomNode>    FindAxiomNodeByID(const std::string& inAxiomNodeID) const;
-    std::shared_ptr<const HTNMethodNode>   FindMethodNodeByID(const std::string& inMethodNodeID) const;
+    HTN_NODISCARD std::shared_ptr<const HTNConstantNode> FindConstantNodeByID(const std::string& inConstantNodeID) const;
+    HTN_NODISCARD std::shared_ptr<const HTNAxiomNode>    FindAxiomNodeByID(const std::string& inAxiomNodeID) const;
+    HTN_NODISCARD std::shared_ptr<const HTNMethodNode>   FindMethodNodeByID(const std::string& inMethodNodeID) const;
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>&   GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNConstantsNode>>& GetConstantNodes() const;
-    const std::vector<std::shared_ptr<const HTNAxiomNode>>&     GetAxiomNodes() const;
-    const std::vector<std::shared_ptr<const HTNMethodNode>>&    GetMethodNodes() const;
-    bool                                                        IsTopLevel() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>& GetIDNode() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNConstantsNode>>& GetConstantNodes() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNAxiomNode>>& GetAxiomNodes() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNMethodNode>>& GetMethodNodes() const;
+    HTN_NODISCARD bool                                                     IsTopLevel() const;
 
 private:
     // Node representing the ID of the domain

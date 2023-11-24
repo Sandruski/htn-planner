@@ -17,22 +17,22 @@ class HTNPlanningQuery
 public:
     explicit HTNPlanningQuery(HTNPlanningUnit& ioPlanningUnit);
 
-    HTNPlanningUnit&       GetPlanningUnitMutable();
-    const HTNPlanningUnit& GetPlanningUnit() const;
+    HTN_NODISCARD HTNPlanningUnit&       GetPlanningUnitMutable();
+    HTN_NODISCARD const HTNPlanningUnit& GetPlanningUnit() const;
 
     void               SetEntryPointID(const std::string& inEntryPointID);
     void               ClearEntryPointID();
-    const std::string& GetEntryPointID() const;
-    bool               IsEntryPointIDEmpty() const;
+    HTN_NODISCARD const std::string& GetEntryPointID() const;
+    HTN_NODISCARD bool               IsEntryPointIDEmpty() const;
 
     void               SetLastDecompositionOperationResult(const HTNOperationResult inLastDecompositionOperationResult);
-    HTNOperationResult GetLastDecompositionOperationResult() const;
-    bool               IsLastDecompositionOperationSuccessful() const;
+    HTN_NODISCARD HTNOperationResult GetLastDecompositionOperationResult() const;
+    HTN_NODISCARD bool               IsLastDecompositionOperationSuccessful() const;
 
     void                                        SetLastDomainNode(const std::shared_ptr<const HTNDomainNode>& inLastDomainNode);
-    const std::shared_ptr<const HTNDomainNode>& GetLastDomainNode() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetLastDomainNode() const;
     void                                        SetLastEntryPointID(const std::string& inLastEntryPointID);
-    const std::string&                          GetLastEntryPointID() const;
+    HTN_NODISCARD const std::string& GetLastEntryPointID() const;
 
 private:
     HTNPlanningUnit& mPlanningUnit;

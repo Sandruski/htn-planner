@@ -10,12 +10,12 @@ class HTNAtomNode
 public:
     explicit HTNAtomNode(const HTNAtom& inValue);
 
-    const HTNAtom& GetData() const;
+    HTN_NODISCARD const HTNAtom& GetData() const;
 
     void               SetNextNode(HTNAtomNode* inNode);
-    const HTNAtomNode* GetNextNode() const;
-    HTNAtomNode*       GetNextNodeMutable();
-    bool               HasNextNode() const;
+    HTN_NODISCARD const HTNAtomNode* GetNextNode() const;
+    HTN_NODISCARD HTNAtomNode*       GetNextNodeMutable();
+    HTN_NODISCARD bool               HasNextNode() const;
 
 private:
     HTNAtom      mData;

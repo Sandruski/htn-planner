@@ -25,12 +25,12 @@ public:
                                   const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
                                   const HTNPathHandler& inVariablesPathHandler, const std::string& inNodeLabel);
 
-    const HTNNodeResult*                                                  GetNodeResult() const;
-    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  GetNodeParameters() const;
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetNodeArguments() const;
-    const HTNPathHandler&                                                 GetVariablesPathHandler() const;
-    HTNPathHandler&                                                       GetVariablesPathHandlerMutable();
-    const std::string&                                                    GetNodeLabel() const;
+    HTN_NODISCARD const HTNNodeResult*                                                  GetNodeResult() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  GetNodeParameters() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetNodeArguments() const;
+    HTN_NODISCARD const HTNPathHandler&                                                 GetVariablesPathHandler() const;
+    HTN_NODISCARD HTNPathHandler&                                                       GetVariablesPathHandlerMutable();
+    HTN_NODISCARD const std::string&                                                    GetNodeLabel() const;
 
 private:
     const HTNNodeResult*                                           mNodeResult = nullptr;

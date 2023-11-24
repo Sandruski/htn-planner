@@ -44,14 +44,14 @@ public:
     // Checks if the passed fact arguments match the ones of the row at the index in the table
     // Binds the passed fact arguments that are unbound
     template<typename T>
-    bool Check(const size inFactArgumentsIndex, const T ioFactArgumentsBegin, const T ioFactArgumentsEnd) const;
+    HTN_NODISCARD bool Check(const size inFactArgumentsIndex, const T ioFactArgumentsBegin, const T ioFactArgumentsEnd) const;
 
     // Checks if the passed arguments match the fact arguments of any row in the table
     template<typename T>
-    bool ContainsFactArguments(const T inFactArgumentsBegin, const T inFactArgumentsEnd) const;
+    HTN_NODISCARD bool ContainsFactArguments(const T inFactArgumentsBegin, const T inFactArgumentsEnd) const;
 
-    const std::vector<HTNFactArguments>& GetFactArguments() const;
-    size                                 GetFactArgumentsSize() const;
+    HTN_NODISCARD const std::vector<HTNFactArguments>& GetFactArguments() const;
+    HTN_NODISCARD size                                 GetFactArgumentsSize() const;
 
 private:
     // Adds a row to the table
@@ -82,31 +82,33 @@ public:
     // If all fact arguments are bound, returns 1
     // Otherwise, returns the number of rows of the table associated to the fact ID
     template<typename T>
-    size Query(const std::string& inFactID, const T inFactArgumentsBegin, const T inFactArgumentsEnd) const;
+    HTN_NODISCARD size Query(const std::string& inFactID, const T inFactArgumentsBegin, const T inFactArgumentsEnd) const;
 
     // If all fact arguments are bound, returns true
     // Otherwise, checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
     template<typename T>
-    bool QueryIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin, const T ioFactArgumentsEnd) const;
+    HTN_NODISCARD bool QueryIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin,
+                                 const T ioFactArgumentsEnd) const;
 
     // Checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
     template<typename T>
-    bool CheckIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin, const T ioFactArgumentsEnd) const;
+    HTN_NODISCARD bool CheckIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin,
+                                 const T ioFactArgumentsEnd) const;
 
     // Returns the number of tables associated to the fact ID
-    size GetFactArgumentsTablesSize(const std::string& inFactID) const;
+    HTN_NODISCARD size GetFactArgumentsTablesSize(const std::string& inFactID) const;
 
     // Returns whether the table of the number of arguments is associated to the fact ID
-    bool ContainsFactArgumentTable(const std::string& inFactID, const size inFactArgumentsSize) const;
+    HTN_NODISCARD bool ContainsFactArgumentTable(const std::string& inFactID, const size inFactArgumentsSize) const;
 
     // Returns the number of rows of the table of the number of arguments associated to the fact ID
-    size GetFactArgumentsSize(const std::string& inFactID, const size inFactArgumentsSize) const;
+    HTN_NODISCARD size GetFactArgumentsSize(const std::string& inFactID, const size inFactArgumentsSize) const;
 
     // Returns whether the fact arguments are contained by the fact ID
     template<typename T>
-    bool ContainsFactArguments(const std::string& inFactID, const T inFactArgumentsBegin, const T inFactArgumentsEnd) const;
+    HTN_NODISCARD bool ContainsFactArguments(const std::string& inFactID, const T inFactArgumentsBegin, const T inFactArgumentsEnd) const;
 
-    const std::unordered_map<std::string, HTNFactArgumentsTables>& GetFacts() const;
+    HTN_NODISCARD const std::unordered_map<std::string, HTNFactArgumentsTables>& GetFacts() const;
 
 private:
     // Fact ID to fact argument tables

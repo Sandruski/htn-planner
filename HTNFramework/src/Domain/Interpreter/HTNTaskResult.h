@@ -13,8 +13,8 @@ class HTNTaskResult
 public:
     explicit HTNTaskResult(const std::string& inID, const std::vector<HTNAtom>& inArguments);
 
-    const std::string&          GetID() const;
-    const std::vector<HTNAtom>& GetArguments() const;
+    HTN_NODISCARD const std::string&          GetID() const;
+    HTN_NODISCARD const std::vector<HTNAtom>& GetArguments() const;
 
 private:
     // ID of the task

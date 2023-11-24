@@ -22,9 +22,9 @@ public:
 
     void AddVariablePath(const std::string& inVariablePath);
 
-    const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
-    const HTNDecompositionNode&                 GetNode() const;
-    const std::vector<std::string>&             GetNodeVariablePaths() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
+    HTN_NODISCARD const HTNDecompositionNode&                 GetNode() const;
+    HTN_NODISCARD const std::vector<std::string>&             GetNodeVariablePaths() const;
 
 private:
     //----------------------------------------------------------------------//

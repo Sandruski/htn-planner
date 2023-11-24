@@ -12,11 +12,11 @@ public:
     HTNPathHandler() = default;
     explicit HTNPathHandler(const std::string& inPath);
 
-    bool TryPushSegmentToPath(const std::string& inSegment);
-    bool TryPopSegmentFromPath();
+    HTN_NODISCARD bool TryPushSegmentToPath(const std::string& inSegment);
+    HTN_NODISCARD bool TryPopSegmentFromPath();
 
-    bool               FindLastPathSegment(std::string& outSegment) const;
-    const std::string& GetPath() const;
+    HTN_NODISCARD bool  FindLastPathSegment(std::string& outSegment) const;
+    HTN_NODISCARD const std::string& GetPath() const;
 
 private:
     std::string mPath;

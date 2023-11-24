@@ -11,17 +11,17 @@ class HTNCompoundTaskNode;
 
 namespace HTNDomainHelpers
 {
-std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const std::string& inEntryPointID);
+HTN_NODISCARD std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const std::string& inEntryPointID);
 
-bool IsInputParameter(const std::string& inVariableID);
-bool IsOutputParameter(const std::string& inVariableID);
-bool IsInputOutputParameter(const std::string& inVariableID);
-bool IsParameter(const std::string& inVariableID);
-bool IsAnyArgument(const std::string& inVariableID);
+HTN_NODISCARD bool IsInputParameter(const std::string& inVariableID);
+HTN_NODISCARD bool IsOutputParameter(const std::string& inVariableID);
+HTN_NODISCARD bool IsInputOutputParameter(const std::string& inVariableID);
+HTN_NODISCARD bool IsParameter(const std::string& inVariableID);
+HTN_NODISCARD bool IsAnyArgument(const std::string& inVariableID);
 
 inline const std::string kAnonymousNamespaceID             = "unnamed";
-const std::string        kTopLevelDomainID                 = "top_level_domain";
-const std::string        kTopLevelMethodID                 = "top_level_method";
+inline const std::string kTopLevelDomainID                 = "top_level_domain";
+inline const std::string kTopLevelMethodID                 = "top_level_method";
 inline const std::string kDefaultMainTopLevelMethodID      = "behave";
 inline const std::string kDefaultUpperBodyTopLevelMethodID = "behave_upper_body";
 } // namespace HTNDomainHelpers

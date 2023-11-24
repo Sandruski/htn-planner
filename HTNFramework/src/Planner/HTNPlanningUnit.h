@@ -24,11 +24,11 @@ public:
     // Execute planning unit top level method
     bool ExecuteTopLevelMethod(const std::string& inEntryPointID);
 
-    const std::string&     GetID() const;
-    const HTNDatabaseHook& GetDatabaseHook() const;
-    const HTNPlannerHook&  GetPlannerHook() const;
+    HTN_NODISCARD const std::string&     GetID() const;
+    HTN_NODISCARD const HTNDatabaseHook& GetDatabaseHook() const;
+    HTN_NODISCARD const HTNPlannerHook&  GetPlannerHook() const;
 
-    const HTNDecompositionRecord& GetLastDecomposition() const;
+    HTN_NODISCARD const HTNDecompositionRecord& GetLastDecomposition() const;
 
 private:
     std::string            mID;
@@ -39,7 +39,7 @@ private:
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 public:
-    const HTNDecompositionResult& GetLastDecompositionResult() const;
+    HTN_NODISCARD const HTNDecompositionResult& GetLastDecompositionResult() const;
 
 private:
     HTNDecompositionResult mLastDecompositionResult;

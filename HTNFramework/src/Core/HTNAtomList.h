@@ -25,13 +25,13 @@ public:
 
     void PushBack(const HTNAtom& inValue);
 
-    const HTNAtom& Get(const uint32 inIndex) const;
-    const HTNAtom* Find(const uint32 inIndex) const;
+    HTN_NODISCARD const HTNAtom& Get(const uint32 inIndex) const;
+    HTN_NODISCARD const HTNAtom* Find(const uint32 inIndex) const;
 
-    uint32 GetSize() const;
-    bool   IsEmpty() const;
+    HTN_NODISCARD uint32 GetSize() const;
+    HTN_NODISCARD bool   IsEmpty() const;
 
-    std::string ToString(const bool inShouldDoubleQuoteString) const;
+    HTN_NODISCARD std::string ToString(const bool inShouldDoubleQuoteString) const;
 
 private:
     HTNAtomNode* mHeadNode = nullptr;

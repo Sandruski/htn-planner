@@ -8,7 +8,7 @@ namespace HTNWorldStateHelpers
 {
 // Returns the number of fact arguments that are bound
 template<typename T>
-uint32 CountFactArgumentsBound(const T inFactArgumentsBegin, const T inFactArgumentsEnd);
+HTN_NODISCARD uint32 CountFactArgumentsBound(const T inFactArgumentsBegin, const T inFactArgumentsEnd);
 
 // Maximum number of fact arguments
 inline constexpr size kMaxFactArgumentsNum = 10;

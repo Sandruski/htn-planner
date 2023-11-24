@@ -15,8 +15,8 @@ class HTNWorldStateParserContext : public HTNParserContextBase
 public:
     explicit HTNWorldStateParserContext(const std::vector<HTNToken>& inTokens, HTNWorldState& outWorldState);
 
-    const HTNWorldState& GetWorldState() const;
-    HTNWorldState& GetWorldStateMutable();
+    HTN_NODISCARD const HTNWorldState& GetWorldState() const;
+    HTN_NODISCARD HTNWorldState& GetWorldStateMutable();
 
 private:
     //----------------------------------------------------------------------//

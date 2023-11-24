@@ -45,8 +45,8 @@ private:
 
     void ResetDecompositionPrinterState();
 
-    bool IsLastWorldStateFileParsingOperationSuccessful() const;
-    bool IsLastDomainFileParsingOperationSuccessful() const;
+    HTN_NODISCARD bool IsLastWorldStateFileParsingOperationSuccessful() const;
+    HTN_NODISCARD bool  IsLastDomainFileParsingOperationSuccessful() const;
 
     HTNDatabaseHook& mDatabaseHook;
     HTNPlannerHook&  mPlannerHook;

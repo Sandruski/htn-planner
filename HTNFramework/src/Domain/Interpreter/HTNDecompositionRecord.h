@@ -13,15 +13,15 @@ class HTNDecompositionRecord
 {
 public:
     void            PushPendingTaskInstance(const HTNTaskInstance& inPendingTaskInstance);
-    HTNTaskInstance PopPendingTaskInstance();
-    bool            HasPendingTaskInstances() const;
+    HTN_NODISCARD HTNTaskInstance PopPendingTaskInstance();
+    HTN_NODISCARD bool            HasPendingTaskInstances() const;
 
     void                  SetEnvironment(const HTNEnvironment& inEnvironment);
-    const HTNEnvironment& GetEnvironment() const;
-    HTNEnvironment&       GetEnvironmentMutable();
+    HTN_NODISCARD const HTNEnvironment& GetEnvironment() const;
+    HTN_NODISCARD HTNEnvironment&       GetEnvironmentMutable();
 
     void                              AddTaskResultToPlan(const HTNTaskResult& inTaskResult);
-    const std::vector<HTNTaskResult>& GetPlan() const;
+    HTN_NODISCARD const std::vector<HTNTaskResult>& GetPlan() const;
 
 private:
     // State of variables and indices

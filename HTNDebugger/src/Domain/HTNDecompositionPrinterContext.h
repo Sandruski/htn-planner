@@ -30,49 +30,49 @@ public:
                                             std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates,
                                             HTNDecompositionNode&                                                  ioSelectedNode);
 
-    const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
-    const std::string&                          GetEntryPointID() const;
-    const HTNDecompositionResult&               GetDecompositionResult() const;
-    HTNDecompositionTooltipMode                 GetTooltipMode() const;
-    bool                                        ShouldIgnoreImGuiState() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
+    HTN_NODISCARD const std::string&            GetEntryPointID() const;
+    HTN_NODISCARD const HTNDecompositionResult& GetDecompositionResult() const;
+    HTN_NODISCARD HTNDecompositionTooltipMode   GetTooltipMode() const;
+    HTN_NODISCARD bool                          ShouldIgnoreImGuiState() const;
 
-    void SelectNode(const HTNDecompositionNode& inNode);
-    void UnselectSelectedNode();
-    bool IsNodeSelected(const std::string& inNodeLabel) const;
+    void               SelectNode(const HTNDecompositionNode& inNode);
+    void               UnselectSelectedNode();
+    HTN_NODISCARD bool IsNodeSelected(const std::string& inNodeLabel) const;
 
-    void                             AddNodeState(const std::string& inNodePath, const HTNDecompositionNodeState& inNodeState);
-    const HTNDecompositionNodeState& GetNodeState(const std::string& inNodePath) const;
-    HTNDecompositionNodeState&       GetNodeStateMutable(const std::string& inNodePath);
-    const HTNDecompositionNodeState* FindNodeState(const std::string& inNodePath) const;
-    HTNDecompositionNodeState*       FindNodeStateMutable(const std::string& inNodePath);
+    void                                           AddNodeState(const std::string& inNodePath, const HTNDecompositionNodeState& inNodeState);
+    HTN_NODISCARD const HTNDecompositionNodeState& GetNodeState(const std::string& inNodePath) const;
+    HTN_NODISCARD HTNDecompositionNodeState&       GetNodeStateMutable(const std::string& inNodePath);
+    HTN_NODISCARD const HTNDecompositionNodeState* FindNodeState(const std::string& inNodePath) const;
+    HTN_NODISCARD HTNDecompositionNodeState*       FindNodeStateMutable(const std::string& inNodePath);
     void AddChoicePointNodeState(const std::string& inNodePath, const HTNDecompositionChoicePointNodeState& inChoicePointNodeState);
-    const HTNDecompositionChoicePointNodeState& GetChoicePointNodeState(const std::string& inNodePath) const;
-    HTNDecompositionChoicePointNodeState&       GetChoicePointNodeStateMutable(const std::string& inNodePath);
-    const HTNDecompositionChoicePointNodeState* FindChoicePointNodeState(const std::string& inNodePath) const;
-    HTNDecompositionChoicePointNodeState*       FindChoicePointNodeStateMutable(const std::string& inNodePath);
+    HTN_NODISCARD const HTNDecompositionChoicePointNodeState& GetChoicePointNodeState(const std::string& inNodePath) const;
+    HTN_NODISCARD HTNDecompositionChoicePointNodeState&       GetChoicePointNodeStateMutable(const std::string& inNodePath);
+    HTN_NODISCARD const HTNDecompositionChoicePointNodeState* FindChoicePointNodeState(const std::string& inNodePath) const;
+    HTN_NODISCARD HTNDecompositionChoicePointNodeState*       FindChoicePointNodeStateMutable(const std::string& inNodePath);
 
-    HTNNodeStep GetNodeStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
-    int32       GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
-    bool        IsNodeOpen(const std::string& inNodePath, const int32 inDecompositionStep, const bool inIsChoicePoint) const;
+    HTN_NODISCARD HTNNodeStep GetNodeStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
+    HTN_NODISCARD int32       GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
+    HTN_NODISCARD bool        IsNodeOpen(const std::string& inNodePath, const int32 inDecompositionStep, const bool inIsChoicePoint) const;
 
-    const HTNPathHandler& GetCurrentNodePathHandler() const;
-    HTNPathHandler&       GetCurrentNodePathHandlerMutable();
-    const HTNPathHandler& GetCurrentVariablesPathHandler() const;
-    HTNPathHandler&       GetCurrentVariablesPathHandlerMutable();
+    HTN_NODISCARD const HTNPathHandler& GetCurrentNodePathHandler() const;
+    HTN_NODISCARD HTNPathHandler&       GetCurrentNodePathHandlerMutable();
+    HTN_NODISCARD const HTNPathHandler& GetCurrentVariablesPathHandler() const;
+    HTN_NODISCARD HTNPathHandler&       GetCurrentVariablesPathHandlerMutable();
 
-    void  SetCurrentDecompositionStep(const int32 inCurrentDecompositionStep);
-    int32 GetCurrentDecompositionStep() const;
-    bool  IsCurrentDecompositionStepValid() const;
-    void  SetMinDecompositionStep(const int32 inMinDecompositionStep);
-    int32 GetMinDecompositionStep() const;
-    void  SetMaxDecompositionStep(const int32 inMaxDecompositionStep);
-    int32 GetMaxDecompositionStep() const;
+    void                SetCurrentDecompositionStep(const int32 inCurrentDecompositionStep);
+    HTN_NODISCARD int32 GetCurrentDecompositionStep() const;
+    HTN_NODISCARD bool  IsCurrentDecompositionStepValid() const;
+    void                SetMinDecompositionStep(const int32 inMinDecompositionStep);
+    HTN_NODISCARD int32 GetMinDecompositionStep() const;
+    void                SetMaxDecompositionStep(const int32 inMaxDecompositionStep);
+    HTN_NODISCARD int32 GetMaxDecompositionStep() const;
 
-    void SetIsCurrentNodeVisible(const bool inIsCurrentNodeVisible);
-    bool IsCurrentNodeVisible() const;
-    bool IsSelectedNodeSelected() const;
-    void RefreshNodeStates();
-    bool ShouldRefreshNodeStates() const;
+    void               SetIsCurrentNodeVisible(const bool inIsCurrentNodeVisible);
+    HTN_NODISCARD bool IsCurrentNodeVisible() const;
+    HTN_NODISCARD bool IsSelectedNodeSelected() const;
+    void               RefreshNodeStates();
+    HTN_NODISCARD bool ShouldRefreshNodeStates() const;
 
 private:
     //----------------------------------------------------------------------//

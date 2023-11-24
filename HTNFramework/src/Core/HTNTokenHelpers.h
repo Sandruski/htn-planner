@@ -10,5 +10,5 @@ enum class HTNTokenType : uint8;
 
 namespace HTNTokenHelpers
 {
-std::string GetTokenTypeString(const HTNTokenType inTokenType);
+HTN_NODISCARD std::string GetTokenTypeString(const HTNTokenType inTokenType);
 } // HTNTokenHelpers

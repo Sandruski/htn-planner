@@ -18,14 +18,14 @@ public:
     explicit HTNLexerContextBase(const std::string& inText, std::vector<HTNToken>& outTokens);
     virtual ~HTNLexerContextBase() = 0;
 
-    const std::string& GetText() const;
+    HTN_NODISCARD const std::string& GetText() const;
 
     void AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme));
 
-    char GetCharacter(const uint32 inOffset = 0) const;
+    HTN_NODISCARD char GetCharacter(const uint32 inOffset = 0) const;
 
     void   AdvancePosition(HTN_DEBUG_ONLY(const bool inIsNewLine = false));
-    uint32 GetPosition() const;
+    HTN_NODISCARD uint32 GetPosition() const;
 
 private:
     //----------------------------------------------------------------------//
@@ -45,8 +45,8 @@ private:
 
 #ifdef HTN_DEBUG
 public:
-    uint32 GetRow() const;
-    uint32 GetColumn() const;
+    HTN_NODISCARD uint32 GetRow() const;
+    HTN_NODISCARD uint32  GetColumn() const;
 
 private:
     //----------------------------------------------------------------------//

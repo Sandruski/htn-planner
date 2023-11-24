@@ -24,7 +24,7 @@ public:
 
     bool MakePlan(HTNDecompositionContext& ioDecompositionContext) const;
 
-    const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 
 private:
     std::shared_ptr<const HTNDomainNode> mDomainNode;

@@ -14,5 +14,5 @@ public:
     virtual ~HTNParserBase() = 0;
 
 protected:
-    const HTNToken* ParseToken(const HTNTokenType inTokenType, HTNParserContextBase& ioParserContext) const;
+    HTN_NODISCARD const HTNToken* ParseToken(const HTNTokenType inTokenType, HTNParserContextBase& ioParserContext) const;
 };

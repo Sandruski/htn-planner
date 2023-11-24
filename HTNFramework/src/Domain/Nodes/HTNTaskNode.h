@@ -24,8 +24,8 @@ public:
 
     HTN_NODISCARD std::string GetID() const final;
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>&             GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetArgumentNodes() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>&             GetIDNode() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetArgumentNodes() const;
 
 protected:
     // Node representing the ID of the task
@@ -36,7 +36,7 @@ protected:
     std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> mArgumentNodes;
 
 private:
-    uint32 GenerateID() const;
+    HTN_NODISCARD uint32 GenerateID() const;
 
     // ID of the task
     // - Globally unique
@@ -57,7 +57,7 @@ public:
 
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
-    bool IsTopLevel() const;
+    HTN_NODISCARD bool IsTopLevel() const;
 
 private:
     // Whether the compound task serves as an entry point for a decomposition

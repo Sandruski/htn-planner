@@ -14,8 +14,8 @@ public:
     explicit HTNToken(const HTNAtom&            inValue,
                       const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme, const uint32 inRow, const uint32 inColumn));
 
-    const HTNAtom& GetValue() const;
-    HTNTokenType   GetType() const;
+    HTN_NODISCARD const HTNAtom& GetValue() const;
+    HTN_NODISCARD HTNTokenType   GetType() const;
 
 private:
     HTNAtom      mValue;
@@ -23,9 +23,9 @@ private:
 
 #ifdef HTN_DEBUG
 public:
-    const std::string& GetLexeme() const;
-    uint32             GetRow() const;
-    uint32             GetColumn() const;
+    HTN_NODISCARD const std::string& GetLexeme() const;
+    HTN_NODISCARD uint32             GetRow() const;
+    HTN_NODISCARD uint32             GetColumn() const;
 
 private:
     std::string mLexeme;

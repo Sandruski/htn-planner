@@ -27,10 +27,10 @@ public:
 protected:
     void SetUp() override;
 
-    const std::string& GetWorldStateFileName() const;
-    const std::string& GetDomainFileName() const;
-    const std::string& GetEntryPointID() const;
-    const size&        GetPlanningUnitsSize() const;
+    HTN_NODISCARD const std::string& GetWorldStateFileName() const;
+    HTN_NODISCARD const std::string& GetDomainFileName() const;
+    HTN_NODISCARD const std::string& GetEntryPointID() const;
+    HTN_NODISCARD const size&        GetPlanningUnitsSize() const;
 
     HTNDatabaseHook              mDatabaseHook;
     HTNPlannerHook               mPlannerHook;

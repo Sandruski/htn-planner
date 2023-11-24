@@ -17,7 +17,7 @@ public:
     explicit HTNFileHandler(const std::string& inFilePath);
     ~HTNFileHandler();
 
-    bool ReadFile(std::string& outFileText) const;
+    HTN_NODISCARD bool ReadFile(std::string& outFileText) const;
 
 private:
     std::ifstream mFile;

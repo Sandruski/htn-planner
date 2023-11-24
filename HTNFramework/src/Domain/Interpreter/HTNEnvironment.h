@@ -10,12 +10,12 @@ class HTNEnvironment
 {
 public:
     void                SetVariables(const HTNVariables& inVariables);
-    const HTNVariables& GetVariables() const;
-    HTNVariables&       GetVariablesMutable();
+    HTN_NODISCARD const HTNVariables& GetVariables() const;
+    HTN_NODISCARD HTNVariables&       GetVariablesMutable();
 
     void              SetIndices(const HTNIndices& inIndices);
-    const HTNIndices& GetIndices() const;
-    HTNIndices&       GetIndicesMutable();
+    HTN_NODISCARD const HTNIndices& GetIndices() const;
+    HTN_NODISCARD HTNIndices&       GetIndicesMutable();
 
 private:
     HTNVariables mVariables;

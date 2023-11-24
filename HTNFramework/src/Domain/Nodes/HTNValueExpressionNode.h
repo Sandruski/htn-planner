@@ -18,7 +18,7 @@ public:
 
     HTN_NODISCARD std::string GetID() const final;
 
-    const HTNAtom& GetValue() const;
+    HTN_NODISCARD const HTNAtom& GetValue() const;
 
 protected:
     // Value

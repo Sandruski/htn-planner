@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeBase.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 #include <vector>
@@ -26,9 +26,9 @@ public:
 
     HTN_NODISCARD std::string GetID() const final;
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>&            GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& GetParameterNodes() const;
-    const std::shared_ptr<const HTNConditionNodeBase>&                   GetConditionNode() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>& GetIDNode() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& GetParameterNodes() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNConditionNodeBase>& GetConditionNode() const;
 
 private:
     // Node representing the ID of the axiom

@@ -32,7 +32,8 @@ enum HTNValueExpressionNodeColorResult : uint8
     W
 };
 
-HTNDecompositionWatchPrinterContextBase& GetDecompositionWatchPrinterContext(HTNNodeVisitorContextBase& ioDecompositionWatchPrinterContext)
+HTN_NODISCARD HTNDecompositionWatchPrinterContextBase& GetDecompositionWatchPrinterContext(
+    HTNNodeVisitorContextBase& ioDecompositionWatchPrinterContext)
 {
     return static_cast<HTNDecompositionWatchPrinterContextBase&>(ioDecompositionWatchPrinterContext);
 }

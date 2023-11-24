@@ -62,7 +62,7 @@ int main(int, char**)
     ImGui_ImplSDL2_InitForSDLRenderer(Window, Renderer);
     ImGui_ImplSDLRenderer2_Init(Renderer);
 
-    const ImVec4 ClearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    static constexpr ImVec4 ClearColor = ImVec4(0.45f, 0.55f, 0.6f, 1.f);
 
     // Main loop
     bool IsDone = false;

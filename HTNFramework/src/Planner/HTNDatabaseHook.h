@@ -15,7 +15,7 @@ public:
     // Parses a world state file and initializes a world state
     bool ParseWorldStateFile(const std::string& inWorldStateFilePath);
 
-    const HTNWorldState& GetWorldState() const;
+    HTN_NODISCARD const HTNWorldState& GetWorldState() const;
 
 private:
     HTNWorldState mWorldState;

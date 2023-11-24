@@ -184,7 +184,7 @@ void PostPrintNode(const std::string& inNodePath, const bool inIsChoicePoint, co
     }
 }
 
-bool IsChoicePointNodeValid(const size inDecompositionStep, const int32 inCurrentDecompositionStep, const int32 inMinDecompositionStep,
+HTN_NODISCARD bool IsChoicePointNodeValid(const size inDecompositionStep, const int32 inCurrentDecompositionStep, const int32 inMinDecompositionStep,
                             const int32 inMaxDecompositionStep)
 {
     // Filter available nodes within range [min, max)
@@ -205,7 +205,7 @@ bool IsChoicePointNodeValid(const size inDecompositionStep, const int32 inCurren
     return true;
 }
 
-bool IsRegularNodeValid(const size inDecompositionStep, const int32 inCurrentDecompositionStep, const int32 inMinDecompositionStep,
+HTN_NODISCARD bool IsRegularNodeValid(const size inDecompositionStep, const int32 inCurrentDecompositionStep, const int32 inMinDecompositionStep,
                         const int32 inMaxDecompositionStep)
 {
     // Filter available nodes within range [min, max)
@@ -223,14 +223,14 @@ bool IsRegularNodeValid(const size inDecompositionStep, const int32 inCurrentDec
     return true;
 }
 
-bool IsNodeValid(const size inDecompositionStep, const bool inIsChoicePoint, const int32 inCurrentDecompositionStep,
+HTN_NODISCARD bool IsNodeValid(const size inDecompositionStep, const bool inIsChoicePoint, const int32 inCurrentDecompositionStep,
                  const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep)
 {
     return inIsChoicePoint ? IsChoicePointNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep)
                             : IsRegularNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep);
 }
 
-HTNDecompositionPrinterContext& GetDecompositionPrinterContext(HTNNodeVisitorContextBase& ioDecompositionPrinterContext)
+HTN_NODISCARD HTNDecompositionPrinterContext& GetDecompositionPrinterContext(HTNNodeVisitorContextBase& ioDecompositionPrinterContext)
 {
     return static_cast<HTNDecompositionPrinterContext&>(ioDecompositionPrinterContext);
 }

@@ -16,10 +16,10 @@ public:
     explicit HTNTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode, const HTNEnvironment& inEnvironment,
                              const HTNPathHandler& inNodePathHandler, const HTNPathHandler& inVariablesPathHandler);
 
-    const std::shared_ptr<const HTNTaskNodeBase>& GetTaskNode() const;
-    const HTNEnvironment&                         GetEnvironment() const;
-    const HTNPathHandler&                         GetNodePathHandler() const;
-    const HTNPathHandler&                         GetVariablesPathHandler() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNTaskNodeBase>& GetTaskNode() const;
+    HTN_NODISCARD const HTNEnvironment&                         GetEnvironment() const;
+    HTN_NODISCARD const HTNPathHandler&                         GetNodePathHandler() const;
+    HTN_NODISCARD const HTNPathHandler&                         GetVariablesPathHandler() const;
 
 private:
     std::shared_ptr<const HTNTaskNodeBase> mTaskNode;

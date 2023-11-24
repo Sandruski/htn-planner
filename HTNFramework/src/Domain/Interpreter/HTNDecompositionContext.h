@@ -32,26 +32,26 @@ public:
     explicit HTNDecompositionContext(const HTNWorldState& inWorldState, const std::shared_ptr<const HTNDomainNode>& inDomainNode,
                                      const std::string& inEntryPointID);
 
-    const HTNWorldState&                        GetWorldState() const;
-    const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
-    const std::string&                          GetEntryPointID() const;
+    HTN_NODISCARD const HTNWorldState& GetWorldState() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
+    HTN_NODISCARD const std::string& GetEntryPointID() const;
 
     void RecordDecomposition(const HTNDecompositionRecord& inDecomposition);
-    bool RestoreDecomposition();
+    HTN_NODISCARD bool RestoreDecomposition();
 
-    const HTNDecompositionRecord& GetCurrentDecomposition() const;
-    HTNDecompositionRecord&       GetCurrentDecompositionMutable();
+    HTN_NODISCARD const HTNDecompositionRecord& GetCurrentDecomposition() const;
+    HTN_NODISCARD HTNDecompositionRecord&       GetCurrentDecompositionMutable();
 
     void                                 SetDecompositionRecordHistory(const HTNDecompositionRecordHistory& inDecompositionRecordHistory);
-    const HTNDecompositionRecordHistory& GetDecompositionRecordHistory() const;
+    HTN_NODISCARD const HTNDecompositionRecordHistory& GetDecompositionRecordHistory() const;
 
     void                  SetCurrentNodePathHandler(const HTNPathHandler& inCurrentNodePathHandler);
-    const HTNPathHandler& GetCurrentNodePathHandler() const;
-    HTNPathHandler&       GetCurrentNodePathHandlerMutable();
+    HTN_NODISCARD const HTNPathHandler& GetCurrentNodePathHandler() const;
+    HTN_NODISCARD HTNPathHandler&       GetCurrentNodePathHandlerMutable();
 
     void                  SetCurrentVariablesPathHandler(const HTNPathHandler& inCurrentVariablesPathHandler);
-    const HTNPathHandler& GetCurrentVariablesPathHandler() const;
-    HTNPathHandler&       GetCurrentVariablesPathHandlerMutable();
+    HTN_NODISCARD const HTNPathHandler& GetCurrentVariablesPathHandler() const;
+    HTN_NODISCARD HTNPathHandler&       GetCurrentVariablesPathHandlerMutable();
 
 private:
     //----------------------------------------------------------------------//
@@ -84,7 +84,7 @@ public:
     void RecordNodeResult(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
     void RecordNodeResult(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
 
-    const HTNDecompositionResult& GetDecompositionResult() const;
+    HTN_NODISCARD const HTNDecompositionResult& GetDecompositionResult() const;
 
 private:
     //----------------------------------------------------------------------//

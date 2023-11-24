@@ -21,9 +21,9 @@ public:
     virtual ~HTNDecompositionNodeStateBase() = 0;
 
     void SetDecompositionStep(const int32 inDecompositionStep);
-    int32  GetDecompositionStep() const;
+    HTN_NODISCARD int32 GetDecompositionStep() const;
 
-    virtual HTNNodeStep GetNodeStep() const = 0;
+    HTN_NODISCARD virtual HTNNodeStep GetNodeStep() const = 0;
 
 private:
     // Decomposition step of the node
@@ -40,10 +40,10 @@ public:
     HTNDecompositionNodeState() = default;
     explicit HTNDecompositionNodeState(const int32 inDecompositionStep, const bool inIsOpen);
 
-    HTNNodeStep GetNodeStep() const final;
+    HTN_NODISCARD HTNNodeStep GetNodeStep() const final;
 
     void SetIsOpen(const bool inIsOpen);
-    bool IsOpen() const;
+    HTN_NODISCARD bool IsOpen() const;
 
 private:
     // Whether the node is open or closed
@@ -60,11 +60,11 @@ public:
     HTNDecompositionChoicePointNodeState() = default;
     explicit HTNDecompositionChoicePointNodeState(const int32 inDecompositionStep, const bool inIsOpen);
 
-    HTNNodeStep GetNodeStep() const final;
+    HTN_NODISCARD HTNNodeStep GetNodeStep() const final;
 
     void SetIsOpen(const size inDecompositionStep, const bool inIsOpen);
-    bool IsOpen(const size inDecompositionStep) const;
-    int32  FindOpenDecompositionStepInRange(const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep) const;
+    HTN_NODISCARD bool IsOpen(const size inDecompositionStep) const;
+    HTN_NODISCARD int32 FindOpenDecompositionStepInRange(const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep) const;
 
 private:
     // Decomposition step to whether the node is open or closed

@@ -10,7 +10,7 @@
 
 namespace
 {
-std::string MakeFactDescription(const std::string& inFactID, const HTNFactArguments& inFactArguments,
+HTN_NODISCARD std::string MakeFactDescription(const std::string& inFactID, const HTNFactArguments& inFactArguments,
                                 const bool inShouldDoubleQuoteString)
 {
     std::string FactDescription = inFactID;

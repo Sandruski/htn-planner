@@ -25,5 +25,6 @@ class HTNConditionQueryWorldState final : public HTNConditionQueryBase
 {
 public:
     // Check if the condition is true
-    static bool Check(const HTNWorldState& inWorldState, const std::string& inFactID, const size inArgumentsIndex, std::vector<HTNAtom>& ioArguments);
+    HTN_NODISCARD bool Check(const HTNWorldState& inWorldState, const std::string& inFactID, const size inArgumentsIndex,
+                             std::vector<HTNAtom>& ioArguments) const;
 };

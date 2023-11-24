@@ -19,7 +19,7 @@ public:
                                                         const HTNDecompositionNode&                 inDecompositionNode,
                                                         const HTNDecompositionTooltipMode           inTooltipMode);
 
-    HTNDecompositionTooltipMode GetTooltipMode() const;
+    HTN_NODISCARD HTNDecompositionTooltipMode GetTooltipMode() const;
 
 private:
     //----------------------------------------------------------------------//

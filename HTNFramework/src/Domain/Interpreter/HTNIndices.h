@@ -12,21 +12,21 @@ class HTNIndices
 {
 public:
     // Adds a new index
-    size AddIndex(const std::string& inNodePath);
+    HTN_NODISCARD size AddIndex(const std::string& inNodePath);
 
     // Increments an existing index or adds a new index and increments it
     size IncrementIndex(const std::string& inNodePath);
 
     // Adds a new index or increments an existing index
-    size AddOrIncrementIndex(const std::string& inNodePath);
+    HTN_NODISCARD size AddOrIncrementIndex(const std::string& inNodePath);
 
     // Removes an existing index
     void RemoveIndex(const std::string& inNodePath);
 
     // Returns an existing index or an invalid one if not existing
-    size GetIndex(const std::string& inNodePath) const;
+    HTN_NODISCARD size GetIndex(const std::string& inNodePath) const;
 
-    const std::unordered_map<std::string, size>& GetIndices() const;
+    HTN_NODISCARD const std::unordered_map<std::string, size>& GetIndices() const;
 
 private:
     // Node path to index

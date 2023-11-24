@@ -3,8 +3,8 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
+#include "HTNCoreMinimal.h"
 
 class HTNWorldState;
 
@@ -15,8 +15,8 @@ class HTNWorldStatePrinterContext final : public HTNNodeVisitorContextBase
 public:
     explicit HTNWorldStatePrinterContext(const HTNWorldState& inWorldState, const ImGuiTextFilter& inTextFilter);
 
-    const HTNWorldState&   GetWorldState() const;
-    const ImGuiTextFilter& GetTextFilter() const;
+    HTN_NODISCARD const HTNWorldState&   GetWorldState() const;
+    HTN_NODISCARD const ImGuiTextFilter& GetTextFilter() const;
 
 private:
     //----------------------------------------------------------------------//

@@ -13,8 +13,8 @@ public:
     explicit HTNNodeResult(const HTNVariables& inVariables);
     explicit HTNNodeResult(const HTNVariables& inVariables, const bool inResult);
 
-    const HTNVariables& GetVariables() const;
-    bool                GetResult() const;
+    HTN_NODISCARD const HTNVariables& GetVariables() const;
+    HTN_NODISCARD bool                 GetResult() const;
 
 private:
     HTNVariables mVariables;

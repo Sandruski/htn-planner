@@ -15,7 +15,7 @@ class HTNDomainPrinterContext final : public HTNNodeVisitorContextBase
 public:
     explicit HTNDomainPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
 
-    const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 
 private:
     //----------------------------------------------------------------------//

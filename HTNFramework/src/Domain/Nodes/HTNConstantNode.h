@@ -23,8 +23,8 @@ public:
 
     HTN_NODISCARD std::string GetID() const final;
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>& GetIDNode() const;
-    const std::shared_ptr<const HTNLiteralExpressionNode>& GetValueNode() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>& GetIDNode() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNLiteralExpressionNode>& GetValueNode() const;
 
 private:
     // Node representing the ID of the constant

@@ -16,8 +16,8 @@ class HTNDomainParserContext : public HTNParserContextBase
 public:
     explicit HTNDomainParserContext(const std::vector<HTNToken>& inTokens, std::shared_ptr<const HTNDomainNode>& outDomainNode);
 
-    const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
-    std::shared_ptr<const HTNDomainNode>&       GetDomainNodeMutable();
+    HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
+    HTN_NODISCARD std::shared_ptr<const HTNDomainNode>&        GetDomainNodeMutable();
 
 private:
     //----------------------------------------------------------------------//

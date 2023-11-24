@@ -26,9 +26,9 @@ public:
 
     HTN_NODISCARD std::string GetID() const final;
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>&  GetIDNode() const;
-    const std::shared_ptr<const HTNConditionNodeBase>&         GetPreConditionNode() const;
-    const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& GetTaskNodes() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>&  GetIDNode() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNConditionNodeBase>&         GetPreConditionNode() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& GetTaskNodes() const;
 
 private:
     // Node representing the ID of the branch

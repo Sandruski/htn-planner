@@ -25,29 +25,29 @@ public:
     void AddListElement(const HTNAtom& inElement);
 
     // Return the list element
-    const HTNAtom& GetListElement(const uint32 inIndex) const;
-    const HTNAtom* FindListElement(const uint32 inIndex) const;
+    HTN_NODISCARD const HTNAtom& GetListElement(const uint32 inIndex) const;
+    HTN_NODISCARD const HTNAtom* FindListElement(const uint32 inIndex) const;
 
-    int32 GetListSize() const;
-    bool  IsListEmpty() const;
-
-    template<typename T>
-    const T& GetValue() const;
+    HTN_NODISCARD int32 GetListSize() const;
+    HTN_NODISCARD bool  IsListEmpty() const;
 
     template<typename T>
-    T& GetValueMutable();
+    HTN_NODISCARD const T& GetValue() const;
 
     template<typename T>
-    bool IsType() const;
+    HTN_NODISCARD T& GetValueMutable();
+
+    template<typename T>
+    HTN_NODISCARD bool IsType() const;
 
     // Unbinds this HtnAtom, this can be used in the context of multiresult queries where we might want to reuse the same HtnAtom
     // multiple times because the backtracking mechanism (we will talk about this later) is making us reevaluate the planner.
     void Unbind();
 
-    bool IsBound() const;
+    HTN_NODISCARD bool IsBound() const;
 
     // Returns a string optionally delimited by double quotes
-    std::string ToString(const bool inShouldDoubleQuoteString) const;
+    HTN_NODISCARD std::string ToString(const bool inShouldDoubleQuoteString) const;
 
 private:
     std::optional<std::variant<bool, int32, float, std::string, HTNAtomList>> mData;

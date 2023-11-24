@@ -22,7 +22,7 @@ public:
     HTN_NODISCARD std::string GetID() const final;
 
 private:
-    uint32 GenerateID() const;
+    HTN_NODISCARD uint32 GenerateID() const;
 
     // ID of the condition
     // - Globally unique
@@ -42,8 +42,8 @@ public:
 
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>&             GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetArgumentNodes() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>& GetIDNode() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetArgumentNodes() const;
 
 private:
     // Node representing the ID of the condition
@@ -68,8 +68,8 @@ public:
 
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>&             GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetArgumentNodes() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>&             GetIDNode() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetArgumentNodes() const;
 
 private:
     // Node representing the ID of the condition
@@ -97,7 +97,7 @@ public:
 
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
-    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetSubConditionNodes() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetSubConditionNodes() const;
 
 private:
     // Nodes representing the sub-conditions of the condition
@@ -120,7 +120,7 @@ public:
 
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
-    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetSubConditionNodes() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetSubConditionNodes() const;
 
 private:
     // Nodes representing the sub-conditions of the condition
@@ -143,7 +143,7 @@ public:
 
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
-    const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetSubConditionNodes() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& GetSubConditionNodes() const;
 
 private:
     // Nodes representing the sub-conditions of the condition
@@ -165,7 +165,7 @@ public:
 
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
-    const std::shared_ptr<const HTNConditionNodeBase>& GetSubConditionNode() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNConditionNodeBase>& GetSubConditionNode() const;
 
 private:
     // Node representing the sub-condition of the condition

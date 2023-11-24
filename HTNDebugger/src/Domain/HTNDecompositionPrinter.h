@@ -45,7 +45,8 @@ public:
     HTNAtom Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const final;
 
 private:
-    bool PrintNode(const HTNNodeBase& inNode, const HTNNodeTitleFunction inNodeTitleFunction, const HTNNodeBehaviorFunction inNodeBehaviorFunction,
+    HTN_NODISCARD bool PrintNode(const HTNNodeBase& inNode, const HTNNodeTitleFunction inNodeTitleFunction,
+                                const HTNNodeBehaviorFunction inNodeBehaviorFunction,
                    const HTNNodeFunction inNodeFunction, const ImGuiTreeNodeFlags inTreeNodeFlags,
                    HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const;
 

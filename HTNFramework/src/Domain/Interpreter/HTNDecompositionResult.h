@@ -29,9 +29,9 @@ public:
     HTNNodeResultHistory() = default;
     explicit HTNNodeResultHistory(const bool inIsChoicePoint);
 
-    const HTNNodeResultStepsCollection& GetNodeResultStepsCollection() const;
-    HTNNodeResultStepsCollection&       GetNodeResultStepsCollectionMutable();
-    bool                                IsChoicePoint() const;
+    HTN_NODISCARD const HTNNodeResultStepsCollection& GetNodeResultStepsCollection() const;
+    HTN_NODISCARD HTNNodeResultStepsCollection&       GetNodeResultStepsCollectionMutable();
+    HTN_NODISCARD bool                                IsChoicePoint() const;
 
 private:
     HTNNodeResultStepsCollection mNodeResultStepsCollection;
@@ -42,10 +42,10 @@ class HTNDecompositionResult
 {
 public:
     void AddNodeResult(const std::string& inNodePath, const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
-    const HTNNodeResultHistory* FindNodeResultHistory(const std::string& inNodePath) const;
+    HTN_NODISCARD const HTNNodeResultHistory* FindNodeResultHistory(const std::string& inNodePath) const;
 
     void IncrementDecompositionStep();
-    size GetDecompositionStep() const;
+    HTN_NODISCARD size GetDecompositionStep() const;
 
 private:
     HTNNodeResultHistoryCollection mNodeResultHistoryCollection;

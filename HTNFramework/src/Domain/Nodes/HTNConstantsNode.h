@@ -24,8 +24,8 @@ public:
 
     HTN_NODISCARD std::string GetID() const final;
 
-    const std::shared_ptr<const HTNIdentifierExpressionNode>&  GetIDNode() const;
-    const std::vector<std::shared_ptr<const HTNConstantNode>>& GetConstantNodes() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>&  GetIDNode() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNConstantNode>>& GetConstantNodes() const;
 
 private:
     // Node representing the ID of the group of constants

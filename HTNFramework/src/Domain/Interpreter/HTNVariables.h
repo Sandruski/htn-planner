@@ -15,7 +15,7 @@ public:
     void SetVariable(const std::string& inVariablePath, const HTNAtom& inVariableValue);
 
     // Returns an existing variable or an unset HTNAtom if not existing
-    HTNAtom FindVariable(const std::string& inVariablePath) const;
+    HTN_NODISCARD HTNAtom FindVariable(const std::string& inVariablePath) const;
 
     // Removes an existing variable
     void RemoveVariable(const std::string& inVariablePath);
@@ -23,7 +23,7 @@ public:
     // Removes all existing variables under the variables path
     void RemoveVariables(const std::string& inVariablesPath);
 
-    const std::unordered_map<std::string, HTNAtom>& GetVariables() const;
+    HTN_NODISCARD const std::unordered_map<std::string, HTNAtom>& GetVariables() const;
 
 private:
     // Variable path to value

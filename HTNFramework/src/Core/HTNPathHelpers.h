@@ -8,7 +8,7 @@
 
 namespace HTNPathHelpers
 {
-bool TryPushSegmentToPath(const std::string& inSegment, std::string& ioPath);
-bool TryPopSegmentFromPath(std::string& ioPath);
-bool FindLastPathSegment(const std::string& inPath, std::string& outSegment);
+HTN_NODISCARD bool TryPushSegmentToPath(const std::string& inSegment, std::string& ioPath);
+HTN_NODISCARD bool TryPopSegmentFromPath(std::string& ioPath);
+HTN_NODISCARD bool FindLastPathSegment(const std::string& inPath, std::string& outSegment);
 } // namespace HTNPathHelpers

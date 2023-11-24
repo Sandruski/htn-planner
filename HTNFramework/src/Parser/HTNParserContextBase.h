@@ -19,12 +19,12 @@ public:
     explicit HTNParserContextBase(const std::vector<HTNToken>& inTokens);
     virtual ~HTNParserContextBase() = 0;
 
-    const HTNToken* GetToken(const uint32 inPosition) const;
-    size            GetTokensSize() const;
+    HTN_NODISCARD const HTNToken* GetToken(const uint32 inPosition) const;
+    HTN_NODISCARD size            GetTokensSize() const;
 
     void   SetPosition(const uint32 inPosition);
     void   IncrementPosition();
-    uint32 GetPosition() const;
+    HTN_NODISCARD uint32 GetPosition() const;
 
 private:
     //----------------------------------------------------------------------//
@@ -40,11 +40,11 @@ private:
 #if HTN_DEBUG
 public:
     void               SetLastErrorMessage(const std::string& inLastErrorMessage);
-    const std::string& GetLastErrorMessage() const;
+    HTN_NODISCARD const std::string& GetLastErrorMessage() const;
     void               SetLastErrorRow(const int32 inLastErrorRow);
-    int32              GetLastErrorRow() const;
+    HTN_NODISCARD int32               GetLastErrorRow() const;
     void               SetLastErrorColumn(const int32 inLastErrorColumn);
-    int32              GetLastErrorColumn() const;
+    HTN_NODISCARD int32                GetLastErrorColumn() const;
 
 protected:
     //----------------------------------------------------------------------//

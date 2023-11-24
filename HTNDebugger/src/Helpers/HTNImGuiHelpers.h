@@ -20,11 +20,11 @@ namespace HTNImGuiHelpers
 void HelpMarker(const std::string& inDescription);
 
 void SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen);
-bool IsCurrentItemSelected();
+HTN_NODISCARD bool IsCurrentItemSelected();
 
-ImVec4 GetNodeColor(const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep);
-ImVec4 GetResultColor(const bool inResult);
-ImVec4 GetVariableColor(const std::string& inVariableID);
+HTN_NODISCARD ImVec4 GetNodeColor(const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep);
+HTN_NODISCARD ImVec4 GetResultColor(const bool inResult);
+HTN_NODISCARD ImVec4 GetVariableColor(const std::string& inVariableID);
 
 inline constexpr ImVec4 kFailColor        = ImVec4(1.f, 0.5f, 0.5f, 1.f);
 inline constexpr ImVec4 kSuccessColor     = ImVec4(0.f, 1.f, 0.f, 1.f);
