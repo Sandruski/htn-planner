@@ -3,11 +3,11 @@
 #include "Domain/Printer/HTNDecompositionWatchTooltipPrinter.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Printer/HTNDecompositionHelpers.h"
-#include "Domain/Printer/HTNDecompositionNode.h"
-#include "Domain/Printer/HTNDecompositionWatchTooltipPrinterContext.h"
 #include "Domain/Interpreter/HTNNodeResult.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
+#include "Domain/Printer/HTNDecompositionHelpers.h"
+#include "Domain/Printer/HTNDecompositionWatchTooltipPrinterContext.h"
+#include "Domain/Printer/HTNNodeInstance.h"
 #include "HTNImGuiHelpers.h"
 
 #include "imgui.h"
@@ -20,18 +20,18 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
         return;
     }
 
-    const HTNDecompositionNode& Node       = ioDecompositionWatchTooltipPrinterContext.GetNode();
-    const HTNNodeResult*        NodeResult = Node.GetNodeResult();
+    const HTNNodeInstance& NodeInstance = ioDecompositionWatchTooltipPrinterContext.GetNodeInstance();
+    const HTNNodeResult*   NodeResult   = NodeInstance.GetNodeResult();
     if (!NodeResult)
     {
         return;
     }
 
     bool                                                                 ShouldPrint       = false;
-    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters    = Node.GetNodeParameters();
+    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters    = NodeInstance.GetNodeParameters();
     const bool                                                           HasNodeParameters = !NodeParameters.empty();
     ShouldPrint                                                                            = ShouldPrint || HasNodeParameters;
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments    = Node.GetNodeArguments();
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments    = NodeInstance.GetNodeArguments();
     const bool                                                            HasNodeArguments = !NodeArguments.empty();
     ShouldPrint                                                                            = ShouldPrint || HasNodeArguments;
     const std::unordered_map<std::string, HTNAtom>& Variables                              = NodeResult->GetVariables().GetVariables();

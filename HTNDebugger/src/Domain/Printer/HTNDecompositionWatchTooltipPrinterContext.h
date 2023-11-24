@@ -9,14 +9,14 @@
 
 #include <memory>
 
-class HTNDecompositionNode;
+class HTNNodeInstance;
 class HTNDomainNode;
 
 class HTNDecompositionWatchTooltipPrinterContext final : public HTNDecompositionWatchPrinterContextBase
 {
 public:
     explicit HTNDecompositionWatchTooltipPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                        const HTNDecompositionNode&                 inDecompositionNode,
+                                                        const HTNNodeInstance&                 inNodeInstance,
                                                         const HTNDecompositionTooltipMode           inTooltipMode);
 
     HTN_NODISCARD HTNDecompositionTooltipMode GetTooltipMode() const;

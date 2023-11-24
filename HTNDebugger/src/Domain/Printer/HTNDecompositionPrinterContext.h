@@ -4,8 +4,8 @@
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Core/HTNPathHandler.h"
-#include "Domain/Printer/HTNDecompositionTooltipMode.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
+#include "Domain/Printer/HTNDecompositionTooltipMode.h"
 #include "HTNCoreMinimal.h"
 
 #include <limits>
@@ -14,8 +14,8 @@
 #include <unordered_map>
 
 class HTNDecompositionChoicePointNodeState;
-class HTNDecompositionNode;
-class HTNDecompositionNodeState;
+class HTNNodeInstance;
+class HTNNodeState;
 class HTNDecompositionResult;
 class HTNDomainNode;
 enum class HTNNodeStep : uint8;
@@ -26,9 +26,9 @@ public:
     explicit HTNDecompositionPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                             const HTNDecompositionResult& inDecompositionResult, const HTNDecompositionTooltipMode inTooltipMode,
                                             const bool                                                             inShouldIgnoreImGuiState,
-                                            std::unordered_map<std::string, HTNDecompositionNodeState>&            ioNodeStates,
+                                            std::unordered_map<std::string, HTNNodeState>&            ioNodeStates,
                                             std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates,
-                                            HTNDecompositionNode&                                                  ioSelectedNode);
+                                            HTNNodeInstance&                                                       ioSelectedNodeInstance);
 
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
     HTN_NODISCARD const std::string&            GetEntryPointID() const;
@@ -36,15 +36,15 @@ public:
     HTN_NODISCARD HTNDecompositionTooltipMode   GetTooltipMode() const;
     HTN_NODISCARD bool                          ShouldIgnoreImGuiState() const;
 
-    void               SelectNode(const HTNDecompositionNode& inNode);
-    void               UnselectSelectedNode();
+    void               SelectNodeInstance(const HTNNodeInstance& inNodeInstance);
+    void               UnselectSelectedNodeInstance();
     HTN_NODISCARD bool IsNodeSelected(const std::string& inNodeLabel) const;
 
-    void                                           AddNodeState(const std::string& inNodePath, const HTNDecompositionNodeState& inNodeState);
-    HTN_NODISCARD const HTNDecompositionNodeState& GetNodeState(const std::string& inNodePath) const;
-    HTN_NODISCARD HTNDecompositionNodeState&       GetNodeStateMutable(const std::string& inNodePath);
-    HTN_NODISCARD const HTNDecompositionNodeState* FindNodeState(const std::string& inNodePath) const;
-    HTN_NODISCARD HTNDecompositionNodeState*       FindNodeStateMutable(const std::string& inNodePath);
+    void                                           AddNodeState(const std::string& inNodePath, const HTNNodeState& inNodeState);
+    HTN_NODISCARD const HTNNodeState& GetNodeState(const std::string& inNodePath) const;
+    HTN_NODISCARD HTNNodeState&       GetNodeStateMutable(const std::string& inNodePath);
+    HTN_NODISCARD const HTNNodeState* FindNodeState(const std::string& inNodePath) const;
+    HTN_NODISCARD HTNNodeState*       FindNodeStateMutable(const std::string& inNodePath);
     void AddChoicePointNodeState(const std::string& inNodePath, const HTNDecompositionChoicePointNodeState& inChoicePointNodeState);
     HTN_NODISCARD const HTNDecompositionChoicePointNodeState& GetChoicePointNodeState(const std::string& inNodePath) const;
     HTN_NODISCARD HTNDecompositionChoicePointNodeState&       GetChoicePointNodeStateMutable(const std::string& inNodePath);
@@ -70,7 +70,7 @@ public:
 
     void               SetIsCurrentNodeVisible(const bool inIsCurrentNodeVisible);
     HTN_NODISCARD bool IsCurrentNodeVisible() const;
-    HTN_NODISCARD bool IsSelectedNodeSelected() const;
+    HTN_NODISCARD bool IsSelectedNodeInstanceSelected() const;
     void               RefreshNodeStates();
     HTN_NODISCARD bool ShouldRefreshNodeStates() const;
 
@@ -88,12 +88,12 @@ private:
     // Input/Output
     //----------------------------------------------------------------------//
     // Node path to node state
-    std::unordered_map<std::string, HTNDecompositionNodeState>& mNodeStates;
+    std::unordered_map<std::string, HTNNodeState>& mNodeStates;
 
     // Node path to choice point node state
     std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& mChoicePointNodeStates;
 
-    HTNDecompositionNode& mSelectedNode;
+    HTNNodeInstance& mSelectedNodeInstance;
 
     //----------------------------------------------------------------------//
     // Internal
@@ -118,8 +118,8 @@ private:
     // Whether the current node is shown or hidden
     bool mIsCurrentNodeVisible = true;
 
-    // Whether the selected node is still selected
-    bool mIsSelectedNodeSelected = false;
+    // Whether the selected node instance is still selected
+    bool mIsSelectedNodeInstanceSelected = false;
 
     // Whether to refresh the node states
     bool mShouldRefreshNodeStates = false;
@@ -210,9 +210,9 @@ inline bool HTNDecompositionPrinterContext::IsCurrentNodeVisible() const
     return mIsCurrentNodeVisible;
 }
 
-inline bool HTNDecompositionPrinterContext::IsSelectedNodeSelected() const
+inline bool HTNDecompositionPrinterContext::IsSelectedNodeInstanceSelected() const
 {
-    return mIsSelectedNodeSelected;
+    return mIsSelectedNodeInstanceSelected;
 }
 
 inline void HTNDecompositionPrinterContext::RefreshNodeStates()

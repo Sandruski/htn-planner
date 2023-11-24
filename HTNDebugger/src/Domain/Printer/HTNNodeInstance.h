@@ -13,15 +13,15 @@ class HTNNodeResult;
 class HTNValueExpressionNodeBase;
 class HTNVariableExpressionNode;
 
-class HTNDecompositionNode
+class HTNNodeInstance
 {
 public:
-    HTNDecompositionNode() = default;
-    explicit HTNDecompositionNode(const HTNNodeResult& inNodeResult, const std::string& inNodeLabel);
-    explicit HTNDecompositionNode(const HTNNodeResult&                                                 inNodeResult,
+    HTNNodeInstance() = default;
+    explicit HTNNodeInstance(const HTNNodeResult& inNodeResult, const std::string& inNodeLabel);
+    explicit HTNNodeInstance(const HTNNodeResult&                                                 inNodeResult,
                                   const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters,
                                   const HTNPathHandler& inVariablesPathHandler, const std::string& inNodeLabel);
-    explicit HTNDecompositionNode(const HTNNodeResult&                                                  inNodeResult,
+    explicit HTNNodeInstance(const HTNNodeResult&                                                  inNodeResult,
                                   const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
                                   const HTNPathHandler& inVariablesPathHandler, const std::string& inNodeLabel);
 
@@ -40,32 +40,32 @@ private:
     std::string                                                    mNodeLabel;
 };
 
-inline const HTNNodeResult* HTNDecompositionNode::GetNodeResult() const
+inline const HTNNodeResult* HTNNodeInstance::GetNodeResult() const
 {
     return mNodeResult;
 }
 
-inline const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& HTNDecompositionNode::GetNodeParameters() const
+inline const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& HTNNodeInstance::GetNodeParameters() const
 {
     return mNodeParameters;
 }
 
-inline const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& HTNDecompositionNode::GetNodeArguments() const
+inline const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& HTNNodeInstance::GetNodeArguments() const
 {
     return mNodeArguments;
 }
 
-inline const HTNPathHandler& HTNDecompositionNode::GetVariablesPathHandler() const
+inline const HTNPathHandler& HTNNodeInstance::GetVariablesPathHandler() const
 {
     return mVariablesPathHandler;
 }
 
-inline HTNPathHandler& HTNDecompositionNode::GetVariablesPathHandlerMutable()
+inline HTNPathHandler& HTNNodeInstance::GetVariablesPathHandlerMutable()
 {
     return mVariablesPathHandler;
 }
 
-inline const std::string& HTNDecompositionNode::GetNodeLabel() const
+inline const std::string& HTNNodeInstance::GetNodeLabel() const
 {
     return mNodeLabel;
 }

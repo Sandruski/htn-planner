@@ -4,10 +4,6 @@
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Core/HTNScope.h"
-#include "Domain/Printer/HTNDecompositionHelpers.h"
-#include "Domain/Printer/HTNDecompositionNodeState.h"
-#include "Domain/Printer/HTNDecompositionPrinterContext.h"
-#include "Domain/Printer/HTNDecompositionWatchTooltipPrinterContext.h"
 #include "Domain/HTNDomainHelpers.h"
 #include "Domain/Interpreter/HTNDecompositionResult.h"
 #include "Domain/Interpreter/HTNNodeResult.h"
@@ -21,6 +17,10 @@
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "Domain/Nodes/HTNTaskNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
+#include "Domain/Printer/HTNDecompositionHelpers.h"
+#include "Domain/Printer/HTNNodeState.h"
+#include "Domain/Printer/HTNDecompositionPrinterContext.h"
+#include "Domain/Printer/HTNDecompositionWatchTooltipPrinterContext.h"
 #include "HTNImGuiHelpers.h"
 
 #include "imgui.h"
@@ -63,7 +63,7 @@ void PrePrintChoicePointNode(const std::string& inNodePath, const size inLastDec
 void PrePrintRegularNode(const std::string& inNodePath, const HTNNodeResultStepsCollection& inNodeResultStepsCollection,
                          HTNDecompositionPrinterContext& ioDecompositionPrinterContext)
 {
-    HTNDecompositionNodeState* NodeState = ioDecompositionPrinterContext.FindNodeStateMutable(inNodePath);
+    HTNNodeState* NodeState = ioDecompositionPrinterContext.FindNodeStateMutable(inNodePath);
     if (NodeState)
     {
         const bool ShouldRefreshNodeStates = ioDecompositionPrinterContext.ShouldRefreshNodeStates();
@@ -97,7 +97,7 @@ void PrePrintRegularNode(const std::string& inNodePath, const HTNNodeResultSteps
         // Default open current decomposition step
         static constexpr int32 DecompositionStep = HTNDecompositionHelpers::kInvalidDecompositionStep;
         static constexpr bool  IsNodeOpen        = true;
-        ioDecompositionPrinterContext.AddNodeState(inNodePath, HTNDecompositionNodeState(DecompositionStep, IsNodeOpen));
+        ioDecompositionPrinterContext.AddNodeState(inNodePath, HTNNodeState(DecompositionStep, IsNodeOpen));
         ioDecompositionPrinterContext.RefreshNodeStates();
     }
 }
@@ -139,7 +139,7 @@ void PostPrintRegularNode(const std::string& inNodePath, const bool inIsNodeOpen
                           HTNDecompositionPrinterContext& ioDecompositionPrinterContext)
 {
 
-    HTNDecompositionNodeState& NodeState = ioDecompositionPrinterContext.GetNodeStateMutable(inNodePath);
+    HTNNodeState& NodeState = ioDecompositionPrinterContext.GetNodeStateMutable(inNodePath);
 
     const int32 CurrentDecompositionStep = ioDecompositionPrinterContext.GetCurrentDecompositionStep();
 
@@ -185,7 +185,7 @@ void PostPrintNode(const std::string& inNodePath, const bool inIsChoicePoint, co
 }
 
 HTN_NODISCARD bool IsChoicePointNodeValid(const size inDecompositionStep, const int32 inCurrentDecompositionStep, const int32 inMinDecompositionStep,
-                            const int32 inMaxDecompositionStep)
+                                          const int32 inMaxDecompositionStep)
 {
     // Filter available nodes within range [min, max)
     if (!HTNDecompositionHelpers::IsDecompositionStepInRange(static_cast<const int32>(inDecompositionStep), inMinDecompositionStep,
@@ -206,7 +206,7 @@ HTN_NODISCARD bool IsChoicePointNodeValid(const size inDecompositionStep, const 
 }
 
 HTN_NODISCARD bool IsRegularNodeValid(const size inDecompositionStep, const int32 inCurrentDecompositionStep, const int32 inMinDecompositionStep,
-                        const int32 inMaxDecompositionStep)
+                                      const int32 inMaxDecompositionStep)
 {
     // Filter available nodes within range [min, max)
     if (!HTNDecompositionHelpers::IsDecompositionStepInRange(static_cast<const int32>(inDecompositionStep), inMinDecompositionStep,
@@ -224,10 +224,10 @@ HTN_NODISCARD bool IsRegularNodeValid(const size inDecompositionStep, const int3
 }
 
 HTN_NODISCARD bool IsNodeValid(const size inDecompositionStep, const bool inIsChoicePoint, const int32 inCurrentDecompositionStep,
-                 const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep)
+                               const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep)
 {
     return inIsChoicePoint ? IsChoicePointNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep)
-                            : IsRegularNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep);
+                           : IsRegularNodeValid(inDecompositionStep, inCurrentDecompositionStep, inMinDecompositionStep, inMaxDecompositionStep);
 }
 
 HTN_NODISCARD HTNDecompositionPrinterContext& GetDecompositionPrinterContext(HTNNodeVisitorContextBase& ioDecompositionPrinterContext)
@@ -249,10 +249,10 @@ bool HTNDecompositionPrinter::Print(HTNDecompositionPrinterContext& ioDecomposit
 
     const bool Result = GetNodeValue(*DomainNode, ioDecompositionPrinterContext).GetValue<bool>();
 
-    const bool IsSelectedNodeSelected = ioDecompositionPrinterContext.IsSelectedNodeSelected();
-    if (!IsSelectedNodeSelected)
+    const bool IsSelectedNodeInstanceSelected = ioDecompositionPrinterContext.IsSelectedNodeInstanceSelected();
+    if (!IsSelectedNodeInstanceSelected)
     {
-        ioDecompositionPrinterContext.UnselectSelectedNode();
+        ioDecompositionPrinterContext.UnselectSelectedNodeInstance();
     }
 
     return Result;
@@ -308,12 +308,12 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeV
         }
     };
 
-    const HTNNodeFunction NodeFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNDecompositionNode {
-        return HTNDecompositionNode(inNodeResult, ParameterNodes, CurrentVariablesPathHandler, inNodeLabel);
+    const HTNNodeInstanceFunction NodeInstanceFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNNodeInstance {
+        return HTNNodeInstance(inNodeResult, ParameterNodes, CurrentVariablesPathHandler, inNodeLabel);
     };
 
     static constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
-    return PrintNode(inAxiomNode, NodeTitleFunction, NodeBehaviorFunction, NodeFunction, TreeNodeFlags, ioDecompositionPrinterContext);
+    return PrintNode(inAxiomNode, NodeTitleFunction, NodeBehaviorFunction, NodeInstanceFunction, TreeNodeFlags, ioDecompositionPrinterContext);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
@@ -349,12 +349,12 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNMethodNode& inMethodNode, HTNNod
         }
     };
 
-    const HTNNodeFunction NodeFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNDecompositionNode {
-        return HTNDecompositionNode(inNodeResult, ParameterNodes, CurrentVariablesPathHandler, inNodeLabel);
+    const HTNNodeInstanceFunction NodeInstanceFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNNodeInstance {
+        return HTNNodeInstance(inNodeResult, ParameterNodes, CurrentVariablesPathHandler, inNodeLabel);
     };
 
     static constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
-    return PrintNode(inMethodNode, NodeTitleFunction, NodeBehaviorFunction, NodeFunction, TreeNodeFlags, ioDecompositionPrinterContext);
+    return PrintNode(inMethodNode, NodeTitleFunction, NodeBehaviorFunction, NodeInstanceFunction, TreeNodeFlags, ioDecompositionPrinterContext);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
@@ -382,12 +382,12 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNBranchNode& inBranchNode, HTNNod
         }
     };
 
-    const HTNNodeFunction NodeFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNDecompositionNode {
-        return HTNDecompositionNode(inNodeResult, inNodeLabel);
+    const HTNNodeInstanceFunction NodeInstanceFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNNodeInstance {
+        return HTNNodeInstance(inNodeResult, inNodeLabel);
     };
 
     static constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_None;
-    return PrintNode(inBranchNode, NodeTitleFunction, NodeBehaviorFunction, NodeFunction, TreeNodeFlags, ioDecompositionPrinterContext);
+    return PrintNode(inBranchNode, NodeTitleFunction, NodeBehaviorFunction, NodeInstanceFunction, TreeNodeFlags, ioDecompositionPrinterContext);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
@@ -414,13 +414,13 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode, 
 
     const HTNPathHandler& CurrentVariablesPathHandler = DecompositionPrinterContext.GetCurrentVariablesPathHandler();
 
-    const HTNNodeFunction NodeFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNDecompositionNode {
-        return HTNDecompositionNode(inNodeResult, ArgumentNodes, CurrentVariablesPathHandler, inNodeLabel);
+    const HTNNodeInstanceFunction NodeInstanceFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNNodeInstance {
+        return HTNNodeInstance(inNodeResult, ArgumentNodes, CurrentVariablesPathHandler, inNodeLabel);
     };
 
     const HTNNodeBehaviorFunction       NodeBehaviorFunction;
     static constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
-    return PrintNode(inConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeFunction, TreeNodeFlags, ioDecompositionPrinterContext);
+    return PrintNode(inConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeInstanceFunction, TreeNodeFlags, ioDecompositionPrinterContext);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomConditionNode,
@@ -457,12 +457,13 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
 
     const HTNPathHandler& CurrentVariablesPathHandler = DecompositionPrinterContext.GetCurrentVariablesPathHandler();
 
-    const HTNNodeFunction NodeFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNDecompositionNode {
-        return HTNDecompositionNode(inNodeResult, ArgumentNodes, CurrentVariablesPathHandler, inNodeLabel);
+    const HTNNodeInstanceFunction NodeInstanceFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNNodeInstance {
+        return HTNNodeInstance(inNodeResult, ArgumentNodes, CurrentVariablesPathHandler, inNodeLabel);
     };
 
     static constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_NoTreePushOnOpen;
-    return PrintNode(inAxiomConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeFunction, TreeNodeFlags, ioDecompositionPrinterContext);
+    return PrintNode(inAxiomConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeInstanceFunction, TreeNodeFlags,
+                     ioDecompositionPrinterContext);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
@@ -484,12 +485,12 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndCondition
         }
     };
 
-    const HTNNodeFunction NodeFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNDecompositionNode {
-        return HTNDecompositionNode(inNodeResult, inNodeLabel);
+    const HTNNodeInstanceFunction NodeInstanceFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNNodeInstance {
+        return HTNNodeInstance(inNodeResult, inNodeLabel);
     };
 
     static constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
-    return PrintNode(inAndConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeFunction, TreeNodeFlags, ioDecompositionPrinterContext);
+    return PrintNode(inAndConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeInstanceFunction, TreeNodeFlags, ioDecompositionPrinterContext);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
@@ -511,12 +512,12 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNo
         }
     };
 
-    const HTNNodeFunction NodeFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNDecompositionNode {
-        return HTNDecompositionNode(inNodeResult, inNodeLabel);
+    const HTNNodeInstanceFunction NodeInstanceFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNNodeInstance {
+        return HTNNodeInstance(inNodeResult, inNodeLabel);
     };
 
     static constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
-    return PrintNode(inOrConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeFunction, TreeNodeFlags, ioDecompositionPrinterContext);
+    return PrintNode(inOrConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeInstanceFunction, TreeNodeFlags, ioDecompositionPrinterContext);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
@@ -538,12 +539,12 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltCondition
         }
     };
 
-    const HTNNodeFunction NodeFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNDecompositionNode {
-        return HTNDecompositionNode(inNodeResult, inNodeLabel);
+    const HTNNodeInstanceFunction NodeInstanceFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNNodeInstance {
+        return HTNNodeInstance(inNodeResult, inNodeLabel);
     };
 
     static constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
-    return PrintNode(inAltConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeFunction, TreeNodeFlags, ioDecompositionPrinterContext);
+    return PrintNode(inAltConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeInstanceFunction, TreeNodeFlags, ioDecompositionPrinterContext);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
@@ -562,12 +563,12 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotCondition
         GetNodeValue(*SubConditionNode, ioDecompositionPrinterContext);
     };
 
-    const HTNNodeFunction NodeFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNDecompositionNode {
-        return HTNDecompositionNode(inNodeResult, inNodeLabel);
+    const HTNNodeInstanceFunction NodeInstanceFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNNodeInstance {
+        return HTNNodeInstance(inNodeResult, inNodeLabel);
     };
 
     static constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
-    return PrintNode(inNotConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeFunction, TreeNodeFlags, ioDecompositionPrinterContext);
+    return PrintNode(inNotConditionNode, NodeTitleFunction, NodeBehaviorFunction, NodeInstanceFunction, TreeNodeFlags, ioDecompositionPrinterContext);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTaskNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
@@ -603,12 +604,12 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
 
     const HTNPathHandler& CurrentVariablesPathHandler = DecompositionPrinterContext.GetCurrentVariablesPathHandler();
 
-    const HTNNodeFunction NodeFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNDecompositionNode {
-        return HTNDecompositionNode(inNodeResult, ArgumentNodes, CurrentVariablesPathHandler, inNodeLabel);
+    const HTNNodeInstanceFunction NodeInstanceFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNNodeInstance {
+        return HTNNodeInstance(inNodeResult, ArgumentNodes, CurrentVariablesPathHandler, inNodeLabel);
     };
 
     static constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_NoTreePushOnOpen;
-    return PrintNode(inCompoundTaskNode, NodeTitleFunction, NodeBehaviorFunction, NodeFunction, TreeNodeFlags, ioDecompositionPrinterContext);
+    return PrintNode(inCompoundTaskNode, NodeTitleFunction, NodeBehaviorFunction, NodeInstanceFunction, TreeNodeFlags, ioDecompositionPrinterContext);
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskNode,
@@ -636,17 +637,18 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTa
 
     const HTNPathHandler& CurrentVariablesPathHandler = DecompositionPrinterContext.GetCurrentVariablesPathHandler();
 
-    const HTNNodeFunction NodeFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNDecompositionNode {
-        return HTNDecompositionNode(inNodeResult, ArgumentNodes, CurrentVariablesPathHandler, inNodeLabel);
+    const HTNNodeInstanceFunction NodeInstanceFunction = [&](const HTNNodeResult& inNodeResult, const std::string& inNodeLabel) -> HTNNodeInstance {
+        return HTNNodeInstance(inNodeResult, ArgumentNodes, CurrentVariablesPathHandler, inNodeLabel);
     };
 
     const HTNNodeBehaviorFunction       NodeBehaviorFunction;
     static constexpr ImGuiTreeNodeFlags TreeNodeFlags = ImGuiTreeNodeFlags_Leaf;
-    return PrintNode(inPrimitiveTaskNode, NodeTitleFunction, NodeBehaviorFunction, NodeFunction, TreeNodeFlags, ioDecompositionPrinterContext);
+    return PrintNode(inPrimitiveTaskNode, NodeTitleFunction, NodeBehaviorFunction, NodeInstanceFunction, TreeNodeFlags,
+                     ioDecompositionPrinterContext);
 }
 
 bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNodeTitleFunction inNodeTitleFunction,
-                                        const HTNNodeBehaviorFunction inNodeBehaviorFunction, const HTNNodeFunction inNodeFunction,
+                                        const HTNNodeBehaviorFunction inNodeBehaviorFunction, const HTNNodeInstanceFunction inNodeInstanceFunction,
                                         const ImGuiTreeNodeFlags inTreeNodeFlags, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
 {
     HTNDecompositionPrinterContext& DecompositionPrinterContext = GetDecompositionPrinterContext(ioDecompositionPrinterContext);
@@ -694,15 +696,15 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
 
         const std::string NodeLabel =
             IsChoicePoint ? std::format("##{}{}", CurrentNodePath, DecompositionStep) : std::format("##{}", CurrentNodePath);
-        const HTNDecompositionNode Node          = inNodeFunction ? inNodeFunction(NodeResult, NodeLabel) : HTNDecompositionNode();
-        ImGuiTreeNodeFlags         TreeNodeFlags = inTreeNodeFlags | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+        const HTNNodeInstance NodeInstance  = inNodeInstanceFunction ? inNodeInstanceFunction(NodeResult, NodeLabel) : HTNNodeInstance();
+        ImGuiTreeNodeFlags    TreeNodeFlags = inTreeNodeFlags | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
         const bool IsNodeSelected = DecompositionPrinterContext.IsNodeSelected(NodeLabel);
         if (IsNodeSelected)
         {
             TreeNodeFlags |= ImGuiTreeNodeFlags_Selected;
 
-            DecompositionPrinterContext.SelectNode(Node);
+            DecompositionPrinterContext.SelectNodeInstance(NodeInstance);
         }
 
         if (IsChoicePoint)
@@ -758,13 +760,13 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
                 const std::shared_ptr<const HTNDomainNode>& DomainNode  = DecompositionPrinterContext.GetDomainNode();
                 const HTNDecompositionTooltipMode           TooltipMode = DecompositionPrinterContext.GetTooltipMode();
                 HTNDecompositionWatchTooltipPrinterContext  DecompositionWatchTooltipPrinterContext =
-                    HTNDecompositionWatchTooltipPrinterContext(DomainNode, Node, TooltipMode);
+                    HTNDecompositionWatchTooltipPrinterContext(DomainNode, NodeInstance, TooltipMode);
                 mDecompositionWatchTooltipPrinter.Print(DecompositionWatchTooltipPrinterContext);
             }
 
             if (HTNImGuiHelpers::IsCurrentItemSelected())
             {
-                DecompositionPrinterContext.SelectNode(Node);
+                DecompositionPrinterContext.SelectNodeInstance(NodeInstance);
             }
 
             if (IsChoicePoint)

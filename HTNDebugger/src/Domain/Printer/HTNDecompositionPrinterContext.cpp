@@ -4,62 +4,62 @@
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/Printer/HTNDecompositionHelpers.h"
-#include "Domain/Printer/HTNDecompositionNode.h"
-#include "Domain/Printer/HTNDecompositionNodeState.h"
+#include "Domain/Printer/HTNNodeInstance.h"
+#include "Domain/Printer/HTNNodeState.h"
 #include "Domain/Interpreter/HTNDecompositionResult.h"
 #include "Domain/Interpreter/HTNNodeStep.h"
 
 HTNDecompositionPrinterContext::HTNDecompositionPrinterContext(
     const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID, const HTNDecompositionResult& inDecompositionResult,
     const HTNDecompositionTooltipMode inTooltipMode,
-    const bool inShouldIgnoreImGuiState, std::unordered_map<std::string, HTNDecompositionNodeState>& ioNodeStates,
-    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates, HTNDecompositionNode& ioSelectedNode)
+    const bool inShouldIgnoreImGuiState, std::unordered_map<std::string, HTNNodeState>& ioNodeStates,
+    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates, HTNNodeInstance& ioSelectedNodeInstance)
     : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionResult(inDecompositionResult), mTooltipMode(inTooltipMode),
       mShouldIgnoreImGuiState(inShouldIgnoreImGuiState), mNodeStates(ioNodeStates), mChoicePointNodeStates(ioChoicePointNodeStates),
-      mSelectedNode(ioSelectedNode)
+      mSelectedNodeInstance(ioSelectedNodeInstance)
 {
 }
 
-void HTNDecompositionPrinterContext::SelectNode(const HTNDecompositionNode& inNode)
+void HTNDecompositionPrinterContext::SelectNodeInstance(const HTNNodeInstance& inNodeInstance)
 {
-    mSelectedNode           = inNode;
-    mIsSelectedNodeSelected = true;
+    mSelectedNodeInstance   = inNodeInstance;
+    mIsSelectedNodeInstanceSelected = true;
 }
 
-void HTNDecompositionPrinterContext::UnselectSelectedNode()
+void HTNDecompositionPrinterContext::UnselectSelectedNodeInstance()
 {
-    mSelectedNode           = HTNDecompositionNode();
-    mIsSelectedNodeSelected = false;
+    mSelectedNodeInstance           = HTNNodeInstance();
+    mIsSelectedNodeInstanceSelected = false;
 }
 
 bool HTNDecompositionPrinterContext::IsNodeSelected(const std::string& inNodeLabel) const
 {
-    const std::string& SelectedNodeLabel = mSelectedNode.GetNodeLabel();
-    return (inNodeLabel == SelectedNodeLabel);
+    const std::string& NodeLabel = mSelectedNodeInstance.GetNodeLabel();
+    return inNodeLabel == NodeLabel;
 }
 
-void HTNDecompositionPrinterContext::AddNodeState(const std::string& inNodePath, const HTNDecompositionNodeState& inNodeState)
+void HTNDecompositionPrinterContext::AddNodeState(const std::string& inNodePath, const HTNNodeState& inNodeState)
 {
     mNodeStates[inNodePath] = inNodeState;
 }
 
-const HTNDecompositionNodeState& HTNDecompositionPrinterContext::GetNodeState(const std::string& inNodePath) const
+const HTNNodeState& HTNDecompositionPrinterContext::GetNodeState(const std::string& inNodePath) const
 {
     return mNodeStates.at(inNodePath);
 }
 
-HTNDecompositionNodeState& HTNDecompositionPrinterContext::GetNodeStateMutable(const std::string& inNodePath)
+HTNNodeState& HTNDecompositionPrinterContext::GetNodeStateMutable(const std::string& inNodePath)
 {
     return mNodeStates.at(inNodePath);
 }
 
-const HTNDecompositionNodeState* HTNDecompositionPrinterContext::FindNodeState(const std::string& inNodePath) const
+const HTNNodeState* HTNDecompositionPrinterContext::FindNodeState(const std::string& inNodePath) const
 {
     const auto It = mNodeStates.find(inNodePath);
     return (It != mNodeStates.end()) ? &It->second : nullptr;
 }
 
-HTNDecompositionNodeState* HTNDecompositionPrinterContext::FindNodeStateMutable(const std::string& inNodePath)
+HTNNodeState* HTNDecompositionPrinterContext::FindNodeStateMutable(const std::string& inNodePath)
 {
     const auto It = mNodeStates.find(inNodePath);
     return (It != mNodeStates.end()) ? &It->second : nullptr;
@@ -141,7 +141,7 @@ bool HTNDecompositionPrinterContext::IsNodeOpen(const std::string& inNodePath, c
         const auto It = mNodeStates.find(inNodePath);
         if (It != mNodeStates.end())
         {
-            const HTNDecompositionNodeState& NodeState = mNodeStates.at(inNodePath);
+            const HTNNodeState& NodeState = mNodeStates.at(inNodePath);
             return NodeState.IsOpen();
         }
     }

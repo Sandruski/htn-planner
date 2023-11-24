@@ -10,6 +10,9 @@
 
 class HTNTaskNodeBase;
 
+/*
+ * Primitive or compound task
+ */
 class HTNTaskInstance
 {
 public:

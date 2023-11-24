@@ -4,8 +4,8 @@
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 HTNDecompositionWatchWindowPrinterContext::HTNDecompositionWatchWindowPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                                                     const HTNDecompositionNode&                 inDecompositionNode)
-    : HTNDecompositionWatchPrinterContextBase(inDomainNode, inDecompositionNode)
+                                                                                     const HTNNodeInstance&                      inNodeInstance)
+    : HTNDecompositionWatchPrinterContextBase(inDomainNode, inNodeInstance)
 {
 }
 #endif

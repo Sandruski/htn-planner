@@ -1,6 +1,6 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
-#include "Domain/Printer/HTNDecompositionNodeState.h"
+#include "Domain/Printer/HTNNodeState.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/Interpreter/HTNNodeStep.h"
@@ -9,14 +9,14 @@ HTNDecompositionNodeStateBase::HTNDecompositionNodeStateBase(const int32 inDecom
 {
 }
 
-HTNDecompositionNodeState::HTNDecompositionNodeState(const int32 inDecompositionStep, const bool inIsOpen)
+HTNNodeState::HTNNodeState(const int32 inDecompositionStep, const bool inIsOpen)
     : HTNDecompositionNodeStateBase(inDecompositionStep), mIsOpen(inIsOpen)
 {
 }
 
 HTNDecompositionNodeStateBase::~HTNDecompositionNodeStateBase() = default;
 
-HTNNodeStep HTNDecompositionNodeState::GetNodeStep() const
+HTNNodeStep HTNNodeState::GetNodeStep() const
 {
     const int32 DecompositionStep = GetDecompositionStep();
     return HTNDecompositionHelpers::IsDecompositionStepValid(DecompositionStep) ? HTNNodeStep::END : HTNNodeStep::START;

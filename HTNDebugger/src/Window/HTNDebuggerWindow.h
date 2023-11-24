@@ -3,12 +3,12 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Printer/HTNDecompositionNode.h"
-#include "Domain/Printer/HTNDecompositionNodeState.h"
 #include "Domain/Printer/HTNDecompositionPrinter.h"
 #include "Domain/Printer/HTNDecompositionTooltipMode.h"
 #include "Domain/Printer/HTNDecompositionWatchWindowPrinter.h"
 #include "Domain/Printer/HTNDomainPrinter.h"
+#include "Domain/Printer/HTNNodeInstance.h"
+#include "Domain/Printer/HTNNodeState.h"
 #include "HTNCoreMinimal.h"
 #include "Window/HTNOperationResult.h"
 #include "Window/HTNPlanningQuery.h"
@@ -41,12 +41,12 @@ private:
     void RenderWorldState();
 
     void RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, HTNPlanningQuery& ioPlanningQuery,
-                                            HTNDecompositionNode& ioSelectedNode);
+                                            HTNNodeInstance& ioSelectedNode);
 
     void ResetDecompositionPrinterState();
 
     HTN_NODISCARD bool IsLastWorldStateFileParsingOperationSuccessful() const;
-    HTN_NODISCARD bool  IsLastDomainFileParsingOperationSuccessful() const;
+    HTN_NODISCARD bool IsLastDomainFileParsingOperationSuccessful() const;
 
     HTNDatabaseHook& mDatabaseHook;
     HTNPlannerHook&  mPlannerHook;
@@ -73,10 +73,10 @@ private:
     //----------------------------------------------------------------------//
     // Decomposition Printer
     //----------------------------------------------------------------------//
-    std::unordered_map<std::string, HTNDecompositionNodeState>            mNodeStates;
+    std::unordered_map<std::string, HTNNodeState>                         mNodeStates;
     std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mChoicePointNodeStates;
-    HTNDecompositionNode                                                  mMainSelectedNode;
-    HTNDecompositionNode                                                  mUpperBodySelectedNode;
+    HTNNodeInstance                                                       mMainSelectedNodeInstance;
+    HTNNodeInstance                                                       mUpperBodySelectedNodeInstance;
     HTNDecompositionTooltipMode                                           mTooltipMode               = HTNDecompositionTooltipMode::REGULAR;
     bool                                                                  mIsDecompositionCurrentTab = false;
 

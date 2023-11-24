@@ -8,6 +8,9 @@
 #include <string>
 #include <vector>
 
+/*
+ * Result of a primitive task
+ */
 class HTNTaskResult
 {
 public:

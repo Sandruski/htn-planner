@@ -10,20 +10,19 @@
 #include <string>
 #include <vector>
 
-class HTNDecompositionNode;
+class HTNNodeInstance;
 class HTNDomainNode;
 
 class HTNDecompositionWatchPrinterContextBase : public HTNNodeVisitorContextBase
 {
 public:
-    explicit HTNDecompositionWatchPrinterContextBase(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                     const HTNDecompositionNode&                 inDecompositionNode);
+    explicit HTNDecompositionWatchPrinterContextBase(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const HTNNodeInstance& inNodeInstance);
     virtual ~HTNDecompositionWatchPrinterContextBase() = 0;
 
     void AddVariablePath(const std::string& inVariablePath);
 
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
-    HTN_NODISCARD const HTNDecompositionNode&                 GetNode() const;
+    HTN_NODISCARD const HTNNodeInstance&                 GetNodeInstance() const;
     HTN_NODISCARD const std::vector<std::string>&             GetNodeVariablePaths() const;
 
 private:
@@ -31,7 +30,7 @@ private:
     // Input
     //----------------------------------------------------------------------//
     const std::shared_ptr<const HTNDomainNode>& mDomainNode;
-    const HTNDecompositionNode& mNode;
+    const HTNNodeInstance& mNodeInstance;
 
     //----------------------------------------------------------------------//
     // Internal
@@ -49,9 +48,9 @@ inline const std::shared_ptr<const HTNDomainNode>& HTNDecompositionWatchPrinterC
     return mDomainNode;
 }
 
-inline const HTNDecompositionNode& HTNDecompositionWatchPrinterContextBase::GetNode() const
+inline const HTNNodeInstance& HTNDecompositionWatchPrinterContextBase::GetNodeInstance() const
 {
-    return mNode;
+    return mNodeInstance;
 }
 
 inline const std::vector<std::string>& HTNDecompositionWatchPrinterContextBase::GetNodeVariablePaths() const

@@ -34,11 +34,11 @@ private:
  * Decomposition node state (not choice point)
  * - A decomposition step of -1 means use current decomposition step
  */
-class HTNDecompositionNodeState final : public HTNDecompositionNodeStateBase
+class HTNNodeState final : public HTNDecompositionNodeStateBase
 {
 public:
-    HTNDecompositionNodeState() = default;
-    explicit HTNDecompositionNodeState(const int32 inDecompositionStep, const bool inIsOpen);
+    HTNNodeState() = default;
+    explicit HTNNodeState(const int32 inDecompositionStep, const bool inIsOpen);
 
     HTN_NODISCARD HTNNodeStep GetNodeStep() const final;
 
@@ -81,12 +81,12 @@ inline int32 HTNDecompositionNodeStateBase::GetDecompositionStep() const
     return mDecompositionStep;
 }
 
-inline void HTNDecompositionNodeState::SetIsOpen(const bool inIsOpen)
+inline void HTNNodeState::SetIsOpen(const bool inIsOpen)
 {
     mIsOpen = inIsOpen;
 }
 
-inline bool HTNDecompositionNodeState::IsOpen() const
+inline bool HTNNodeState::IsOpen() const
 {
     return mIsOpen;
 }

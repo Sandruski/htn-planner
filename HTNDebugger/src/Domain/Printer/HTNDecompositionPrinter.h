@@ -3,7 +3,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Printer/HTNDecompositionNode.h"
+#include "Domain/Printer/HTNNodeInstance.h"
 #include "Domain/Printer/HTNDecompositionWatchTooltipPrinter.h"
 #include "Domain/Printer/HTNDomainPrinterBase.h"
 #include "HTNCoreMinimal.h"
@@ -19,7 +19,7 @@ enum class HTNNodeStep : uint8;
 
 using HTNNodeTitleFunction    = std::function<void(const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep)>;
 using HTNNodeBehaviorFunction = std::function<void()>;
-using HTNNodeFunction         = std::function<HTNDecompositionNode(const HTNNodeResult& inNodeResult, const std::string& inNodeLabel)>;
+using HTNNodeInstanceFunction         = std::function<HTNNodeInstance(const HTNNodeResult& inNodeResult, const std::string& inNodeLabel)>;
 
 typedef int32 ImGuiTreeNodeFlags;
 
@@ -47,7 +47,7 @@ public:
 private:
     HTN_NODISCARD bool PrintNode(const HTNNodeBase& inNode, const HTNNodeTitleFunction inNodeTitleFunction,
                                 const HTNNodeBehaviorFunction inNodeBehaviorFunction,
-                   const HTNNodeFunction inNodeFunction, const ImGuiTreeNodeFlags inTreeNodeFlags,
+                   const HTNNodeInstanceFunction inNodeInstanceFunction, const ImGuiTreeNodeFlags inTreeNodeFlags,
                    HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const;
 
     const HTNDecompositionWatchTooltipPrinter mDecompositionWatchTooltipPrinter = HTNDecompositionWatchTooltipPrinter();

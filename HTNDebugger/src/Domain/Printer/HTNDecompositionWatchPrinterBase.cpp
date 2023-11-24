@@ -4,13 +4,13 @@
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Core/HTNScope.h"
-#include "Domain/Printer/HTNDecompositionNode.h"
-#include "Domain/Printer/HTNDecompositionWatchPrinterContextBase.h"
 #include "Domain/Interpreter/HTNNodeResult.h"
 #include "Domain/Interpreter/HTNVariables.h"
 #include "Domain/Nodes/HTNConstantNode.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
+#include "Domain/Printer/HTNDecompositionWatchPrinterContextBase.h"
+#include "Domain/Printer/HTNNodeInstance.h"
 #include "HTNImGuiHelpers.h"
 
 #include "imgui.h"
@@ -87,13 +87,13 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
 
     // Variable value
     {
-        const HTNDecompositionNode& Node                 = DecompositionWatchPrinterContext.GetNode();
-        HTNPathHandler              VariablesPathHandler = Node.GetVariablesPathHandler();
-        const HTNScope              VariableScope        = HTNScope(VariableID, VariablesPathHandler);
-        const std::string&          VariablePath         = VariablesPathHandler.GetPath();
+        const HTNNodeInstance& NodeInstance         = DecompositionWatchPrinterContext.GetNodeInstance();
+        HTNPathHandler         VariablesPathHandler = NodeInstance.GetVariablesPathHandler();
+        const HTNScope         VariableScope        = HTNScope(VariableID, VariablesPathHandler);
+        const std::string&     VariablePath         = VariablesPathHandler.GetPath();
         DecompositionWatchPrinterContext.AddVariablePath(VariablePath);
 
-        const HTNNodeResult*  NodeResult              = Node.GetNodeResult();
+        const HTNNodeResult*  NodeResult              = NodeInstance.GetNodeResult();
         const HTNVariables&   Variables               = NodeResult->GetVariables();
         static constexpr bool ShouldDoubleQuoteString = true;
         const std::string     VariableValueString     = Variables.FindVariable(VariablePath).ToString(ShouldDoubleQuoteString);
@@ -146,12 +146,12 @@ void HTNDecompositionWatchPrinterBase::PrintColoredValueIDExpressionNode(
     ImGui::TextColored(ValueImGuiColor, ValueString.c_str());
 }
 
-void HTNDecompositionWatchPrinterBase::PrintValueValueExpressionNode(
-    const std::shared_ptr<const HTNValueExpressionNodeBase>& inValueExpressionNode, HTNNodeVisitorContextBase& ioDomainPrinterContext) const
+void HTNDecompositionWatchPrinterBase::PrintValueValueExpressionNode(const std::shared_ptr<const HTNValueExpressionNodeBase>& inValueExpressionNode,
+                                                                     HTNNodeVisitorContextBase& ioDomainPrinterContext) const
 {
     const std::string ValueString = GetNodeValue(*inValueExpressionNode, ioDomainPrinterContext)
-                                         .GetListElement(HTNValueExpressionNodeResult::VALUE_STRING)
-                                         .GetValue<std::string>();
+                                        .GetListElement(HTNValueExpressionNodeResult::VALUE_STRING)
+                                        .GetValue<std::string>();
     ImGui::Text(ValueString.c_str());
 }
 #endif

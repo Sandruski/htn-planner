@@ -3,14 +3,14 @@
 #include "Domain/Printer/HTNDecompositionWatchPrinterContextBase.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Printer/HTNDecompositionNode.h"
+#include "Domain/Printer/HTNNodeInstance.h"
 
 HTNDecompositionWatchPrinterContextBase::HTNDecompositionWatchPrinterContextBase(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                                                 const HTNDecompositionNode&                 inDecompositionNode)
-    : mDomainNode(inDomainNode), mNode(inDecompositionNode)
+                                                                                 const HTNNodeInstance&                      inNodeInstance)
+    : mDomainNode(inDomainNode), mNodeInstance(inNodeInstance)
 {
-    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  NodeParameters = inDecompositionNode.GetNodeParameters();
-    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments  = inDecompositionNode.GetNodeArguments();
+    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  NodeParameters = inNodeInstance.GetNodeParameters();
+    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments  = inNodeInstance.GetNodeArguments();
     mNodeVariablePaths.reserve(std::max(NodeParameters.size(), NodeArguments.size()));
 }
 

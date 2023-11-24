@@ -5,7 +5,7 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Core/HTNFileHelpers.h"
 #include "Core/HTNPathHelpers.h"
-#include "Domain/Printer/HTNDecompositionNode.h"
+#include "Domain/Printer/HTNNodeInstance.h"
 #include "Domain/Printer/HTNDecompositionPrinterContext.h"
 #include "Domain/Printer/HTNDecompositionWatchWindowPrinterContext.h"
 #include "Domain/Printer/HTNDomainPrinter.h"
@@ -256,7 +256,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         {
             {
                 const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
-                RenderDecompositionByPlanningQuery(MethodNodes, mMainPlanningQuery, mMainSelectedNode);
+                RenderDecompositionByPlanningQuery(MethodNodes, mMainPlanningQuery, mMainSelectedNodeInstance);
             }
             ImGui::EndTabItem();
         }
@@ -265,7 +265,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         {
             {
                 const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
-                RenderDecompositionByPlanningQuery(MethodNodes, mUpperBodyPlanningQuery, mUpperBodySelectedNode);
+                RenderDecompositionByPlanningQuery(MethodNodes, mUpperBodyPlanningQuery, mUpperBodySelectedNodeInstance);
             }
             ImGui::EndTabItem();
         }
@@ -358,7 +358,7 @@ void HTNDebuggerWindow::RenderWorldState()
 }
 
 void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes,
-                                                           HTNPlanningQuery& ioPlanningQuery, HTNDecompositionNode& ioSelectedNode)
+                                                           HTNPlanningQuery& ioPlanningQuery, HTNNodeInstance& ioSelectedNodeInstance)
 {
     // Refresh selected entry point ID
     if (!ioPlanningQuery.IsEntryPointIDEmpty())
@@ -531,7 +531,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         const bool                                  ShouldIgnoreImGuiState  = !mIsDecompositionCurrentTab;
         HTNDecompositionPrinterContext              DecompositionPrinterContext =
             HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionResult, mTooltipMode, ShouldIgnoreImGuiState,
-                                           mNodeStates, mChoicePointNodeStates, ioSelectedNode);
+                                           mNodeStates, mChoicePointNodeStates, ioSelectedNodeInstance);
         mDecompositionPrinter.Print(DecompositionPrinterContext);
     }
 
@@ -560,7 +560,7 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
     {
         const std::shared_ptr<const HTNDomainNode>& LastDomainNode = ioPlanningQuery.GetLastDomainNode();
         HTNDecompositionWatchWindowPrinterContext   DecompositionWatchWindowPrinterContext =
-            HTNDecompositionWatchWindowPrinterContext(LastDomainNode, ioSelectedNode);
+            HTNDecompositionWatchWindowPrinterContext(LastDomainNode, ioSelectedNodeInstance);
         mDecompositionWatchWindowPrinter.Print(DecompositionWatchWindowPrinterContext);
     }
 
@@ -571,7 +571,7 @@ void HTNDebuggerWindow::ResetDecompositionPrinterState()
 {
     mNodeStates.clear();
     mChoicePointNodeStates.clear();
-    mMainSelectedNode = HTNDecompositionNode();
+    mMainSelectedNodeInstance = HTNNodeInstance();
 }
 
 bool HTNDebuggerWindow::IsLastWorldStateFileParsingOperationSuccessful() const

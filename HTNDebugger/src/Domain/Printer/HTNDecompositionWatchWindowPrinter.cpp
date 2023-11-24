@@ -3,19 +3,19 @@
 #include "Domain/Printer/HTNDecompositionWatchWindowPrinter.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Printer/HTNDecompositionNode.h"
-#include "Domain/Printer/HTNDecompositionWatchWindowPrinterContext.h"
 #include "Domain/Interpreter/HTNNodeResult.h"
 #include "Domain/Interpreter/HTNVariables.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
+#include "Domain/Printer/HTNDecompositionWatchWindowPrinterContext.h"
+#include "Domain/Printer/HTNNodeInstance.h"
 #include "HTNImGuiHelpers.h"
 
 #include "imgui.h"
 
 void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinterContext& ioDecompositionWatchWindowPrinterContext) const
 {
-    const HTNDecompositionNode& Node         = ioDecompositionWatchWindowPrinterContext.GetNode();
-    const HTNNodeResult* NodeResult = Node.GetNodeResult();
+    const HTNNodeInstance& NodeInstance = ioDecompositionWatchWindowPrinterContext.GetNodeInstance();
+    const HTNNodeResult*   NodeResult   = NodeInstance.GetNodeResult();
     if (!NodeResult)
     {
         return;
@@ -25,7 +25,7 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
     if (ImGui::BeginTable("WatchWindowTable", 2, WatchWindowTableFlags))
     {
         // Print node parameters
-        const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters = Node.GetNodeParameters();
+        const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& NodeParameters = NodeInstance.GetNodeParameters();
         for (const std::shared_ptr<const HTNVariableExpressionNode>& NodeParameter : NodeParameters)
         {
             ImGui::TableNextRow();
@@ -40,7 +40,7 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
         }
 
         // Print node arguments
-        const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments = Node.GetNodeArguments();
+        const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments = NodeInstance.GetNodeArguments();
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& NodeArgument : NodeArguments)
         {
             ImGui::TableNextRow();

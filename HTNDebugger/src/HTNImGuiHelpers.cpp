@@ -3,7 +3,7 @@
 #include "HTNImGuiHelpers.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Printer/HTNDecompositionNodeState.h"
+#include "Domain/Printer/HTNNodeState.h"
 #include "Domain/Printer/HTNDecompositionPrinter.h"
 #include "Domain/HTNDomainHelpers.h"
 #include "Domain/Interpreter/HTNNodeResult.h"
