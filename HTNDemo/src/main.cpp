@@ -11,10 +11,10 @@
 #include <cstdio>
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNDebuggerWindow.h"
-#include "Planner/HTNDatabaseHook.h"
-#include "Planner/HTNPlannerHook.h"
-#include "Planner/HTNPlanningUnit.h"
+#include "Window/HTNDebuggerWindow.h"
+#include "Hook/HTNDatabaseHook.h"
+#include "Hook/HTNPlannerHook.h"
+#include "Hook/HTNPlanningUnit.h"
 #endif
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)

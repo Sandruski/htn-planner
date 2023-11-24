@@ -3,9 +3,9 @@
 #include "Core/HTNFileHelpers.h"
 #include "Domain/HTNDomainHelpers.h"
 #include "HTNCoreMinimal.h"
-#include "Planner/HTNDatabaseHook.h"
-#include "Planner/HTNPlannerHook.h"
-#include "Planner/HTNPlanningUnit.h"
+#include "Hook/HTNDatabaseHook.h"
+#include "Hook/HTNPlannerHook.h"
+#include "Hook/HTNPlanningUnit.h"
 
 #include "optick.h"
 #include "gtest/gtest-param-test.h"
