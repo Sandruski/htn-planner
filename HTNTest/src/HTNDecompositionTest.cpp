@@ -1,15 +1,15 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
-#include "Domain/HTNDomainHelpers.h"
 #include "Core/HTNFileHelpers.h"
+#include "Domain/HTNDomainHelpers.h"
 #include "HTNCoreMinimal.h"
 #include "Planner/HTNDatabaseHook.h"
 #include "Planner/HTNPlannerHook.h"
 #include "Planner/HTNPlanningUnit.h"
 
 #include "optick.h"
-#include "gtest/gtest.h"
 #include "gtest/gtest-param-test.h"
+#include "gtest/gtest.h"
 
 #include <execution>
 #include <filesystem>
@@ -18,7 +18,7 @@
 #include <tuple>
 #include <vector>
 
-class HTNDecompositionTest : public testing::TestWithParam<std::tuple<std::string, std::string, std::string>>
+class HTNDecompositionTest : public testing::TestWithParam<std::tuple<std::string, std::string, std::string, size>>
 {
 public:
     static void SetUpTestCase();
@@ -30,9 +30,11 @@ protected:
     const std::string& GetWorldStateFileName() const;
     const std::string& GetDomainFileName() const;
     const std::string& GetEntryPointID() const;
+    const size&        GetPlanningUnitsSize() const;
 
-    HTNDatabaseHook mDatabaseHook;
-    HTNPlannerHook  mPlannerHook;
+    HTNDatabaseHook              mDatabaseHook;
+    HTNPlannerHook               mPlannerHook;
+    std::vector<HTNPlanningUnit> mPlanningUnits;
 };
 
 void HTNDecompositionTest::SetUpTestCase()
@@ -66,6 +68,9 @@ void HTNDecompositionTest::SetUp()
     const std::string DomainFileAbsolutePath = HTNFileHelpers::MakeAbsolutePath(DomainFileRelativePath).string();
     const bool        ParseDomainFileResult  = mPlannerHook.ParseDomainFile(DomainFileAbsolutePath);
     ASSERT_TRUE(ParseDomainFileResult);
+
+    const size PlanningUnitsSize = GetPlanningUnitsSize();
+    mPlanningUnits.resize(PlanningUnitsSize, HTNPlanningUnit("", mDatabaseHook, mPlannerHook));
 }
 
 const std::string& HTNDecompositionTest::GetWorldStateFileName() const
@@ -83,25 +88,19 @@ const std::string& HTNDecompositionTest::GetEntryPointID() const
     return std::get<2>(GetParam());
 }
 
-TEST_P(HTNDecompositionTest, IsDecompositionSuccessful)
+const size& HTNDecompositionTest::GetPlanningUnitsSize() const
 {
-    HTNPlanningUnit   PlanningUnit                = HTNPlanningUnit("", mDatabaseHook, mPlannerHook);
-    const std::string EntryPointID                = GetEntryPointID();
-    const bool        ExecuteTopLevelMethodResult = PlanningUnit.ExecuteTopLevelMethod(EntryPointID);
-    EXPECT_TRUE(ExecuteTopLevelMethodResult);
+    return std::get<3>(GetParam());
 }
 
-TEST_P(HTNDecompositionTest, AreDecompositionsSuccessful)
+TEST_P(HTNDecompositionTest, IsDecompositionSuccessful)
 {
-    std::vector<HTNPlanningUnit> PlanningUnits;
-    static constexpr size        PlanningUnitsSize = 100;
-    PlanningUnits.resize(PlanningUnitsSize, HTNPlanningUnit("", mDatabaseHook, mPlannerHook));
     const std::string EntryPointID = GetEntryPointID();
-    std::for_each(std::execution::par, PlanningUnits.begin(), PlanningUnits.end(), [&](HTNPlanningUnit& inPlanningUnit) {
+    std::for_each(std::execution::par, mPlanningUnits.begin(), mPlanningUnits.end(), [&](HTNPlanningUnit& inPlanningUnit) {
         const bool ExecuteTopLevelMethodResult = inPlanningUnit.ExecuteTopLevelMethod(EntryPointID);
         EXPECT_TRUE(ExecuteTopLevelMethodResult);
     });
 }
 
 INSTANTIATE_TEST_CASE_P(Human, HTNDecompositionTest,
-                        testing::Values(std::make_tuple("human", "human", HTNDomainHelpers::kDefaultMainTopLevelMethodID)));
+                        testing::Values(std::make_tuple("human", "human", HTNDomainHelpers::kDefaultMainTopLevelMethodID, 100)));
