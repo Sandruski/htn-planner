@@ -10,7 +10,18 @@ Note that the project is a work in progress (WIP). As such, certain features may
 3. If you add or remove project files, regenerate the solution by rerunning [GenerateProjectFiles.bat](https://github.com/Sandruski/htn-planner/blob/main/GenerateProjectFiles.bat).
 
 ## Quick Introduction
-The solution contains five projects, HTNPlanner, HTNDebugger, HTNDemo, HTNTest, and HTNFramework. HTNPlanner is the planner library, HTNDebugger is a library to debug the planner, HTNDemo is a playground for using the planner, HTNTest contains a set of unit tests for testing the planner using automation, and HTNFramework contains the core functionalities shared across all the projects. The startup project should be configured to either HTNPlanner, as is the default setting, or HTNTest.
+The solution contains four projects, HTNFramework, HTNDebugger, HTNDemo, and HTNTest. HTNFramework and HTNDebugger are libraries, HTNFramework is the planner itself and HTNDebugger is the debugger of the planner. HTNDemo and HTNTest are applications, HTNDemo is a playground for using the planner and HTNTest contains a set of unit tests for testing the planner using automation.
+
+1. Build the solution and run the startup project. The startup project should be configured to either HTNDemo, as is the default setting, or HTNTest.
+
+### HTNDemo
+2. In the "World State" tab, click the "Parse" button to parse the selected world state. Below, see the parsed world state.
+3. In the "Domain" tab, click the "Parse" button to parse the selected domain. Below, see the parsed domain.
+4. In the "Decomposition" tab, click the "Decompose" button to decompose the selected entry point of the parsed domain using the parsed world state. Below, see the result of the decomposition.
+5. In the "Active Plan" tab, see the decomposed plan.
+
+### HTNTest
+2. In the console window, see the results of the tests.
 
 ## Performance Analysis
 
