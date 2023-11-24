@@ -41,13 +41,13 @@ through Example](https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter12_Explori
 Bots in Killzone 3](https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter29_Hierarchical_AI_for_Multiplayer_Bots_in_Killzone_3.pdf)
 
 ## Future Work
-- Implement call terms (functions defined in C++).
-- Allow to include other domain files.
-- Allow to override methods, axioms, and constants.
-- Allow to edit and export domains and world states in a custom editor with syntax highlighting.
-- Implement a domain validator.
-- Time-slice the decomposition process.
-- Replace the interpreter with a compiler.
+- Implement call terms for invoking functions defined in C++.
+- Implement includes of additional domain files for improved modularity.
+- Implement overrides of methods, axioms, and constants for improved customization.
+- Edit and export domains and world states in a custom editor with syntax highlighting for faster iterations.
+- Implement a domain validator to ensure that the parsed domain has semantic coherence.
+- Time-slice the decomposition process to maintain a stable framerate.
+- Transition from an interpreter to a compiler to improve the overall performance.
 
 ## License
 This project is under the [MIT license](https://github.com/Sandruski/htn-planner/blob/main/LICENSE).
