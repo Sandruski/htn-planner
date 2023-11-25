@@ -8,7 +8,7 @@ Note that the project is a work in progress (WIP). As such, certain features may
 
 ### Use pre-built binaries
 1. Download the latest release from [Releases](https://github.com/Sandruski/htn-planner/releases). The latest released version is v0.1.
-2. Run 'HTNDemo.exe', which corresponds to the HTNDemo project.
+2. Run `HTNDemo.exe`, which corresponds to the HTNDemo project.
 
 ### Build it yourself
 1. Clone the repository with `git clone https://github.com/Sandruski/htn-planner` or download it as a ZIP from [htn-planner](https://github.com/Sandruski/htn-planner).
