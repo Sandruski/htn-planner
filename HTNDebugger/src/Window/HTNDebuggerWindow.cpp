@@ -123,19 +123,33 @@ void RefreshSelectedEntryPointID(const std::vector<std::shared_ptr<const HTNMeth
     {
         const HTNPlanningUnit& PlanningUnit            = ioPlanningQuery.GetPlanningUnit();
         const std::string&     DefaultTopLevelMethodID = PlanningUnit.GetDefaultTopLevelMethodID();
-        const auto It = std::find_if(inMethodNodes.begin(), inMethodNodes.end(), [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) {
-            if (!inMethodNode->IsTopLevel())
-            {
-                return false;
-            }
+        const auto             DefaultTopLevelMethodNodeIt =
+            std::find_if(inMethodNodes.begin(), inMethodNodes.end(), [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) {
+                if (!inMethodNode->IsTopLevel())
+                {
+                    return false;
+                }
 
-            const std::string MethodID = inMethodNode->GetID();
-            return DefaultTopLevelMethodID == MethodID;
-        });
+                const std::string MethodID = inMethodNode->GetID();
+                return DefaultTopLevelMethodID == MethodID;
+            });
 
-        if (It != inMethodNodes.end())
+        if (DefaultTopLevelMethodNodeIt != inMethodNodes.end())
         {
             ioPlanningQuery.SetEntryPointID(DefaultTopLevelMethodID);
+            return;
+        }
+
+        const auto FirstTopLevelMethodNodeIt =
+            std::find_if(inMethodNodes.begin(), inMethodNodes.end(),
+                         [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) { return inMethodNode->IsTopLevel(); });
+
+        if (FirstTopLevelMethodNodeIt != inMethodNodes.end())
+        {
+            const std::shared_ptr<const HTNMethodNode>& FirstTopLevelMethodNode = *FirstTopLevelMethodNodeIt;
+            const std::string                           FirstTopLevelMethodID   = FirstTopLevelMethodNode->GetID();
+            ioPlanningQuery.SetEntryPointID(FirstTopLevelMethodID);
+            return;
         }
     }
 }
@@ -309,6 +323,19 @@ void HTNDebuggerWindow::RenderActivePlan()
 
 void HTNDebuggerWindow::RenderDecomposition()
 {
+    std::vector<std::shared_ptr<const HTNMethodNode>> MethodNodes;
+    const std::shared_ptr<const HTNDomainNode>&       DomainNode = mPlannerHook.GetDomainNode();
+    if (DomainNode)
+    {
+        if (DomainNode->IsTopLevel())
+        {
+            MethodNodes = DomainNode->GetMethodNodes();
+        }
+    }
+
+    RefreshSelectedEntryPointID(MethodNodes, mMainPlanningQuery);
+    RefreshSelectedEntryPointID(MethodNodes, mSecondaryPlanningQuery);
+
     if (ImGui::Button("Decompose All"))
     {
         std::for_each(std::execution::par, mPlanningQueries.begin(), mPlanningQueries.end(), [this](HTNPlanningQuery* ioPlanningQuery) {
@@ -324,16 +351,6 @@ void HTNDebuggerWindow::RenderDecomposition()
     if (ImGui::IsItemHovered(ButtonHoveredFlags))
     {
         ImGui::SetTooltip("Decompose all selected entry points of the parsed domain using the parsed world state");
-    }
-
-    std::vector<std::shared_ptr<const HTNMethodNode>> MethodNodes;
-    const std::shared_ptr<const HTNDomainNode>&       DomainNode = mPlannerHook.GetDomainNode();
-    if (DomainNode)
-    {
-        if (DomainNode->IsTopLevel())
-        {
-            MethodNodes = DomainNode->GetMethodNodes();
-        }
     }
 
     if (ImGui::BeginTabBar("Decomposition"))
@@ -449,8 +466,6 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
                                                            HTNPlanningQuery& ioPlanningQuery, HTNNodeStates& ioNodeStates,
                                                            HTNChoicePointNodeStates& ioChoicePointNodeStates, HTNNodeInstance& ioSelectedNodeInstance)
 {
-    RefreshSelectedEntryPointID(inMethodNodes, ioPlanningQuery);
-
     const std::string& EntryPointID = ioPlanningQuery.GetEntryPointID();
     if (ImGui::BeginCombo("Entry Point", EntryPointID.c_str()))
     {
