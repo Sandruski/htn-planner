@@ -4,7 +4,7 @@
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/Interpreter/HTNNodeResult.h"
-#include "Domain/Interpreter/HTNVariables.h"
+#include "Domain/Interpreter/HTNVariablesManager.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Domain/Printer/HTNDecompositionWatchWindowPrinterContext.h"
 #include "Domain/Printer/HTNNodeInstance.h"
@@ -55,11 +55,12 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
         }
 
         // Print remaining variables
-        const std::vector<std::string>&                 NodeVariablePaths = ioDecompositionWatchWindowPrinterContext.GetNodeVariablePaths();
-        const std::unordered_map<std::string, HTNAtom>& Variables         = NodeResult->GetVariables().GetVariables();
-        for (const std::pair<const std::string, HTNAtom>& VariablePair : Variables)
+        const std::vector<std::string>& NodeVariablePaths = ioDecompositionWatchWindowPrinterContext.GetNodeVariablePaths();
+        const HTNVariablesManager&      VariablesManager  = NodeResult->GetVariablesManager();
+        const HTNVariables&             Variables         = VariablesManager.GetVariables();
+        for (const HTNVariable& Variable : Variables)
         {
-            const std::string& VariablePath = VariablePair.first;
+            const std::string& VariablePath = Variable.first;
             const auto         It           = std::find(NodeVariablePaths.begin(), NodeVariablePaths.end(), VariablePath);
             if (It != NodeVariablePaths.end())
             {
@@ -83,7 +84,8 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
             ImGui::TableNextColumn();
 
             static constexpr bool ShouldDoubleQuoteString = true;
-            const std::string     VariableValueString     = VariablePair.second.ToString(ShouldDoubleQuoteString);
+            const HTNAtom&        VariableValue           = Variable.second;
+            const std::string     VariableValueString     = VariableValue.ToString(ShouldDoubleQuoteString);
             ImGui::Text(VariableValueString.c_str());
         }
 

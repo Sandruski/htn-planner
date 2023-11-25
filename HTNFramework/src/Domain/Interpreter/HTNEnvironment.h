@@ -2,52 +2,52 @@
 
 #pragma once
 
+#include "Domain/Interpreter/HTNIndicesManager.h"
+#include "Domain/Interpreter/HTNVariablesManager.h"
 #include "HTNCoreMinimal.h"
-#include "Domain/Interpreter/HTNIndices.h"
-#include "Domain/Interpreter/HTNVariables.h"
 
 class HTNEnvironment
 {
 public:
-    void                SetVariables(const HTNVariables& inVariables);
-    HTN_NODISCARD const HTNVariables& GetVariables() const;
-    HTN_NODISCARD HTNVariables&       GetVariablesMutable();
+    void                                     SetVariablesManager(const HTNVariablesManager& inVariablesManager);
+    HTN_NODISCARD const HTNVariablesManager& GetVariablesManager() const;
+    HTN_NODISCARD HTNVariablesManager&       GetVariablesManagerMutable();
 
-    void              SetIndices(const HTNIndices& inIndices);
-    HTN_NODISCARD const HTNIndices& GetIndices() const;
-    HTN_NODISCARD HTNIndices&       GetIndicesMutable();
+    void                                   SetIndicesManager(const HTNIndicesManager& inIndicesManager);
+    HTN_NODISCARD const HTNIndicesManager& GetIndicesManager() const;
+    HTN_NODISCARD HTNIndicesManager&       GetIndicesManagerMutable();
 
 private:
-    HTNVariables mVariables;
-    HTNIndices   mIndices;
+    HTNVariablesManager mVariablesManager;
+    HTNIndicesManager   mIndicesManager;
 };
 
-inline void HTNEnvironment::SetVariables(const HTNVariables& inVariables)
+inline void HTNEnvironment::SetVariablesManager(const HTNVariablesManager& inVariablesManager)
 {
-    mVariables = inVariables;
+    mVariablesManager = inVariablesManager;
 }
 
-inline const HTNVariables& HTNEnvironment::GetVariables() const
+inline const HTNVariablesManager& HTNEnvironment::GetVariablesManager() const
 {
-    return mVariables;
+    return mVariablesManager;
 }
 
-inline HTNVariables& HTNEnvironment::GetVariablesMutable()
+inline HTNVariablesManager& HTNEnvironment::GetVariablesManagerMutable()
 {
-    return mVariables;
+    return mVariablesManager;
 }
 
-inline void HTNEnvironment::SetIndices(const HTNIndices& inIndices)
+inline void HTNEnvironment::SetIndicesManager(const HTNIndicesManager& inIndicesManager)
 {
-    mIndices = inIndices;
+    mIndicesManager = inIndicesManager;
 }
 
-inline const HTNIndices& HTNEnvironment::GetIndices() const
+inline const HTNIndicesManager& HTNEnvironment::GetIndicesManager() const
 {
-    return mIndices;
+    return mIndicesManager;
 }
 
-inline HTNIndices& HTNEnvironment::GetIndicesMutable()
+inline HTNIndicesManager& HTNEnvironment::GetIndicesManagerMutable()
 {
-    return mIndices;
+    return mIndicesManager;
 }

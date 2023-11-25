@@ -1,8 +1,8 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
-#include "Domain/Interpreter/HTNVariables.h"
+#include "Domain/Interpreter/HTNVariablesManager.h"
 
-void HTNVariables::RemoveVariables(const std::string& inVariablesPath)
+void HTNVariablesManager::RemoveVariables(const std::string& inVariablesPath)
 {
     for (auto It = mVariables.begin(); It != mVariables.end();)
     {

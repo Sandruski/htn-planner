@@ -34,8 +34,9 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments    = NodeInstance.GetNodeArguments();
     const bool                                                            HasNodeArguments = !NodeArguments.empty();
     ShouldPrint                                                                            = ShouldPrint || HasNodeArguments;
-    const std::unordered_map<std::string, HTNAtom>& Variables                              = NodeResult->GetVariables().GetVariables();
-    const bool                                      HasVariables                           = !Variables.empty();
+    const HTNVariablesManager& VariablesManager                                            = NodeResult->GetVariablesManager();
+    const HTNVariables&        Variables                                                   = VariablesManager.GetVariables();
+    const bool                 HasVariables                                                = !Variables.empty();
     if (TooltipMode == HTNDecompositionTooltipMode::FULL)
     {
         ShouldPrint = ShouldPrint || HasVariables;
@@ -86,9 +87,9 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
             if (HasVariables)
             {
                 const std::vector<std::string>& NodeVariablePaths = ioDecompositionWatchTooltipPrinterContext.GetNodeVariablePaths();
-                for (const std::pair<const std::string, HTNAtom>& VariablePair : Variables)
+                for (const HTNVariable& Variable : Variables)
                 {
-                    const std::string& VariablePath = VariablePair.first;
+                    const std::string& VariablePath = Variable.first;
                     const auto         It           = std::find(NodeVariablePaths.begin(), NodeVariablePaths.end(), VariablePath);
                     if (It != NodeVariablePaths.end())
                     {
@@ -107,7 +108,8 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
 
                     // Variable value
                     static constexpr bool ShouldDoubleQuoteString = true;
-                    const std::string     VariableValueString     = VariablePair.second.ToString(ShouldDoubleQuoteString);
+                    const HTNAtom&        VariableValue           = Variable.second;
+                    const std::string     VariableValueString     = VariableValue.ToString(ShouldDoubleQuoteString);
                     ImGui::Text(VariableValueString.c_str());
                     ImGui::SameLine();
                 }

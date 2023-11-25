@@ -2,13 +2,17 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Core/HTNAtom.h"
+#include "HTNCoreMinimal.h"
 
 #include <string>
 #include <unordered_map>
 
-class HTNVariables
+// Variable path to variable value
+using HTNVariables = std::unordered_map<std::string, HTNAtom>;
+using HTNVariable  = std::pair<const std::string, HTNAtom>;
+
+class HTNVariablesManager
 {
 public:
     // Sets the value of an existing variable or adds a new variable and sets its value
@@ -23,30 +27,29 @@ public:
     // Removes all existing variables under the variables path
     void RemoveVariables(const std::string& inVariablesPath);
 
-    HTN_NODISCARD const std::unordered_map<std::string, HTNAtom>& GetVariables() const;
+    HTN_NODISCARD const HTNVariables& GetVariables() const;
 
 private:
-    // Variable path to value
-    std::unordered_map<std::string, HTNAtom> mVariables;
+    HTNVariables mVariables;
 };
 
-inline void HTNVariables::SetVariable(const std::string& inVariablePath, const HTNAtom& inVariableValue)
+inline void HTNVariablesManager::SetVariable(const std::string& inVariablePath, const HTNAtom& inVariableValue)
 {
     mVariables[inVariablePath] = inVariableValue;
 }
 
-inline HTNAtom HTNVariables::FindVariable(const std::string& inVariablePath) const
+inline HTNAtom HTNVariablesManager::FindVariable(const std::string& inVariablePath) const
 {
     const auto It = mVariables.find(inVariablePath);
     return (It != mVariables.end()) ? It->second : HTNAtom();
 }
 
-inline void HTNVariables::RemoveVariable(const std::string& inVariablePath)
+inline void HTNVariablesManager::RemoveVariable(const std::string& inVariablePath)
 {
     mVariables.erase(inVariablePath);
 }
 
-inline const std::unordered_map<std::string, HTNAtom>& HTNVariables::GetVariables() const
+inline const HTNVariables& HTNVariablesManager::GetVariables() const
 {
     return mVariables;
 }

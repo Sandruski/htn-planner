@@ -8,7 +8,7 @@
 #include <string>
 
 class HTNDecompositionContext;
-class HTNVariables;
+class HTNVariablesManager;
 
 /**
  * Helper that uses RAII to automatically push/pop a node to/from the variable scope path
@@ -21,5 +21,5 @@ public:
     ~HTNDecompositionVariablesScope();
 
 private:
-    HTNVariables& mVariables;
+    HTNVariablesManager& mVariablesManager;
 };

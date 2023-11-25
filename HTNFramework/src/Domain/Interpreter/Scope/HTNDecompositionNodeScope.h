@@ -8,7 +8,7 @@
 #include <string>
 
 class HTNDecompositionContext;
-class HTNIndices;
+class HTNIndicesManager;
 
 /**
  * Helper that uses RAII to automatically push/pop a node to/from the node path
@@ -21,5 +21,5 @@ public:
     ~HTNDecompositionNodeScope();
 
 private:
-    HTNIndices& mIndices;
+    HTNIndicesManager& mIndicesManager;
 };

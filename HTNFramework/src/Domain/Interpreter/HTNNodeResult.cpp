@@ -3,11 +3,12 @@
 #include "Domain/Interpreter/HTNNodeResult.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-HTNNodeResult::HTNNodeResult(const HTNVariables& inVariables) : mVariables(inVariables)
+HTNNodeResult::HTNNodeResult(const HTNVariablesManager& inVariablesManager) : mVariablesManager(inVariablesManager)
 {
 }
 
-HTNNodeResult::HTNNodeResult(const HTNVariables& inVariables, const bool inResult) : mVariables(inVariables), mResult(inResult)
+HTNNodeResult::HTNNodeResult(const HTNVariablesManager& inVariablesManager, const bool inResult)
+    : mVariablesManager(inVariablesManager), mResult(inResult)
 {
 }
 #endif

@@ -208,11 +208,12 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
-    HTNIndices&             Indices              = Environment.GetIndicesMutable();
+    HTNIndicesManager&      IndicesManager       = Environment.GetIndicesManagerMutable();
 
     const std::vector<std::shared_ptr<const HTNBranchNode>>& BranchNodes     = inMethodNode.GetBranchNodes();
     const size                                               BranchNodesSize = BranchNodes.size();
-    for (size BranchIndex = Indices.AddIndex(CurrentNodePath); BranchIndex < BranchNodesSize; BranchIndex = Indices.GetIndex(CurrentNodePath))
+    for (size BranchIndex = IndicesManager.AddIndex(CurrentNodePath); BranchIndex < BranchNodesSize;
+         BranchIndex      = IndicesManager.GetIndex(CurrentNodePath))
     {
         // Check branch
         const std::shared_ptr<const HTNBranchNode>& BranchNode = BranchNodes[BranchIndex];
@@ -242,7 +243,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
         else
         {
             // Continue
-            Indices.IncrementIndex(CurrentNodePath);
+            IndicesManager.IncrementIndex(CurrentNodePath);
         }
     }
 
@@ -381,7 +382,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
-    HTNIndices&             Indices              = Environment.GetIndicesMutable();
+    HTNIndicesManager&      IndicesManager       = Environment.GetIndicesManagerMutable();
 
     const HTNWorldState& WorldState = DecompositionContext.GetWorldState();
 
@@ -389,8 +390,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
     const std::shared_ptr<const HTNIdentifierExpressionNode>& ConditionNodeIDNode = inConditionNode.GetIDNode();
     const std::string FactID            = GetNodeValue(*ConditionNodeIDNode, ioDecompositionContext).GetValue<std::string>();
     const size        FactArgumentsSize = WorldState.GetFactArgumentsSize(FactID, FactArguments.size());
-    for (size FactArgumentsIndex = Indices.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsSize;
-         FactArgumentsIndex      = Indices.AddOrIncrementIndex(CurrentNodePath))
+    for (size FactArgumentsIndex = IndicesManager.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsSize;
+         FactArgumentsIndex      = IndicesManager.AddOrIncrementIndex(CurrentNodePath))
     {
         static const HTNConditionQueryWorldState ConditionQueryWorldState;
         if (!ConditionQueryWorldState.Check(WorldState, FactID, FactArgumentsIndex, FactArguments))
@@ -408,7 +409,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
         }
 
         // Copy variables before they change
-        const HTNVariables Variables = Environment.GetVariables();
+        const HTNVariablesManager VariablesManager = Environment.GetVariablesManager();
 
         // Update variables
         for (size i = 0; i < ArgumentNodesSize; ++i)
@@ -431,7 +432,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
         // Copy unchanged variables to decomposition
         HTNDecompositionRecord NewDecomposition = CurrentDecomposition;
         HTNEnvironment&        NewEnvironment   = NewDecomposition.GetEnvironmentMutable();
-        NewEnvironment.SetVariables(Variables);
+        NewEnvironment.SetVariablesManager(VariablesManager);
 
         // Record decomposition
         DecompositionContext.RecordDecomposition(NewDecomposition);
@@ -654,12 +655,12 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
-    HTNIndices&             Indices              = Environment.GetIndicesMutable();
+    HTNIndicesManager&      IndicesManager       = Environment.GetIndicesManagerMutable();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes     = inAndConditionNode.GetSubConditionNodes();
     const size                                                      SubConditionNodesSize = SubConditionNodes.size();
-    for (size SubConditionIndex = Indices.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
-         SubConditionIndex      = Indices.GetIndex(CurrentNodePath))
+    for (size SubConditionIndex = IndicesManager.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
+         SubConditionIndex      = IndicesManager.GetIndex(CurrentNodePath))
     {
         // Check sub-condition
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = SubConditionNodes[SubConditionIndex];
@@ -691,7 +692,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
         }
 
         // Continue
-        Indices.IncrementIndex(CurrentNodePath);
+        IndicesManager.IncrementIndex(CurrentNodePath);
     }
 
     // If empty, it evaluates to true
@@ -725,12 +726,12 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
-    HTNIndices&             Indices              = Environment.GetIndicesMutable();
+    HTNIndicesManager&      IndicesManager       = Environment.GetIndicesManagerMutable();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes     = inOrConditionNode.GetSubConditionNodes();
     const size                                                      SubConditionNodesSize = SubConditionNodes.size();
-    for (size SubConditionIndex = Indices.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
-         SubConditionIndex      = Indices.GetIndex(CurrentNodePath))
+    for (size SubConditionIndex = IndicesManager.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
+         SubConditionIndex      = IndicesManager.GetIndex(CurrentNodePath))
     {
         // Copy decomposition record history
         const HTNDecompositionRecordHistory DecompositionRecordHistory = DecompositionContext.GetDecompositionRecordHistory();
@@ -751,7 +752,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
         }
 
         // Continue
-        Indices.IncrementIndex(CurrentNodePath);
+        IndicesManager.IncrementIndex(CurrentNodePath);
     }
 
     // If empty, it evaluates to false
@@ -785,12 +786,12 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
-    HTNIndices&             Indices              = Environment.GetIndicesMutable();
+    HTNIndicesManager&      IndicesManager       = Environment.GetIndicesManagerMutable();
 
     const std::vector<std::shared_ptr<const HTNConditionNodeBase>>& SubConditionNodes     = inAltConditionNode.GetSubConditionNodes();
     const size                                                      SubConditionNodesSize = SubConditionNodes.size();
-    for (size SubConditionIndex = Indices.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
-         SubConditionIndex      = Indices.GetIndex(CurrentNodePath))
+    for (size SubConditionIndex = IndicesManager.AddIndex(CurrentNodePath); SubConditionIndex < SubConditionNodesSize;
+         SubConditionIndex      = IndicesManager.GetIndex(CurrentNodePath))
     {
         // Check sub-condition
         const std::shared_ptr<const HTNConditionNodeBase>& SubConditionNode = SubConditionNodes[SubConditionIndex];
@@ -820,7 +821,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
         else
         {
             // Continue
-            Indices.IncrementIndex(CurrentNodePath);
+            IndicesManager.IncrementIndex(CurrentNodePath);
         }
     }
 
@@ -856,7 +857,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
 
     // Copy variables
-    const HTNVariables Variables = Environment.GetVariables();
+    const HTNVariablesManager VariablesManager = Environment.GetVariablesManager();
 
     // Copy decomposition history
     const HTNDecompositionRecordHistory DecompositionRecordHistory = DecompositionContext.GetDecompositionRecordHistory();
@@ -866,7 +867,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
     const bool                                         Result           = !GetNodeValue(*SubConditionNode, ioDecompositionContext).GetValue<bool>();
 
     // Reset variables
-    Environment.SetVariables(Variables);
+    Environment.SetVariablesManager(VariablesManager);
 
     // Reset decomposition history
     DecompositionContext.SetDecompositionRecordHistory(DecompositionRecordHistory);
@@ -1069,9 +1070,9 @@ void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpr
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
-    HTNVariables&           Variables            = Environment.GetVariablesMutable();
+    HTNVariablesManager&    VariablesManager     = Environment.GetVariablesManagerMutable();
     const std::string&      CurrentVariablePath  = VariablePathManager.GetPath();
-    Variables.SetVariable(CurrentVariablePath, inVariableExpressionNodeValue);
+    VariablesManager.SetVariable(CurrentVariablePath, inVariableExpressionNodeValue);
 }
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpressionNode,
@@ -1088,9 +1089,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableE
 
     const HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecomposition();
     const HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironment();
-    const HTNVariables&           Variables            = Environment.GetVariables();
+    const HTNVariablesManager&    VariablesManager     = Environment.GetVariablesManager();
     const std::string&            CurrentVariablePath  = VariablePathManager.GetPath();
-    return Variables.FindVariable(CurrentVariablePath);
+    return VariablesManager.FindVariable(CurrentVariablePath);
 }
 
 HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantExpressionNode,

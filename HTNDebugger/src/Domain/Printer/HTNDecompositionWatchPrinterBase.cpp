@@ -5,7 +5,7 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Core/HTNScope.h"
 #include "Domain/Interpreter/HTNNodeResult.h"
-#include "Domain/Interpreter/HTNVariables.h"
+#include "Domain/Interpreter/HTNVariablesManager.h"
 #include "Domain/Nodes/HTNConstantNode.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
@@ -93,10 +93,10 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
         const std::string&     VariablePath         = VariablesPathManager.GetPath();
         DecompositionWatchPrinterContext.AddVariablePath(VariablePath);
 
-        const HTNNodeResult*  NodeResult              = NodeInstance.GetNodeResult();
-        const HTNVariables&   Variables               = NodeResult->GetVariables();
-        static constexpr bool ShouldDoubleQuoteString = true;
-        const std::string     VariableValueString     = Variables.FindVariable(VariablePath).ToString(ShouldDoubleQuoteString);
+        const HTNNodeResult*       NodeResult              = NodeInstance.GetNodeResult();
+        const HTNVariablesManager& VariablesManager        = NodeResult->GetVariablesManager();
+        static constexpr bool      ShouldDoubleQuoteString = true;
+        const std::string          VariableValueString     = VariablesManager.FindVariable(VariablePath).ToString(ShouldDoubleQuoteString);
         Result.PushBack(VariableValueString);
     }
 
