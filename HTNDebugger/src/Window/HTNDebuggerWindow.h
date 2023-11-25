@@ -57,7 +57,7 @@ private:
     HTNDatabaseHook& mDatabaseHook;
     HTNPlannerHook&  mPlannerHook;
 
-    // Two planning units as an example, but there could be as many as parts in the body of the AI
+    // Two planning units as an example, but there could be as many as parts in the body of the AI. For instance, a robot with 8 articulated arms could have 8 planning units, one for each arm
     HTNPlanningUnit& mMainPlanningUnit;
     HTNPlanningUnit& mSecondaryPlanningUnit;
 

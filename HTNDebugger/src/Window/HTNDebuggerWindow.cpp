@@ -123,7 +123,20 @@ void RefreshSelectedEntryPointID(const std::vector<std::shared_ptr<const HTNMeth
     {
         const HTNPlanningUnit& PlanningUnit            = ioPlanningQuery.GetPlanningUnit();
         const std::string&     DefaultTopLevelMethodID = PlanningUnit.GetDefaultTopLevelMethodID();
-        ioPlanningQuery.SetEntryPointID(DefaultTopLevelMethodID);
+        const auto It = std::find_if(inMethodNodes.begin(), inMethodNodes.end(), [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) {
+            if (!inMethodNode->IsTopLevel())
+            {
+                return false;
+            }
+
+            const std::string MethodID = inMethodNode->GetID();
+            return DefaultTopLevelMethodID == MethodID;
+        });
+
+        if (It != inMethodNodes.end())
+        {
+            ioPlanningQuery.SetEntryPointID(DefaultTopLevelMethodID);
+        }
     }
 }
 
