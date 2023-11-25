@@ -18,3 +18,5 @@ has_mold "orange"
 
 is_wrapped "sandwich"
 has_peel "banana"
+
+is_eating "banana"

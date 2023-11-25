@@ -18,6 +18,10 @@ The solution contains four projects, HTNFramework, HTNDebugger, HTNDemo, and HTN
 2. In the "World State" tab, click the "Parse" button to parse the selected world state. Below, see the parsed world state.
 3. In the "Domain" tab, click the "Parse" button to parse the selected domain. Below, see the parsed domain.
 4. In the "Decomposition" tab, click the "Decompose" button to decompose the selected entry point of the parsed domain using the parsed world state. Below, see the result of the decomposition.
+
+- Uses DFS.
+- Uses backtracking to test alternative options for choice points.
+
 5. In the "Active Plan" tab, see the decomposed plan.
 
 ### HTNTest

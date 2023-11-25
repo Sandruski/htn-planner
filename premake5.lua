@@ -37,10 +37,10 @@ project "HTNFramework"
     files { "%{prj.name}/src/**.cpp",
             "%{prj.name}/src/**.h",                 
             -- Optick
-            "ThirdParty/Optick/src/**.cpp",
-            "ThirdParty/Optick/src/**.h" }
+            "ThirdParty/optick/src/**.cpp",
+            "ThirdParty/optick/src/**.h" }
 
-    includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/Optick/src" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/optick/src" }
 
 -- HTNDebugger
 project "HTNDebugger"
@@ -59,8 +59,8 @@ project "HTNDebugger"
     files { "%{prj.name}/src/**.cpp",
             "%{prj.name}/src/**.h",
             -- Optick
-            "ThirdParty/Optick/src/**.cpp",
-            "ThirdParty/Optick/src/**.h",
+            "ThirdParty/optick/src/**.cpp",
+            "ThirdParty/optick/src/**.h",
             -- ImGui
 			"ThirdParty/imgui/imconfig.h", 
 			"ThirdParty/imgui/imgui.cpp", 
@@ -71,7 +71,7 @@ project "HTNDebugger"
 			"ThirdParty/imgui/imgui_tables.cpp", 
 			"ThirdParty/imgui/imgui_widgets.cpp" }
 
-    includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/Optick/src", "ThirdParty/imgui" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/optick/src", "ThirdParty/imgui" }
 
     links { "HTNFramework" }
 
@@ -88,8 +88,8 @@ project "HTNDemo"
     files { "%{prj.name}/src/**.cpp",
             "%{prj.name}/src/**.h", 
             -- Optick
-            "ThirdParty/Optick/src/**.cpp",
-            "ThirdParty/Optick/src/**.h",
+            "ThirdParty/optick/src/**.cpp",
+            "ThirdParty/optick/src/**.h",
             -- ImGui
 			"ThirdParty/imgui/imconfig.h", 
 			"ThirdParty/imgui/imgui.cpp", 
@@ -104,7 +104,7 @@ project "HTNDemo"
 			"ThirdParty/imgui/backends/imgui_impl_sdlrenderer2.h", 
 			"ThirdParty/imgui/backends/imgui_impl_sdlrenderer2.cpp" }
 
-    includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNDebugger/src", "ThirdParty/Optick/src", "ThirdParty/SDL2/include", "ThirdParty/imgui", "ThirdParty/imgui/backends" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "HTNDebugger/src", "ThirdParty/optick/src", "ThirdParty/SDL2/include", "ThirdParty/imgui", "ThirdParty/imgui/backends" }
 
 	libdirs { "ThirdParty/SDL2/lib/%{cfg.architecture}" }
     links { "HTNFramework", "HTNDebugger", "SDL2", "SDL2main" }
@@ -124,7 +124,7 @@ project "HTNDemo"
     files { "%{prj.name}/src/**.cpp",
             "%{prj.name}/src/**.h" }
 
-    includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/Optick/src" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src" }
 
     links { "HTNFramework" }
 

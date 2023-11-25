@@ -22,6 +22,4 @@ HTN_NODISCARD bool IsAnyArgument(const std::string& inVariableID);
 inline const std::string kAnonymousNamespaceID             = "unnamed";
 inline const std::string kTopLevelDomainID                 = "top_level_domain";
 inline const std::string kTopLevelMethodID                 = "top_level_method";
-inline const std::string kDefaultMainTopLevelMethodID      = "behave";
-inline const std::string kDefaultUpperBodyTopLevelMethodID = "behave_upper_body";
 } // namespace HTNDomainHelpers

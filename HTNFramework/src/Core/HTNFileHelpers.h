@@ -9,6 +9,9 @@
 
 namespace HTNFileHelpers
 {
+void CollectFilePaths(const std::filesystem::path& inDirectoryPath, const std::string& inFileExtension,
+                                 std::vector<std::filesystem::path>& outFilePaths);
+
 void CollectFilePathsRecursively(const std::filesystem::path& inDirectoryPath, const std::string& inFileExtension,
                                  std::vector<std::filesystem::path>& outFilePaths);
 

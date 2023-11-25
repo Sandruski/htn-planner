@@ -54,7 +54,7 @@ void RenderFileSelector(const std::string& inDirectoryName, const std::string& i
 {
     const std::filesystem::path        DirectoryPath = HTNFileHelpers::MakeAbsolutePath(inDirectoryName);
     std::vector<std::filesystem::path> FilePaths;
-    HTNFileHelpers::CollectFilePathsRecursively(DirectoryPath, inFileExtension, FilePaths);
+    HTNFileHelpers::CollectFilePaths(DirectoryPath, inFileExtension, FilePaths);
 
     RefreshSelectedFilePath(FilePaths, ioSelectedFilePath);
 
@@ -121,15 +121,9 @@ void RefreshSelectedEntryPointID(const std::vector<std::shared_ptr<const HTNMeth
 
     if (ioPlanningQuery.IsEntryPointIDEmpty())
     {
-        const auto It = std::find_if(inMethodNodes.begin(), inMethodNodes.end(),
-                                     [&](const std::shared_ptr<const HTNMethodNode>& inMethodNode) { return inMethodNode->IsTopLevel(); });
-
-        if (It != inMethodNodes.end())
-        {
-            const std::shared_ptr<const HTNMethodNode>& TopLevelMethodNode = *It;
-            const std::string                           EntryPointID       = TopLevelMethodNode->GetID();
-            ioPlanningQuery.SetEntryPointID(EntryPointID);
-        }
+        const HTNPlanningUnit& PlanningUnit            = ioPlanningQuery.GetPlanningUnit();
+        const std::string&     DefaultTopLevelMethodID = PlanningUnit.GetDefaultTopLevelMethodID();
+        ioPlanningQuery.SetEntryPointID(DefaultTopLevelMethodID);
     }
 }
 
@@ -152,12 +146,12 @@ void RenderActivePlanByPlanningQuery(const HTNPlanningQuery& inPlanningQuery)
     const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_HorizontalScrollbar;
     ImGui::BeginChild("Child", ChildSize, ChildFlags, WindowFlags);
 
-    const bool IsLastDecompositionSuccessful = inPlanningQuery.IsLastDecompositionOperationSuccessful();
-    if (IsLastDecompositionSuccessful)
+    const bool IsLastDecompositionOperationSuccessful = inPlanningQuery.IsLastDecompositionOperationSuccessful();
+    if (IsLastDecompositionOperationSuccessful)
     {
-        const HTNPlanningUnit&            PlanningUnit         = inPlanningQuery.GetPlanningUnit();
-        const HTNDecompositionRecord&     CurrentDecomposition = PlanningUnit.GetLastDecomposition();
-        const HTNPlan& Plan                 = CurrentDecomposition.GetPlan();
+        const HTNPlanningUnit&        PlanningUnit         = inPlanningQuery.GetPlanningUnit();
+        const HTNDecompositionRecord& CurrentDecomposition = PlanningUnit.GetLastDecomposition();
+        const HTNPlan&                Plan                 = CurrentDecomposition.GetPlan();
 
         if (Plan.empty())
         {
@@ -185,10 +179,49 @@ void RenderActivePlanByPlanningQuery(const HTNPlanningQuery& inPlanningQuery)
 } // namespace
 
 HTNDebuggerWindow::HTNDebuggerWindow(HTNDatabaseHook& ioDatabaseHook, HTNPlannerHook& ioPlannerHook, HTNPlanningUnit& ioMainPlanningUnit,
-                                     HTNPlanningUnit& ioUpperBodyPlanningUnit)
+                                     HTNPlanningUnit& ioSecondaryPlanningUnit)
     : mDatabaseHook(ioDatabaseHook), mPlannerHook(ioPlannerHook), mMainPlanningUnit(ioMainPlanningUnit),
-      mUpperBodyPlanningUnit(ioUpperBodyPlanningUnit)
+      mSecondaryPlanningUnit(ioSecondaryPlanningUnit)
 {
+}
+
+void HTNDebuggerWindow::Init()
+{
+    // Parse world state
+    const std::filesystem::path        WorldStatesDirectoryPath = HTNFileHelpers::MakeAbsolutePath(HTNFileHelpers::kWorldStatesDirectoryName);
+    std::vector<std::filesystem::path> WorldStateFilePaths;
+    HTNFileHelpers::CollectFilePaths(WorldStatesDirectoryPath, HTNFileHelpers::kWorldStateFileExtension, WorldStateFilePaths);
+    RefreshSelectedFilePath(WorldStateFilePaths, mSelectedWorldStateFilePath);
+
+    mLastParseWorldStateFileOperationResult =
+        static_cast<const HTNOperationResult>(mDatabaseHook.ParseWorldStateFile(mSelectedWorldStateFilePath.string()));
+
+    // Parse domain
+    const std::filesystem::path        DomainsDirectoryPath = HTNFileHelpers::MakeAbsolutePath(HTNFileHelpers::kDomainsDirectoryName);
+    std::vector<std::filesystem::path> DomainFilePaths;
+    HTNFileHelpers::CollectFilePaths(DomainsDirectoryPath, HTNFileHelpers::kDomainFileExtension, DomainFilePaths);
+    RefreshSelectedFilePath(DomainFilePaths, mSelectedDomainFilePath);
+
+    mLastParseDomainFileOperationResult = static_cast<const HTNOperationResult>(mPlannerHook.ParseDomainFile(mSelectedDomainFilePath.string()));
+
+    // Decompose
+    std::vector<std::shared_ptr<const HTNMethodNode>> MethodNodes;
+    const std::shared_ptr<const HTNDomainNode>&       DomainNode = mPlannerHook.GetDomainNode();
+    if (DomainNode)
+    {
+        if (DomainNode->IsTopLevel())
+        {
+            MethodNodes = DomainNode->GetMethodNodes();
+        }
+    }
+
+    // Main planning unit
+    RefreshSelectedEntryPointID(MethodNodes, mMainPlanningQuery);
+    DecomposePlanningQuery(mMainPlanningQuery);
+
+    // Secondary planning unit
+    RefreshSelectedEntryPointID(MethodNodes, mSecondaryPlanningQuery);
+    DecomposePlanningQuery(mSecondaryPlanningQuery);
 }
 
 void HTNDebuggerWindow::Render()
@@ -245,15 +278,15 @@ void HTNDebuggerWindow::RenderActivePlan()
 {
     if (ImGui::BeginTabBar("ActivePlan"))
     {
-        if (ImGui::BeginTabItem("Main"))
+        if (ImGui::BeginTabItem("Main Planning Unit"))
         {
             RenderActivePlanByPlanningQuery(mMainPlanningQuery);
             ImGui::EndTabItem();
         }
 
-        if (ImGui::BeginTabItem("Upper Body"))
+        if (ImGui::BeginTabItem("Secondary Planning Unit"))
         {
-            RenderActivePlanByPlanningQuery(mUpperBodyPlanningQuery);
+            RenderActivePlanByPlanningQuery(mSecondaryPlanningQuery);
             ImGui::EndTabItem();
         }
 
@@ -271,7 +304,7 @@ void HTNDebuggerWindow::RenderDecomposition()
         });
 
         ResetDecompositionState(mMainNodeStates, mMainChoicePointNodeStates, mMainSelectedNodeInstance);
-        ResetDecompositionState(mUpperBodyNodeStates, mUpperBodyChoicePointNodeStates, mUpperBodySelectedNodeInstance);
+        ResetDecompositionState(mSecondaryNodeStates, mSecondaryChoicePointNodeStates, mSecondarySelectedNodeInstance);
     }
 
     static constexpr ImGuiHoveredFlags ButtonHoveredFlags = ImGuiHoveredFlags_ForTooltip;
@@ -290,12 +323,9 @@ void HTNDebuggerWindow::RenderDecomposition()
         }
     }
 
-    RefreshSelectedEntryPointID(MethodNodes, mMainPlanningQuery);
-    RefreshSelectedEntryPointID(MethodNodes, mUpperBodyPlanningQuery);
-
     if (ImGui::BeginTabBar("Decomposition"))
     {
-        if (ImGui::BeginTabItem("Main"))
+        if (ImGui::BeginTabItem("Main Planning Unit"))
         {
             {
                 const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
@@ -305,12 +335,12 @@ void HTNDebuggerWindow::RenderDecomposition()
             ImGui::EndTabItem();
         }
 
-        if (ImGui::BeginTabItem("Upper Body"))
+        if (ImGui::BeginTabItem("Secondary Planning Unit"))
         {
             {
                 const std::lock_guard<std::mutex> Lock(mPlanningQueryMutex);
-                RenderDecompositionByPlanningQuery(MethodNodes, mUpperBodyPlanningQuery, mUpperBodyNodeStates, mUpperBodyChoicePointNodeStates,
-                                                   mUpperBodySelectedNodeInstance);
+                RenderDecompositionByPlanningQuery(MethodNodes, mSecondaryPlanningQuery, mSecondaryNodeStates, mSecondaryChoicePointNodeStates,
+                                                   mSecondarySelectedNodeInstance);
             }
             ImGui::EndTabItem();
         }
@@ -376,7 +406,7 @@ void HTNDebuggerWindow::RenderWorldState()
     ImGui::Separator();
 
     static ImGuiTextFilter TextFilter;
-    TextFilter.Draw("##");
+    TextFilter.Draw("Search");
 
     ImGui::SameLine();
     HTNImGuiHelpers::HelpMarker("Filter usage:\n"
@@ -404,9 +434,10 @@ void HTNDebuggerWindow::RenderWorldState()
 
 void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes,
                                                            HTNPlanningQuery& ioPlanningQuery, HTNNodeStates& ioNodeStates,
-                                                           HTNChoicePointNodeStates& ioChoicePointNodeStates,
-                                                           HTNNodeInstance&                                          ioSelectedNodeInstance)
+                                                           HTNChoicePointNodeStates& ioChoicePointNodeStates, HTNNodeInstance& ioSelectedNodeInstance)
 {
+    RefreshSelectedEntryPointID(inMethodNodes, ioPlanningQuery);
+
     const std::string& EntryPointID = ioPlanningQuery.GetEntryPointID();
     if (ImGui::BeginCombo("Entry Point", EntryPointID.c_str()))
     {

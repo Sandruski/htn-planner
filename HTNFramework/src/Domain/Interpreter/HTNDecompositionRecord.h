@@ -2,25 +2,25 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNTaskInstance.h"
 #include "Domain/Interpreter/HTNTaskResult.h"
+#include "HTNCoreMinimal.h"
 
 #include <vector>
 
 class HTNDecompositionRecord
 {
 public:
-    void            PushPendingTaskInstance(const HTNTaskInstance& inPendingTaskInstance);
+    void                          PushPendingTaskInstance(const HTNTaskInstance& inPendingTaskInstance);
     HTN_NODISCARD HTNTaskInstance PopPendingTaskInstance();
     HTN_NODISCARD bool            HasPendingTaskInstances() const;
 
-    void                  SetEnvironment(const HTNEnvironment& inEnvironment);
+    void                                SetEnvironment(const HTNEnvironment& inEnvironment);
     HTN_NODISCARD const HTNEnvironment& GetEnvironment() const;
     HTN_NODISCARD HTNEnvironment&       GetEnvironmentMutable();
 
-    void                              AddTaskResultToPlan(const HTNTaskResult& inTaskResult);
+    void                         AddTaskResultToPlan(const HTNTaskResult& inTaskResult);
     HTN_NODISCARD const HTNPlan& GetPlan() const;
 
 private:

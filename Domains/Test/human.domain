@@ -18,12 +18,36 @@
 		)
 	)
 
-     (:method (behave) top_level_method
+    (:method (behave) top_level_method
 
         (branch_hungry
             (
             )
             (       (eat_food @fruit)
+            )
+        )
+
+        (branch_fallback
+            (
+            )
+            (
+            )
+        )
+    )
+
+    (:method (behave_upper_body) top_level_method
+
+        (branch_talk_about_food
+            (and    (is_eating ?food)
+            )
+            (       (!talk "This fruit is very tasty!")
+            )
+        )
+
+        (branch_fallback
+            (
+            )
+            (
             )
         )
     )
@@ -36,7 +60,7 @@
             )
             (       (!take ?food)
                     (prepare_food ?food)
-                    (!eat ?food)
+                    (!eat ?food) // This primitive task will write in the database a fact with this format: (is_eating ?food)
             )
         )
 

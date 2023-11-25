@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Domain/Interpreter/HTNDecompositionRecord.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 #include <string>
@@ -19,21 +19,23 @@ class HTNPlannerHook;
 class HTNPlanningUnit
 {
 public:
-    explicit HTNPlanningUnit(const std::string& inID, const HTNDatabaseHook& inDatabaseHook, const HTNPlannerHook& inPlannerHook);
+    explicit HTNPlanningUnit(const HTNDatabaseHook& inDatabaseHook, const HTNPlannerHook& inPlannerHook,
+                             const std::string& inDefaultTopLevelMethodID);
 
     // Execute planning unit top level method
     bool ExecuteTopLevelMethod(const std::string& inEntryPointID);
+    bool ExecuteTopLevelMethod();
 
-    HTN_NODISCARD const std::string&     GetID() const;
     HTN_NODISCARD const HTNDatabaseHook& GetDatabaseHook() const;
     HTN_NODISCARD const HTNPlannerHook&  GetPlannerHook() const;
+    HTN_NODISCARD const std::string& GetDefaultTopLevelMethodID() const;
 
     HTN_NODISCARD const HTNDecompositionRecord& GetLastDecomposition() const;
 
 private:
-    std::string            mID;
     const HTNDatabaseHook& mDatabaseHook;
     const HTNPlannerHook&  mPlannerHook;
+    std::string            mDefaultTopLevelMethodID;
 
     HTNDecompositionRecord mLastDecomposition;
 
@@ -46,11 +48,6 @@ private:
 #endif
 };
 
-inline const std::string& HTNPlanningUnit::GetID() const
-{
-    return mID;
-}
-
 inline const HTNDatabaseHook& HTNPlanningUnit::GetDatabaseHook() const
 {
     return mDatabaseHook;
@@ -59,6 +56,11 @@ inline const HTNDatabaseHook& HTNPlanningUnit::GetDatabaseHook() const
 inline const HTNPlannerHook& HTNPlanningUnit::GetPlannerHook() const
 {
     return mPlannerHook;
+}
+
+inline const std::string& HTNPlanningUnit::GetDefaultTopLevelMethodID() const
+{
+    return mDefaultTopLevelMethodID;
 }
 
 inline const HTNDecompositionRecord& HTNPlanningUnit::GetLastDecomposition() const

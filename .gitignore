@@ -412,4 +412,4 @@ FodyWeavers.xsd
 
 # Optick
 *.opt
-!ThirdParty/Optick_1.4.0/bin**
+!ThirdParty/optick/bin**

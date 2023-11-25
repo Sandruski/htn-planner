@@ -11,10 +11,10 @@
 #include <cstdio>
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Window/HTNDebuggerWindow.h"
 #include "Hook/HTNDatabaseHook.h"
 #include "Hook/HTNPlannerHook.h"
 #include "Hook/HTNPlanningUnit.h"
+#include "Window/HTNDebuggerWindow.h"
 #endif
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
@@ -68,12 +68,17 @@ int main(int, char**)
     bool IsDone = false;
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    HTNDatabaseHook   DatabaseHook;
-    HTNPlannerHook    PlannerHook;
-    HTNPlanningUnit   MainPlanningUnit      = HTNPlanningUnit("Main", DatabaseHook, PlannerHook);
-    HTNPlanningUnit   UpperBodyPlanningUnit = HTNPlanningUnit("Upper Body", DatabaseHook, PlannerHook);
-    HTNDebuggerWindow DebuggerWindow        = HTNDebuggerWindow(DatabaseHook, PlannerHook, MainPlanningUnit, UpperBodyPlanningUnit);
+    HTNDatabaseHook DatabaseHook;
+    HTNPlannerHook  PlannerHook;
 
+    // Planning units for a human, the main one and the upper body one
+    static const std::string MainDefaultTopLevelMethodID      = "behave";
+    HTNPlanningUnit          MainPlanningUnit                 = HTNPlanningUnit(DatabaseHook, PlannerHook, MainDefaultTopLevelMethodID);
+    static const std::string UpperBodyDefaultTopLevelMethodID = "behave_upper_body";
+    HTNPlanningUnit          UpperBodyPlanningUnit            = HTNPlanningUnit(DatabaseHook, PlannerHook, UpperBodyDefaultTopLevelMethodID);
+
+    HTNDebuggerWindow DebuggerWindow = HTNDebuggerWindow(DatabaseHook, PlannerHook, MainPlanningUnit, UpperBodyPlanningUnit);
+    DebuggerWindow.Init();
     bool ShouldShowHTNDebuggerWindow = true;
 #endif
 

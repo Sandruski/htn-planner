@@ -6,8 +6,9 @@
 #include "Hook/HTNDatabaseHook.h"
 #include "Hook/HTNPlannerHook.h"
 
-HTNPlanningUnit::HTNPlanningUnit(const std::string& inID, const HTNDatabaseHook& inDatabaseHook, const HTNPlannerHook& inPlannerHook)
-    : mID(inID), mDatabaseHook(inDatabaseHook), mPlannerHook(inPlannerHook)
+HTNPlanningUnit::HTNPlanningUnit(const HTNDatabaseHook& inDatabaseHook, const HTNPlannerHook& inPlannerHook,
+                                 const std::string& inDefaultTopLevelMethodID)
+    : mDatabaseHook(inDatabaseHook), mPlannerHook(inPlannerHook), mDefaultTopLevelMethodID(inDefaultTopLevelMethodID)
 {
 }
 
@@ -24,4 +25,9 @@ bool HTNPlanningUnit::ExecuteTopLevelMethod(const std::string& inEntryPointID)
 #endif
 
     return Result;
+}
+
+bool HTNPlanningUnit::ExecuteTopLevelMethod()
+{
+    return ExecuteTopLevelMethod(mDefaultTopLevelMethodID);
 }

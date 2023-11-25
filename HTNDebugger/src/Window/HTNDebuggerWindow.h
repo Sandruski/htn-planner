@@ -26,12 +26,16 @@ class HTNMethodNode;
 class HTNPlannerHook;
 class HTNPlanningUnit;
 
+/*
+ * Debugger window of the HTN planner of an AI
+ */
 class HTNDebuggerWindow
 {
 public:
     explicit HTNDebuggerWindow(HTNDatabaseHook& ioDatabaseHook, HTNPlannerHook& ioPlannerHook, HTNPlanningUnit& ioMainPlanningUnit,
-                               HTNPlanningUnit& ioUpperBodyPlanningUnit);
+                               HTNPlanningUnit& ioSecondaryPlanningUnit);
 
+    void Init();
     void Render();
 
 private:
@@ -52,13 +56,15 @@ private:
 
     HTNDatabaseHook& mDatabaseHook;
     HTNPlannerHook&  mPlannerHook;
+
+    // Two planning units as an example, but there could be as many as parts in the body of the AI
     HTNPlanningUnit& mMainPlanningUnit;
-    HTNPlanningUnit& mUpperBodyPlanningUnit;
+    HTNPlanningUnit& mSecondaryPlanningUnit;
 
     std::mutex                     mPlanningQueryMutex;
     HTNPlanningQuery               mMainPlanningQuery      = HTNPlanningQuery(mMainPlanningUnit);
-    HTNPlanningQuery               mUpperBodyPlanningQuery = HTNPlanningQuery(mUpperBodyPlanningUnit);
-    std::vector<HTNPlanningQuery*> mPlanningQueries        = {&mMainPlanningQuery, &mUpperBodyPlanningQuery};
+    HTNPlanningQuery               mSecondaryPlanningQuery = HTNPlanningQuery(mSecondaryPlanningUnit);
+    std::vector<HTNPlanningQuery*> mPlanningQueries        = {&mMainPlanningQuery, &mSecondaryPlanningQuery};
 
     //----------------------------------------------------------------------//
     // WorldState Printer
@@ -76,11 +82,11 @@ private:
     // Decomposition Printer
     //----------------------------------------------------------------------//
     HTNNodeStates               mMainNodeStates;
-    HTNNodeStates               mUpperBodyNodeStates;
+    HTNNodeStates               mSecondaryNodeStates;
     HTNChoicePointNodeStates    mMainChoicePointNodeStates;
-    HTNChoicePointNodeStates    mUpperBodyChoicePointNodeStates;
+    HTNChoicePointNodeStates    mSecondaryChoicePointNodeStates;
     HTNNodeInstance             mMainSelectedNodeInstance;
-    HTNNodeInstance             mUpperBodySelectedNodeInstance;
+    HTNNodeInstance             mSecondarySelectedNodeInstance;
     HTNDecompositionTooltipMode mTooltipMode               = HTNDecompositionTooltipMode::REGULAR;
     bool                        mIsDecompositionCurrentTab = false;
 
