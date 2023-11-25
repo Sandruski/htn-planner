@@ -21,9 +21,11 @@ The solution contains four projects, HTNFramework, HTNDebugger, HTNDemo, and HTN
 
 ### HTNDemo
 1. In the "World State" tab, click the "Parse" button to parse the selected world state file from the folder of the same name. Below, see the parsed world state.
+
 ![world_state](https://github.com/Sandruski/htn-planner/blob/main/docs/images/world_state_tab.png)
 
 2. In the "Domain" tab, click the "Parse" button to parse the selected domain file from the folder of the same name. Below, see the parsed domain.
+
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/domain_tab.png)
 
 3. In the "Decomposition" tab, click the "Decompose" button to decompose the selected entry point of the parsed domain using the parsed world state. Below, see the result of the decomposition.
