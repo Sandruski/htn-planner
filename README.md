@@ -46,6 +46,8 @@ TODO salvarez
 ### HTNTest
 1. In the console window, see the results of the tests.
 
+![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/test_result_window.png)
+
 ## Performance Analysis
 
 ## Third-Party
