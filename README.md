@@ -8,27 +8,27 @@ Note that the project is a work in progress (WIP). As such, certain features may
 
 ### Use pre-built binaries
 1. Download the latest release from [Releases](https://github.com/Sandruski/htn-planner/releases). The latest released version is v0.1.
-2. Run `HTNDemo.exe`, which corresponds to the HTNDemo project.
+2. Run `HTNDemo.exe`, which corresponds to the `HTNDemo` project.
 
 ### Build it yourself
 1. Clone the repository with `git clone https://github.com/Sandruski/htn-planner` or download it as a ZIP from [htn-planner](https://github.com/Sandruski/htn-planner).
 2. Generate the solution by running [GenerateProjectFiles.bat](https://github.com/Sandruski/htn-planner/blob/main/GenerateProjectFiles.bat). By default, it is generated for Visual Studio 2022. You can change the version of Visual Studio by editing this file.
 3. If you add or remove project files, regenerate the solution by rerunning [GenerateProjectFiles.bat](https://github.com/Sandruski/htn-planner/blob/main/GenerateProjectFiles.bat).
-4. Build the solution and run the startup project. The startup project should be configured to either HTNDemo, as is the default setting, or HTNTest.
+4. Build the solution and run the startup project. The startup project should be configured to either `HTNDemo`, as is the default setting, or `HTNTest`.
 
 ## Quick Introduction
-The solution contains four projects, HTNFramework, HTNDebugger, HTNDemo, and HTNTest. HTNFramework and HTNDebugger are libraries, HTNFramework is the planner itself and HTNDebugger is the debugger of the planner. HTNDemo and HTNTest are applications, HTNDemo is a playground for using the planner and HTNTest contains a set of unit tests for testing the planner using automation.
+The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, and `HTNTest`. `HTNFramework` and `HTNDebugger` are libraries, `HTNFramework` is the planner itself and `HTNDebugger` is the debugger of the planner. `HTNDemo` and `HTNTest` are applications, `HTNDemo` is a playground for using the planner and `HTNTest` contains a set of unit tests for testing the planner using automation.
 
 ### HTNDemo
-1. In the "World State" tab, click the "Parse" button to parse the selected world state file from the folder of the same name. Below, see the parsed world state.
+1. In the `World State` tab, click the `Parse` button to parse the selected world state file from the folder of the same name. Below, see the parsed world state.
 
 ![world_state](https://github.com/Sandruski/htn-planner/blob/main/docs/images/world_state_tab.png)
 
-2. In the "Domain" tab, click the "Parse" button to parse the selected domain file from the folder of the same name. Below, see the parsed domain.
+2. In the `Domain` tab, click the `Parse` button to parse the selected domain file from the folder of the same name. Below, see the parsed domain.
 
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/domain_tab.png)
 
-3. In the "Decomposition" tab, click the "Decompose" button to decompose the selected entry point of the parsed domain using the parsed world state. Below, see the result of the decomposition.
+3. In the `Decomposition` tab, click the `Decompose` button to decompose the selected entry point of the parsed domain using the parsed world state. Below, see the result of the decomposition.
 
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point_tab.png)
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points_tab.png)
@@ -39,7 +39,7 @@ The solution contains four projects, HTNFramework, HTNDebugger, HTNDemo, and HTN
 - Uses DFS.
 - Uses backtracking to test alternative options for choice points.
 
-4. In the "Active Plan" tab, see the decomposed plan.
+4. In the `Active Plan` tab, see the decomposed plan.
 
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_active_plan_tab.png)
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_active_plan_tab.png)
