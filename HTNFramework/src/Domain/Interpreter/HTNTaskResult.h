@@ -8,6 +8,10 @@
 #include <string>
 #include <vector>
 
+class HTNTaskResult;
+
+using HTNPlan = std::vector<HTNTaskResult>;
+
 /*
  * Result of a primitive task
  */

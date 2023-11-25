@@ -157,7 +157,7 @@ void RenderActivePlanByPlanningQuery(const HTNPlanningQuery& inPlanningQuery)
     {
         const HTNPlanningUnit&            PlanningUnit         = inPlanningQuery.GetPlanningUnit();
         const HTNDecompositionRecord&     CurrentDecomposition = PlanningUnit.GetLastDecomposition();
-        const std::vector<HTNTaskResult>& Plan                 = CurrentDecomposition.GetPlan();
+        const HTNPlan& Plan                 = CurrentDecomposition.GetPlan();
 
         if (Plan.empty())
         {

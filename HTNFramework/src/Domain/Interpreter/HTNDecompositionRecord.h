@@ -21,7 +21,7 @@ public:
     HTN_NODISCARD HTNEnvironment&       GetEnvironmentMutable();
 
     void                              AddTaskResultToPlan(const HTNTaskResult& inTaskResult);
-    HTN_NODISCARD const std::vector<HTNTaskResult>& GetPlan() const;
+    HTN_NODISCARD const HTNPlan& GetPlan() const;
 
 private:
     // State of variables and indices
@@ -31,7 +31,7 @@ private:
     std::vector<HTNTaskInstance> mPendingTaskInstances;
 
     // Final plan of tasks
-    std::vector<HTNTaskResult> mPlan;
+    HTNPlan mPlan;
 };
 
 inline void HTNDecompositionRecord::PushPendingTaskInstance(const HTNTaskInstance& inPendingTaskInstance)
@@ -72,7 +72,7 @@ inline void HTNDecompositionRecord::AddTaskResultToPlan(const HTNTaskResult& inT
     mPlan.emplace_back(inTaskResult);
 }
 
-inline const std::vector<HTNTaskResult>& HTNDecompositionRecord::GetPlan() const
+inline const HTNPlan& HTNDecompositionRecord::GetPlan() const
 {
     return mPlan;
 }
