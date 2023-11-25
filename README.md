@@ -30,11 +30,18 @@ The solution contains four projects, HTNFramework, HTNDebugger, HTNDemo, and HTN
 
 3. In the "Decomposition" tab, click the "Decompose" button to decompose the selected entry point of the parsed domain using the parsed world state. Below, see the result of the decomposition.
 
+![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point_tab.png)
+![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points_tab.png)
+![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_failed_choice_point_tab.png)
+![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_tab.png)
 TODO salvarez
 - Uses DFS.
 - Uses backtracking to test alternative options for choice points.
 
 4. In the "Active Plan" tab, see the decomposed plan.
+
+![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_active_plan_tab.png)
+![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_active_plan_tab.png)
 
 ### HTNTest
 1. In the console window, see the results of the tests.
