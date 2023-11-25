@@ -21,6 +21,8 @@ class HTNFactArgumentsTable;
 
 using HTNFactArguments       = std::array<HTNAtom, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
 using HTNFactArgumentsTables = std::array<HTNFactArgumentsTable, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
+using HTNFacts = std::unordered_map<std::string, HTNFactArgumentsTables>;
+using HTNFact = std::pair<const std::string, HTNFactArgumentsTables>;
 
 /**
  * Table of fact arguments mapped to a fact ID in the world state
@@ -108,11 +110,11 @@ public:
     template<typename T>
     HTN_NODISCARD bool ContainsFactArguments(const std::string& inFactID, const T inFactArgumentsBegin, const T inFactArgumentsEnd) const;
 
-    HTN_NODISCARD const std::unordered_map<std::string, HTNFactArgumentsTables>& GetFacts() const;
+    HTN_NODISCARD const HTNFacts& GetFacts() const;
 
 private:
     // Fact ID to fact argument tables
-    std::unordered_map<std::string, HTNFactArgumentsTables> mFacts;
+    HTNFacts mFacts;
 };
 
 template<typename T>
@@ -339,7 +341,7 @@ bool HTNWorldState::ContainsFactArguments(const std::string& inFactID, const T i
     return FactArgumentsTable.ContainsFactArguments(inFactArgumentsBegin, inFactArgumentsEnd);
 }
 
-inline const std::unordered_map<std::string, HTNFactArgumentsTables>& HTNWorldState::GetFacts() const
+inline const HTNFacts& HTNWorldState::GetFacts() const
 {
     return mFacts;
 }

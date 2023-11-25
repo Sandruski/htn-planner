@@ -5,16 +5,16 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/Interpreter/HTNNodeStep.h"
 
-HTNDecompositionNodeStateBase::HTNDecompositionNodeStateBase(const int32 inDecompositionStep) : mDecompositionStep(inDecompositionStep)
+HTNNodeStateBase::HTNNodeStateBase(const int32 inDecompositionStep) : mDecompositionStep(inDecompositionStep)
 {
 }
 
 HTNNodeState::HTNNodeState(const int32 inDecompositionStep, const bool inIsOpen)
-    : HTNDecompositionNodeStateBase(inDecompositionStep), mIsOpen(inIsOpen)
+    : HTNNodeStateBase(inDecompositionStep), mIsOpen(inIsOpen)
 {
 }
 
-HTNDecompositionNodeStateBase::~HTNDecompositionNodeStateBase() = default;
+HTNNodeStateBase::~HTNNodeStateBase() = default;
 
 HTNNodeStep HTNNodeState::GetNodeStep() const
 {
@@ -22,17 +22,17 @@ HTNNodeStep HTNNodeState::GetNodeStep() const
     return HTNDecompositionHelpers::IsDecompositionStepValid(DecompositionStep) ? HTNNodeStep::END : HTNNodeStep::START;
 }
 
-HTNDecompositionChoicePointNodeState::HTNDecompositionChoicePointNodeState(const int32 inDecompositionStep, const bool inIsOpen)
-    : HTNDecompositionNodeStateBase(inDecompositionStep), mIsOpen({{inDecompositionStep, inIsOpen}})
+HTNChoicePointNodeState::HTNChoicePointNodeState(const int32 inDecompositionStep, const bool inIsOpen)
+    : HTNNodeStateBase(inDecompositionStep), mIsOpen({{inDecompositionStep, inIsOpen}})
 {
 }
 
-HTNNodeStep HTNDecompositionChoicePointNodeState::GetNodeStep() const
+HTNNodeStep HTNChoicePointNodeState::GetNodeStep() const
 {
     return HTNNodeStep::END;
 }
 
-int32 HTNDecompositionChoicePointNodeState::FindOpenDecompositionStepInRange(const int32 inMinDecompositionStep,
+int32 HTNChoicePointNodeState::FindOpenDecompositionStepInRange(const int32 inMinDecompositionStep,
                                                                              const int32 inMaxDecompositionStep) const
 {
     for (const std::pair<const size, bool>& Pair : mIsOpen)

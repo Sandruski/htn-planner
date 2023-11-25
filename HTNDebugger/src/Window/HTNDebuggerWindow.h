@@ -41,13 +41,11 @@ private:
     void RenderWorldState();
 
     void RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, HTNPlanningQuery& ioPlanningQuery,
-                                            std::unordered_map<std::string, HTNNodeState>&                         ioNodeStates,
-                                            std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates,
-                                            HTNNodeInstance&                                                       ioSelectedNodeInstance);
+                                            HTNNodeStates& ioNodeStates, HTNChoicePointNodeStates& ioChoicePointNodeStates,
+                                            HTNNodeInstance& ioSelectedNodeInstance);
 
-    void ResetDecompositionState(std::unordered_map<std::string, HTNNodeState>&                         ioNodeStates,
-                                 std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates,
-                                 HTNNodeInstance&                                                       ioSelectedNodeInstance);
+    void ResetDecompositionState(HTNNodeStates& ioNodeStates, HTNChoicePointNodeStates& ioChoicePointNodeStates,
+                                 HTNNodeInstance& ioSelectedNodeInstance);
 
     HTN_NODISCARD bool IsLastWorldStateFileParsingOperationSuccessful() const;
     HTN_NODISCARD bool IsLastDomainFileParsingOperationSuccessful() const;
@@ -77,14 +75,14 @@ private:
     //----------------------------------------------------------------------//
     // Decomposition Printer
     //----------------------------------------------------------------------//
-    std::unordered_map<std::string, HTNNodeState>                         mMainNodeStates;
-    std::unordered_map<std::string, HTNNodeState>                         mUpperBodyNodeStates;
-    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mMainChoicePointNodeStates;
-    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState> mUpperBodyChoicePointNodeStates;
-    HTNNodeInstance                                                       mMainSelectedNodeInstance;
-    HTNNodeInstance                                                       mUpperBodySelectedNodeInstance;
-    HTNDecompositionTooltipMode                                           mTooltipMode               = HTNDecompositionTooltipMode::REGULAR;
-    bool                                                                  mIsDecompositionCurrentTab = false;
+    HTNNodeStates               mMainNodeStates;
+    HTNNodeStates               mUpperBodyNodeStates;
+    HTNChoicePointNodeStates    mMainChoicePointNodeStates;
+    HTNChoicePointNodeStates    mUpperBodyChoicePointNodeStates;
+    HTNNodeInstance             mMainSelectedNodeInstance;
+    HTNNodeInstance             mUpperBodySelectedNodeInstance;
+    HTNDecompositionTooltipMode mTooltipMode               = HTNDecompositionTooltipMode::REGULAR;
+    bool                        mIsDecompositionCurrentTab = false;
 
     const HTNWorldStatePrinter               mWorldStatePrinter               = HTNWorldStatePrinter();
     const HTNDomainPrinter                   mDomainPrinter                   = HTNDomainPrinter();

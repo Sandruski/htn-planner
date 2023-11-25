@@ -6,14 +6,14 @@
 #include "Core/HTNPathManager.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "Domain/Printer/HTNDecompositionTooltipMode.h"
+#include "Domain/Printer/HTNNodeState.h"
 #include "HTNCoreMinimal.h"
 
 #include <limits>
 #include <memory>
 #include <string>
-#include <unordered_map>
 
-class HTNDecompositionChoicePointNodeState;
+class HTNChoicePointNodeState;
 class HTNNodeInstance;
 class HTNNodeState;
 class HTNDecompositionResult;
@@ -25,10 +25,8 @@ class HTNDecompositionPrinterContext final : public HTNNodeVisitorContextBase
 public:
     explicit HTNDecompositionPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
                                             const HTNDecompositionResult& inDecompositionResult, const HTNDecompositionTooltipMode inTooltipMode,
-                                            const bool                                                             inShouldIgnoreImGuiState,
-                                            std::unordered_map<std::string, HTNNodeState>&            ioNodeStates,
-                                            std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates,
-                                            HTNNodeInstance&                                                       ioSelectedNodeInstance);
+                                            const bool inShouldIgnoreImGuiState, HTNNodeStates& ioNodeStates,
+                                            HTNChoicePointNodeStates& ioChoicePointNodeStates, HTNNodeInstance& ioSelectedNodeInstance);
 
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
     HTN_NODISCARD const std::string&            GetEntryPointID() const;
@@ -40,16 +38,16 @@ public:
     void               UnselectSelectedNodeInstance();
     HTN_NODISCARD bool IsNodeSelected(const std::string& inNodeLabel) const;
 
-    void                                           AddNodeState(const std::string& inNodePath, const HTNNodeState& inNodeState);
+    void                              AddNodeState(const std::string& inNodePath, const HTNNodeState& inNodeState);
     HTN_NODISCARD const HTNNodeState& GetNodeState(const std::string& inNodePath) const;
     HTN_NODISCARD HTNNodeState&       GetNodeStateMutable(const std::string& inNodePath);
     HTN_NODISCARD const HTNNodeState* FindNodeState(const std::string& inNodePath) const;
     HTN_NODISCARD HTNNodeState*       FindNodeStateMutable(const std::string& inNodePath);
-    void AddChoicePointNodeState(const std::string& inNodePath, const HTNDecompositionChoicePointNodeState& inChoicePointNodeState);
-    HTN_NODISCARD const HTNDecompositionChoicePointNodeState& GetChoicePointNodeState(const std::string& inNodePath) const;
-    HTN_NODISCARD HTNDecompositionChoicePointNodeState&       GetChoicePointNodeStateMutable(const std::string& inNodePath);
-    HTN_NODISCARD const HTNDecompositionChoicePointNodeState* FindChoicePointNodeState(const std::string& inNodePath) const;
-    HTN_NODISCARD HTNDecompositionChoicePointNodeState*       FindChoicePointNodeStateMutable(const std::string& inNodePath);
+    void                              AddChoicePointNodeState(const std::string& inNodePath, const HTNChoicePointNodeState& inChoicePointNodeState);
+    HTN_NODISCARD const HTNChoicePointNodeState& GetChoicePointNodeState(const std::string& inNodePath) const;
+    HTN_NODISCARD HTNChoicePointNodeState&       GetChoicePointNodeStateMutable(const std::string& inNodePath);
+    HTN_NODISCARD const HTNChoicePointNodeState* FindChoicePointNodeState(const std::string& inNodePath) const;
+    HTN_NODISCARD HTNChoicePointNodeState*       FindChoicePointNodeStateMutable(const std::string& inNodePath);
 
     HTN_NODISCARD HTNNodeStep GetNodeStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
     HTN_NODISCARD int32       GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
@@ -88,10 +86,10 @@ private:
     // Input/Output
     //----------------------------------------------------------------------//
     // Node path to node state
-    std::unordered_map<std::string, HTNNodeState>& mNodeStates;
+    HTNNodeStates& mNodeStates;
 
     // Node path to choice point node state
-    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& mChoicePointNodeStates;
+    HTNChoicePointNodeStates& mChoicePointNodeStates;
 
     HTNNodeInstance& mSelectedNodeInstance;
 

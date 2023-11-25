@@ -36,7 +36,7 @@ enum HTNValueExpressionNodeResult : uint8
 void PrePrintChoicePointNode(const std::string& inNodePath, const size inLastDecompositionStep,
                              HTNDecompositionPrinterContext& ioDecompositionPrinterContext)
 {
-    HTNDecompositionChoicePointNodeState* ChoicePointNodeState = ioDecompositionPrinterContext.FindChoicePointNodeStateMutable(inNodePath);
+    HTNChoicePointNodeState* ChoicePointNodeState = ioDecompositionPrinterContext.FindChoicePointNodeStateMutable(inNodePath);
     if (ChoicePointNodeState)
     {
         const bool ShouldRefreshNodeStates = ioDecompositionPrinterContext.ShouldRefreshNodeStates();
@@ -55,7 +55,7 @@ void PrePrintChoicePointNode(const std::string& inNodePath, const size inLastDec
         // Default open successful decomposition step
         const int32           DecompositionStep = static_cast<const int32>(inLastDecompositionStep);
         static constexpr bool IsNodeOpen        = true;
-        ioDecompositionPrinterContext.AddChoicePointNodeState(inNodePath, HTNDecompositionChoicePointNodeState(DecompositionStep, IsNodeOpen));
+        ioDecompositionPrinterContext.AddChoicePointNodeState(inNodePath, HTNChoicePointNodeState(DecompositionStep, IsNodeOpen));
         ioDecompositionPrinterContext.RefreshNodeStates();
     }
 }
@@ -117,7 +117,7 @@ void PrePrintNode(const std::string& inNodePath, const bool inIsChoicePoint, con
 
 void PostPrintChoicePointNode(const std::string& inNodePath, const bool inIsNodeOpen, HTNDecompositionPrinterContext& ioDecompositionPrinterContext)
 {
-    HTNDecompositionChoicePointNodeState& ChoicePointNodeState = ioDecompositionPrinterContext.GetChoicePointNodeStateMutable(inNodePath);
+    HTNChoicePointNodeState& ChoicePointNodeState = ioDecompositionPrinterContext.GetChoicePointNodeStateMutable(inNodePath);
 
     const int32 PreviousDecompositionStep = ChoicePointNodeState.GetDecompositionStep();
 

@@ -10,7 +10,7 @@
 namespace
 {
 HTN_NODISCARD std::string MakeFactDescription(const std::string& inFactID, const HTNFactArguments& inFactArguments,
-                                const bool inShouldDoubleQuoteString)
+                                              const bool inShouldDoubleQuoteString)
 {
     std::string FactDescription = inFactID;
 
@@ -30,8 +30,8 @@ bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinte
     const HTNWorldState&   WorldState = ioWorldStatePrinterContext.GetWorldState();
     const ImGuiTextFilter& TextFilter = ioWorldStatePrinterContext.GetTextFilter();
 
-    const std::unordered_map<std::string, HTNFactArgumentsTables>& Facts = WorldState.GetFacts();
-    for (const std::pair<const std::string, HTNFactArgumentsTables>& Fact : Facts)
+    const HTNFacts& Facts = WorldState.GetFacts();
+    for (const HTNFact& Fact : Facts)
     {
         const std::string&            FactID              = Fact.first;
         const HTNFactArgumentsTables& FactArgumentsTables = Fact.second;
@@ -48,7 +48,7 @@ bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinte
                 if (!PassFilterResult)
                 {
                     ShouldDoubleQuoteString = true;
-                    Text                                = MakeFactDescription(FactID, FactArgumentsElement, ShouldDoubleQuoteString);
+                    Text                    = MakeFactDescription(FactID, FactArgumentsElement, ShouldDoubleQuoteString);
 
                     PassFilterResult = TextFilter.PassFilter(Text.c_str());
                     if (!PassFilterResult)

@@ -402,10 +402,10 @@ void HTNDebuggerWindow::RenderWorldState()
     ImGui::EndChild();
 }
 
-void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(
-    const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, HTNPlanningQuery& ioPlanningQuery,
-    std::unordered_map<std::string, HTNNodeState>&                         ioNodeStates,
-    std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates, HTNNodeInstance& ioSelectedNodeInstance)
+void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes,
+                                                           HTNPlanningQuery& ioPlanningQuery, HTNNodeStates& ioNodeStates,
+                                                           HTNChoicePointNodeStates& ioChoicePointNodeStates,
+                                                           HTNNodeInstance&                                          ioSelectedNodeInstance)
 {
     const std::string& EntryPointID = ioPlanningQuery.GetEntryPointID();
     if (ImGui::BeginCombo("Entry Point", EntryPointID.c_str()))
@@ -578,9 +578,8 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(
     ImGui::EndChild();
 }
 
-void HTNDebuggerWindow::ResetDecompositionState(std::unordered_map<std::string, HTNNodeState>&                         ioNodeStates,
-                                                std::unordered_map<std::string, HTNDecompositionChoicePointNodeState>& ioChoicePointNodeStates,
-                                                HTNNodeInstance&                                                       ioSelectedNodeInstance)
+void HTNDebuggerWindow::ResetDecompositionState(HTNNodeStates& ioNodeStates, HTNChoicePointNodeStates& ioChoicePointNodeStates,
+                                                HTNNodeInstance& ioSelectedNodeInstance)
 {
     ioNodeStates.clear();
     ioChoicePointNodeStates.clear();

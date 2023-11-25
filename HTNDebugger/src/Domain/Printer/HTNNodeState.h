@@ -3,24 +3,32 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNCoreMinimal.h"
 #include "Domain/Printer/HTNDecompositionHelpers.h"
+#include "HTNCoreMinimal.h"
 
 #include <map>
+#include <string>
+#include <unordered_map>
+
+class HTNChoicePointNodeState;
+class HTNNodeState;
 
 enum class HTNNodeStep : uint8;
+
+using HTNNodeStates            = std::unordered_map<std::string, HTNNodeState>;
+using HTNChoicePointNodeStates = std::unordered_map<std::string, HTNChoicePointNodeState>;
 
 /**
  * Base decomposition node state
  */
-class HTNDecompositionNodeStateBase
+class HTNNodeStateBase
 {
 public:
-    HTNDecompositionNodeStateBase() = default;
-    explicit HTNDecompositionNodeStateBase(const int32 inDecompositionStep);
-    virtual ~HTNDecompositionNodeStateBase() = 0;
+    HTNNodeStateBase() = default;
+    explicit HTNNodeStateBase(const int32 inDecompositionStep);
+    virtual ~HTNNodeStateBase() = 0;
 
-    void SetDecompositionStep(const int32 inDecompositionStep);
+    void                SetDecompositionStep(const int32 inDecompositionStep);
     HTN_NODISCARD int32 GetDecompositionStep() const;
 
     HTN_NODISCARD virtual HTNNodeStep GetNodeStep() const = 0;
@@ -34,7 +42,7 @@ private:
  * Decomposition node state (not choice point)
  * - A decomposition step of -1 means use current decomposition step
  */
-class HTNNodeState final : public HTNDecompositionNodeStateBase
+class HTNNodeState final : public HTNNodeStateBase
 {
 public:
     HTNNodeState() = default;
@@ -42,7 +50,7 @@ public:
 
     HTN_NODISCARD HTNNodeStep GetNodeStep() const final;
 
-    void SetIsOpen(const bool inIsOpen);
+    void               SetIsOpen(const bool inIsOpen);
     HTN_NODISCARD bool IsOpen() const;
 
 private:
@@ -54,16 +62,16 @@ private:
  * Decomposition choice point node state
  * - A decomposition step of -1 means use all decomposition steps
  */
-class HTNDecompositionChoicePointNodeState final : public HTNDecompositionNodeStateBase
+class HTNChoicePointNodeState final : public HTNNodeStateBase
 {
 public:
-    HTNDecompositionChoicePointNodeState() = default;
-    explicit HTNDecompositionChoicePointNodeState(const int32 inDecompositionStep, const bool inIsOpen);
+    HTNChoicePointNodeState() = default;
+    explicit HTNChoicePointNodeState(const int32 inDecompositionStep, const bool inIsOpen);
 
     HTN_NODISCARD HTNNodeStep GetNodeStep() const final;
 
-    void SetIsOpen(const size inDecompositionStep, const bool inIsOpen);
-    HTN_NODISCARD bool IsOpen(const size inDecompositionStep) const;
+    void                SetIsOpen(const size inDecompositionStep, const bool inIsOpen);
+    HTN_NODISCARD bool  IsOpen(const size inDecompositionStep) const;
     HTN_NODISCARD int32 FindOpenDecompositionStepInRange(const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep) const;
 
 private:
@@ -71,12 +79,12 @@ private:
     std::map<size, bool> mIsOpen;
 };
 
-inline void HTNDecompositionNodeStateBase::SetDecompositionStep(const int32 inDecompositionStep)
+inline void HTNNodeStateBase::SetDecompositionStep(const int32 inDecompositionStep)
 {
     mDecompositionStep = inDecompositionStep;
 }
 
-inline int32 HTNDecompositionNodeStateBase::GetDecompositionStep() const
+inline int32 HTNNodeStateBase::GetDecompositionStep() const
 {
     return mDecompositionStep;
 }
@@ -91,12 +99,12 @@ inline bool HTNNodeState::IsOpen() const
     return mIsOpen;
 }
 
-inline void HTNDecompositionChoicePointNodeState::SetIsOpen(const size inDecompositionStep, const bool inIsOpen)
+inline void HTNChoicePointNodeState::SetIsOpen(const size inDecompositionStep, const bool inIsOpen)
 {
     mIsOpen[inDecompositionStep] = inIsOpen;
 }
 
-inline bool HTNDecompositionChoicePointNodeState::IsOpen(const size inDecompositionStep) const
+inline bool HTNChoicePointNodeState::IsOpen(const size inDecompositionStep) const
 {
     const auto It = mIsOpen.find(inDecompositionStep);
     return (It != mIsOpen.end()) ? It->second : false;
