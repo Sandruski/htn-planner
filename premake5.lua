@@ -122,9 +122,12 @@ project "HTNDemo"
     objdir ("int/" .. outputdir .. "/%{prj.name}")
 
     files { "%{prj.name}/src/**.cpp",
-            "%{prj.name}/src/**.h" }
+            "%{prj.name}/src/**.h",
+            -- Optick
+            "ThirdParty/optick/src/**.cpp",
+            "ThirdParty/optick/src/**.h" }
 
-    includedirs { "%{prj.name}/src", "HTNFramework/src" }
+    includedirs { "%{prj.name}/src", "HTNFramework/src", "ThirdParty/optick/src" }
 
     links { "HTNFramework" }
 

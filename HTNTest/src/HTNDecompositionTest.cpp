@@ -18,6 +18,11 @@
 #include <tuple>
 #include <vector>
 
+namespace
+{
+const std::string kMainDefaultTopLevelMethodID = "behave";
+}
+
 class HTNDecompositionTest : public testing::TestWithParam<std::tuple<std::string, std::string, std::string, size>>
 {
 public:
@@ -70,7 +75,7 @@ void HTNDecompositionTest::SetUp()
     ASSERT_TRUE(ParseDomainFileResult);
 
     const size PlanningUnitsSize = GetPlanningUnitsSize();
-    mPlanningUnits.resize(PlanningUnitsSize, HTNPlanningUnit("", mDatabaseHook, mPlannerHook));
+    mPlanningUnits.resize(PlanningUnitsSize, HTNPlanningUnit(mDatabaseHook, mPlannerHook, kMainDefaultTopLevelMethodID));
 }
 
 const std::string& HTNDecompositionTest::GetWorldStateFileName() const
@@ -102,5 +107,4 @@ TEST_P(HTNDecompositionTest, IsDecompositionSuccessful)
     });
 }
 
-INSTANTIATE_TEST_CASE_P(Human, HTNDecompositionTest,
-                        testing::Values(std::make_tuple("human", "human", HTNDomainHelpers::kDefaultMainTopLevelMethodID, 100)));
+INSTANTIATE_TEST_CASE_P(Human, HTNDecompositionTest, testing::Values(std::make_tuple("human", "human", kMainDefaultTopLevelMethodID, 100)));
