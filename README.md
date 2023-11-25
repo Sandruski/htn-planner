@@ -34,7 +34,8 @@ The solution contains four projects, HTNFramework, HTNDebugger, HTNDemo, and HTN
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points_tab.png)
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_failed_choice_point_tab.png)
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_tab.png)
-TODO salvarez
+
+// TODO salvarez explain
 - Uses DFS.
 - Uses backtracking to test alternative options for choice points.
 
@@ -49,6 +50,8 @@ TODO salvarez
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/test_result_window.png)
 
 ## Performance Analysis
+
+// TODO salvarez explain and take screenshots from Optick
 
 ## Third-Party
 - [SDL](https://www.libsdl.org/)
