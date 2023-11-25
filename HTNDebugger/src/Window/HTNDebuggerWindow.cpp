@@ -525,15 +525,26 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
     {
         if (ImGui::BeginMenu("View"))
         {
+            static constexpr ImGuiHoveredFlags MenuItemHoveredFlags = ImGuiHoveredFlags_ForTooltip;
+
             if (ImGui::MenuItem("Reset", "R"))
             {
                 ResetDecompositionState(ioNodeStates, ioChoicePointNodeStates, ioSelectedNodeInstance);
             }
 
-            static constexpr ImGuiHoveredFlags MenuItemHoveredFlags = ImGuiHoveredFlags_ForTooltip;
             if (ImGui::IsItemHovered(MenuItemHoveredFlags))
             {
-                ImGui::SetTooltip("Display successful decomposition");
+                ImGui::SetTooltip("Display the successful decomposition");
+            }
+
+            if (ImGui::MenuItem("Unselect", "U"))
+            {
+                ResetSelectedNodeInstance(ioSelectedNodeInstance);
+            }
+
+            if (ImGui::IsItemHovered(MenuItemHoveredFlags))
+            {
+                ImGui::SetTooltip("Unselect the selected line");
             }
 
             ImGui::EndMenu();
@@ -591,6 +602,11 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         ResetDecompositionState(ioNodeStates, ioChoicePointNodeStates, ioSelectedNodeInstance);
     }
 
+    if (ImGui::IsKeyPressed(ImGuiKey_U, ShouldRepeat))
+    {
+        ResetSelectedNodeInstance(ioSelectedNodeInstance);
+    }
+
     const bool IsLastDecompositionOperationSuccessful = ioPlanningQuery.IsLastDecompositionOperationSuccessful();
     if (IsLastDecompositionOperationSuccessful)
     {
@@ -642,6 +658,11 @@ void HTNDebuggerWindow::ResetDecompositionState(HTNNodeStates& ioNodeStates, HTN
 {
     ioNodeStates.clear();
     ioChoicePointNodeStates.clear();
+    ioSelectedNodeInstance = HTNNodeInstance();
+}
+
+void HTNDebuggerWindow::ResetSelectedNodeInstance(HTNNodeInstance& ioSelectedNodeInstance)
+{
     ioSelectedNodeInstance = HTNNodeInstance();
 }
 
