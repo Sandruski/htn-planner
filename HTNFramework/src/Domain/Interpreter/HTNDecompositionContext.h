@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Core/HTNPathHandler.h"
+#include "Core/HTNPathManager.h"
 #include "Domain/Interpreter/HTNDecompositionRecord.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "HTNCoreMinimal.h"
@@ -45,13 +45,13 @@ public:
     void                                 SetDecompositionRecordHistory(const HTNDecompositionRecordHistory& inDecompositionRecordHistory);
     HTN_NODISCARD const HTNDecompositionRecordHistory& GetDecompositionRecordHistory() const;
 
-    void                  SetCurrentNodePathHandler(const HTNPathHandler& inCurrentNodePathHandler);
-    HTN_NODISCARD const HTNPathHandler& GetCurrentNodePathHandler() const;
-    HTN_NODISCARD HTNPathHandler&       GetCurrentNodePathHandlerMutable();
+    void                  SetCurrentNodePathManager(const HTNPathManager& inCurrentNodePathManager);
+    HTN_NODISCARD const HTNPathManager& GetCurrentNodePathManager() const;
+    HTN_NODISCARD HTNPathManager&       GetCurrentNodePathManagerMutable();
 
-    void                  SetCurrentVariablesPathHandler(const HTNPathHandler& inCurrentVariablesPathHandler);
-    HTN_NODISCARD const HTNPathHandler& GetCurrentVariablesPathHandler() const;
-    HTN_NODISCARD HTNPathHandler&       GetCurrentVariablesPathHandlerMutable();
+    void                  SetCurrentVariablesPathManager(const HTNPathManager& inCurrentVariablesPathManager);
+    HTN_NODISCARD const HTNPathManager& GetCurrentVariablesPathManager() const;
+    HTN_NODISCARD HTNPathManager&       GetCurrentVariablesPathManagerMutable();
 
 private:
     //----------------------------------------------------------------------//
@@ -74,10 +74,10 @@ private:
     HTNDecompositionRecordHistory mDecompositionRecordHistory;
 
     // Path from the root node to the current node being processed
-    HTNPathHandler mCurrentNodePathHandler;
+    HTNPathManager mCurrentNodePathManager;
 
     // Path from the root node to the current node determining the scope of the variables
-    HTNPathHandler mCurrentVariablesPathHandler;
+    HTNPathManager mCurrentVariablesPathManager;
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 public:
@@ -134,34 +134,34 @@ inline const HTNDecompositionRecordHistory& HTNDecompositionContext::GetDecompos
     return mDecompositionRecordHistory;
 }
 
-inline void HTNDecompositionContext::SetCurrentNodePathHandler(const HTNPathHandler& inNodePathHandler)
+inline void HTNDecompositionContext::SetCurrentNodePathManager(const HTNPathManager& inNodePathManager)
 {
-    mCurrentNodePathHandler = inNodePathHandler;
+    mCurrentNodePathManager = inNodePathManager;
 }
 
-inline const HTNPathHandler& HTNDecompositionContext::GetCurrentNodePathHandler() const
+inline const HTNPathManager& HTNDecompositionContext::GetCurrentNodePathManager() const
 {
-    return mCurrentNodePathHandler;
+    return mCurrentNodePathManager;
 }
 
-inline HTNPathHandler& HTNDecompositionContext::GetCurrentNodePathHandlerMutable()
+inline HTNPathManager& HTNDecompositionContext::GetCurrentNodePathManagerMutable()
 {
-    return mCurrentNodePathHandler;
+    return mCurrentNodePathManager;
 }
 
-inline void HTNDecompositionContext::SetCurrentVariablesPathHandler(const HTNPathHandler& inVariablesPathHandler)
+inline void HTNDecompositionContext::SetCurrentVariablesPathManager(const HTNPathManager& inVariablesPathManager)
 {
-    mCurrentVariablesPathHandler = inVariablesPathHandler;
+    mCurrentVariablesPathManager = inVariablesPathManager;
 }
 
-inline const HTNPathHandler& HTNDecompositionContext::GetCurrentVariablesPathHandler() const
+inline const HTNPathManager& HTNDecompositionContext::GetCurrentVariablesPathManager() const
 {
-    return mCurrentVariablesPathHandler;
+    return mCurrentVariablesPathManager;
 }
 
-inline HTNPathHandler& HTNDecompositionContext::GetCurrentVariablesPathHandlerMutable()
+inline HTNPathManager& HTNDecompositionContext::GetCurrentVariablesPathManagerMutable()
 {
-    return mCurrentVariablesPathHandler;
+    return mCurrentVariablesPathManager;
 }
 
 #ifdef HTN_DEBUG_DECOMPOSITION

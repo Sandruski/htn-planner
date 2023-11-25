@@ -2,7 +2,7 @@
 
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 
-#include "Core/HTNPathHandler.h"
+#include "Core/HTNPathManager.h"
 #include "Domain/HTNDomainHelpers.h"
 #include "Domain/Interpreter/HTNConditionQuery.h"
 #include "Domain/Interpreter/HTNDecompositionContext.h"
@@ -34,13 +34,13 @@ HTN_NODISCARD HTNDecompositionContext& GetDecompositionContext(HTNNodeVisitorCon
 void RecordCurrentNodeResult(const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint,
                              HTNDecompositionContext& ioDecompositionContext)
 {
-    const std::string& CurrentNodePath = ioDecompositionContext.GetCurrentNodePathHandler().GetPath();
+    const std::string& CurrentNodePath = ioDecompositionContext.GetCurrentNodePathManager().GetPath();
     ioDecompositionContext.RecordNodeResult(CurrentNodePath, inResult, inNodeStep, inIsChoicePoint);
 }
 
 void RecordCurrentNodeResult(const HTNNodeStep inNodeStep, const bool inIsChoicePoint, HTNDecompositionContext& ioDecompositionContext)
 {
-    const std::string& CurrentNodePath = ioDecompositionContext.GetCurrentNodePathHandler().GetPath();
+    const std::string& CurrentNodePath = ioDecompositionContext.GetCurrentNodePathManager().GetPath();
     ioDecompositionContext.RecordNodeResult(CurrentNodePath, inNodeStep, inIsChoicePoint);
 }
 #endif
@@ -101,10 +101,10 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
 
     const std::shared_ptr<const HTNCompoundTaskNode> TopLevelCompoundTaskNode    = HTNDomainHelpers::MakeTopLevelCompoundTaskNode(EntryPointID);
-    const HTNPathHandler&                            CurrentNodePathHandler      = DecompositionContext.GetCurrentNodePathHandler();
-    const HTNPathHandler&                            CurrentVariablesPathHandler = DecompositionContext.GetCurrentVariablesPathHandler();
+    const HTNPathManager&                            CurrentNodePathManager      = DecompositionContext.GetCurrentNodePathManager();
+    const HTNPathManager&                            CurrentVariablesPathManager = DecompositionContext.GetCurrentVariablesPathManager();
     const HTNTaskInstance                            TopLevelCompoundTaskInstance =
-        HTNTaskInstance(TopLevelCompoundTaskNode, HTNEnvironment(), CurrentNodePathHandler, CurrentVariablesPathHandler);
+        HTNTaskInstance(TopLevelCompoundTaskNode, HTNEnvironment(), CurrentNodePathManager, CurrentVariablesPathManager);
     CurrentDecomposition.PushPendingTaskInstance(TopLevelCompoundTaskInstance);
 
     // Perform depth-first search on the domain
@@ -114,8 +114,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
         const HTNTaskInstance TaskInstance = CurrentDecomposition.PopPendingTaskInstance();
 
         // Initialize the state with that of the task instance
-        DecompositionContext.SetCurrentNodePathHandler(TaskInstance.GetNodePathHandler());
-        DecompositionContext.SetCurrentVariablesPathHandler(TaskInstance.GetVariablesPathHandler());
+        DecompositionContext.SetCurrentNodePathManager(TaskInstance.GetNodePathManager());
+        DecompositionContext.SetCurrentVariablesPathManager(TaskInstance.GetVariablesPathManager());
 
         // Also set the environment because it is synced to the current node and variable scope paths
         CurrentDecomposition.SetEnvironment(TaskInstance.GetEnvironment());
@@ -200,7 +200,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
 #endif
 
     const HTNDecompositionNodeScope MethodNodeScope = HTNDecompositionNodeScope(inMethodNode.GetID(), DecompositionContext);
-    const std::string&              CurrentNodePath = DecompositionContext.GetCurrentNodePathHandler().GetPath();
+    const std::string&              CurrentNodePath = DecompositionContext.GetCurrentNodePathManager().GetPath();
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
@@ -287,14 +287,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVi
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
 
-    const HTNPathHandler& CurrentNodePathHandler      = DecompositionContext.GetCurrentNodePathHandler();
-    const HTNPathHandler& CurrentVariablesPathHandler = DecompositionContext.GetCurrentVariablesPathHandler();
+    const HTNPathManager& CurrentNodePathManager      = DecompositionContext.GetCurrentNodePathManager();
+    const HTNPathManager& CurrentVariablesPathManager = DecompositionContext.GetCurrentVariablesPathManager();
 
     const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& TaskNodes = inBranchNode.GetTaskNodes();
     for (int32 i = static_cast<int32>(TaskNodes.size()) - 1; i >= 0; --i)
     {
         const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskNodes[i];
-        const HTNTaskInstance TaskInstance = HTNTaskInstance(TaskNode, Environment, CurrentNodePathHandler, CurrentVariablesPathHandler);
+        const HTNTaskInstance TaskInstance = HTNTaskInstance(TaskNode, Environment, CurrentNodePathManager, CurrentVariablesPathManager);
         CurrentDecomposition.PushPendingTaskInstance(TaskInstance);
     }
 
@@ -317,7 +317,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
 #endif
 
     const HTNDecompositionNodeScope ConditionNodeScope = HTNDecompositionNodeScope(inConditionNode.GetID(), DecompositionContext);
-    const std::string&              CurrentNodePath    = DecompositionContext.GetCurrentNodePathHandler().GetPath();
+    const std::string&              CurrentNodePath    = DecompositionContext.GetCurrentNodePathManager().GetPath();
 
     // Gather fact arguments
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes     = inConditionNode.GetArgumentNodes();
@@ -646,7 +646,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
 #endif
 
     const HTNDecompositionNodeScope AndConditionNodeScope = HTNDecompositionNodeScope(inAndConditionNode.GetID(), DecompositionContext);
-    const std::string&              CurrentNodePath       = DecompositionContext.GetCurrentNodePathHandler().GetPath();
+    const std::string&              CurrentNodePath       = DecompositionContext.GetCurrentNodePathManager().GetPath();
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
@@ -717,7 +717,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
 #endif
 
     const HTNDecompositionNodeScope OrConditionNodeScope = HTNDecompositionNodeScope(inOrConditionNode.GetID(), DecompositionContext);
-    const std::string&              CurrentNodePath      = DecompositionContext.GetCurrentNodePathHandler().GetPath();
+    const std::string&              CurrentNodePath      = DecompositionContext.GetCurrentNodePathManager().GetPath();
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
@@ -777,7 +777,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
 #endif
 
     const HTNDecompositionNodeScope AltConditionNodeScope = HTNDecompositionNodeScope(inAltConditionNode.GetID(), DecompositionContext);
-    const std::string&              CurrentNodePath       = DecompositionContext.GetCurrentNodePathHandler().GetPath();
+    const std::string&              CurrentNodePath       = DecompositionContext.GetCurrentNodePathManager().GetPath();
 
 #ifdef HTN_DEBUG_DECOMPOSITION
     RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
@@ -1063,14 +1063,14 @@ void HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableExpr
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
     const std::string     VariableID                  = inVariableExpressionNode.GetValue().GetValue<std::string>();
-    const HTNPathHandler& CurrentVariablesPathHandler = DecompositionContext.GetCurrentVariablesPathHandler();
-    HTNPathHandler        VariablePathHandler         = HTNPathHandler(CurrentVariablesPathHandler);
-    HTNScope              VariableScope               = HTNScope(VariableID, VariablePathHandler);
+    const HTNPathManager& CurrentVariablesPathManager = DecompositionContext.GetCurrentVariablesPathManager();
+    HTNPathManager        VariablePathManager         = HTNPathManager(CurrentVariablesPathManager);
+    HTNScope              VariableScope               = HTNScope(VariableID, VariablePathManager);
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
     HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironmentMutable();
     HTNVariables&           Variables            = Environment.GetVariablesMutable();
-    const std::string&      CurrentVariablePath  = VariablePathHandler.GetPath();
+    const std::string&      CurrentVariablePath  = VariablePathManager.GetPath();
     Variables.SetVariable(CurrentVariablePath, inVariableExpressionNodeValue);
 }
 
@@ -1082,14 +1082,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNVariableExpressionNode& inVariableE
     HTNDecompositionContext& DecompositionContext = GetDecompositionContext(ioDecompositionContext);
 
     const std::string     VariableID                  = inVariableExpressionNode.GetValue().GetValue<std::string>();
-    const HTNPathHandler& CurrentVariablesPathHandler = DecompositionContext.GetCurrentVariablesPathHandler();
-    HTNPathHandler        VariablePathHandler         = HTNPathHandler(CurrentVariablesPathHandler);
-    HTNScope              VariableScope               = HTNScope(VariableID, VariablePathHandler);
+    const HTNPathManager& CurrentVariablesPathManager = DecompositionContext.GetCurrentVariablesPathManager();
+    HTNPathManager        VariablePathManager         = HTNPathManager(CurrentVariablesPathManager);
+    HTNScope              VariableScope               = HTNScope(VariableID, VariablePathManager);
 
     const HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecomposition();
     const HTNEnvironment&         Environment          = CurrentDecomposition.GetEnvironment();
     const HTNVariables&           Variables            = Environment.GetVariables();
-    const std::string&            CurrentVariablePath  = VariablePathHandler.GetPath();
+    const std::string&            CurrentVariablePath  = VariablePathManager.GetPath();
     return Variables.FindVariable(CurrentVariablePath);
 }
 

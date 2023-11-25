@@ -1,24 +1,24 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
-#include "HTNPathHandler.h"
+#include "HTNPathManager.h"
 
 #include "HTNPathHelpers.h"
 
-HTNPathHandler::HTNPathHandler(const std::string& inPath) : mPath(inPath)
+HTNPathManager::HTNPathManager(const std::string& inPath) : mPath(inPath)
 {
 }
 
-bool HTNPathHandler::TryPushSegmentToPath(const std::string& inSegment)
+bool HTNPathManager::TryPushSegmentToPath(const std::string& inSegment)
 {
     return HTNPathHelpers::TryPushSegmentToPath(inSegment, mPath);
 }
 
-bool HTNPathHandler::TryPopSegmentFromPath()
+bool HTNPathManager::TryPopSegmentFromPath()
 {
     return HTNPathHelpers::TryPopSegmentFromPath(mPath);
 }
 
-bool HTNPathHandler::FindLastPathSegment(std::string& outSegment) const
+bool HTNPathManager::FindLastPathSegment(std::string& outSegment) const
 {
     return HTNPathHelpers::FindLastPathSegment(mPath, outSegment);
 }

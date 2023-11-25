@@ -4,7 +4,7 @@
 
 #include "HTNCoreMinimal.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
-#include "Core/HTNPathHandler.h"
+#include "Core/HTNPathManager.h"
 
 #include <memory>
 
@@ -17,18 +17,18 @@ class HTNTaskInstance
 {
 public:
     explicit HTNTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode, const HTNEnvironment& inEnvironment,
-                             const HTNPathHandler& inNodePathHandler, const HTNPathHandler& inVariablesPathHandler);
+                             const HTNPathManager& inNodePathManager, const HTNPathManager& inVariablesPathManager);
 
     HTN_NODISCARD const std::shared_ptr<const HTNTaskNodeBase>& GetTaskNode() const;
     HTN_NODISCARD const HTNEnvironment&                         GetEnvironment() const;
-    HTN_NODISCARD const HTNPathHandler&                         GetNodePathHandler() const;
-    HTN_NODISCARD const HTNPathHandler&                         GetVariablesPathHandler() const;
+    HTN_NODISCARD const HTNPathManager&                         GetNodePathManager() const;
+    HTN_NODISCARD const HTNPathManager&                         GetVariablesPathManager() const;
 
 private:
     std::shared_ptr<const HTNTaskNodeBase> mTaskNode;
     HTNEnvironment                         mEnvironment;
-    HTNPathHandler                         mNodePathHandler;
-    HTNPathHandler                         mVariablesPathHandler;
+    HTNPathManager                         mNodePathManager;
+    HTNPathManager                         mVariablesPathManager;
 };
 
 inline const std::shared_ptr<const HTNTaskNodeBase>& HTNTaskInstance::GetTaskNode() const
@@ -41,12 +41,12 @@ inline const HTNEnvironment& HTNTaskInstance::GetEnvironment() const
     return mEnvironment;
 }
 
-inline const HTNPathHandler& HTNTaskInstance::GetNodePathHandler() const
+inline const HTNPathManager& HTNTaskInstance::GetNodePathManager() const
 {
-    return mNodePathHandler;
+    return mNodePathManager;
 }
 
-inline const HTNPathHandler& HTNTaskInstance::GetVariablesPathHandler() const
+inline const HTNPathManager& HTNTaskInstance::GetVariablesPathManager() const
 {
-    return mVariablesPathHandler;
+    return mVariablesPathManager;
 }

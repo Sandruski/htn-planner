@@ -1,17 +1,17 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
-#include "HTNFileHandler.h"
+#include "HTNFileReader.h"
 
 #include "HTNLog.h"
 
 #include <sstream>
 
-HTNFileHandler::HTNFileHandler(const std::string& inFilePath)
+HTNFileReader::HTNFileReader(const std::string& inFilePath)
 {
     mFile.open(inFilePath);
 }
 
-HTNFileHandler::~HTNFileHandler()
+HTNFileReader::~HTNFileReader()
 {
     if (!mFile.is_open())
     {
@@ -21,7 +21,7 @@ HTNFileHandler::~HTNFileHandler()
     mFile.close();
 }
 
-bool HTNFileHandler::ReadFile(std::string& outFileText) const
+bool HTNFileReader::ReadFile(std::string& outFileText) const
 {
     if (!mFile.is_open())
     {

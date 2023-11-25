@@ -88,9 +88,9 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNVariableExpressionNode&
     // Variable value
     {
         const HTNNodeInstance& NodeInstance         = DecompositionWatchPrinterContext.GetNodeInstance();
-        HTNPathHandler         VariablesPathHandler = NodeInstance.GetVariablesPathHandler();
-        const HTNScope         VariableScope        = HTNScope(VariableID, VariablesPathHandler);
-        const std::string&     VariablePath         = VariablesPathHandler.GetPath();
+        HTNPathManager         VariablesPathManager = NodeInstance.GetVariablesPathManager();
+        const HTNScope         VariableScope        = HTNScope(VariableID, VariablesPathManager);
+        const std::string&     VariablePath         = VariablesPathManager.GetPath();
         DecompositionWatchPrinterContext.AddVariablePath(VariablePath);
 
         const HTNNodeResult*  NodeResult              = NodeInstance.GetNodeResult();

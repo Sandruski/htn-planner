@@ -3,7 +3,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Core/HTNPathHandler.h"
+#include "Core/HTNPathManager.h"
 #include "HTNCoreMinimal.h"
 
 #include <memory>
@@ -20,23 +20,23 @@ public:
     explicit HTNNodeInstance(const HTNNodeResult& inNodeResult, const std::string& inNodeLabel);
     explicit HTNNodeInstance(const HTNNodeResult&                                                 inNodeResult,
                                   const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters,
-                                  const HTNPathHandler& inVariablesPathHandler, const std::string& inNodeLabel);
+                                  const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel);
     explicit HTNNodeInstance(const HTNNodeResult&                                                  inNodeResult,
                                   const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
-                                  const HTNPathHandler& inVariablesPathHandler, const std::string& inNodeLabel);
+                                  const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel);
 
     HTN_NODISCARD const HTNNodeResult*                                                  GetNodeResult() const;
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  GetNodeParameters() const;
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetNodeArguments() const;
-    HTN_NODISCARD const HTNPathHandler&                                                 GetVariablesPathHandler() const;
-    HTN_NODISCARD HTNPathHandler&                                                       GetVariablesPathHandlerMutable();
+    HTN_NODISCARD const HTNPathManager&                                                 GetVariablesPathManager() const;
+    HTN_NODISCARD HTNPathManager&                                                       GetVariablesPathManagerMutable();
     HTN_NODISCARD const std::string&                                                    GetNodeLabel() const;
 
 private:
     const HTNNodeResult*                                           mNodeResult = nullptr;
     std::vector<std::shared_ptr<const HTNVariableExpressionNode>>  mNodeParameters;
     std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> mNodeArguments;
-    HTNPathHandler                                                 mVariablesPathHandler;
+    HTNPathManager                                                 mVariablesPathManager;
     std::string                                                    mNodeLabel;
 };
 
@@ -55,14 +55,14 @@ inline const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& HTN
     return mNodeArguments;
 }
 
-inline const HTNPathHandler& HTNNodeInstance::GetVariablesPathHandler() const
+inline const HTNPathManager& HTNNodeInstance::GetVariablesPathManager() const
 {
-    return mVariablesPathHandler;
+    return mVariablesPathManager;
 }
 
-inline HTNPathHandler& HTNNodeInstance::GetVariablesPathHandlerMutable()
+inline HTNPathManager& HTNNodeInstance::GetVariablesPathManagerMutable()
 {
-    return mVariablesPathHandler;
+    return mVariablesPathManager;
 }
 
 inline const std::string& HTNNodeInstance::GetNodeLabel() const

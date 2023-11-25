@@ -3,7 +3,7 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Core/HTNPathHandler.h"
+#include "Core/HTNPathManager.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "Domain/Printer/HTNDecompositionTooltipMode.h"
 #include "HTNCoreMinimal.h"
@@ -55,10 +55,10 @@ public:
     HTN_NODISCARD int32       GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
     HTN_NODISCARD bool        IsNodeOpen(const std::string& inNodePath, const int32 inDecompositionStep, const bool inIsChoicePoint) const;
 
-    HTN_NODISCARD const HTNPathHandler& GetCurrentNodePathHandler() const;
-    HTN_NODISCARD HTNPathHandler&       GetCurrentNodePathHandlerMutable();
-    HTN_NODISCARD const HTNPathHandler& GetCurrentVariablesPathHandler() const;
-    HTN_NODISCARD HTNPathHandler&       GetCurrentVariablesPathHandlerMutable();
+    HTN_NODISCARD const HTNPathManager& GetCurrentNodePathManager() const;
+    HTN_NODISCARD HTNPathManager&       GetCurrentNodePathManagerMutable();
+    HTN_NODISCARD const HTNPathManager& GetCurrentVariablesPathManager() const;
+    HTN_NODISCARD HTNPathManager&       GetCurrentVariablesPathManagerMutable();
 
     void                SetCurrentDecompositionStep(const int32 inCurrentDecompositionStep);
     HTN_NODISCARD int32 GetCurrentDecompositionStep() const;
@@ -99,10 +99,10 @@ private:
     // Internal
     //----------------------------------------------------------------------//
     // Path from the root node to the current node being processed
-    HTNPathHandler mCurrentNodePathHandler;
+    HTNPathManager mCurrentNodePathManager;
 
     // Path from the root node to the current node determining the scope of the variables
-    HTNPathHandler mCurrentVariablesPathHandler;
+    HTNPathManager mCurrentVariablesPathManager;
 
     // Current decomposition step
     int32 mCurrentDecompositionStep = 0;
@@ -150,24 +150,24 @@ inline bool HTNDecompositionPrinterContext::ShouldIgnoreImGuiState() const
     return mShouldIgnoreImGuiState;
 }
 
-inline const HTNPathHandler& HTNDecompositionPrinterContext::GetCurrentNodePathHandler() const
+inline const HTNPathManager& HTNDecompositionPrinterContext::GetCurrentNodePathManager() const
 {
-    return mCurrentNodePathHandler;
+    return mCurrentNodePathManager;
 }
 
-inline HTNPathHandler& HTNDecompositionPrinterContext::GetCurrentNodePathHandlerMutable()
+inline HTNPathManager& HTNDecompositionPrinterContext::GetCurrentNodePathManagerMutable()
 {
-    return mCurrentNodePathHandler;
+    return mCurrentNodePathManager;
 }
 
-inline const HTNPathHandler& HTNDecompositionPrinterContext::GetCurrentVariablesPathHandler() const
+inline const HTNPathManager& HTNDecompositionPrinterContext::GetCurrentVariablesPathManager() const
 {
-    return mCurrentVariablesPathHandler;
+    return mCurrentVariablesPathManager;
 }
 
-inline HTNPathHandler& HTNDecompositionPrinterContext::GetCurrentVariablesPathHandlerMutable()
+inline HTNPathManager& HTNDecompositionPrinterContext::GetCurrentVariablesPathManagerMutable()
 {
-    return mCurrentVariablesPathHandler;
+    return mCurrentVariablesPathManager;
 }
 
 inline void HTNDecompositionPrinterContext::SetCurrentDecompositionStep(const int32 inCurrentDecompositionStep)

@@ -2,18 +2,18 @@
 
 #include "Hook/HTNPlannerHook.h"
 
+#include "Core/HTNFileReader.h"
+#include "Core/HTNToken.h"
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Parser/HTNDomainLexerContext.h"
 #include "Domain/Parser/HTNDomainParserContext.h"
-#include "Core/HTNFileHandler.h"
-#include "Core/HTNToken.h"
 
 bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
 {
-    const HTNFileHandler DomainFileHandler = HTNFileHandler(inDomainFilePath);
-    std::string          DomainFileText;
-    if (!DomainFileHandler.ReadFile(DomainFileText))
+    const HTNFileReader DomainFileReader = HTNFileReader(inDomainFilePath);
+    std::string         DomainFileText;
+    if (!DomainFileReader.ReadFile(DomainFileText))
     {
         HTN_LOG_ERROR("Domain [{}] could not be read", inDomainFilePath);
         return false;

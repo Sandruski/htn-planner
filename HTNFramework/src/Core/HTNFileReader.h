@@ -11,11 +11,11 @@
 /**
  * Helper that uses RAII to automatically open/close a file to perform operations on it such as reading it
  */
-class HTNFileHandler : private HTNUncopyable
+class HTNFileReader : private HTNUncopyable
 {
 public:
-    explicit HTNFileHandler(const std::string& inFilePath);
-    ~HTNFileHandler();
+    explicit HTNFileReader(const std::string& inFilePath);
+    ~HTNFileReader();
 
     HTN_NODISCARD bool ReadFile(std::string& outFileText) const;
 

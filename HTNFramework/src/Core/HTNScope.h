@@ -7,7 +7,7 @@
 
 #include <string>
 
-class HTNPathHandler;
+class HTNPathManager;
 
 /**
  * Helper that uses RAII to automatically push/pop a node to/from a node path
@@ -15,11 +15,11 @@ class HTNPathHandler;
 class HTNScope : private HTNUncopyable
 {
 public:
-    explicit HTNScope(const std::string& inSegment, HTNPathHandler& ioPathHandler);
+    explicit HTNScope(const std::string& inSegment, HTNPathManager& ioPathManager);
     virtual ~HTNScope();
 
 protected:
-    HTNPathHandler& mPathHandler;
+    HTNPathManager& mPathManager;
     bool            mResult = false;
 };
 

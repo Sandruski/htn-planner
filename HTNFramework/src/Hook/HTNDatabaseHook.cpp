@@ -2,16 +2,16 @@
 
 #include "Hook/HTNDatabaseHook.h"
 
-#include "Core/HTNFileHandler.h"
+#include "Core/HTNFileReader.h"
 #include "Core/HTNToken.h"
 #include "WorldState/Parser/HTNWorldStateLexerContext.h"
 #include "WorldState/Parser/HTNWorldStateParserContext.h"
 
 bool HTNDatabaseHook::ParseWorldStateFile(const std::string& inWorldStateFilePath)
 {
-    const HTNFileHandler WorldStateFileHandler = HTNFileHandler(inWorldStateFilePath);
-    std::string          WorldStateText;
-    if (!WorldStateFileHandler.ReadFile(WorldStateText))
+    const HTNFileReader WorldStateFileReader = HTNFileReader(inWorldStateFilePath);
+    std::string         WorldStateText;
+    if (!WorldStateFileReader.ReadFile(WorldStateText))
     {
         HTN_LOG_ERROR("World state [{}] could not be read", inWorldStateFilePath);
         return false;

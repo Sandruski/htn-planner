@@ -96,9 +96,9 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
                     }
 
                     // Variable ID
-                    const HTNPathHandler VariablePathHandler = HTNPathHandler(VariablePath);
+                    const HTNPathManager VariablePathManager = HTNPathManager(VariablePath);
                     std::string          VariableID;
-                    const bool           FindLastPathSegmentResult = VariablePathHandler.FindLastPathSegment(VariableID);
+                    const bool           FindLastPathSegmentResult = VariablePathManager.FindLastPathSegment(VariableID);
                     assert(FindLastPathSegmentResult);
                     const std::string VariableIDString = std::format("?{}", VariableID);
                     const ImVec4      VariableIDColor  = HTNImGuiHelpers::GetVariableColor(VariableID);

@@ -2,13 +2,13 @@
 
 #include "HTNScope.h"
 
-#include "HTNPathHandler.h"
+#include "HTNPathManager.h"
 
 #include <cassert>
 
-HTNScope::HTNScope(const std::string& inSegment, HTNPathHandler& ioPathHandler) : mPathHandler(ioPathHandler)
+HTNScope::HTNScope(const std::string& inSegment, HTNPathManager& ioPathManager) : mPathManager(ioPathManager)
 {
-    mResult = ioPathHandler.TryPushSegmentToPath(inSegment);
+    mResult = ioPathManager.TryPushSegmentToPath(inSegment);
 }
 
 HTNScope::~HTNScope()
@@ -19,6 +19,6 @@ HTNScope::~HTNScope()
     }
 
     // Remove the current node from the path
-    const bool Result = mPathHandler.TryPopSegmentFromPath();
+    const bool Result = mPathManager.TryPopSegmentFromPath();
     assert(Result);
 }

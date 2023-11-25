@@ -7,7 +7,7 @@
 #include "Domain/Interpreter/HTNIndices.h"
 
 HTNDecompositionNodeScope::HTNDecompositionNodeScope(const std::string& inNodeID, HTNDecompositionContext& ioDecompositionContext)
-    : HTNScope(inNodeID, ioDecompositionContext.GetCurrentNodePathHandlerMutable()),
+    : HTNScope(inNodeID, ioDecompositionContext.GetCurrentNodePathManagerMutable()),
       mIndices(ioDecompositionContext.GetCurrentDecompositionMutable().GetEnvironmentMutable().GetIndicesMutable())
 {
 }
@@ -20,6 +20,6 @@ HTNDecompositionNodeScope::~HTNDecompositionNodeScope()
     }
 
     // Remove the index associated to the node path when the node goes out of scope to minimize memory storage requirements
-    const std::string& NodePath = mPathHandler.GetPath();
+    const std::string& NodePath = mPathManager.GetPath();
     mIndices.RemoveIndex(NodePath);
 }

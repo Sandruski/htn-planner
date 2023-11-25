@@ -3,7 +3,7 @@
 #include "Domain/Interpreter/HTNTaskInstance.h"
 
 HTNTaskInstance::HTNTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode, const HTNEnvironment& inEnvironment,
-                                 const HTNPathHandler& inNodePathHandler, const HTNPathHandler& inVariablesPathHandler)
-    : mTaskNode(inTaskNode), mEnvironment(inEnvironment), mNodePathHandler(inNodePathHandler), mVariablesPathHandler(inVariablesPathHandler)
+                                 const HTNPathManager& inNodePathManager, const HTNPathManager& inVariablesPathManager)
+    : mTaskNode(inTaskNode), mEnvironment(inEnvironment), mNodePathManager(inNodePathManager), mVariablesPathManager(inVariablesPathManager)
 {
 }

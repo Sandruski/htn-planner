@@ -6,11 +6,11 @@
 
 #include <string>
 
-class HTNPathHandler
+class HTNPathManager
 {
 public:
-    HTNPathHandler() = default;
-    explicit HTNPathHandler(const std::string& inPath);
+    HTNPathManager() = default;
+    explicit HTNPathManager(const std::string& inPath);
 
     HTN_NODISCARD bool TryPushSegmentToPath(const std::string& inSegment);
     HTN_NODISCARD bool TryPopSegmentFromPath();
@@ -22,7 +22,7 @@ private:
     std::string mPath;
 };
 
-inline const std::string& HTNPathHandler::GetPath() const
+inline const std::string& HTNPathManager::GetPath() const
 {
     return mPath;
 }
