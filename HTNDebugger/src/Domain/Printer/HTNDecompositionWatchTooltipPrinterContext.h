@@ -3,9 +3,9 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNCoreMinimal.h"
-#include "Domain/Printer/HTNDecompositionWatchPrinterContextBase.h"
 #include "Domain/Printer/HTNDecompositionTooltipMode.h"
+#include "Domain/Printer/HTNDecompositionWatchPrinterContextBase.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 
@@ -16,8 +16,7 @@ class HTNDecompositionWatchTooltipPrinterContext final : public HTNDecomposition
 {
 public:
     explicit HTNDecompositionWatchTooltipPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                        const HTNNodeInstance&                 inNodeInstance,
-                                                        const HTNDecompositionTooltipMode           inTooltipMode);
+                                                        const HTNNodeInstance& inNodeInstance, const HTNDecompositionTooltipMode inTooltipMode);
 
     HTN_NODISCARD HTNDecompositionTooltipMode GetTooltipMode() const;
 

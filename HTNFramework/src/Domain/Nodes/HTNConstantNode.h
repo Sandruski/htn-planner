@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeBase.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 
@@ -17,7 +17,7 @@ class HTNConstantNode final : public HTNNodeBase
 {
 public:
     explicit HTNConstantNode(const std::shared_ptr<const HTNIdentifierExpressionNode>& inIDNode,
-                             const std::shared_ptr<const HTNLiteralExpressionNode>& inValueNode);
+                             const std::shared_ptr<const HTNLiteralExpressionNode>&    inValueNode);
 
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 

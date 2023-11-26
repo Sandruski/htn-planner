@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
-#include "Domain/Interpreter/HTNEnvironment.h"
 #include "Core/HTNPathManager.h"
+#include "Domain/Interpreter/HTNEnvironment.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 

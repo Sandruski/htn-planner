@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Core/HTNAtom.h"
+#include "HTNCoreMinimal.h"
 #include "WorldState/HTNWorldStateHelpers.h"
 
 #include <array>
@@ -21,8 +21,8 @@ class HTNFactArgumentsTable;
 
 using HTNFactArguments       = std::array<HTNAtom, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
 using HTNFactArgumentsTables = std::array<HTNFactArgumentsTable, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
-using HTNFacts = std::unordered_map<std::string, HTNFactArgumentsTables>;
-using HTNFact = std::pair<const std::string, HTNFactArgumentsTables>;
+using HTNFacts               = std::unordered_map<std::string, HTNFactArgumentsTables>;
+using HTNFact                = std::pair<const std::string, HTNFactArgumentsTables>;
 
 /**
  * Table of fact arguments mapped to a fact ID in the world state
@@ -90,12 +90,12 @@ public:
     // Otherwise, checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
     template<typename T>
     HTN_NODISCARD bool QueryIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin,
-                                 const T ioFactArgumentsEnd) const;
+                                  const T ioFactArgumentsEnd) const;
 
     // Checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
     template<typename T>
     HTN_NODISCARD bool CheckIndex(const std::string& inFactID, const size inFactArgumentsIndex, const T ioFactArgumentsBegin,
-                                 const T ioFactArgumentsEnd) const;
+                                  const T ioFactArgumentsEnd) const;
 
     // Returns the number of tables associated to the fact ID
     HTN_NODISCARD size GetFactArgumentsTablesSize(const std::string& inFactID) const;

@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Core/HTNAtom.h"
+#include "HTNCoreMinimal.h"
 
 class HTNAtomNode
 {
@@ -12,7 +12,7 @@ public:
 
     HTN_NODISCARD const HTNAtom& GetData() const;
 
-    void               SetNextNode(HTNAtomNode* inNode);
+    void                             SetNextNode(HTNAtomNode* inNode);
     HTN_NODISCARD const HTNAtomNode* GetNextNode() const;
     HTN_NODISCARD HTNAtomNode*       GetNextNodeMutable();
     HTN_NODISCARD bool               HasNextNode() const;

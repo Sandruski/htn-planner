@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Core/HTNAtom.h"
+#include "HTNCoreMinimal.h"
 
 #include <string>
 #include <vector>
@@ -20,7 +20,7 @@ class HTNTaskResult
 public:
     explicit HTNTaskResult(const std::string& inID, const std::vector<HTNAtom>& inArguments);
 
-    HTN_NODISCARD const std::string&          GetID() const;
+    HTN_NODISCARD const std::string& GetID() const;
     HTN_NODISCARD const std::vector<HTNAtom>& GetArguments() const;
 
 private:

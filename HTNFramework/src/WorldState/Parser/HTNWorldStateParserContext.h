@@ -16,7 +16,7 @@ public:
     explicit HTNWorldStateParserContext(const std::vector<HTNToken>& inTokens, HTNWorldState& outWorldState);
 
     HTN_NODISCARD const HTNWorldState& GetWorldState() const;
-    HTN_NODISCARD HTNWorldState& GetWorldStateMutable();
+    HTN_NODISCARD HTNWorldState&       GetWorldStateMutable();
 
 private:
     //----------------------------------------------------------------------//

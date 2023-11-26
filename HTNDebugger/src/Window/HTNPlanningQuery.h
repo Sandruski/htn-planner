@@ -6,8 +6,8 @@
 #include "HTNCoreMinimal.h"
 #include "Window/HTNOperationResult.h"
 
-#include <string>
 #include <memory>
+#include <string>
 
 class HTNDomainNode;
 class HTNPlanningUnit;
@@ -20,8 +20,8 @@ public:
     HTN_NODISCARD HTNPlanningUnit&       GetPlanningUnitMutable();
     HTN_NODISCARD const HTNPlanningUnit& GetPlanningUnit() const;
 
-    void               SetEntryPointID(const std::string& inEntryPointID);
-    void               ClearEntryPointID();
+    void                SetEntryPointID(const std::string& inEntryPointID);
+    void                ClearEntryPointID();
     HTN_NODISCARD const std::string& GetEntryPointID() const;
     HTN_NODISCARD bool               IsEntryPointIDEmpty() const;
 
@@ -29,9 +29,9 @@ public:
     HTN_NODISCARD HTNOperationResult GetLastDecomposeDomainOperationResult() const;
     HTN_NODISCARD bool               IsLastDecomposeDomainOperationSuccessful() const;
 
-    void                                        SetLastDomainNode(const std::shared_ptr<const HTNDomainNode>& inLastDomainNode);
+    void                SetLastDomainNode(const std::shared_ptr<const HTNDomainNode>& inLastDomainNode);
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetLastDomainNode() const;
-    void                                        SetLastEntryPointID(const std::string& inLastEntryPointID);
+    void                                                      SetLastEntryPointID(const std::string& inLastEntryPointID);
     HTN_NODISCARD const std::string& GetLastEntryPointID() const;
 
 private:
@@ -72,7 +72,6 @@ inline bool HTNPlanningQuery::IsEntryPointIDEmpty() const
 {
     return mEntryPointID.empty();
 }
-
 
 inline void HTNPlanningQuery::SetLastDecomposeDomainOperationResult(const HTNOperationResult inLastDecomposeDomainOperationResult)
 {

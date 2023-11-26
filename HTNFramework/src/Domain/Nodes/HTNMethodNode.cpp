@@ -6,8 +6,8 @@
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 
 HTNMethodNode::HTNMethodNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&            inIDNode,
-                                    const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inParameterNodes,
-                                    const std::vector<std::shared_ptr<const HTNBranchNode>>& inBranchNodes, const bool inIsTopLevel)
+                             const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inParameterNodes,
+                             const std::vector<std::shared_ptr<const HTNBranchNode>>& inBranchNodes, const bool inIsTopLevel)
     : mIDNode(inIDNode), mParameterNodes(inParameterNodes), mBranchNodes(inBranchNodes), mIsTopLevel(inIsTopLevel)
 {
 }

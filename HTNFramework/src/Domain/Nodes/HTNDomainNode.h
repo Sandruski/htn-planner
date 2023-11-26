@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeBase.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 #include <vector>
@@ -30,8 +30,8 @@ public:
     HTN_NODISCARD std::string GetID() const final;
 
     HTN_NODISCARD std::shared_ptr<const HTNConstantNode> FindConstantNodeByID(const std::string& inConstantNodeID) const;
-    HTN_NODISCARD std::shared_ptr<const HTNAxiomNode>    FindAxiomNodeByID(const std::string& inAxiomNodeID) const;
-    HTN_NODISCARD std::shared_ptr<const HTNMethodNode>   FindMethodNodeByID(const std::string& inMethodNodeID) const;
+    HTN_NODISCARD std::shared_ptr<const HTNAxiomNode> FindAxiomNodeByID(const std::string& inAxiomNodeID) const;
+    HTN_NODISCARD std::shared_ptr<const HTNMethodNode> FindMethodNodeByID(const std::string& inMethodNodeID) const;
 
     HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>& GetIDNode() const;
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNConstantsNode>>& GetConstantNodes() const;

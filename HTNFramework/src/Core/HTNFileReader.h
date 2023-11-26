@@ -5,8 +5,8 @@
 #include "HTNCoreMinimal.h"
 #include "HTNUncopyable.h"
 
-#include <string>
 #include <fstream>
+#include <string>
 
 /**
  * Helper that uses RAII to automatically open/close a file to perform operations on it such as reading it

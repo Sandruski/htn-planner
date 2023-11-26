@@ -2,8 +2,8 @@
 
 #include "Domain/Parser/HTNDomainLexer.h"
 
-#include "Domain/Parser/HTNDomainLexerContext.h"
 #include "Core/HTNTokenType.h"
+#include "Domain/Parser/HTNDomainLexerContext.h"
 #include "Parser/HTNLexerHelpers.h"
 
 bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
@@ -61,7 +61,7 @@ bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
         }
         case '/': {
             static constexpr uint32 LookAhead     = 1;
-            const char NextCharacter = ioDomainLexerContext.GetCharacter(LookAhead);
+            const char              NextCharacter = ioDomainLexerContext.GetCharacter(LookAhead);
             if (NextCharacter == '/')
             {
                 // Comment

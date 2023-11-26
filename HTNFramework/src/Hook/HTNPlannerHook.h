@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Domain/Interpreter/HTNDomainInterpreter.h"
 #include "Domain/Parser/HTNDomainLexer.h"
 #include "Domain/Parser/HTNDomainParser.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 #include <string>
@@ -31,8 +31,8 @@ public:
 private:
     std::shared_ptr<const HTNDomainNode> mDomainNode;
 
-    const HTNDomainLexer mDomainLexer = HTNDomainLexer();
-    const HTNDomainParser mDomainParser = HTNDomainParser();
+    const HTNDomainLexer       mDomainLexer       = HTNDomainLexer();
+    const HTNDomainParser      mDomainParser      = HTNDomainParser();
     const HTNDomainInterpreter mDomainInterpreter = HTNDomainInterpreter();
 };
 

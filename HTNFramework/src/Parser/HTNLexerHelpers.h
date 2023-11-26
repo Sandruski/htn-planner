@@ -12,10 +12,10 @@ class HTNLexerContextBase;
 
 namespace HTNLexerHelpers
 {
-HTN_NODISCARD bool        IsValidCharacter(const char inCharacter);
-HTN_NODISCARD bool        IsLetter(const char inCharacter);
-HTN_NODISCARD bool        IsDigit(const char inCharacter);
-HTN_NODISCARD bool        IsAlphaNumeric(const char inCharacter);
+HTN_NODISCARD bool IsValidCharacter(const char inCharacter);
+HTN_NODISCARD bool IsLetter(const char inCharacter);
+HTN_NODISCARD bool IsDigit(const char inCharacter);
+HTN_NODISCARD bool IsAlphaNumeric(const char inCharacter);
 HTN_NODISCARD std::string GetSpecialCharacterEscapeSequence(const char inCharacter);
 
 #ifdef HTN_DEBUG

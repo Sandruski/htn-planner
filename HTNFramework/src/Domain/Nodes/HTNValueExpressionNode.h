@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
-#include "Domain/Nodes/HTNNodeBase.h"
 #include "Core/HTNAtom.h"
+#include "Domain/Nodes/HTNNodeBase.h"
+#include "HTNCoreMinimal.h"
 
 #include <string>
 
@@ -55,7 +55,7 @@ class HTNVariableExpressionNode final : public HTNValueExpressionNodeBase
 public:
     explicit HTNVariableExpressionNode(const HTNAtom& inValue);
 
-    void    Accept(const HTNNodeVisitorBase& inNodeVisitor, const HTNAtom& inNodeValue, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
+    void Accept(const HTNNodeVisitorBase& inNodeVisitor, const HTNAtom& inNodeValue, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 };
 

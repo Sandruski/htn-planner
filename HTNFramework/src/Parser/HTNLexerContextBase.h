@@ -24,7 +24,7 @@ public:
 
     HTN_NODISCARD char GetCharacter(const uint32 inOffset = 0) const;
 
-    void   AdvancePosition(HTN_DEBUG_ONLY(const bool inIsNewLine = false));
+    void                 AdvancePosition(HTN_DEBUG_ONLY(const bool inIsNewLine = false));
     HTN_NODISCARD uint32 GetPosition() const;
 
 private:
@@ -46,7 +46,7 @@ private:
 #ifdef HTN_DEBUG
 public:
     HTN_NODISCARD uint32 GetRow() const;
-    HTN_NODISCARD uint32  GetColumn() const;
+    HTN_NODISCARD uint32 GetColumn() const;
 
 private:
     //----------------------------------------------------------------------//

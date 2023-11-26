@@ -9,8 +9,7 @@ HTNNodeStateBase::HTNNodeStateBase(const int32 inDecompositionStep) : mDecomposi
 {
 }
 
-HTNNodeState::HTNNodeState(const int32 inDecompositionStep, const bool inIsOpen)
-    : HTNNodeStateBase(inDecompositionStep), mIsOpen(inIsOpen)
+HTNNodeState::HTNNodeState(const int32 inDecompositionStep, const bool inIsOpen) : HTNNodeStateBase(inDecompositionStep), mIsOpen(inIsOpen)
 {
 }
 
@@ -32,8 +31,7 @@ HTNNodeStep HTNChoicePointNodeState::GetNodeStep() const
     return HTNNodeStep::END;
 }
 
-int32 HTNChoicePointNodeState::FindOpenDecompositionStepInRange(const int32 inMinDecompositionStep,
-                                                                             const int32 inMaxDecompositionStep) const
+int32 HTNChoicePointNodeState::FindOpenDecompositionStepInRange(const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep) const
 {
     for (const std::pair<const size, bool>& Pair : mIsOpen)
     {

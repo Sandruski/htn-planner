@@ -3,8 +3,8 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 #include <string>
@@ -22,15 +22,15 @@ public:
     void AddVariablePath(const std::string& inVariablePath);
 
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
-    HTN_NODISCARD const HTNNodeInstance&                 GetNodeInstance() const;
-    HTN_NODISCARD const std::vector<std::string>&             GetNodeVariablePaths() const;
+    HTN_NODISCARD const HTNNodeInstance&                      GetNodeInstance() const;
+    HTN_NODISCARD const std::vector<std::string>& GetNodeVariablePaths() const;
 
 private:
     //----------------------------------------------------------------------//
     // Input
     //----------------------------------------------------------------------//
     const std::shared_ptr<const HTNDomainNode>& mDomainNode;
-    const HTNNodeInstance& mNodeInstance;
+    const HTNNodeInstance&                      mNodeInstance;
 
     //----------------------------------------------------------------------//
     // Internal

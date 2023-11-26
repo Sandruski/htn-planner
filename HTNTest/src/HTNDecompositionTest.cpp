@@ -116,4 +116,4 @@ TEST_P(HTNDecompositionTest, IsDecompositionSuccessful)
     });
 }
 
-INSTANTIATE_TEST_CASE_P(Human, HTNDecompositionTest, testing::Values(std::make_tuple("human", "human", kMainDefaultTopLevelMethodID, 100)));
+INSTANTIATE_TEST_CASE_P(Human, HTNDecompositionTest, testing::Values(std::make_tuple("human", "human", kMainDefaultTopLevelMethodID, 1000)));

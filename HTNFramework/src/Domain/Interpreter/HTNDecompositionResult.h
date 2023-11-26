@@ -44,7 +44,7 @@ public:
     void AddNodeResult(const std::string& inNodePath, const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
     HTN_NODISCARD const HTNNodeResultHistory* FindNodeResultHistory(const std::string& inNodePath) const;
 
-    void IncrementDecompositionStep();
+    void               IncrementDecompositionStep();
     HTN_NODISCARD size GetDecompositionStep() const;
 
 private:

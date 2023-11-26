@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
+#include "HTNCoreMinimal.h"
 
 class HTNDecompositionContext;
 

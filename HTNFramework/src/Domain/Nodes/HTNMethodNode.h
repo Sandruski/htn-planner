@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeBase.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 #include <vector>
@@ -18,7 +18,7 @@ class HTNVariableExpressionNode;
 class HTNMethodNode final : public HTNNodeBase
 {
 public:
-    explicit HTNMethodNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
+    explicit HTNMethodNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&            inIDNode,
                            const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inParameterNodes,
                            const std::vector<std::shared_ptr<const HTNBranchNode>>& inBranchNodes, const bool inIsTopLevel);
 

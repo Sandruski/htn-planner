@@ -16,7 +16,7 @@ bool IsValidCharacter(const char inCharacter)
 bool IsLetter(const char inCharacter)
 {
     return ((inCharacter >= 'a') && (inCharacter <= 'z')) || ((inCharacter >= 'A') && (inCharacter <= 'Z')) ||
-            (inCharacter >= '_'); // Underscore is considered a letter
+           (inCharacter >= '_'); // Underscore is considered a letter
 }
 
 bool IsDigit(const char inCharacter)
@@ -46,4 +46,3 @@ void PrintErrorMessage(const std::string& inMessage, const HTNLexerContextBase& 
 }
 #endif
 } // namespace HTNLexerHelpers
-

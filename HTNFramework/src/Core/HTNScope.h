@@ -22,4 +22,3 @@ protected:
     HTNPathManager& mPathManager;
     bool            mResult = false;
 };
-

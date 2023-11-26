@@ -36,20 +36,20 @@ public:
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
     HTN_NODISCARD const std::string& GetEntryPointID() const;
 
-    void RecordDecomposition(const HTNDecompositionRecord& inDecomposition);
+    void               RecordDecomposition(const HTNDecompositionRecord& inDecomposition);
     HTN_NODISCARD bool RestoreDecomposition();
 
     HTN_NODISCARD const HTNDecompositionRecord& GetCurrentDecomposition() const;
     HTN_NODISCARD HTNDecompositionRecord&       GetCurrentDecompositionMutable();
 
-    void                                 SetDecompositionRecordHistory(const HTNDecompositionRecordHistory& inDecompositionRecordHistory);
+    void SetDecompositionRecordHistory(const HTNDecompositionRecordHistory& inDecompositionRecordHistory);
     HTN_NODISCARD const HTNDecompositionRecordHistory& GetDecompositionRecordHistory() const;
 
-    void                  SetCurrentNodePathManager(const HTNPathManager& inCurrentNodePathManager);
+    void                                SetCurrentNodePathManager(const HTNPathManager& inCurrentNodePathManager);
     HTN_NODISCARD const HTNPathManager& GetCurrentNodePathManager() const;
     HTN_NODISCARD HTNPathManager&       GetCurrentNodePathManagerMutable();
 
-    void                  SetCurrentVariablesPathManager(const HTNPathManager& inCurrentVariablesPathManager);
+    void                                SetCurrentVariablesPathManager(const HTNPathManager& inCurrentVariablesPathManager);
     HTN_NODISCARD const HTNPathManager& GetCurrentVariablesPathManager() const;
     HTN_NODISCARD HTNPathManager&       GetCurrentVariablesPathManagerMutable();
 

@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "HTNCoreMinimal.h"
 #include "Domain/Nodes/HTNNodeBase.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 #include <vector>
@@ -68,7 +68,7 @@ public:
 
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
-    HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>&             GetIDNode() const;
+    HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>& GetIDNode() const;
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetArgumentNodes() const;
 
 private:

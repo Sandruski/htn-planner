@@ -9,15 +9,15 @@ HTNNodeInstance::HTNNodeInstance(const HTNNodeResult& inNodeResult, const std::s
 }
 
 HTNNodeInstance::HTNNodeInstance(const HTNNodeResult&                                                 inNodeResult,
-                                           const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters,
-                                           const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel)
+                                 const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters,
+                                 const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel)
     : mNodeResult(&inNodeResult), mNodeParameters(inNodeParameters), mVariablesPathManager(inVariablesPathManager), mNodeLabel(inNodeLabel)
 {
 }
 
 HTNNodeInstance::HTNNodeInstance(const HTNNodeResult&                                                  inNodeResult,
-                                           const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
-                                           const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel)
+                                 const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
+                                 const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel)
     : mNodeResult(&inNodeResult), mNodeArguments(inNodeArguments), mVariablesPathManager(inVariablesPathManager), mNodeLabel(inNodeLabel)
 {
 }

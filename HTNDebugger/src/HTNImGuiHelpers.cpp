@@ -3,11 +3,11 @@
 #include "HTNImGuiHelpers.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Printer/HTNNodeState.h"
-#include "Domain/Printer/HTNDecompositionPrinter.h"
 #include "Domain/HTNDomainHelpers.h"
 #include "Domain/Interpreter/HTNNodeResult.h"
 #include "Domain/Interpreter/HTNNodeStep.h"
+#include "Domain/Printer/HTNDecompositionPrinter.h"
+#include "Domain/Printer/HTNNodeState.h"
 
 #include "imgui_internal.h"
 

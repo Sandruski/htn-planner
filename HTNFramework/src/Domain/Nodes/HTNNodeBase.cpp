@@ -9,7 +9,8 @@ void HTNNodeBase::Accept(HTN_MAYBE_UNUSED const HTNNodeVisitorBase& inNodeVisito
 {
 }
 
-HTNAtom HTNNodeBase::Accept(HTN_MAYBE_UNUSED const HTNNodeVisitorBase& inNodeVisitor, HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioNodeVisitorContext) const
+HTNAtom HTNNodeBase::Accept(HTN_MAYBE_UNUSED const HTNNodeVisitorBase&  inNodeVisitor,
+                            HTN_MAYBE_UNUSED HTNNodeVisitorContextBase& ioNodeVisitorContext) const
 {
     return HTNAtom();
 }

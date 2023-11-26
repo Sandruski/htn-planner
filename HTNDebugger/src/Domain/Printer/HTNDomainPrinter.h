@@ -3,8 +3,8 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNCoreMinimal.h"
 #include "Domain/Printer/HTNDomainPrinterBase.h"
+#include "HTNCoreMinimal.h"
 
 class HTNDomainPrinterContext;
 

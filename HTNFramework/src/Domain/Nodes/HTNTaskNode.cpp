@@ -5,14 +5,13 @@
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 HTNTaskNodeBase::HTNTaskNodeBase(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
-                                        const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes)
+                                 const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mID(GenerateID())
 {
 }
 
 HTNTaskNodeBase::HTNTaskNodeBase(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
-                                        const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes,
-                                        const uint32                                                    inID)
+                                 const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes, const uint32 inID)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mID(inID)
 {
 }
@@ -23,15 +22,15 @@ std::string HTNTaskNodeBase::GetID() const
 }
 
 HTNCompoundTaskNode::HTNCompoundTaskNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
-                                                const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes,
-                                                const bool                                                            inIsTopLevel)
+                                         const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes,
+                                         const bool                                                            inIsTopLevel)
     : HTNTaskNodeBase(inIDNode, inArgumentNodes), mIsTopLevel(inIsTopLevel)
 {
 }
 
 HTNCompoundTaskNode::HTNCompoundTaskNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
-                                                const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes,
-                                                const uint32 inID, const bool inIsTopLevel)
+                                         const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes, const uint32 inID,
+                                         const bool inIsTopLevel)
     : HTNTaskNodeBase(inIDNode, inArgumentNodes, inID), mIsTopLevel(inIsTopLevel)
 {
 }
@@ -42,11 +41,10 @@ HTNAtom HTNCompoundTaskNode::Accept(const HTNNodeVisitorBase& inNodeVisitor, HTN
 }
 
 HTNPrimitiveTaskNode::HTNPrimitiveTaskNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
-                                                  const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes)
+                                           const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes)
     : HTNTaskNodeBase(inIDNode, inArgumentNodes)
 {
 }
-
 
 HTNAtom HTNPrimitiveTaskNode::Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const
 {

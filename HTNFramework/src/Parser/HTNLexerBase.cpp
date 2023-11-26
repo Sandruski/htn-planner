@@ -2,8 +2,8 @@
 
 #include "Parser/HTNLexerBase.h"
 
-#include "HTNLexerHelpers.h"
 #include "Core/HTNTokenType.h"
+#include "HTNLexerHelpers.h"
 #include "Parser/HTNLexerContextBase.h"
 
 #ifdef HTN_DEBUG

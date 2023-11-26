@@ -66,7 +66,7 @@ bool HTNWorldState::ContainsFactArgumentTable(const std::string& inFactID, const
     const HTNFactArgumentsTables& FactArgumentsTables = It->second;
     assert(inFactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
     const HTNFactArgumentsTable& FactArgumentsTable = FactArgumentsTables[inFactArgumentsSize];
-    const size            FactArgumentsSize  = FactArgumentsTable.GetFactArgumentsSize();
+    const size                   FactArgumentsSize  = FactArgumentsTable.GetFactArgumentsSize();
     return FactArgumentsSize > 0;
 }
 

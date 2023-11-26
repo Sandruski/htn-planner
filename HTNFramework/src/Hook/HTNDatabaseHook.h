@@ -20,7 +20,7 @@ public:
 private:
     HTNWorldState mWorldState;
 
-    const HTNWorldStateLexer mWorldStateLexer = HTNWorldStateLexer();
+    const HTNWorldStateLexer  mWorldStateLexer  = HTNWorldStateLexer();
     const HTNWorldStateParser mWorldStateParser = HTNWorldStateParser();
 };
 

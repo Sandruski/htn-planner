@@ -6,8 +6,8 @@
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 
 HTNBranchNode::HTNBranchNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&  inIDNode,
-                                    const std::shared_ptr<const HTNConditionNodeBase>&         inPreConditionNode,
-                                    const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& inTaskNodes)
+                             const std::shared_ptr<const HTNConditionNodeBase>&         inPreConditionNode,
+                             const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& inTaskNodes)
     : mIDNode(inIDNode), mPreConditionNode(inPreConditionNode), mTaskNodes(inTaskNodes)
 {
 }

@@ -6,7 +6,7 @@
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 
 HTNConstantNode::HTNConstantNode(const std::shared_ptr<const HTNIdentifierExpressionNode>& inIDNode,
-                                        const std::shared_ptr<const HTNLiteralExpressionNode>&    inValueNode)
+                                 const std::shared_ptr<const HTNLiteralExpressionNode>&    inValueNode)
     : mIDNode(inIDNode), mValueNode(inValueNode)
 {
 }

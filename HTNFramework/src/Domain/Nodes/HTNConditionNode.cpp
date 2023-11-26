@@ -14,7 +14,7 @@ std::string HTNConditionNodeBase::GetID() const
 }
 
 HTNConditionNode::HTNConditionNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
-                                          const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes)
+                                   const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes)
 {
 }
@@ -25,7 +25,7 @@ HTNAtom HTNConditionNode::Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNod
 }
 
 HTNAxiomConditionNode::HTNAxiomConditionNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
-                                                    const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes)
+                                             const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes)
     : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes)
 {
 }

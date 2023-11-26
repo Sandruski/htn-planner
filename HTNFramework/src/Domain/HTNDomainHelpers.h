@@ -19,7 +19,7 @@ HTN_NODISCARD bool IsInputOutputParameter(const std::string& inVariableID);
 HTN_NODISCARD bool IsParameter(const std::string& inVariableID);
 HTN_NODISCARD bool IsAnyArgument(const std::string& inVariableID);
 
-inline const std::string kAnonymousNamespaceID             = "unnamed";
-inline const std::string kTopLevelDomainID                 = "top_level_domain";
-inline const std::string kTopLevelMethodID                 = "top_level_method";
+inline const std::string kAnonymousNamespaceID = "unnamed";
+inline const std::string kTopLevelDomainID     = "top_level_domain";
+inline const std::string kTopLevelMethodID     = "top_level_method";
 } // namespace HTNDomainHelpers

@@ -3,8 +3,8 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "HTNCoreMinimal.h"
 #include "Domain/Printer/HTNDecompositionWatchPrinterContextBase.h"
+#include "HTNCoreMinimal.h"
 
 #include <memory>
 
@@ -15,6 +15,6 @@ class HTNDecompositionWatchWindowPrinterContext final : public HTNDecompositionW
 {
 public:
     explicit HTNDecompositionWatchWindowPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                       const HTNNodeInstance&                 inNodeInstance);
+                                                       const HTNNodeInstance&                      inNodeInstance);
 };
 #endif

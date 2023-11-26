@@ -18,19 +18,17 @@ class HTNNodeInstance
 public:
     HTNNodeInstance() = default;
     explicit HTNNodeInstance(const HTNNodeResult& inNodeResult, const std::string& inNodeLabel);
-    explicit HTNNodeInstance(const HTNNodeResult&                                                 inNodeResult,
-                                  const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters,
-                                  const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel);
-    explicit HTNNodeInstance(const HTNNodeResult&                                                  inNodeResult,
-                                  const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
-                                  const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel);
+    explicit HTNNodeInstance(const HTNNodeResult& inNodeResult, const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters,
+                             const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel);
+    explicit HTNNodeInstance(const HTNNodeResult& inNodeResult, const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
+                             const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel);
 
-    HTN_NODISCARD const HTNNodeResult*                                                  GetNodeResult() const;
-    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  GetNodeParameters() const;
+    HTN_NODISCARD const HTNNodeResult* GetNodeResult() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& GetNodeParameters() const;
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetNodeArguments() const;
     HTN_NODISCARD const HTNPathManager&                                                 GetVariablesPathManager() const;
     HTN_NODISCARD HTNPathManager&                                                       GetVariablesPathManagerMutable();
-    HTN_NODISCARD const std::string&                                                    GetNodeLabel() const;
+    HTN_NODISCARD const std::string& GetNodeLabel() const;
 
 private:
     const HTNNodeResult*                                           mNodeResult = nullptr;

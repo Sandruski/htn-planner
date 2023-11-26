@@ -19,7 +19,7 @@ namespace HTNImGuiHelpers
 // @see imgui_demo.cpp
 void HelpMarker(const std::string& inDescription);
 
-void SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen);
+void               SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen);
 HTN_NODISCARD bool IsCurrentItemSelected();
 
 HTN_NODISCARD ImVec4 GetNodeColor(const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep);

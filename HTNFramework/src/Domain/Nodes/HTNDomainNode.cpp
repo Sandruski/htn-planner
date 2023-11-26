@@ -10,9 +10,9 @@
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 
 HTNDomainNode::HTNDomainNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&   inIDNode,
-                                    const std::vector<std::shared_ptr<const HTNConstantsNode>>& inConstantNodes,
-                                    const std::vector<std::shared_ptr<const HTNAxiomNode>>&     inAxiomNodes,
-                                    const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel)
+                             const std::vector<std::shared_ptr<const HTNConstantsNode>>& inConstantNodes,
+                             const std::vector<std::shared_ptr<const HTNAxiomNode>>&     inAxiomNodes,
+                             const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel)
     : mIDNode(inIDNode), mConstantNodes(inConstantNodes), mAxiomNodes(inAxiomNodes), mMethodNodes(inMethodNodes), mIsTopLevel(inIsTopLevel)
 {
 }

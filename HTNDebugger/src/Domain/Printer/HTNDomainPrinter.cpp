@@ -4,7 +4,6 @@
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/HTNDomainHelpers.h"
-#include "Domain/Printer/HTNDomainPrinterContext.h"
 #include "Domain/Nodes/HTNAxiomNode.h"
 #include "Domain/Nodes/HTNBranchNode.h"
 #include "Domain/Nodes/HTNConditionNode.h"
@@ -14,6 +13,7 @@
 #include "Domain/Nodes/HTNMethodNode.h"
 #include "Domain/Nodes/HTNTaskNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
+#include "Domain/Printer/HTNDomainPrinterContext.h"
 
 #include "imgui.h"
 
