@@ -15,7 +15,7 @@ Note that the project is a work in progress (WIP). As such, certain features may
 
 ### Use pre-built binaries
 1. Download the latest release from [Releases](https://github.com/Sandruski/htn-planner/releases). The latest released version is v0.1.
-2. Run `HTNDemo.exe`, which corresponds to the `HTNDemo` project.
+2. Run `bin/HTNDemo.exe`, which corresponds to the `HTNDemo` project.
 
 ### Build it yourself
 1. Clone the repository with `git clone https://github.com/Sandruski/htn-planner` or download it as a ZIP from [htn-planner](https://github.com/Sandruski/htn-planner).
@@ -71,7 +71,7 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 
 ## Performance Analysis
 
-A profiling session is started every time that the `HTNTest` project is run. The resulting capture is recorded and saved in the `Captures` directory.
+The following are the profiling results obtained during a session for the `HTNDemo` project in Release configuration with both `HTN_VALIDATE_DOMAIN`, which enables validating the domain during a decomposition, and `HTN_DEBUG_DECOMPOSITION`, which enables storing the decomposition results during a decomposition, macros defined. Additionally, a profiling session is started each time the `HTNTest` project is run, and the resulting capture is saved in the `Captures` directory.
 
 ![main_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png)
 *Main decomposition profiling results*
