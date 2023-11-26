@@ -1,7 +1,7 @@
 # HTN
 This project is a hierarchical task network (HTN) planner library for AI decision-making. It is implemented in C++ and it interprets a custom domain language.
 
-![video](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/test_video.mp4)
+[video](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/test_video.mp4)
 
 ## Disclaimer
 Note that the project is a work in progress (WIP). As such, certain features may be incomplete or subject to change. Feedback and contributions are welcomed.
