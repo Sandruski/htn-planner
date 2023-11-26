@@ -66,7 +66,7 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 ### HTNTest
 1. In the console window, see the results of the tests.
 
-![tests_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/test_results.png)
+![tests_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/tests_results.png)
 *Tests results*
 
 ## Performance Analysis
