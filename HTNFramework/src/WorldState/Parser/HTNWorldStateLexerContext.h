@@ -10,7 +10,7 @@
 
 class HTNToken;
 
-class HTNWorldStateLexerContext : public HTNLexerContextBase
+class HTNWorldStateLexerContext final : public HTNLexerContextBase
 {
 public:
     explicit HTNWorldStateLexerContext(const std::string& inText, std::vector<HTNToken>& outTokens);

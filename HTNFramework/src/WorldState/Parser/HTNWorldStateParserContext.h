@@ -10,7 +10,7 @@
 class HTNToken;
 class HTNWorldState;
 
-class HTNWorldStateParserContext : public HTNParserContextBase
+class HTNWorldStateParserContext final : public HTNParserContextBase
 {
 public:
     explicit HTNWorldStateParserContext(const std::vector<HTNToken>& inTokens, HTNWorldState& outWorldState);

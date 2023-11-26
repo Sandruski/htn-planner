@@ -6,6 +6,8 @@
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "HTNImGuiHelpers.h"
 
+#include "imgui.h"
+
 namespace
 {
 enum HTNValueExpressionNodeResult : uint8

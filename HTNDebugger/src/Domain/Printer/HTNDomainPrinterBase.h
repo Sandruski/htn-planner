@@ -6,14 +6,14 @@
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 #include "HTNCoreMinimal.h"
 
-#include "imgui.h"
-
 #include <memory>
 #include <string>
 
 class HTNIdentifierExpressionNode;
 class HTNNodeVisitorContextBase;
 class HTNValueExpressionNodeBase;
+
+struct ImVec4;
 
 class HTNDomainPrinterBase : public HTNNodeVisitorBase
 {
