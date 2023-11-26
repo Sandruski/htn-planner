@@ -53,7 +53,7 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 
 ## Performance Analysis
 
-// TODO salvarez explain and take screenshots from Optick
+A new Optick capture is automatically recorded and saved in the `Captures` directory every time that the `HTNTest` project is run.
 
 ## Third-Party
 - [SDL](https://www.libsdl.org/)

@@ -53,7 +53,7 @@ void HTNDecompositionTest::TearDownTestCase()
 
     // Create the captures directory
     const std::string CapturesDirectoryPath = HTNFileHelpers::MakeAbsolutePath(HTNFileHelpers::kCapturesDirectoryName).string();
-    if (!std::filesystem::exists(CapturesDirectoryPath) || !std::filesystem::is_directory(CapturesDirectoryPath))
+    if (!HTNFileHelpers::DoesDirectoryExist(CapturesDirectoryPath))
     {
         std::filesystem::create_directory(CapturesDirectoryPath);
     }

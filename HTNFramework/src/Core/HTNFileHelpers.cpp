@@ -4,14 +4,6 @@
 
 namespace HTNFileHelpers
 {
-void CollectFilePaths(const std::filesystem::path& inDirectoryPath, const std::string& inFileExtension,
-                      std::vector<std::filesystem::path>& outFilePaths)
-{
-    static const size DefaultFilePathsSize = 10;
-    outFilePaths.reserve(DefaultFilePathsSize);
-    HTNFileHelpers::CollectFilePathsRecursively(inDirectoryPath, inFileExtension, outFilePaths);
-}
-
 void CollectFilePathsRecursively(const std::filesystem::path& inDirectoryPath, const std::string& inFileExtension,
                                  std::vector<std::filesystem::path>& outFilePaths)
 {
@@ -33,6 +25,19 @@ void CollectFilePathsRecursively(const std::filesystem::path& inDirectoryPath, c
             outFilePaths.emplace_back(FilePath);
         }
     }
+}
+
+void CollectFilePaths(const std::filesystem::path& inDirectoryPath, const std::string& inFileExtension,
+                      std::vector<std::filesystem::path>& outFilePaths)
+{
+    if (!DoesDirectoryExist(inDirectoryPath))
+    {
+        return;
+    }
+
+    static const size DefaultFilePathsSize = 10;
+    outFilePaths.reserve(DefaultFilePathsSize);
+    CollectFilePathsRecursively(inDirectoryPath, inFileExtension, outFilePaths);
 }
 
 std::string MakeFilePath(const std::string& inDirectoryName, const std::string& inFileName, const std::string& inFileExtension)
