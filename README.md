@@ -6,7 +6,7 @@ It is more than just a planner, it is a full language.
 ![main_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition.png)
 *Main decomposition*
 
-Watch the [demo video](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/demo.mp4).
+Watch the [demo](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/demo.mp4) video.
 
 ## Disclaimer
 Note that the project is a work in progress (WIP). As such, certain features may be incomplete or subject to change. Feedback and contributions are welcomed.
