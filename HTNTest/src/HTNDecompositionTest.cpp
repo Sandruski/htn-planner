@@ -20,8 +20,9 @@
 
 namespace
 {
-const std::string kMainDefaultTopLevelMethodID = "behave";
-}
+const std::string kMainDefaultTopLevelMethodID      = "behave";
+const std::string kUpperBodyDefaultTopLevelMethodID = "behave_upper_body";
+} // namespace
 
 class HTNDecompositionTest : public testing::TestWithParam<std::tuple<std::string, std::string, std::string, size>>
 {
@@ -116,4 +117,6 @@ TEST_P(HTNDecompositionTest, IsDecompositionSuccessful)
     });
 }
 
-INSTANTIATE_TEST_CASE_P(Human, HTNDecompositionTest, testing::Values(std::make_tuple("human", "human", kMainDefaultTopLevelMethodID, 1000)));
+INSTANTIATE_TEST_CASE_P(Human, HTNDecompositionTest,
+                        testing::Values(std::make_tuple("human", "human", kMainDefaultTopLevelMethodID, 1000),
+                                        std::make_tuple("human", "human", kUpperBodyDefaultTopLevelMethodID, 1000)));

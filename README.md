@@ -64,12 +64,18 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 ### HTNTest
 1. In the console window, see the results of the tests.
 
-![test_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/test_results.png)
-*Test results*
+![tests_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/test_results.png)
+*Tests results*
 
 ## Performance Analysis
 
-A new Optick capture is automatically recorded and saved in the `Captures` directory every time that the `HTNTest` project is run.
+A profiling session is started every time that the `HTNTest` project is run. The resulting capture is recorded and saved in the `Captures` directory.
+
+![main_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png)
+*Main decomposition profiling results*
+
+![secondary_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png)
+*Secondary decomposition profiling results*
 
 ## Third-Party
 - [SDL](https://www.libsdl.org/)
