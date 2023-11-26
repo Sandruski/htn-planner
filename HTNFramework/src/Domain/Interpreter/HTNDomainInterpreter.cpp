@@ -234,7 +234,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
             // Restore state: unbound variables but updated indices
             if (!DecompositionContext.RestoreDecomposition())
             {
-                break;
+                return Result;
             }
 #ifdef HTN_DEBUG_DECOMPOSITION
             RecordCurrentNodeResult(Result, StartNodeStep, IsChoicePoint, DecompositionContext);
@@ -682,7 +682,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
                 // Restore state: unbound variables but updated indices
                 if (!DecompositionContext.RestoreDecomposition())
                 {
-                    break;
+                    return Result;
                 }
 #ifdef HTN_DEBUG_DECOMPOSITION
                 RecordCurrentNodeResult(Result, StartNodeStep, IsChoicePoint, DecompositionContext);
@@ -812,7 +812,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
             // Restore state: unbound variables but updated indices
             if (!DecompositionContext.RestoreDecomposition())
             {
-                break;
+                return Result;
             }
 #ifdef HTN_DEBUG_DECOMPOSITION
             RecordCurrentNodeResult(Result, StartNodeStep, IsChoicePoint, DecompositionContext);

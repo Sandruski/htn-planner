@@ -67,19 +67,19 @@
         (branch_get_food_from_house
             (
             )
-            ( // Here should go the tasks for getting food from the house
+            (       // Here should go the tasks for getting food from the house
             )
         )
 
         (branch_buy_food_in_store
             (
             )
-            ( // Here should go the tasks for buying food in a store
+            (       // Here should go the tasks for buying food in a store
             )
         )
     )
 
-     (:method (prepare_food ?inp_food)
+    (:method (prepare_food ?inp_food)
 
         (branch_unwrap_food
             (and    (is_wrapped ?inp_food)

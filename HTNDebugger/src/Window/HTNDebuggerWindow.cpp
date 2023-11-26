@@ -607,19 +607,16 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         ResetSelectedNodeInstance(ioSelectedNodeInstance);
     }
 
-    const bool IsLastDecompositionOperationSuccessful = ioPlanningQuery.IsLastDecompositionOperationSuccessful();
-    if (IsLastDecompositionOperationSuccessful)
-    {
-        const std::shared_ptr<const HTNDomainNode>& LastDomainNode          = ioPlanningQuery.GetLastDomainNode();
-        const std::string&                          LastEntryPointID        = ioPlanningQuery.GetLastEntryPointID();
-        const HTNPlanningUnit&                      PlanningUnit            = ioPlanningQuery.GetPlanningUnit();
-        const HTNDecompositionResult&               LastDecompositionResult = PlanningUnit.GetLastDecompositionResult();
-        const bool                                  ShouldIgnoreImGuiState  = !mIsDecompositionCurrentTab;
-        HTNDecompositionPrinterContext              DecompositionPrinterContext =
-            HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionResult, mTooltipMode, ShouldIgnoreImGuiState,
-                                           ioNodeStates, ioChoicePointNodeStates, ioSelectedNodeInstance);
-        mDecompositionPrinter.Print(DecompositionPrinterContext);
-    }
+    const std::shared_ptr<const HTNDomainNode>& LastDomainNode                         = ioPlanningQuery.GetLastDomainNode();
+    const std::string&                          LastEntryPointID                       = ioPlanningQuery.GetLastEntryPointID();
+    const HTNPlanningUnit&                      PlanningUnit                           = ioPlanningQuery.GetPlanningUnit();
+    const bool                                  IsLastDecompositionOperationSuccessful = ioPlanningQuery.IsLastDecompositionOperationSuccessful();
+    const HTNDecompositionResult&               LastDecompositionResult                = PlanningUnit.GetLastDecompositionResult();
+    const bool                                  ShouldIgnoreImGuiState                 = !mIsDecompositionCurrentTab;
+    HTNDecompositionPrinterContext              DecompositionPrinterContext =
+        HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionResult, IsLastDecompositionOperationSuccessful,
+                                       mTooltipMode, ShouldIgnoreImGuiState, ioNodeStates, ioChoicePointNodeStates, ioSelectedNodeInstance);
+    mDecompositionPrinter.Print(DecompositionPrinterContext);
 
     ImGui::EndChild();
 
@@ -642,13 +639,9 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         ImGui::EndMenuBar();
     }
 
-    if (IsLastDecompositionOperationSuccessful)
-    {
-        const std::shared_ptr<const HTNDomainNode>& LastDomainNode = ioPlanningQuery.GetLastDomainNode();
-        HTNDecompositionWatchWindowPrinterContext   DecompositionWatchWindowPrinterContext =
-            HTNDecompositionWatchWindowPrinterContext(LastDomainNode, ioSelectedNodeInstance);
-        mDecompositionWatchWindowPrinter.Print(DecompositionWatchWindowPrinterContext);
-    }
+    HTNDecompositionWatchWindowPrinterContext DecompositionWatchWindowPrinterContext =
+        HTNDecompositionWatchWindowPrinterContext(LastDomainNode, ioSelectedNodeInstance);
+    mDecompositionWatchWindowPrinter.Print(DecompositionWatchWindowPrinterContext);
 
     ImGui::EndChild();
 }

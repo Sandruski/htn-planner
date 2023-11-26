@@ -10,12 +10,13 @@
 
 HTNDecompositionPrinterContext::HTNDecompositionPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
                                                                const std::string& inEntryPointID, const HTNDecompositionResult& inDecompositionResult,
+                                                               const bool                        inIsDecompositionSuccessful,
                                                                const HTNDecompositionTooltipMode inTooltipMode, const bool inShouldIgnoreImGuiState,
                                                                HTNNodeStates& ioNodeStates, HTNChoicePointNodeStates& ioChoicePointNodeStates,
                                                                HTNNodeInstance& ioSelectedNodeInstance)
-    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionResult(inDecompositionResult), mTooltipMode(inTooltipMode),
-      mShouldIgnoreImGuiState(inShouldIgnoreImGuiState), mNodeStates(ioNodeStates), mChoicePointNodeStates(ioChoicePointNodeStates),
-      mSelectedNodeInstance(ioSelectedNodeInstance)
+    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionResult(inDecompositionResult),
+      mIsDecompositionSuccessful(inIsDecompositionSuccessful), mTooltipMode(inTooltipMode), mShouldIgnoreImGuiState(inShouldIgnoreImGuiState),
+      mNodeStates(ioNodeStates), mChoicePointNodeStates(ioChoicePointNodeStates), mSelectedNodeInstance(ioSelectedNodeInstance)
 {
 }
 

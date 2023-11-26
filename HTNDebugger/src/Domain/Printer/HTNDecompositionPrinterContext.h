@@ -24,13 +24,15 @@ class HTNDecompositionPrinterContext final : public HTNNodeVisitorContextBase
 {
 public:
     explicit HTNDecompositionPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                                            const HTNDecompositionResult& inDecompositionResult, const HTNDecompositionTooltipMode inTooltipMode,
-                                            const bool inShouldIgnoreImGuiState, HTNNodeStates& ioNodeStates,
-                                            HTNChoicePointNodeStates& ioChoicePointNodeStates, HTNNodeInstance& ioSelectedNodeInstance);
+                                            const HTNDecompositionResult& inDecompositionResult, const bool inIsDecompositionSuccessful,
+                                            const HTNDecompositionTooltipMode inTooltipMode, const bool inShouldIgnoreImGuiState,
+                                            HTNNodeStates& ioNodeStates, HTNChoicePointNodeStates& ioChoicePointNodeStates,
+                                            HTNNodeInstance& ioSelectedNodeInstance);
 
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
     HTN_NODISCARD const std::string&            GetEntryPointID() const;
     HTN_NODISCARD const HTNDecompositionResult& GetDecompositionResult() const;
+    HTN_NODISCARD bool                          IsDecompositionSuccessful() const;
     HTN_NODISCARD HTNDecompositionTooltipMode   GetTooltipMode() const;
     HTN_NODISCARD bool                          ShouldIgnoreImGuiState() const;
 
@@ -79,8 +81,9 @@ private:
     const std::shared_ptr<const HTNDomainNode>& mDomainNode;
     const std::string&                          mEntryPointID;
     const HTNDecompositionResult&               mDecompositionResult;
-    const HTNDecompositionTooltipMode           mTooltipMode            = HTNDecompositionTooltipMode::NONE;
-    const bool                                  mShouldIgnoreImGuiState = false;
+    const bool                                  mIsDecompositionSuccessful = false;
+    const HTNDecompositionTooltipMode           mTooltipMode               = HTNDecompositionTooltipMode::NONE;
+    const bool                                  mShouldIgnoreImGuiState    = false;
 
     //----------------------------------------------------------------------//
     // Input/Output
@@ -136,6 +139,11 @@ inline const std::string& HTNDecompositionPrinterContext::GetEntryPointID() cons
 inline const HTNDecompositionResult& HTNDecompositionPrinterContext::GetDecompositionResult() const
 {
     return mDecompositionResult;
+}
+
+inline bool HTNDecompositionPrinterContext::IsDecompositionSuccessful() const
+{
+    return mIsDecompositionSuccessful;
 }
 
 inline HTNDecompositionTooltipMode HTNDecompositionPrinterContext::GetTooltipMode() const

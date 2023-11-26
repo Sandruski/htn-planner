@@ -18,9 +18,9 @@
 #include "Domain/Nodes/HTNTaskNode.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Domain/Printer/HTNDecompositionHelpers.h"
-#include "Domain/Printer/HTNNodeState.h"
 #include "Domain/Printer/HTNDecompositionPrinterContext.h"
 #include "Domain/Printer/HTNDecompositionWatchTooltipPrinterContext.h"
+#include "Domain/Printer/HTNNodeState.h"
 #include "HTNImGuiHelpers.h"
 
 #include "imgui.h"
@@ -52,7 +52,7 @@ void PrePrintChoicePointNode(const std::string& inNodePath, const size inLastDec
     }
     else
     {
-        // Default open successful decomposition step
+        // Default open last decomposition step
         const int32           DecompositionStep = static_cast<const int32>(inLastDecompositionStep);
         static constexpr bool IsNodeOpen        = true;
         ioDecompositionPrinterContext.AddChoicePointNodeState(inNodePath, HTNChoicePointNodeState(DecompositionStep, IsNodeOpen));
@@ -670,6 +670,8 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
     const auto LastIt                = NodeResultStepsCollection.rbegin();
     const size LastDecompositionStep = LastIt->first;
 
+    const bool IsDecompositionSuccessful = DecompositionPrinterContext.IsDecompositionSuccessful();
+
     PrePrintNode(CurrentNodePath, IsChoicePoint, NodeResultStepsCollection, LastDecompositionStep, DecompositionPrinterContext);
 
     const HTNNodeStep CurrentNodeStep              = DecompositionPrinterContext.GetNodeStep(CurrentNodePath, IsChoicePoint);
@@ -729,8 +731,7 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
             if (IsChoicePoint)
             {
                 // Push arrow color
-                const bool   Result       = NodeResult.GetResult();
-                const bool   IsSuccessful = Result && (LastDecompositionStep == DecompositionStep);
+                const bool   IsSuccessful = IsDecompositionSuccessful && (LastDecompositionStep == DecompositionStep);
                 const ImVec4 ArrowColor   = IsSuccessful ? HTNImGuiHelpers::kSuccessColor : HTNImGuiHelpers::kFailColor;
                 ImGui::PushStyleColor(ImGuiCol_Text, ArrowColor);
             }
