@@ -472,7 +472,7 @@ bool HTNDomainParser::ParseConditionNode(HTNDomainParserContext&                
 
     outConditionNode = ConditionNode;
 
-    return true;
+    return nullptr != outConditionNode;
 }
 
 bool HTNDomainParser::ParseSubConditionNode(HTNDomainParserContext&                      ioDomainParserContext,

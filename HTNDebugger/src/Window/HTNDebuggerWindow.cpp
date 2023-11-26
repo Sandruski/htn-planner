@@ -159,7 +159,7 @@ void DecomposePlanningQuery(HTNPlanningQuery& ioPlanningQuery)
     HTNPlanningUnit&         PlanningUnit    = ioPlanningQuery.GetPlanningUnitMutable();
     const std::string&       EntryPointID    = ioPlanningQuery.GetEntryPointID();
     const HTNOperationResult OperationResult = static_cast<const HTNOperationResult>(PlanningUnit.ExecuteTopLevelMethod(EntryPointID));
-    ioPlanningQuery.SetLastDecompositionOperationResult(OperationResult);
+    ioPlanningQuery.SetLastDecomposeDomainOperationResult(OperationResult);
     const HTNPlannerHook&                       PlannerHook = PlanningUnit.GetPlannerHook();
     const std::shared_ptr<const HTNDomainNode>& DomainNode  = PlannerHook.GetDomainNode();
     ioPlanningQuery.SetLastDomainNode(DomainNode);
@@ -173,8 +173,8 @@ void RenderActivePlanByPlanningQuery(const HTNPlanningQuery& inPlanningQuery)
     const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags_HorizontalScrollbar;
     ImGui::BeginChild("Child", ChildSize, ChildFlags, WindowFlags);
 
-    const bool IsLastDecompositionOperationSuccessful = inPlanningQuery.IsLastDecompositionOperationSuccessful();
-    if (IsLastDecompositionOperationSuccessful)
+    const bool IsLastDecomposeDomainOperationSuccessful = inPlanningQuery.IsLastDecomposeDomainOperationSuccessful();
+    if (IsLastDecomposeDomainOperationSuccessful)
     {
         const HTNPlanningUnit&        PlanningUnit         = inPlanningQuery.GetPlanningUnit();
         const HTNDecompositionRecord& CurrentDecomposition = PlanningUnit.GetLastDecomposition();
@@ -398,7 +398,7 @@ void HTNDebuggerWindow::RenderDomain()
 
     ImGui::Separator();
 
-    if (!IsLastDomainFileParsingOperationSuccessful())
+    if (!IsLastParseDomainFileOperationSuccessful())
     {
         return;
     }
@@ -445,7 +445,7 @@ void HTNDebuggerWindow::RenderWorldState()
                                 "  \"xxx,yyy\"  display lines containing \"xxx\" or \"yyy\"\n"
                                 "  \"-xxx\"     hide lines containing \"xxx\"");
 
-    if (!IsLastWorldStateFileParsingOperationSuccessful())
+    if (!IsLastParseWorldStateFileOperationSuccessful())
     {
         return;
     }
@@ -505,8 +505,8 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         ImGui::SetTooltip("Decompose the selected entry point of the parsed domain using the parsed world state");
     }
 
-    const HTNOperationResult LastDecompositionOperationResult = ioPlanningQuery.GetLastDecompositionOperationResult();
-    RenderOperationResult(LastDecompositionOperationResult);
+    const HTNOperationResult LastDecomposeDomainOperationResult = ioPlanningQuery.GetLastDecomposeDomainOperationResult();
+    RenderOperationResult(LastDecomposeDomainOperationResult);
 
     ImGui::Separator();
 
@@ -607,14 +607,14 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
         ResetSelectedNodeInstance(ioSelectedNodeInstance);
     }
 
-    const std::shared_ptr<const HTNDomainNode>& LastDomainNode                         = ioPlanningQuery.GetLastDomainNode();
-    const std::string&                          LastEntryPointID                       = ioPlanningQuery.GetLastEntryPointID();
-    const HTNPlanningUnit&                      PlanningUnit                           = ioPlanningQuery.GetPlanningUnit();
-    const bool                                  IsLastDecompositionOperationSuccessful = ioPlanningQuery.IsLastDecompositionOperationSuccessful();
-    const HTNDecompositionResult&               LastDecompositionResult                = PlanningUnit.GetLastDecompositionResult();
-    const bool                                  ShouldIgnoreImGuiState                 = !mIsDecompositionCurrentTab;
+    const std::shared_ptr<const HTNDomainNode>& LastDomainNode                           = ioPlanningQuery.GetLastDomainNode();
+    const std::string&                          LastEntryPointID                         = ioPlanningQuery.GetLastEntryPointID();
+    const HTNPlanningUnit&                      PlanningUnit                             = ioPlanningQuery.GetPlanningUnit();
+    const bool                                  IsLastDecomposeDomainOperationSuccessful = ioPlanningQuery.IsLastDecomposeDomainOperationSuccessful();
+    const HTNDecompositionResult&               LastDecompositionResult                  = PlanningUnit.GetLastDecompositionResult();
+    const bool                                  ShouldIgnoreImGuiState                   = !mIsDecompositionCurrentTab;
     HTNDecompositionPrinterContext              DecompositionPrinterContext =
-        HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionResult, IsLastDecompositionOperationSuccessful,
+        HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionResult, IsLastDecomposeDomainOperationSuccessful,
                                        mTooltipMode, ShouldIgnoreImGuiState, ioNodeStates, ioChoicePointNodeStates, ioSelectedNodeInstance);
     mDecompositionPrinter.Print(DecompositionPrinterContext);
 
@@ -659,12 +659,12 @@ void HTNDebuggerWindow::ResetSelectedNodeInstance(HTNNodeInstance& ioSelectedNod
     ioSelectedNodeInstance = HTNNodeInstance();
 }
 
-bool HTNDebuggerWindow::IsLastWorldStateFileParsingOperationSuccessful() const
+bool HTNDebuggerWindow::IsLastParseWorldStateFileOperationSuccessful() const
 {
     return HTNOperationResultHelpers::IsOperationSuccessful(mLastParseWorldStateFileOperationResult);
 }
 
-bool HTNDebuggerWindow::IsLastDomainFileParsingOperationSuccessful() const
+bool HTNDebuggerWindow::IsLastParseDomainFileOperationSuccessful() const
 {
     return HTNOperationResultHelpers::IsOperationSuccessful(mLastParseDomainFileOperationResult);
 }

@@ -25,9 +25,9 @@ public:
     HTN_NODISCARD const std::string& GetEntryPointID() const;
     HTN_NODISCARD bool               IsEntryPointIDEmpty() const;
 
-    void               SetLastDecompositionOperationResult(const HTNOperationResult inLastDecompositionOperationResult);
-    HTN_NODISCARD HTNOperationResult GetLastDecompositionOperationResult() const;
-    HTN_NODISCARD bool               IsLastDecompositionOperationSuccessful() const;
+    void                             SetLastDecomposeDomainOperationResult(const HTNOperationResult inLastDecomposeDomainOperationResult);
+    HTN_NODISCARD HTNOperationResult GetLastDecomposeDomainOperationResult() const;
+    HTN_NODISCARD bool               IsLastDecomposeDomainOperationSuccessful() const;
 
     void                                        SetLastDomainNode(const std::shared_ptr<const HTNDomainNode>& inLastDomainNode);
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetLastDomainNode() const;
@@ -38,7 +38,7 @@ private:
     HTNPlanningUnit& mPlanningUnit;
     std::string      mEntryPointID;
 
-    HTNOperationResult                   mLastDecompositionOperationResult = HTNOperationResult::NONE;
+    HTNOperationResult                   mLastDecomposeDomainOperationResult = HTNOperationResult::NONE;
     std::shared_ptr<const HTNDomainNode> mLastDomainNode;
     std::string                          mLastEntryPointID;
 };
@@ -73,14 +73,15 @@ inline bool HTNPlanningQuery::IsEntryPointIDEmpty() const
     return mEntryPointID.empty();
 }
 
-inline void HTNPlanningQuery::SetLastDecompositionOperationResult(const HTNOperationResult inLastDecompositionOperationResult)
+
+inline void HTNPlanningQuery::SetLastDecomposeDomainOperationResult(const HTNOperationResult inLastDecomposeDomainOperationResult)
 {
-    mLastDecompositionOperationResult = inLastDecompositionOperationResult;
+    mLastDecomposeDomainOperationResult = inLastDecomposeDomainOperationResult;
 }
 
-inline HTNOperationResult HTNPlanningQuery::GetLastDecompositionOperationResult() const
+inline HTNOperationResult HTNPlanningQuery::GetLastDecomposeDomainOperationResult() const
 {
-    return mLastDecompositionOperationResult;
+    return mLastDecomposeDomainOperationResult;
 }
 
 inline void HTNPlanningQuery::SetLastDomainNode(const std::shared_ptr<const HTNDomainNode>& inLastDomainNode)

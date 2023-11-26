@@ -52,8 +52,8 @@ private:
                                  HTNNodeInstance& ioSelectedNodeInstance);
     void ResetSelectedNodeInstance(HTNNodeInstance& ioSelectedNodeInstance);
 
-    HTN_NODISCARD bool IsLastWorldStateFileParsingOperationSuccessful() const;
-    HTN_NODISCARD bool IsLastDomainFileParsingOperationSuccessful() const;
+    HTN_NODISCARD bool IsLastParseWorldStateFileOperationSuccessful() const;
+    HTN_NODISCARD bool IsLastParseDomainFileOperationSuccessful() const;
 
     HTNDatabaseHook& mDatabaseHook;
     HTNPlannerHook&  mPlannerHook;
