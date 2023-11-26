@@ -50,6 +50,15 @@ void HTNDecompositionTest::SetUpTestCase()
 void HTNDecompositionTest::TearDownTestCase()
 {
     OPTICK_STOP_CAPTURE();
+
+    // Create the captures directory
+    const std::string CapturesDirectoryPath = HTNFileHelpers::MakeAbsolutePath(HTNFileHelpers::kCapturesDirectoryName).string();
+    if (!std::filesystem::exists(CapturesDirectoryPath) || !std::filesystem::is_directory(CapturesDirectoryPath))
+    {
+        std::filesystem::create_directory(CapturesDirectoryPath);
+    }
+
+    // Save the capture file in the captures directory
     const std::string CaptureFileRelativePath = std::format("{}/{}", HTNFileHelpers::kCapturesDirectoryName, HTNFileHelpers::kCaptureFileName);
     const std::string CaptureFileAbsolutePath = HTNFileHelpers::MakeAbsolutePath(CaptureFileRelativePath).string();
     OPTICK_SAVE_CAPTURE(CaptureFileAbsolutePath.c_str());
