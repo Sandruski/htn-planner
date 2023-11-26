@@ -76,7 +76,7 @@ The following are the profiling results obtained during a session for the `HTNDe
 ![main_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png)
 *Main decomposition profiling results*
 
-![secondary_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png)
+![secondary_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_profiling_results.png)
 *Secondary decomposition profiling results*
 
 ## Third-Party
