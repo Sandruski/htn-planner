@@ -5,7 +5,7 @@
         (fruit "fruit")
     )
 
-    (:axiom a(is_item_spoiled ?inp_item)
+    (:axiom (is_item_spoiled ?inp_item)
 		(or     (is_old ?inp_item)
                 (has_mold ?inp_item)
 		)
