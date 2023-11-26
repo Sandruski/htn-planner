@@ -1,7 +1,7 @@
 # HTN
 This project is a hierarchical task network (HTN) planner library for AI decision-making. It is implemented in C++ and it interprets a custom domain language.
 
-It is more than just a planner, it is a full language.
+Not being just a planner but a complete langauge instead makes it a powerful tool for content creators to script complex behaviors with simple statements.
 
 ![main_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition.png)
 *Main decomposition*
@@ -27,17 +27,26 @@ Note that the project is a work in progress (WIP). As such, certain features may
 The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, and `HTNTest`. `HTNFramework` and `HTNDebugger` are libraries, `HTNFramework` is the planner itself and `HTNDebugger` is the debugger of the planner. `HTNDemo` and `HTNTest` are applications, `HTNDemo` is a playground for using the planner and `HTNTest` contains a set of unit tests for testing the planner using automation.
 
 ### HTNDemo
-1. In the `World State` tab, click the `Parse` button to parse the selected world state file from the folder of the same name. Below, see the parsed world state.
+1. In the `World State` tab, click the `Parse` button to parse the selected world state file. World state files are identified by the `.worldstate` extension and are located in the folder of the same name.
+
+A world state is a database of tables of facts.
 
 ![world_state](https://github.com/Sandruski/htn-planner/blob/main/docs/images/world_state.png)
-*Parsed world state*
+*World state*
 
-2. In the `Domain` tab, click the `Parse` button to parse the selected domain file from the folder of the same name. Below, see the parsed domain.
+2. In the `Domain` tab, click the `Parse` button to parse the selected domain file. Domain files are identified by the `.domain` extension and are located in the folder of the same name.
+
+A domain is a graph.
 
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/domain.png)
-*Parsed domain*
+*Domain*
 
-3. In the `Decomposition` tab, click the `Decompose` button to decompose the selected entry point of the parsed domain using the parsed world state. Below, see the result of the decomposition.
+3. In the `Decomposition` tab, click the `Decompose` button to decompose the selected entry point of the parsed domain using the parsed world state. Entry points are methods tagged with `top_level_method` of a domain tagged with `top_level_domain`.
+
+// TODO salvarez explain
+- Uses DFS.
+- Uses backtracking to test alternative options for choice points.
+The decomposition performs a depth first search (DFS) on the domain graph. Since this graph can contain cycles, the backtracking...
 
 ![main_decomposition_successful_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point.png)
 *Successful choice point*
@@ -51,11 +60,7 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 ![secondary_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition.png)
 *Secondary decomposition*
 
-// TODO salvarez explain
-- Uses DFS.
-- Uses backtracking to test alternative options for choice points.
-
-4. In the `Active Plan` tab, see the decomposed plan.
+4. In the `Active Plan` tab, see the tasks of the active plan resulting from the decomposition.
 
 ![main_active_plan](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_active_plan.png)
 *Main active plan*
@@ -71,13 +76,21 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 
 ## Performance Analysis
 
-The following are the profiling results obtained during a session for the `HTNDemo` project in Release configuration with both `HTN_VALIDATE_DOMAIN`, which enables validating the domain during a decomposition, and `HTN_DEBUG_DECOMPOSITION`, which enables storing the decomposition results during a decomposition, macros defined. Additionally, a profiling session is started each time the `HTNTest` project is run, and the resulting capture is saved in the `Captures` directory.
+Since the purpose of this initial iteration of the project has been to understand the problem domain, the focus has been on functionality rather than performance. Because of this, the current implementation of the planner uses an interpreter for the custom domain language. However, the plan is to transition to a compiler in the future, which will improve the overall performance among other things.
+
+The following are the profiling results obtained during a session for the `HTNDemo` project in Release configuration with both `HTN_VALIDATE_DOMAIN`, which enables validating the domain during a decomposition, and `HTN_DEBUG_DECOMPOSITION`, which enables storing the decomposition results during a decomposition, macros defined. Both the function responsible for decomposing a domain, named `InterpretDomain`, and displaying it on the debug window, named `PrintDecomposition`, are mesured, because they are expected to be the ones that are called more frequently. Additional code has also been instrumented.
 
 ![main_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png)
 *Main decomposition profiling results*
 
+On average, a decomposing the main planning unit takes 0.4ms and displaying the results takes 0.15ms.
+
 ![secondary_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_profiling_results.png)
 *Secondary decomposition profiling results*
+
+On average, a decomposing the secondary planning unit takes 0.03ms and displaying the results takes 0.02ms.
+
+Furthermore, a profiling session is started each time the `HTNTest` project is run, and the resulting capture is saved in the `Captures` directory.
 
 ## Third-Party
 - [SDL](https://www.libsdl.org/)
