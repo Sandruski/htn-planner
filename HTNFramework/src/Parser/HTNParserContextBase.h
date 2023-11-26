@@ -22,8 +22,8 @@ public:
     HTN_NODISCARD const HTNToken* GetToken(const uint32 inPosition) const;
     HTN_NODISCARD size            GetTokensSize() const;
 
-    void   SetPosition(const uint32 inPosition);
-    void   IncrementPosition();
+    void                 SetPosition(const uint32 inPosition);
+    void                 IncrementPosition();
     HTN_NODISCARD uint32 GetPosition() const;
 
 private:
@@ -39,12 +39,10 @@ private:
 
 #if HTN_DEBUG
 public:
-    void               SetLastErrorMessage(const std::string& inLastErrorMessage);
+    void                SetLastError(const std::string& inLastErrorMessage, const int32 inLastErrorRow, const int32 inLastErrorColumn);
     HTN_NODISCARD const std::string& GetLastErrorMessage() const;
-    void               SetLastErrorRow(const int32 inLastErrorRow);
-    HTN_NODISCARD int32               GetLastErrorRow() const;
-    void               SetLastErrorColumn(const int32 inLastErrorColumn);
-    HTN_NODISCARD int32                GetLastErrorColumn() const;
+    HTN_NODISCARD int32              GetLastErrorRow() const;
+    HTN_NODISCARD int32              GetLastErrorColumn() const;
 
 protected:
     //----------------------------------------------------------------------//
@@ -72,9 +70,11 @@ inline uint32 HTNParserContextBase::GetPosition() const
 }
 
 #if HTN_DEBUG
-inline void HTNParserContextBase::SetLastErrorMessage(const std::string& inLastErrorMessage)
+inline void HTNParserContextBase::SetLastError(const std::string& inLastErrorMessage, const int32 inLastErrorRow, const int32 inLastErrorColumn)
 {
     mLastErrorMessage = inLastErrorMessage;
+    mLastErrorRow     = inLastErrorRow;
+    mLastErrorColumn  = inLastErrorColumn;
 }
 
 inline const std::string& HTNParserContextBase::GetLastErrorMessage() const
@@ -82,19 +82,9 @@ inline const std::string& HTNParserContextBase::GetLastErrorMessage() const
     return mLastErrorMessage;
 }
 
-inline void HTNParserContextBase::SetLastErrorRow(const int32 inLastErrorRow)
-{
-    mLastErrorRow = inLastErrorRow;
-}
-
 inline int32 HTNParserContextBase::GetLastErrorRow() const
 {
     return mLastErrorRow;
-}
-
-inline void HTNParserContextBase::SetLastErrorColumn(const int32 inLastErrorColumn)
-{
-    mLastErrorColumn = inLastErrorColumn;
 }
 
 inline int32 HTNParserContextBase::GetLastErrorColumn() const

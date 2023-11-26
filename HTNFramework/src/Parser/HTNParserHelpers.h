@@ -11,6 +11,6 @@ class HTNParserContextBase;
 namespace HTNParserHelpers
 {
 #ifdef HTN_DEBUG
-void PrintLastErrorMessage(const HTNParserContextBase& inParserContext);
+void PrintLastError(const HTNParserContextBase& inParserContext);
 #endif
 } // namespace HTNParserHelpers

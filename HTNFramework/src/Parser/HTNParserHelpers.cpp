@@ -9,7 +9,7 @@
 namespace HTNParserHelpers
 {
 #ifdef HTN_DEBUG
-void PrintLastErrorMessage(const HTNParserContextBase& inParserContext)
+void PrintLastError(const HTNParserContextBase& inParserContext)
 {
     const int32        LastErrorRow     = inParserContext.GetLastErrorRow();
     const int32        LastErrorColumn  = inParserContext.GetLastErrorColumn();

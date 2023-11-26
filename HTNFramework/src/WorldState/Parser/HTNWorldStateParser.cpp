@@ -25,7 +25,7 @@ bool HTNWorldStateParser::Parse(HTNWorldStateParserContext& ioWorldStateParserCo
         if (!ParseFact(ioWorldStateParserContext, WorldState))
         {
 #ifdef HTN_DEBUG
-            HTNParserHelpers::PrintLastErrorMessage(ioWorldStateParserContext);
+            HTNParserHelpers::PrintLastError(ioWorldStateParserContext);
 #endif
             return false;
         }

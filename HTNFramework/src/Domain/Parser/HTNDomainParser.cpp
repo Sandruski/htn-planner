@@ -44,7 +44,7 @@ bool HTNDomainParser::Parse(HTNDomainParserContext& ioDomainParserContext) const
     if (!ParseDomainNode(ioDomainParserContext, DomainNode))
     {
 #ifdef HTN_DEBUG
-        HTNParserHelpers::PrintLastErrorMessage(ioDomainParserContext);
+        HTNParserHelpers::PrintLastError(ioDomainParserContext);
 #endif
         return false;
     }
@@ -52,7 +52,7 @@ bool HTNDomainParser::Parse(HTNDomainParserContext& ioDomainParserContext) const
     if (!ParseToken(HTNTokenType::END_OF_FILE, ioDomainParserContext))
     {
 #ifdef HTN_DEBUG
-        HTNParserHelpers::PrintLastErrorMessage(ioDomainParserContext);
+        HTNParserHelpers::PrintLastError(ioDomainParserContext);
 #endif
         return false;
     }
