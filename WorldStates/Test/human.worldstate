@@ -1,22 +1,22 @@
 item "wallet"
 item "sandwich"
-item "apple"
-item "orange"
 item "banana"
+item "orange"
+item "apple"
 
 edible "sandwich"
-edible "apple"
-edible "orange"
 edible "banana"
+edible "orange"
+edible "apple"
 
-type "apple" "fruit"
-type "orange" "fruit"
 type "banana" "fruit"
+type "orange" "fruit"
+type "apple" "fruit"
 
-is_old "apple"
+is_old "banana"
 has_mold "orange"
 
 is_wrapped "sandwich"
-has_peel "banana"
+has_peel "apple"
 
-is_eating "banana"
+is_eating "apple"
