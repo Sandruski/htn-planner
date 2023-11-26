@@ -3,7 +3,7 @@ This project is a hierarchical task network (HTN) planner library for AI decisio
 
 It is more than just a planner, it is a full language.
 
-[![Video](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_tab.png)](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/test_video.mp4)
+[![demo](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decompositio.png)](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/demo.mp4)
 
 ## Disclaimer
 Note that the project is a work in progress (WIP). As such, certain features may be incomplete or subject to change. Feedback and contributions are welcomed.
@@ -26,18 +26,18 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 ### HTNDemo
 1. In the `World State` tab, click the `Parse` button to parse the selected world state file from the folder of the same name. Below, see the parsed world state.
 
-![world_state](https://github.com/Sandruski/htn-planner/blob/main/docs/images/world_state_tab.png)
+![world_state](https://github.com/Sandruski/htn-planner/blob/main/docs/images/world_state.png)
 
 2. In the `Domain` tab, click the `Parse` button to parse the selected domain file from the folder of the same name. Below, see the parsed domain.
 
-![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/domain_tab.png)
+![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/domain.png)
 
 3. In the `Decomposition` tab, click the `Decompose` button to decompose the selected entry point of the parsed domain using the parsed world state. Below, see the result of the decomposition.
 
-![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point_tab.png)
-![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points_tab.png)
-![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_failed_choice_point_tab.png)
-![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_tab.png)
+![main_decomposition_successful_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point.png)
+![main_decomposition_choice_points](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points.png)
+![main_decomposition_failed_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_failed_choice_point.png)
+![secondary_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition.png)
 
 // TODO salvarez explain
 - Uses DFS.
@@ -45,13 +45,13 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 
 4. In the `Active Plan` tab, see the decomposed plan.
 
-![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_active_plan_tab.png)
-![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_active_plan_tab.png)
+![main_active_plan](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_active_plan.png)
+![secondary_active_plan](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_active_plan.png)
 
 ### HTNTest
 1. In the console window, see the results of the tests.
 
-![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/test_result_window.png)
+![tests](https://github.com/Sandruski/htn-planner/blob/main/docs/images/tests.png)
 
 ## Performance Analysis
 
