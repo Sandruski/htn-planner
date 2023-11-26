@@ -22,14 +22,7 @@ HTNDecompositionPrinterContext::HTNDecompositionPrinterContext(const std::shared
 
 void HTNDecompositionPrinterContext::SelectNodeInstance(const HTNNodeInstance& inNodeInstance)
 {
-    mSelectedNodeInstance           = inNodeInstance;
-    mIsSelectedNodeInstanceSelected = true;
-}
-
-void HTNDecompositionPrinterContext::UnselectSelectedNodeInstance()
-{
-    mSelectedNodeInstance           = HTNNodeInstance();
-    mIsSelectedNodeInstanceSelected = false;
+    mSelectedNodeInstance = inNodeInstance;
 }
 
 bool HTNDecompositionPrinterContext::IsNodeSelected(const std::string& inNodeLabel) const

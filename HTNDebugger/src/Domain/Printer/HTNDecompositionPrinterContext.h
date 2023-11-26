@@ -37,7 +37,6 @@ public:
     HTN_NODISCARD bool                          ShouldIgnoreImGuiState() const;
 
     void               SelectNodeInstance(const HTNNodeInstance& inNodeInstance);
-    void               UnselectSelectedNodeInstance();
     HTN_NODISCARD bool IsNodeSelected(const std::string& inNodeLabel) const;
 
     void                              AddNodeState(const std::string& inNodePath, const HTNNodeState& inNodeState);
@@ -70,7 +69,6 @@ public:
 
     void               SetIsCurrentNodeVisible(const bool inIsCurrentNodeVisible);
     HTN_NODISCARD bool IsCurrentNodeVisible() const;
-    HTN_NODISCARD bool IsSelectedNodeInstanceSelected() const;
     void               RefreshNodeStates();
     HTN_NODISCARD bool ShouldRefreshNodeStates() const;
 
@@ -118,9 +116,6 @@ private:
 
     // Whether the current node is shown or hidden
     bool mIsCurrentNodeVisible = true;
-
-    // Whether the selected node instance is still selected
-    bool mIsSelectedNodeInstanceSelected = false;
 
     // Whether to refresh the node states
     bool mShouldRefreshNodeStates = false;
@@ -214,11 +209,6 @@ inline void HTNDecompositionPrinterContext::SetIsCurrentNodeVisible(const bool i
 inline bool HTNDecompositionPrinterContext::IsCurrentNodeVisible() const
 {
     return mIsCurrentNodeVisible;
-}
-
-inline bool HTNDecompositionPrinterContext::IsSelectedNodeInstanceSelected() const
-{
-    return mIsSelectedNodeInstanceSelected;
 }
 
 inline void HTNDecompositionPrinterContext::RefreshNodeStates()

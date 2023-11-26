@@ -247,15 +247,7 @@ bool HTNDecompositionPrinter::Print(HTNDecompositionPrinterContext& ioDecomposit
         return false;
     }
 
-    const bool Result = GetNodeValue(*DomainNode, ioDecompositionPrinterContext).GetValue<bool>();
-
-    const bool IsSelectedNodeInstanceSelected = ioDecompositionPrinterContext.IsSelectedNodeInstanceSelected();
-    if (!IsSelectedNodeInstanceSelected)
-    {
-        ioDecompositionPrinterContext.UnselectSelectedNodeInstance();
-    }
-
-    return Result;
+    return GetNodeValue(*DomainNode, ioDecompositionPrinterContext).GetValue<bool>();
 }
 
 HTNAtom HTNDecompositionPrinter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioDecompositionPrinterContext) const
