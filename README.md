@@ -3,7 +3,7 @@ This project is a hierarchical task network (HTN) planner library for AI decisio
 
 It is more than just a planner, it is a full language.
 
-[![demo](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decompositio.png)](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/demo.mp4)
+[![demo](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition.png)](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/demo.mp4)
 
 ## Disclaimer
 Note that the project is a work in progress (WIP). As such, certain features may be incomplete or subject to change. Feedback and contributions are welcomed.
