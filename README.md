@@ -45,8 +45,7 @@ A domain is a graph of constants, axioms, and methods. It represents the availab
 
 The decomposition process performs a depth-first search (DFS) on the domain graph. The algorithm starts at the top-level compound task and hierarchically expands it into a sequence of primitive tasks, which represent a plan. It uses backtracking as a mechanism to try alternative options leading to different paths at choice points.
 
-![main_decomposition_successful_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point.png)
-: Successful choice point. The Main decomposition had to backtrack 4 times to find the successful path
+![main_decomposition_successful_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point.png "Successful choice point. The Main decomposition had to backtrack 4 times to find the successful path")
 
 ![main_decomposition_choice_points](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points.png)
 <small>*Choice points*</small>
