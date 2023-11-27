@@ -54,7 +54,7 @@ bool HTNWorldStateParser::ParseFact(HTNWorldStateParserContext& ioWorldStatePars
         Arguments.emplace_back(Argument);
     }
 
-    outWorldState.AddFact(Identifier.GetValue<std::string>().c_str(), Arguments.begin(), Arguments.end());
+    outWorldState.AddFact(Identifier.GetValue<std::string>().c_str(), Arguments);
 
     return true;
 }

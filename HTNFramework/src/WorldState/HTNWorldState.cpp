@@ -26,6 +26,7 @@ void HTNWorldState::RemoveFact(const std::string& inFactID, const size inFactArg
 
     HTNFactArgumentsTables& FactArgumentsTables = It->second;
     assert(inFactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
+
     HTNFactArgumentsTable& FactArgumentsTable = FactArgumentsTables[inFactArgumentsSize];
     FactArgumentsTable.RemoveFactArguments(inFactArgumentsIndex);
 }
@@ -65,6 +66,7 @@ bool HTNWorldState::ContainsFactArgumentTable(const std::string& inFactID, const
 
     const HTNFactArgumentsTables& FactArgumentsTables = It->second;
     assert(inFactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
+
     const HTNFactArgumentsTable& FactArgumentsTable = FactArgumentsTables[inFactArgumentsSize];
     const size                   FactArgumentsSize  = FactArgumentsTable.GetFactArgumentsSize();
     return FactArgumentsSize > 0;
@@ -81,6 +83,7 @@ size HTNWorldState::GetFactArgumentsSize(const std::string& inFactID, const size
 
     const HTNFactArgumentsTables& FactArgumentsTables = It->second;
     assert(inFactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
+
     const HTNFactArgumentsTable& FactArgumentsTable = FactArgumentsTables[inFactArgumentsSize];
     return FactArgumentsTable.GetFactArgumentsSize();
 }
