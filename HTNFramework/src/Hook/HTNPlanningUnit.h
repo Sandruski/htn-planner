@@ -9,7 +9,7 @@
 #include <string>
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Interpreter/HTNDecompositionResult.h"
+#include "Domain/Interpreter/HTNDecompositionSnapshot.h"
 #endif
 
 class HTNDatabaseHook;
@@ -41,10 +41,10 @@ private:
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 public:
-    HTN_NODISCARD const HTNDecompositionResult& GetLastDecompositionResult() const;
+    HTN_NODISCARD const HTNDecompositionSnapshot& GetLastDecompositionSnapshot() const;
 
 private:
-    HTNDecompositionResult mLastDecompositionResult;
+    HTNDecompositionSnapshot mLastDecompositionSnapshot;
 #endif
 };
 
@@ -69,8 +69,8 @@ inline const HTNDecompositionRecord& HTNPlanningUnit::GetLastDecomposition() con
 }
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-inline const HTNDecompositionResult& HTNPlanningUnit::GetLastDecompositionResult() const
+inline const HTNDecompositionSnapshot& HTNPlanningUnit::GetLastDecompositionSnapshot() const
 {
-    return mLastDecompositionResult;
+    return mLastDecompositionSnapshot;
 }
 #endif

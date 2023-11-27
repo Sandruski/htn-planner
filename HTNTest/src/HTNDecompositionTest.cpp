@@ -118,5 +118,5 @@ TEST_P(HTNDecompositionTest, IsDecompositionSuccessful)
 }
 
 INSTANTIATE_TEST_CASE_P(Human, HTNDecompositionTest,
-                        testing::Values(std::make_tuple("human", "human", kMainDefaultTopLevelMethodID, 1000),
-                                        std::make_tuple("human", "human", kUpperBodyDefaultTopLevelMethodID, 1000)));
+                        testing::Values(std::make_tuple("human", "human", kMainDefaultTopLevelMethodID, 1),
+                                        std::make_tuple("human", "human", kUpperBodyDefaultTopLevelMethodID, 1)));

@@ -12,7 +12,7 @@
 #include <vector>
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Interpreter/HTNDecompositionResult.h"
+#include "Domain/Interpreter/HTNDecompositionSnapshot.h"
 #endif
 
 class HTNDecompositionRecord;
@@ -107,20 +107,20 @@ private:
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 public:
-    // Records the result of the given node
-    void RecordNodeResult(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
+    // Records a snapshot of the given node
+    void RecordNodeSnapshot(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
 
-    // Records the result of the given node
-    void RecordNodeResult(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
+    // Records a snapshot of the given node
+    void RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
 
-    // Returns the decomposition result
-    HTN_NODISCARD const HTNDecompositionResult& GetDecompositionResult() const;
+    // Returns the decomposition snapshot
+    HTN_NODISCARD const HTNDecompositionSnapshot& GetDecompositionSnapshot() const;
 
 private:
     //----------------------------------------------------------------------//
     // Output
     //----------------------------------------------------------------------//
-    HTNDecompositionResult mDecompositionResult;
+    HTNDecompositionSnapshot mDecompositionSnapshot;
 #endif
 };
 
@@ -195,8 +195,8 @@ inline HTNPathManager& HTNDecompositionContext::GetCurrentVariablesPathManagerMu
 }
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-inline const HTNDecompositionResult& HTNDecompositionContext::GetDecompositionResult() const
+inline const HTNDecompositionSnapshot& HTNDecompositionContext::GetDecompositionSnapshot() const
 {
-    return mDecompositionResult;
+    return mDecompositionSnapshot;
 }
 #endif

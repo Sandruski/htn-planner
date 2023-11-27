@@ -3,18 +3,19 @@
 #include "Domain/Printer/HTNDecompositionPrinterContext.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Interpreter/HTNDecompositionResult.h"
+#include "Domain/Interpreter/HTNDecompositionSnapshot.h"
 #include "Domain/Interpreter/HTNNodeStep.h"
 #include "Domain/Printer/HTNDecompositionHelpers.h"
 #include "Domain/Printer/HTNNodeInstance.h"
 
 HTNDecompositionPrinterContext::HTNDecompositionPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
-                                                               const std::string& inEntryPointID, const HTNDecompositionResult& inDecompositionResult,
-                                                               const bool                        inIsDecompositionSuccessful,
+                                                               const std::string&                          inEntryPointID,
+                                                               const HTNDecompositionSnapshot&             inDecompositionSnapshot,
+                                                               const bool                                  inIsDecompositionSuccessful,
                                                                const HTNDecompositionTooltipMode inTooltipMode, const bool inShouldIgnoreImGuiState,
                                                                HTNNodeStates& ioNodeStates, HTNChoicePointNodeStates& ioChoicePointNodeStates,
                                                                HTNNodeInstance& ioSelectedNodeInstance)
-    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionResult(inDecompositionResult),
+    : mDomainNode(inDomainNode), mEntryPointID(inEntryPointID), mDecompositionSnapshot(inDecompositionSnapshot),
       mIsDecompositionSuccessful(inIsDecompositionSuccessful), mTooltipMode(inTooltipMode), mShouldIgnoreImGuiState(inShouldIgnoreImGuiState),
       mNodeStates(ioNodeStates), mChoicePointNodeStates(ioChoicePointNodeStates), mSelectedNodeInstance(ioSelectedNodeInstance)
 {

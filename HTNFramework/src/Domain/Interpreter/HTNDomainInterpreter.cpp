@@ -31,17 +31,21 @@ HTN_NODISCARD HTNDecompositionContext& GetDecompositionContext(HTNNodeVisitorCon
 }
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-void RecordCurrentNodeResult(const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint,
-                             HTNDecompositionContext& ioDecompositionContext)
+void RecordCurrentNodeSnapshot(const HTNNodeStep inNodeStep, const bool inIsChoicePoint, HTNDecompositionContext& ioDecompositionContext)
 {
+    OPTICK_EVENT("RecordNodeResult");
+
     const std::string& CurrentNodePath = ioDecompositionContext.GetCurrentNodePathManager().GetPath();
-    ioDecompositionContext.RecordNodeResult(CurrentNodePath, inResult, inNodeStep, inIsChoicePoint);
+    ioDecompositionContext.RecordNodeSnapshot(CurrentNodePath, inNodeStep, inIsChoicePoint);
 }
 
-void RecordCurrentNodeResult(const HTNNodeStep inNodeStep, const bool inIsChoicePoint, HTNDecompositionContext& ioDecompositionContext)
+void RecordCurrentNodeSnapshot(const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint,
+                               HTNDecompositionContext& ioDecompositionContext)
 {
+    OPTICK_EVENT("RecordNodeResult");
+
     const std::string& CurrentNodePath = ioDecompositionContext.GetCurrentNodePathManager().GetPath();
-    ioDecompositionContext.RecordNodeResult(CurrentNodePath, inNodeStep, inIsChoicePoint);
+    ioDecompositionContext.RecordNodeSnapshot(CurrentNodePath, inResult, inNodeStep, inIsChoicePoint);
 }
 #endif
 } // namespace
@@ -77,7 +81,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
     const HTNVariablesScope DomainVariablesScope = HTNVariablesScope(DomainNodeID, DecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     if (!inDomainNode.IsTopLevel())
@@ -120,7 +124,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
         if (!Result)
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
             return Result;
         }
@@ -128,7 +132,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
 
     static constexpr bool Result = true;
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
@@ -160,7 +164,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisi
     const HTNNodeScope AxiomNodeScope = HTNNodeScope(inAxiomNode.GetID(), DecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     const std::shared_ptr<const HTNConditionNodeBase>& ConditionNode = inAxiomNode.GetConditionNode();
@@ -169,7 +173,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisi
         // If empty, it evaluates to true
         static constexpr bool Result = true;
 #ifdef HTN_DEBUG_DECOMPOSITION
-        RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+        RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
         return Result;
     }
@@ -177,7 +181,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeVisi
     // Check condition
     const bool Result = GetNodeValue(*ConditionNode, ioDecompositionContext).GetValue<bool>();
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
@@ -198,7 +202,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
     const std::string& CurrentNodePath = DecompositionContext.GetCurrentNodePathManager().GetPath();
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
@@ -216,7 +220,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
         if (Result)
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
             return Result;
         }
@@ -224,7 +228,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
         if (BranchIndex == BranchNodesSize - 1) // Last branch
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
             // Restore state: unbound variables but updated indices
             if (!DecompositionContext.RestoreDecomposition())
@@ -232,7 +236,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
                 return Result;
             }
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, StartNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
         }
         else
@@ -244,7 +248,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNMethodNode& inMethodNode, HTNNodeVi
 
     static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
@@ -264,7 +268,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVi
     const HTNNodeScope BranchNodeScope = HTNNodeScope(inBranchNode.GetID(), DecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     const std::shared_ptr<const HTNConditionNodeBase>& CurrentPreConditionNode = inBranchNode.GetPreConditionNode();
@@ -274,7 +278,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVi
         if (!Result)
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
             return Result;
         }
@@ -296,7 +300,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNBranchNode& inBranchNode, HTNNodeVi
 
     static constexpr bool Result = true;
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
@@ -336,43 +340,47 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
 #endif
 
 #ifdef HTN_VALIDATE_DOMAIN
-    // Check that if an argument is any it is unbound
-    // TODO salvarez Move to a validation step after parsing
-    for (size i = 0; i < ArgumentNodesSize; ++i)
     {
-        const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode = ArgumentNodes[i];
+        OPTICK_EVENT("ValidateNode");
 
-        // Variable IDs can only be strings
-        const bool IsVariableID = ArgumentNode->GetValue().IsType<std::string>();
-        if (!IsVariableID)
+        // Check that if an argument is any it is unbound
+        // TODO salvarez Move to a validation step after parsing
+        for (size i = 0; i < ArgumentNodesSize; ++i)
         {
-            continue;
-        }
+            const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode = ArgumentNodes[i];
 
-        const std::string& VariableID    = ArgumentNode->GetValue().GetValue<std::string>();
-        const bool         IsAnyArgument = HTNDomainHelpers::IsAnyArgument(VariableID);
-        if (!IsAnyArgument)
-        {
-            continue;
-        }
+            // Variable IDs can only be strings
+            const bool IsVariableID = ArgumentNode->GetValue().IsType<std::string>();
+            if (!IsVariableID)
+            {
+                continue;
+            }
 
-        const HTNAtom& Argument = FactArguments[i];
-        if (!Argument.IsBound())
-        {
-            continue;
-        }
+            const std::string& VariableID    = ArgumentNode->GetValue().GetValue<std::string>();
+            const bool         IsAnyArgument = HTNDomainHelpers::IsAnyArgument(VariableID);
+            if (!IsAnyArgument)
+            {
+                continue;
+            }
 
-        HTN_LOG_ERROR("Condition node's argument [{}] is any and is bound", VariableID);
-        static constexpr bool Result = false;
+            const HTNAtom& Argument = FactArguments[i];
+            if (!Argument.IsBound())
+            {
+                continue;
+            }
+
+            HTN_LOG_ERROR("Condition node's argument [{}] is any and is bound", VariableID);
+            static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-        RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
-        return Result;
+            return Result;
+        }
     }
 #endif
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
@@ -398,7 +406,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
         {
             static constexpr bool Result = true;
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
             return Result;
         }
@@ -419,7 +427,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
         {
             static constexpr bool Result = true;
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
             return Result;
         }
@@ -434,14 +442,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
 
         static constexpr bool Result = true;
 #ifdef HTN_DEBUG_DECOMPOSITION
-        RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+        RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
         return Result;
     }
 
     static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
@@ -461,7 +469,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     const HTNNodeScope AxiomConditionNodeScope = HTNNodeScope(inAxiomConditionNode.GetID(), DecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     const std::shared_ptr<const HTNDomainNode>&               DomainNode               = DecompositionContext.GetDomainNode();
@@ -473,7 +481,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         HTN_LOG_ERROR("Axiom node [{}] could not be found", AxiomNodeID);
         static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-        RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+        RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
         return Result;
     }
@@ -483,17 +491,21 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& AxiomNodeParameterNodes             = AxiomNode->GetParameterNodes();
     const size                                                           AxiomNodeParameterNodesSize         = AxiomNodeParameterNodes.size();
 #ifdef HTN_VALIDATE_DOMAIN
-    // Check the number of arguments of an axiom condition node is the same as the number of parameters of the axiom node that it calls
-    // TODO salvarez Move to a validation step after parsing
-    if (AxiomConditionNodeArgumentNodesSize != AxiomNodeParameterNodesSize)
     {
-        HTN_LOG_ERROR("Axiom node of [{}] parameter(s) cannot be called by axiom condition node of [{}] argument(s)", AxiomNodeParameterNodesSize,
-                      AxiomConditionNodeArgumentNodesSize);
-        static constexpr bool Result = false;
+        OPTICK_EVENT("ValidateNode");
+
+        // Check the number of arguments of an axiom condition node is the same as the number of parameters of the axiom node that it calls
+        // TODO salvarez Move to a validation step after parsing
+        if (AxiomConditionNodeArgumentNodesSize != AxiomNodeParameterNodesSize)
+        {
+            HTN_LOG_ERROR("Axiom node of [{}] parameter(s) cannot be called by axiom condition node of [{}] argument(s)", AxiomNodeParameterNodesSize,
+                          AxiomConditionNodeArgumentNodesSize);
+            static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-        RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
-        return Result;
+            return Result;
+        }
     }
 #endif
 
@@ -519,44 +531,53 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
             if (!IsInputParameter && !IsInputOutputParameter)
             {
 #ifdef HTN_VALIDATE_DOMAIN
-                // Check that the parameter is input, output, or input/output
-                const bool IsOutputParameter = HTNDomainHelpers::IsOutputParameter(VariableID);
-                if (!IsOutputParameter)
                 {
-                    HTN_LOG_ERROR("Axiom node's parameter [{}] is not input, output, or input/output", VariableID);
-                    static constexpr bool Result = false;
+                    OPTICK_EVENT("ValidateNode");
+
+                    // Check that the parameter is input, output, or input/output
+                    const bool IsOutputParameter = HTNDomainHelpers::IsOutputParameter(VariableID);
+                    if (!IsOutputParameter)
+                    {
+                        HTN_LOG_ERROR("Axiom node's parameter [{}] is not input, output, or input/output", VariableID);
+                        static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-                    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+                        RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
-                    return Result;
+                        return Result;
+                    }
+#endif
                 }
-#endif
+
                 continue;
             }
 
             const HTNAtom& AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
 #ifdef HTN_VALIDATE_DOMAIN
-            // Check that the argument for the input parameter is bound
-            // TODO salvarez Move to a validation step after parsing
-            if (IsInputParameter)
             {
-                if (!AxiomConditionNodeArgument.IsBound())
+                OPTICK_EVENT("ValidateNode");
+
+                // Check that the argument for the input parameter is bound
+                // TODO salvarez Move to a validation step after parsing
+                if (IsInputParameter)
                 {
+                    if (!AxiomConditionNodeArgument.IsBound())
+                    {
 #ifdef HTN_DEBUG_DECOMPOSITION
-                    static constexpr bool    ShouldDoubleQuoteString = false;
-                    static const std::string ParameterType           = IsInputParameter ? "input" : "input/output";
+                        static constexpr bool    ShouldDoubleQuoteString = false;
+                        static const std::string ParameterType           = IsInputParameter ? "input" : "input/output";
 #endif
-                    HTN_LOG_ERROR(
-                        "Axiom node's {} parameter [{}] cannot be initialized with axiom condition node's argument [{}] because it is unbound",
-                        ParameterType, VariableID, AxiomConditionNodeArgumentNodes[i]->GetValue().ToString(ShouldDoubleQuoteString));
-                    static constexpr bool Result = false;
+                        HTN_LOG_ERROR(
+                            "Axiom node's {} parameter [{}] cannot be initialized with axiom condition node's argument [{}] because it is unbound",
+                            ParameterType, VariableID, AxiomConditionNodeArgumentNodes[i]->GetValue().ToString(ShouldDoubleQuoteString));
+                        static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-                    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+                        RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
-                    return Result;
+                        return Result;
+                    }
                 }
-            }
 #endif
+            }
 
             SetNodeValue(*AxiomNodeParameterNode, AxiomConditionNodeArgument, ioDecompositionContext);
         }
@@ -565,7 +586,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         if (!Result)
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
             return Result;
         }
@@ -593,28 +614,32 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
         const std::shared_ptr<const HTNValueExpressionNodeBase>& AxiomConditionNodeArgumentNode = AxiomConditionNodeArgumentNodes[i];
 
 #ifdef HTN_VALIDATE_DOMAIN
-        // Check that the argument for the output parameter is unbound
-        // TODO salvarez Move to a validation step after parsing
-        if (IsOutputParameter)
         {
-            const HTNAtom& AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
-            if (AxiomConditionNodeArgument.IsBound())
+            OPTICK_EVENT("ValidateNode");
+
+            // Check that the argument for the output parameter is unbound
+            // TODO salvarez Move to a validation step after parsing
+            if (IsOutputParameter)
             {
+                const HTNAtom& AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
+                if (AxiomConditionNodeArgument.IsBound())
+                {
 #ifdef HTN_DEBUG_DECOMPOSITION
-                static constexpr bool    ShouldDoubleQuoteString = false;
-                static const std::string ParameterType           = IsOutputParameter ? "output" : "input/output";
+                    static constexpr bool    ShouldDoubleQuoteString = false;
+                    static const std::string ParameterType           = IsOutputParameter ? "output" : "input/output";
 #endif
-                HTN_LOG_ERROR(
-                    "Axiom condition node's argument [{}] cannot be initialized with axiom node's {} parameter [{}] because it is already bound",
-                    AxiomConditionNodeArgumentNode->GetValue().ToString(ShouldDoubleQuoteString), ParameterType, VariableID);
-                static constexpr bool Result = false;
+                    HTN_LOG_ERROR(
+                        "Axiom condition node's argument [{}] cannot be initialized with axiom node's {} parameter [{}] because it is already bound",
+                        AxiomConditionNodeArgumentNode->GetValue().ToString(ShouldDoubleQuoteString), ParameterType, VariableID);
+                    static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-                RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+                    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
-                return Result;
+                    return Result;
+                }
             }
-        }
 #endif
+        }
 
         const HTNAtom& AxiomNodeParameter = AxiomNodeParameters[i];
         SetNodeValue(*AxiomConditionNodeArgumentNode, AxiomNodeParameter, ioDecompositionContext);
@@ -622,7 +647,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 
     static constexpr bool Result = true;
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
@@ -645,7 +670,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
     const std::string& CurrentNodePath       = DecompositionContext.GetCurrentNodePathManager().GetPath();
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
@@ -665,14 +690,14 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
             if (SubConditionIndex == 0) // First sub-condition
             {
 #ifdef HTN_DEBUG_DECOMPOSITION
-                RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+                RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
                 return Result;
             }
             else
             {
 #ifdef HTN_DEBUG_DECOMPOSITION
-                RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+                RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
                 // Restore state: unbound variables but updated indices
                 if (!DecompositionContext.RestoreDecomposition())
@@ -680,7 +705,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
                     return Result;
                 }
 #ifdef HTN_DEBUG_DECOMPOSITION
-                RecordCurrentNodeResult(Result, StartNodeStep, IsChoicePoint, DecompositionContext);
+                RecordCurrentNodeSnapshot(Result, StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
                 continue;
             }
@@ -693,7 +718,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
     // If empty, it evaluates to true
     static constexpr bool Result = true;
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
@@ -716,7 +741,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
     const std::string& CurrentNodePath      = DecompositionContext.GetCurrentNodePathManager().GetPath();
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
@@ -741,7 +766,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
         if (Result)
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
             return Result;
         }
@@ -753,7 +778,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
     // If empty, it evaluates to false
     static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
@@ -776,7 +801,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
     const std::string& CurrentNodePath       = DecompositionContext.GetCurrentNodePathManager().GetPath();
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
@@ -794,7 +819,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
         if (Result)
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
             return Result;
         }
@@ -802,7 +827,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
         if (SubConditionIndex == SubConditionNodesSize - 1) // Last sub-condition
         {
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
             // Restore state: unbound variables but updated indices
             if (!DecompositionContext.RestoreDecomposition())
@@ -810,7 +835,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
                 return Result;
             }
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, StartNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
         }
         else
@@ -823,7 +848,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
     // If empty, it evaluates to false
     static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
@@ -845,7 +870,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
     const HTNNodeScope NotConditionNodeScope = HTNNodeScope(inNotConditionNode.GetID(), DecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
@@ -868,7 +893,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNod
     DecompositionContext.SetDecompositionRecordHistory(DecompositionRecordHistory);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
@@ -888,7 +913,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     const HTNNodeScope CompoundTaskNodeScope = HTNNodeScope(inCompoundTaskNode.GetID(), DecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     const std::shared_ptr<const HTNDomainNode>&               DomainNode             = DecompositionContext.GetDomainNode();
@@ -900,7 +925,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
         HTN_LOG_ERROR("Method node [{}] could not be found", MethodNodeID);
         static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-        RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+        RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
         return Result;
     }
@@ -910,7 +935,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
         HTN_LOG_ERROR("Method node [{}] is not top-level", MethodNodeID);
         static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-        RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+        RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
         return Result;
     }
@@ -919,20 +944,24 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
     const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>&  MethodNodeParameterNodes      = MethodNode->GetParameterNodes();
     const size                                                            MethodNodeParameterNodesSize  = MethodNodeParameterNodes.size();
 #ifdef HTN_VALIDATE_DOMAIN
-    // Check the number of arguments of a compound task node is the same as the number of parameters of the method node that it calls
-    // TODO salvarez Move to a validation step after parsing
-    const size CompoundTaskNodeArgumentNodesSize = CompoundTaskNodeArgumentNodes.size();
-    if (CompoundTaskNodeArgumentNodesSize != MethodNodeParameterNodesSize)
     {
-        HTN_LOG_ERROR("Method node of [{}] parameter(s) cannot be called by compound task node of [{}] argument(s)", MethodNodeParameterNodesSize,
-                      CompoundTaskNodeArgumentNodesSize);
-        static constexpr bool Result = false;
+        OPTICK_EVENT("ValidateNode");
+
+        // Check the number of arguments of a compound task node is the same as the number of parameters of the method node that it calls
+        // TODO salvarez Move to a validation step after parsing
+        const size CompoundTaskNodeArgumentNodesSize = CompoundTaskNodeArgumentNodes.size();
+        if (CompoundTaskNodeArgumentNodesSize != MethodNodeParameterNodesSize)
+        {
+            HTN_LOG_ERROR("Method node of [{}] parameter(s) cannot be called by compound task node of [{}] argument(s)", MethodNodeParameterNodesSize,
+                          CompoundTaskNodeArgumentNodesSize);
+            static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-        RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+            RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
-        return Result;
+            return Result;
+        }
+#endif
     }
-#endif
 
     std::vector<HTNAtom> CompoundTaskNodeArguments;
     CompoundTaskNodeArguments.reserve(CompoundTaskNodeArgumentNodes.size());
@@ -953,42 +982,51 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
         if (!IsInputParameter)
         {
 #ifdef HTN_VALIDATE_DOMAIN
-            // Check that the parameter is input
-            HTN_LOG_ERROR("Method node's parameter [{}] is not input", VariableID);
-            static constexpr bool Result = false;
+            {
+                OPTICK_EVENT("ValidateNode");
+
+                // Check that the parameter is input
+                HTN_LOG_ERROR("Method node's parameter [{}] is not input", VariableID);
+                static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+                RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
-            return Result;
+                return Result;
 #endif
+            }
+
             continue;
         }
 
         const HTNAtom& CompoundTaskNodeArgument = CompoundTaskNodeArguments[i];
 #ifdef HTN_VALIDATE_DOMAIN
-        // Check that the argument for the input parameter is bound
-        // TODO salvarez Move to a validation step after parsing
-        if (!CompoundTaskNodeArgument.IsBound())
         {
+            OPTICK_EVENT("ValidateNode");
+
+            // Check that the argument for the input parameter is bound
+            // TODO salvarez Move to a validation step after parsing
+            if (!CompoundTaskNodeArgument.IsBound())
+            {
 #ifdef HTN_DEBUG_DECOMPOSITION
-            static constexpr bool ShouldDoubleQuoteString = false;
+                static constexpr bool ShouldDoubleQuoteString = false;
 #endif
-            HTN_LOG_ERROR("Method's input parameter [{}] cannot be initialized with compound task node's argument [{}] because it is unbound",
-                          VariableID, CompoundTaskNodeArgumentNodes[i]->GetValue().ToString(ShouldDoubleQuoteString));
-            static constexpr bool Result = false;
+                HTN_LOG_ERROR("Method's input parameter [{}] cannot be initialized with compound task node's argument [{}] because it is unbound",
+                              VariableID, CompoundTaskNodeArgumentNodes[i]->GetValue().ToString(ShouldDoubleQuoteString));
+                static constexpr bool Result = false;
 #ifdef HTN_DEBUG_DECOMPOSITION
-            RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+                RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
-            return Result;
+                return Result;
+            }
+#endif
         }
-#endif
 
         SetNodeValue(*MethodNodeParameterNode, CompoundTaskNodeArgument, ioDecompositionContext);
     }
 
     const bool Result = GetNodeValue(*MethodNode, ioDecompositionContext).GetValue<bool>();
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }
@@ -1008,7 +1046,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
     const HTNNodeScope PrimitiveTaskNodeScope = HTNNodeScope(inPrimitiveTaskNode.GetID(), DecompositionContext);
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(StartNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(StartNodeStep, IsChoicePoint, DecompositionContext);
 #endif
 
     HTNDecompositionRecord& CurrentDecomposition = DecompositionContext.GetCurrentDecompositionMutable();
@@ -1030,7 +1068,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNPrimitiveTaskNode& inPrimitiveTaskN
 
     static constexpr bool Result = true;
 #ifdef HTN_DEBUG_DECOMPOSITION
-    RecordCurrentNodeResult(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
+    RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
     return Result;
 }

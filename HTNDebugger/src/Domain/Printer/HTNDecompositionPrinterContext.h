@@ -16,7 +16,7 @@
 class HTNChoicePointNodeState;
 class HTNNodeInstance;
 class HTNNodeState;
-class HTNDecompositionResult;
+class HTNDecompositionSnapshot;
 class HTNDomainNode;
 enum class HTNNodeStep : uint8;
 
@@ -24,17 +24,17 @@ class HTNDecompositionPrinterContext final : public HTNNodeVisitorContextBase
 {
 public:
     explicit HTNDecompositionPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode, const std::string& inEntryPointID,
-                                            const HTNDecompositionResult& inDecompositionResult, const bool inIsDecompositionSuccessful,
+                                            const HTNDecompositionSnapshot& inDecompositionSnapshot, const bool inIsDecompositionSuccessful,
                                             const HTNDecompositionTooltipMode inTooltipMode, const bool inShouldIgnoreImGuiState,
                                             HTNNodeStates& ioNodeStates, HTNChoicePointNodeStates& ioChoicePointNodeStates,
                                             HTNNodeInstance& ioSelectedNodeInstance);
 
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
-    HTN_NODISCARD const std::string&            GetEntryPointID() const;
-    HTN_NODISCARD const HTNDecompositionResult& GetDecompositionResult() const;
-    HTN_NODISCARD bool                          IsDecompositionSuccessful() const;
-    HTN_NODISCARD HTNDecompositionTooltipMode   GetTooltipMode() const;
-    HTN_NODISCARD bool                          ShouldIgnoreImGuiState() const;
+    HTN_NODISCARD const std::string&              GetEntryPointID() const;
+    HTN_NODISCARD const HTNDecompositionSnapshot& GetDecompositionSnapshot() const;
+    HTN_NODISCARD bool                            IsDecompositionSuccessful() const;
+    HTN_NODISCARD HTNDecompositionTooltipMode     GetTooltipMode() const;
+    HTN_NODISCARD bool                            ShouldIgnoreImGuiState() const;
 
     void               SelectNodeInstance(const HTNNodeInstance& inNodeInstance);
     HTN_NODISCARD bool IsNodeSelected(const std::string& inNodeLabel) const;
@@ -78,7 +78,7 @@ private:
     //----------------------------------------------------------------------//
     const std::shared_ptr<const HTNDomainNode>& mDomainNode;
     const std::string&                          mEntryPointID;
-    const HTNDecompositionResult&               mDecompositionResult;
+    const HTNDecompositionSnapshot&             mDecompositionSnapshot;
     const bool                                  mIsDecompositionSuccessful = false;
     const HTNDecompositionTooltipMode           mTooltipMode               = HTNDecompositionTooltipMode::NONE;
     const bool                                  mShouldIgnoreImGuiState    = false;
@@ -131,9 +131,9 @@ inline const std::string& HTNDecompositionPrinterContext::GetEntryPointID() cons
     return mEntryPointID;
 }
 
-inline const HTNDecompositionResult& HTNDecompositionPrinterContext::GetDecompositionResult() const
+inline const HTNDecompositionSnapshot& HTNDecompositionPrinterContext::GetDecompositionSnapshot() const
 {
-    return mDecompositionResult;
+    return mDecompositionSnapshot;
 }
 
 inline bool HTNDecompositionPrinterContext::IsDecompositionSuccessful() const

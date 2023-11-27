@@ -7,15 +7,15 @@
 #include "HTNCoreMinimal.h"
 
 /**
- * Result of a node in a decomposition
+ * Snapshot of a node in a decomposition
  * - TODO salvarez Make this a base class with two derived classes - one with the result and one without it
  */
-class HTNNodeResult
+class HTNNodeSnapshot
 {
 public:
-    HTNNodeResult() = default;
-    explicit HTNNodeResult(const HTNVariablesManager& inVariablesManager);
-    explicit HTNNodeResult(const HTNVariablesManager& inVariablesManager, const bool inResult);
+    HTNNodeSnapshot() = default;
+    explicit HTNNodeSnapshot(const HTNVariablesManager& inVariablesManager);
+    explicit HTNNodeSnapshot(const HTNVariablesManager& inVariablesManager, const bool inResult);
 
     // Returns the variables manager of the node
     HTN_NODISCARD const HTNVariablesManager& GetVariablesManager() const;
@@ -27,16 +27,16 @@ private:
     // Variables manager of the node
     HTNVariablesManager mVariablesManager;
 
-    // Actual result of the node
+    // Result of the node
     bool mResult = false;
 };
 
-inline bool HTNNodeResult::GetResult() const
+inline bool HTNNodeSnapshot::GetResult() const
 {
     return mResult;
 }
 
-inline const HTNVariablesManager& HTNNodeResult::GetVariablesManager() const
+inline const HTNVariablesManager& HTNNodeSnapshot::GetVariablesManager() const
 {
     return mVariablesManager;
 }

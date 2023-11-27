@@ -21,7 +21,7 @@ bool HTNPlanningUnit::ExecuteTopLevelMethod(const std::string& inEntryPointID)
 
     mLastDecomposition = DecompositionContext.GetCurrentDecomposition();
 #ifdef HTN_DEBUG_DECOMPOSITION
-    mLastDecompositionResult = DecompositionContext.GetDecompositionResult();
+    mLastDecompositionSnapshot = DecompositionContext.GetDecompositionSnapshot();
 #endif
 
     return Result;

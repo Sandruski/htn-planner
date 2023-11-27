@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-class HTNNodeResult;
+class HTNNodeSnapshot;
 class HTNValueExpressionNodeBase;
 class HTNVariableExpressionNode;
 
@@ -22,13 +22,15 @@ class HTNNodeInstance
 {
 public:
     HTNNodeInstance() = default;
-    explicit HTNNodeInstance(const HTNNodeResult& inNodeResult, const std::string& inNodeLabel);
-    explicit HTNNodeInstance(const HTNNodeResult& inNodeResult, const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters,
+    explicit HTNNodeInstance(const HTNNodeSnapshot& inNodeSnapshot, const std::string& inNodeLabel);
+    explicit HTNNodeInstance(const HTNNodeSnapshot&                                               inNodeSnapshot,
+                             const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& inNodeParameters,
                              const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel);
-    explicit HTNNodeInstance(const HTNNodeResult& inNodeResult, const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
+    explicit HTNNodeInstance(const HTNNodeSnapshot&                                                inNodeSnapshot,
+                             const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
                              const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel);
 
-    HTN_NODISCARD const HTNNodeResult* GetNodeResult() const;
+    HTN_NODISCARD const HTNNodeSnapshot* GetNodeSnapshot() const;
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& GetNodeParameters() const;
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetNodeArguments() const;
     HTN_NODISCARD const HTNPathManager&                                                 GetVariablesPathManager() const;
@@ -36,16 +38,16 @@ public:
     HTN_NODISCARD const std::string& GetNodeLabel() const;
 
 private:
-    const HTNNodeResult*                                           mNodeResult = nullptr;
+    const HTNNodeSnapshot*                                         mNodeSnapshot = nullptr;
     std::vector<std::shared_ptr<const HTNVariableExpressionNode>>  mNodeParameters;
     std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> mNodeArguments;
     HTNPathManager                                                 mVariablesPathManager;
     std::string                                                    mNodeLabel;
 };
 
-inline const HTNNodeResult* HTNNodeInstance::GetNodeResult() const
+inline const HTNNodeSnapshot* HTNNodeInstance::GetNodeSnapshot() const
 {
-    return mNodeResult;
+    return mNodeSnapshot;
 }
 
 inline const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& HTNNodeInstance::GetNodeParameters() const

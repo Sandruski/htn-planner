@@ -187,16 +187,16 @@ void RenderActivePlanByPlanningQuery(const HTNPlanningQuery& inPlanningQuery)
 
         for (const HTNTaskResult& TaskResult : Plan)
         {
-            const std::string& TaskID = TaskResult.GetID();
+            const std::string& TaskID = TaskResult.GetTaskID();
             ImGui::Text(TaskID.c_str());
 
-            const std::vector<HTNAtom>& Arguments = TaskResult.GetArguments();
-            for (const HTNAtom& Argument : Arguments)
+            const std::vector<HTNAtom>& TaskArguments = TaskResult.GetTaskArguments();
+            for (const HTNAtom& TaskArgument : TaskArguments)
             {
                 static constexpr bool ShouldDoubleQuoteString = true;
-                const std::string&    ArgumentString          = Argument.ToString(ShouldDoubleQuoteString);
+                const std::string&    TaskArgumentString      = TaskArgument.ToString(ShouldDoubleQuoteString);
                 ImGui::SameLine();
-                ImGui::Text(ArgumentString.c_str());
+                ImGui::Text(TaskArgumentString.c_str());
             }
         }
     }
@@ -611,10 +611,10 @@ void HTNDebuggerWindow::RenderDecompositionByPlanningQuery(const std::vector<std
     const std::string&                          LastEntryPointID                         = ioPlanningQuery.GetLastEntryPointID();
     const HTNPlanningUnit&                      PlanningUnit                             = ioPlanningQuery.GetPlanningUnit();
     const bool                                  IsLastDecomposeDomainOperationSuccessful = ioPlanningQuery.IsLastDecomposeDomainOperationSuccessful();
-    const HTNDecompositionResult&               LastDecompositionResult                  = PlanningUnit.GetLastDecompositionResult();
+    const HTNDecompositionSnapshot&             LastDecompositionSnapshot                = PlanningUnit.GetLastDecompositionSnapshot();
     const bool                                  ShouldIgnoreImGuiState                   = !mIsDecompositionCurrentTab;
     HTNDecompositionPrinterContext              DecompositionPrinterContext =
-        HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionResult, IsLastDecomposeDomainOperationSuccessful,
+        HTNDecompositionPrinterContext(LastDomainNode, LastEntryPointID, LastDecompositionSnapshot, IsLastDecomposeDomainOperationSuccessful,
                                        mTooltipMode, ShouldIgnoreImGuiState, ioNodeStates, ioChoicePointNodeStates, ioSelectedNodeInstance);
     mDecompositionPrinter.Print(DecompositionPrinterContext);
 

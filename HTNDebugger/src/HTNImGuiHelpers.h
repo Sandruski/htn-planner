@@ -9,7 +9,7 @@
 
 #include <string>
 
-class HTNNodeResult;
+class HTNNodeSnapshot;
 enum class HTNNodeStep : uint8;
 
 namespace HTNImGuiHelpers
@@ -22,7 +22,7 @@ void HelpMarker(const std::string& inDescription);
 void               SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen);
 HTN_NODISCARD bool IsCurrentItemSelected();
 
-HTN_NODISCARD ImVec4 GetNodeColor(const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep);
+HTN_NODISCARD ImVec4 GetNodeColor(const HTNNodeSnapshot& inNodeSnapshot, const HTNNodeStep inNodeStep);
 HTN_NODISCARD ImVec4 GetResultColor(const bool inResult);
 HTN_NODISCARD ImVec4 GetVariableColor(const std::string& inVariableID);
 
