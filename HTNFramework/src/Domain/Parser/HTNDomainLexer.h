@@ -7,6 +7,9 @@
 
 class HTNDomainLexerContext;
 
+/**
+ * Breaks a domain text into a series of tokens
+ */
 class HTNDomainLexer final : public HTNLexerBase
 {
 public:

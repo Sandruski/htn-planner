@@ -10,6 +10,9 @@
 class HTNToken;
 class HTNWorldState;
 
+/**
+ * Data of a parser of a world state
+ */
 class HTNWorldStateParserContext final : public HTNParserContextBase
 {
 public:

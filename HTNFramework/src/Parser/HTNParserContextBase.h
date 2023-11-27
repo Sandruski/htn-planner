@@ -13,6 +13,9 @@
 
 class HTNToken;
 
+/**
+ * Base class for the data of a parser
+ */
 class HTNParserContextBase : public HTNNodeVisitorContextBase
 {
 public:

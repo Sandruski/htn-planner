@@ -10,6 +10,9 @@
 
 class HTNToken;
 
+/**
+ * Data of a lexer of a domain
+ */
 class HTNDomainLexerContext final : public HTNLexerContextBase
 {
 public:

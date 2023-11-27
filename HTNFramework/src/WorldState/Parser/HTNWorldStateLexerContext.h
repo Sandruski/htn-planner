@@ -10,6 +10,9 @@
 
 class HTNToken;
 
+/**
+ * Data of a lexer of a world state
+ */
 class HTNWorldStateLexerContext final : public HTNLexerContextBase
 {
 public:

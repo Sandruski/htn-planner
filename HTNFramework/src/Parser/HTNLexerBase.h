@@ -11,7 +11,7 @@ class HTNLexerContextBase;
 enum class HTNTokenType : uint8;
 
 /**
- * Breaks a text into a series of tokens
+ * Base class that breaks a text into a series of tokens
  * Reports all lexical errors of the text
  */
 class HTNLexerBase

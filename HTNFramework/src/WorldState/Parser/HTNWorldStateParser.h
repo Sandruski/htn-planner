@@ -9,6 +9,10 @@ class HTNAtom;
 class HTNWorldState;
 class HTNWorldStateParserContext;
 
+/**
+ * Recursive descent parser
+ * Builds a world state from a series of tokens
+ */
 class HTNWorldStateParser final : public HTNParserBase
 {
 public:

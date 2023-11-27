@@ -7,6 +7,9 @@
 
 class HTNWorldStateLexerContext;
 
+/**
+ * Breaks a world state text into a series of tokens
+ */
 class HTNWorldStateLexer final : public HTNLexerBase
 {
 public:

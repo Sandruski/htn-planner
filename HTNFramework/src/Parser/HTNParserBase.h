@@ -8,6 +8,10 @@ class HTNParserContextBase;
 class HTNToken;
 enum class HTNTokenType : uint8;
 
+/**
+ * Base class that builds an object from a series of tokens
+ * Reports the first syntax error of the tokens
+ */
 class HTNParserBase
 {
 public:

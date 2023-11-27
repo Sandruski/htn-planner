@@ -11,6 +11,9 @@
 class HTNDomainNode;
 class HTNToken;
 
+/**
+ * Data of a parser of a domain
+ */
 class HTNDomainParserContext final : public HTNParserContextBase
 {
 public:

@@ -12,6 +12,9 @@ class HTNAtom;
 class HTNToken;
 enum class HTNTokenType : uint8;
 
+/**
+ * Base class for the data of a lexer
+ */
 class HTNLexerContextBase : public HTNNodeVisitorContextBase
 {
 public:

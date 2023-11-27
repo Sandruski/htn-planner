@@ -29,14 +29,18 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 ### HTNDemo
 1. In the `World State` tab, click the `Parse` button to parse the selected world state file. World state files are identified by the `.worldstate` extension and are located in the folder of the same name.
 
-A world state is a database of tables of facts. It represents the knowledge about the world.
+A world state is a database of tables of facts representing the knowledge about the world.
+
+The `HTNWorldStateLexer` class is responsible for lexing the text of a world state file and the `HTNWorldStateParser` class is responsible for parsing the resulting tokens into an object of the `HTNWorldState` class, which is the actual world state.
 
 ![world_state](https://github.com/Sandruski/htn-planner/blob/main/docs/images/world_state.png "World state")
 *World state*
 
 2. In the `Domain` tab, click the `Parse` button to parse the selected domain file. Domain files are identified by the `.domain` extension and are located in the folder of the same name.
 
-A domain is a graph of constants, axioms, and methods. It represents the available actions.
+A domain is a graph of constants, axioms, and methods representing the available actions.
+
+The `HTNDomainLexer` class is responsible for lexing the text of a domain file and the `HTNDomainParser` class is responsible for parsing the resulting tokens into an object of the `HTNDomainNode` class, which is the actual domain.
 
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/domain.png "Domain")
 *Domain*
@@ -44,6 +48,8 @@ A domain is a graph of constants, axioms, and methods. It represents the availab
 3. In the `Decomposition` tab, click the `Decompose` button to decompose the selected entry point of the parsed domain using the parsed world state. Entry points are methods tagged with `top_level_method` of a domain tagged with `top_level_domain`.
 
 The decomposition process performs a depth-first search (DFS) on the domain graph. The algorithm starts at the top-level compound task and hierarchically expands it into a sequence of primitive tasks, which represent a plan. It uses the backtracking mechanism to try different options at choice points, which lead to different paths.
+
+The `HTNDomainInterpreter` class is responsible for the decomposition process. The `HTNDecompositionPrinter` class is responsible for displaying its results.
 
 ![main_decomposition_successful_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point.png "Main decomposition successful choice point")
 *Main decomposition successful choice point. The Main decomposition found the successful path at the 5th try*
