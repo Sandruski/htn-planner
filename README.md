@@ -3,7 +3,7 @@ This project is a hierarchical task network (HTN) planner library for AI decisio
 
 Not being just a planner but a complete langauge instead makes it a powerful tool for content creators to script complex behaviors using simple statements.
 
-![main_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition.png)
+![main_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition.png "Main decomposition")
 *Main decomposition*
 
 **Watch the [demo](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/demo.mp4) video.**
@@ -31,47 +31,49 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 
 A world state is a database of tables of facts. It represents the knowledge about the world.
 
-![world_state](https://github.com/Sandruski/htn-planner/blob/main/docs/images/world_state.png)
+![world_state](https://github.com/Sandruski/htn-planner/blob/main/docs/images/world_state.png "World state")
 *World state*
 
 2. In the `Domain` tab, click the `Parse` button to parse the selected domain file. Domain files are identified by the `.domain` extension and are located in the folder of the same name.
 
 A domain is a graph of constants, axioms, and methods. It represents the available actions.
 
-![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/domain.png)
+![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/domain.png "Domain")
 *Domain*
 
 3. In the `Decomposition` tab, click the `Decompose` button to decompose the selected entry point of the parsed domain using the parsed world state. Entry points are methods tagged with `top_level_method` of a domain tagged with `top_level_domain`.
 
-The decomposition process performs a depth-first search (DFS) on the domain graph. The algorithm starts at the top-level compound task and hierarchically expands it into a sequence of primitive tasks, which represent a plan. It uses backtracking as a mechanism to try alternative options leading to different paths at choice points.
+The decomposition process performs a depth-first search (DFS) on the domain graph. The algorithm starts at the top-level compound task and hierarchically expands it into a sequence of primitive tasks, which represent a plan. It uses the backtracking mechanism to try different options at choice points, which lead to different paths.
 
-![main_decomposition_successful_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point.png)
-*Successful choice point. The Main decomposition had to backtrack 4 times to find the successful path*
+![main_decomposition_successful_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point.png "Main decomposition successful choice point")
+*Main decomposition successful choice point. The Main decomposition found the successful path at the 5th try*
 
-![main_decomposition_choice_points](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points.png)
-*Choice points*
+![main_decomposition_choice_points](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points.png "Main decomposition choice points")
+*Main decomposition choice points. The Main decomposition tried 5 different options at its only choice point, meaning that it backtracked 4 times*
 
-![main_decomposition_failed_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_failed_choice_point.png)
-*Failed choice point*
+![main_decomposition_failed_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_failed_choice_point.png "Main decomposition failed choice point")
+*Main decomposition failed choice point. The Main decomposition found a failed path at the first try*
 
-![secondary_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition.png)
-*Secondary decomposition*
+![secondary_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition.png "Secondary decomposition")
+*Secondary decomposition. The Secondary decomposition found the successful path at the first try, therefore it did not backtrack*
 
 4. In the `Active Plan` tab, see the tasks of the active plan resulting from the decomposition.
 
 A plan is a sequence of primitive tasks, which consist of an identifier and a list of arguments.
 
-![main_active_plan](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_active_plan.png)
+![main_active_plan](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_active_plan.png "Main active plan")
 *Main active plan*
 
-![secondary_active_plan](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_active_plan.png)
+![secondary_active_plan](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_active_plan.png "Secondary active plan")
 *Secondary active plan*
 
 ### HTNTest
 1. In the console window, see the results of the unit tests.
 
-![unit_tests_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/unit_tests_results.png)
-*Unit tests results*
+Currently, there is a single unit test that decomposes a specified entry point of a specified domain file using a specified a world state file.
+
+![unit_tests_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/unit_tests_results.png "Unit tests results")
+*Unit tests results. Both Main and Secondary planning units are decomposed*
 
 ## Performance Analysis
 
@@ -79,11 +81,11 @@ Since the purpose of this initial iteration of the project has been to understan
 
 The following are the profiling results obtained during a session for the `HTNDemo` project in Release configuration with both `HTN_VALIDATE_DOMAIN`, which enables validating the domain during a decomposition, and `HTN_DEBUG_DECOMPOSITION`, which enables storing the decomposition results during a decomposition, macros defined. Both the function responsible for decomposing a domain, named `InterpretDomain`, and displaying it on the debug window, named `PrintDecomposition`, are mesured, because they are expected to be the ones that are called more frequently. Additional code has also been instrumented.
 
-![main_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png)
-*Main decomposition profiling results. On average, a decomposing the main planning unit takes 0.4ms and displaying the results takes 0.15ms*
+![main_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png "Main decomposition profiling results")
+*Main decomposition profiling results. On average, decomposing the Main planning unit takes 0.4ms and displaying the decomposition results takes 0.15ms*
 
-![secondary_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_profiling_results.png)
-*Secondary decomposition profiling results. On average, a decomposing the secondary planning unit takes 0.03ms and displaying the results takes 0.02ms*
+![secondary_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_profiling_results.png "Secondary decomposition profiling results")
+*Secondary decomposition profiling results. On average, decomposing the Secondary planning unit takes 0.03ms and displaying the decomposition results takes 0.02ms*
 
 Furthermore, a profiling session is started each time the `HTNTest` project is run, and the resulting capture is saved in the `Captures` directory.
 
