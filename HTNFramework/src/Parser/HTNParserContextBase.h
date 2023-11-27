@@ -14,7 +14,7 @@
 class HTNToken;
 
 /**
- * Base class for the data of a parser
+ * Base class for the contextual data of a parser
  */
 class HTNParserContextBase : public HTNNodeVisitorContextBase
 {
@@ -22,11 +22,19 @@ public:
     explicit HTNParserContextBase(const std::vector<HTNToken>& inTokens);
     virtual ~HTNParserContextBase() = 0;
 
+    // Returns the token at the given position
     HTN_NODISCARD const HTNToken* GetToken(const uint32 inPosition) const;
-    HTN_NODISCARD size            GetTokensSize() const;
 
-    void                 SetPosition(const uint32 inPosition);
-    void                 IncrementPosition();
+    // Returns the number of tokens
+    HTN_NODISCARD size GetTokensSize() const;
+
+    // Sets the position to the given one
+    void SetPosition(const uint32 inPosition);
+
+    // Increments the position
+    void AdvancePosition();
+
+    // Returns the position
     HTN_NODISCARD uint32 GetPosition() const;
 
 private:
@@ -42,10 +50,17 @@ private:
 
 #if HTN_DEBUG
 public:
-    void                SetLastError(const std::string& inLastErrorMessage, const int32 inLastErrorRow, const int32 inLastErrorColumn);
+    // Sets the last error to the given one
+    void SetLastError(const std::string& inLastErrorMessage, const int32 inLastErrorRow, const int32 inLastErrorColumn);
+
+    // Returns the message of the last error
     HTN_NODISCARD const std::string& GetLastErrorMessage() const;
-    HTN_NODISCARD int32              GetLastErrorRow() const;
-    HTN_NODISCARD int32              GetLastErrorColumn() const;
+
+    // Returns the row of the last error
+    HTN_NODISCARD int32 GetLastErrorRow() const;
+
+    // Returns the column of the last error
+    HTN_NODISCARD int32 GetLastErrorColumn() const;
 
 protected:
     //----------------------------------------------------------------------//
@@ -62,7 +77,7 @@ inline void HTNParserContextBase::SetPosition(const uint32 inPosition)
     mPosition = inPosition;
 }
 
-inline void HTNParserContextBase::IncrementPosition()
+inline void HTNParserContextBase::AdvancePosition()
 {
     ++mPosition;
 }

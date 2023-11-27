@@ -9,7 +9,6 @@
 
 #include <string>
 
-class HTNNodeSnapshot;
 enum class HTNNodeStep : uint8;
 
 namespace HTNImGuiHelpers
@@ -19,11 +18,19 @@ namespace HTNImGuiHelpers
 // @see imgui_demo.cpp
 void HelpMarker(const std::string& inDescription);
 
-void               SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen);
+// Sets the given state to the tree node of the given label
+void SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen);
+
+// Return whether the current item is selected
 HTN_NODISCARD bool IsCurrentItemSelected();
 
-HTN_NODISCARD ImVec4 GetNodeColor(const HTNNodeSnapshot& inNodeSnapshot, const HTNNodeStep inNodeStep);
+// Returns the color of the given node result at the node step
+HTN_NODISCARD ImVec4 GetNodeColor(const bool inNodeResult, const HTNNodeStep inNodeStep);
+
+// Returns the color of the given result
 HTN_NODISCARD ImVec4 GetResultColor(const bool inResult);
+
+// Returns the color of the given variable ID
 HTN_NODISCARD ImVec4 GetVariableColor(const std::string& inVariableID);
 
 inline constexpr ImVec4 kFailColor        = ImVec4(1.f, 0.5f, 0.5f, 1.f);

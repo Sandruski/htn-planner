@@ -8,7 +8,7 @@
 #include "WorldState/HTNWorldState.h"
 #include "WorldState/Parser/HTNWorldStateParserContext.h"
 
-/*
+/**
  * Backus Naur Form (BNF)
  * <fact> ::= <identifier> <argument>*
  * <identifier> ::= 'identifier'

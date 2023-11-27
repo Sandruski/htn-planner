@@ -3,7 +3,7 @@
 #include "Domain/Printer/HTNDecompositionWatchTooltipPrinter.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Interpreter/HTNNodeResult.h"
+#include "Domain/Interpreter/HTNNodeSnapshot.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Domain/Printer/HTNDecompositionHelpers.h"
 #include "Domain/Printer/HTNDecompositionWatchTooltipPrinterContext.h"
@@ -21,8 +21,8 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
     }
 
     const HTNNodeInstance& NodeInstance = ioDecompositionWatchTooltipPrinterContext.GetNodeInstance();
-    const HTNNodeResult*   NodeResult   = NodeInstance.GetNodeResult();
-    if (!NodeResult)
+    const HTNNodeSnapshot* NodeSnapshot = NodeInstance.GetNodeSnapshot();
+    if (!NodeSnapshot)
     {
         return;
     }
@@ -34,7 +34,7 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& NodeArguments    = NodeInstance.GetNodeArguments();
     const bool                                                            HasNodeArguments = !NodeArguments.empty();
     ShouldPrint                                                                            = ShouldPrint || HasNodeArguments;
-    const HTNVariablesManager& VariablesManager                                            = NodeResult->GetVariablesManager();
+    const HTNVariablesManager& VariablesManager                                            = NodeSnapshot->GetVariablesManager();
     const HTNVariables&        Variables                                                   = VariablesManager.GetVariables();
     const bool                 HasVariables                                                = !Variables.empty();
     if (TooltipMode == HTNDecompositionTooltipMode::FULL)

@@ -18,6 +18,5 @@ HTNAtom HTNConstantNode::Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNode
 
 std::string HTNConstantNode::GetID() const
 {
-    static constexpr bool ShoudDoubleQuoteString = false;
-    return mIDNode->GetValue().ToString(ShoudDoubleQuoteString);
+    return mIDNode->GetValue().GetValue<std::string>();
 }

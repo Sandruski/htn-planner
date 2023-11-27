@@ -12,7 +12,7 @@ class HTNIdentifierExpressionNode;
 class HTNValueExpressionNodeBase;
 
 /**
- * Node representing a task
+ * Node representing a task of a branch
  */
 class HTNTaskNodeBase : public HTNNodeBase
 {
@@ -22,9 +22,13 @@ public:
     explicit HTNTaskNodeBase(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
                              const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes, const uint32 inID);
 
+    // Returns the ID of the node
     HTN_NODISCARD std::string GetID() const final;
 
+    // Returns the node representing the ID of the task
     HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>& GetIDNode() const;
+
+    // Returns the nodes representing the arguments of the task
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetArgumentNodes() const;
 
 protected:
@@ -36,7 +40,8 @@ protected:
     std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> mArgumentNodes;
 
 private:
-    HTN_NODISCARD uint32 GenerateID() const;
+    // Generates a new globally unique ID
+    HTN_NODISCARD uint32 GenerateGUID() const;
 
     // ID of the task
     // - Globally unique
@@ -44,7 +49,7 @@ private:
 };
 
 /**
- * Node representing a compound task
+ * Node representing a compound task of a branch
  */
 class HTNCompoundTaskNode final : public HTNTaskNodeBase
 {
@@ -55,8 +60,10 @@ public:
                                  const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes, const uint32 inID,
                                  const bool inIsTopLevel);
 
+    // Calls the 'Visit' member method overloaded for the node on the given node visitor with the given context
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
+    // Returns whether the compound task serves as an entry point for a decomposition
     HTN_NODISCARD bool IsTopLevel() const;
 
 private:
@@ -65,7 +72,7 @@ private:
 };
 
 /**
- * Node representing a primitive task
+ * Node representing a primitive task of a branch
  */
 class HTNPrimitiveTaskNode final : public HTNTaskNodeBase
 {
@@ -73,6 +80,7 @@ public:
     explicit HTNPrimitiveTaskNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
                                   const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes);
 
+    // Calls the 'Visit' member method overloaded for the node on the given node visitor with the given context
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 };
 
@@ -84,12 +92,6 @@ inline const std::shared_ptr<const HTNIdentifierExpressionNode>& HTNTaskNodeBase
 inline const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& HTNTaskNodeBase::GetArgumentNodes() const
 {
     return mArgumentNodes;
-}
-
-inline uint32 HTNTaskNodeBase::GenerateID() const
-{
-    static uint32 mIDGenerator = 0;
-    return ++mIDGenerator;
 }
 
 inline bool HTNCompoundTaskNode::IsTopLevel() const

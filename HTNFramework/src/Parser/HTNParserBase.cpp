@@ -39,7 +39,7 @@ const HTNToken* HTNParserBase::ParseToken(const HTNTokenType inTokenType, HTNPar
         return nullptr;
     }
 
-    ioParserContext.IncrementPosition();
+    ioParserContext.AdvancePosition();
 
     return Token;
 }

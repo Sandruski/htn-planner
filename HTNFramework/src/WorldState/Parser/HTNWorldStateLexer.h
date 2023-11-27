@@ -13,5 +13,6 @@ class HTNWorldStateLexerContext;
 class HTNWorldStateLexer final : public HTNLexerBase
 {
 public:
+    // Main lex member method
     bool Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext) const;
 };

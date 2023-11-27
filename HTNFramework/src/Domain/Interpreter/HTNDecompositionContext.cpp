@@ -38,12 +38,12 @@ void HTNDecompositionContext::RecordNodeSnapshot(const std::string& inNodePath, 
     mDecompositionSnapshot.AddNodeSnapshot(inNodePath, NodeSnapshot, inNodeStep, inIsChoicePoint);
 }
 
-void HTNDecompositionContext::RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep,
+void HTNDecompositionContext::RecordNodeSnapshot(const std::string& inNodePath, const bool inNodeResult, const HTNNodeStep inNodeStep,
                                                  const bool inIsChoicePoint)
 {
     const HTNEnvironment&      Environment      = mCurrentDecomposition.GetEnvironment();
     const HTNVariablesManager& VariablesManager = Environment.GetVariablesManager();
-    const HTNNodeSnapshot      NodeSnapshot     = HTNNodeSnapshot(VariablesManager, inResult);
+    const HTNNodeSnapshot      NodeSnapshot     = HTNNodeSnapshot(VariablesManager, inNodeResult);
     mDecompositionSnapshot.AddNodeSnapshot(inNodePath, NodeSnapshot, inNodeStep, inIsChoicePoint);
 }
 #endif

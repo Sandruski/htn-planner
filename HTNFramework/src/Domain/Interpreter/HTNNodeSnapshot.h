@@ -15,25 +15,25 @@ class HTNNodeSnapshot
 public:
     HTNNodeSnapshot() = default;
     explicit HTNNodeSnapshot(const HTNVariablesManager& inVariablesManager);
-    explicit HTNNodeSnapshot(const HTNVariablesManager& inVariablesManager, const bool inResult);
+    explicit HTNNodeSnapshot(const HTNVariablesManager& inVariablesManager, const bool inNodeResult);
 
     // Returns the variables manager of the node
     HTN_NODISCARD const HTNVariablesManager& GetVariablesManager() const;
 
-    // Returns the actual result of the node
-    HTN_NODISCARD bool GetResult() const;
+    // Returns the result of the node
+    HTN_NODISCARD bool GetNodeResult() const;
 
 private:
     // Variables manager of the node
     HTNVariablesManager mVariablesManager;
 
     // Result of the node
-    bool mResult = false;
+    bool mNodeResult = false;
 };
 
-inline bool HTNNodeSnapshot::GetResult() const
+inline bool HTNNodeSnapshot::GetNodeResult() const
 {
-    return mResult;
+    return mNodeResult;
 }
 
 inline const HTNVariablesManager& HTNNodeSnapshot::GetVariablesManager() const

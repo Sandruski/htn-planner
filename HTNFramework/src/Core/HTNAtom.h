@@ -57,7 +57,7 @@ public:
     // Returns whether the list has no elements
     HTN_NODISCARD bool IsListEmpty() const;
 
-    // Returns a string optionally delimited by double quotes
+    // Returns a string representation of the value, optionally delimited by double quotes
     HTN_NODISCARD std::string ToString(const bool inShouldDoubleQuoteString) const;
 
 private:

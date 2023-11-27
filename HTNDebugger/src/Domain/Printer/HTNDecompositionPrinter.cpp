@@ -283,7 +283,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomNode& inAxiomNode, HTNNodeV
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshot& inNodeSnapshot, const HTNNodeStep inNodeStep) {
         static const std::string Prefix = "";
 
-        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
+        const bool   NodeResult = inNodeSnapshot.GetNodeResult();
+        const ImVec4 IDColor    = HTNImGuiHelpers::GetNodeColor(NodeResult, inNodeStep);
         PrintColoredValueExpressionNode(IDNode, Prefix, IDColor, ioDecompositionPrinterContext);
 
         for (const std::shared_ptr<const HTNVariableExpressionNode>& ParameterNode : ParameterNodes)
@@ -397,7 +398,8 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNConditionNode& inConditionNode, 
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshot& inNodeSnapshot, const HTNNodeStep inNodeStep) {
         static const std::string Prefix = "";
 
-        const ImVec4 IDColor = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
+        const bool   NodeResult = inNodeSnapshot.GetNodeResult();
+        const ImVec4 IDColor    = HTNImGuiHelpers::GetNodeColor(NodeResult, inNodeStep);
         PrintColoredValueExpressionNode(IDNode, Prefix, IDColor, ioDecompositionPrinterContext);
 
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
@@ -430,8 +432,9 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
     const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& ArgumentNodes = inAxiomConditionNode.GetArgumentNodes();
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshot& inNodeSnapshot, const HTNNodeStep inNodeStep) {
-        static const std::string IDPrefix = "#";
-        const ImVec4             IDColor  = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
+        static const std::string IDPrefix   = "#";
+        const bool               NodeResult = inNodeSnapshot.GetNodeResult();
+        const ImVec4             IDColor    = HTNImGuiHelpers::GetNodeColor(NodeResult, inNodeStep);
         PrintColoredValueExpressionNode(IDNode, IDPrefix, IDColor, ioDecompositionPrinterContext);
 
         for (const std::shared_ptr<const HTNValueExpressionNodeBase>& ArgumentNode : ArgumentNodes)
@@ -468,8 +471,9 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAndConditionNode& inAndCondition
     OPTICK_EVENT("GetAndConditionNodeValue");
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshot& inNodeSnapshot, const HTNNodeStep inNodeStep) {
-        const std::string IDString = "and";
-        const ImVec4      IDColor  = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
+        const std::string IDString   = "and";
+        const bool        NodeResult = inNodeSnapshot.GetNodeResult();
+        const ImVec4      IDColor    = HTNImGuiHelpers::GetNodeColor(NodeResult, inNodeStep);
         ImGui::SameLine();
         ImGui::TextColored(IDColor, IDString.c_str());
     };
@@ -496,8 +500,9 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNOrConditionNode& inOrConditionNo
     OPTICK_EVENT("GetOrConditionNodeValue");
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshot& inNodeSnapshot, const HTNNodeStep inNodeStep) {
-        const std::string IDString = "or";
-        const ImVec4      IDColor  = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
+        const std::string IDString   = "or";
+        const bool        NodeResult = inNodeSnapshot.GetNodeResult();
+        const ImVec4      IDColor    = HTNImGuiHelpers::GetNodeColor(NodeResult, inNodeStep);
         ImGui::SameLine();
         ImGui::TextColored(IDColor, IDString.c_str());
     };
@@ -524,8 +529,9 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAltConditionNode& inAltCondition
     OPTICK_EVENT("GetAltConditionNodeValue");
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshot& inNodeSnapshot, const HTNNodeStep inNodeStep) {
-        const std::string IDString = "alt";
-        const ImVec4      IDColor  = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
+        const std::string IDString   = "alt";
+        const bool        NodeResult = inNodeSnapshot.GetNodeResult();
+        const ImVec4      IDColor    = HTNImGuiHelpers::GetNodeColor(NodeResult, inNodeStep);
         ImGui::SameLine();
         ImGui::TextColored(IDColor, IDString.c_str());
     };
@@ -552,8 +558,9 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNNotConditionNode& inNotCondition
     OPTICK_EVENT("GetNotConditionNodeValue");
 
     const HTNNodeTitleFunction NodeTitleFunction = [&](const HTNNodeSnapshot& inNodeSnapshot, const HTNNodeStep inNodeStep) {
-        const std::string IDString = "not";
-        const ImVec4      IDColor  = HTNImGuiHelpers::GetNodeColor(inNodeSnapshot, inNodeStep);
+        const std::string IDString   = "not";
+        const bool        NodeResult = inNodeSnapshot.GetNodeResult();
+        const ImVec4      IDColor    = HTNImGuiHelpers::GetNodeColor(NodeResult, inNodeStep);
         ImGui::SameLine();
         ImGui::TextColored(IDColor, IDString.c_str());
     };

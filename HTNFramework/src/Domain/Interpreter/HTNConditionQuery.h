@@ -25,7 +25,7 @@ public:
 class HTNConditionWorldStateQuery final : public HTNConditionQueryBase
 {
 public:
-    // Queries the given fact in the world state
+    // Queries the given fact in the world state, binding unbound arguments
     HTN_NODISCARD bool Check(const HTNWorldState& inWorldState, const std::string& inFactID, const size inFactArgumentsIndex,
                              std::vector<HTNAtom>& ioFactArguments) const;
 };

@@ -39,13 +39,13 @@ void RecordCurrentNodeSnapshot(const HTNNodeStep inNodeStep, const bool inIsChoi
     ioDecompositionContext.RecordNodeSnapshot(CurrentNodePath, inNodeStep, inIsChoicePoint);
 }
 
-void RecordCurrentNodeSnapshot(const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint,
+void RecordCurrentNodeSnapshot(const bool inNodeResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint,
                                HTNDecompositionContext& ioDecompositionContext)
 {
     OPTICK_EVENT("RecordNodeResult");
 
     const std::string& CurrentNodePath = ioDecompositionContext.GetCurrentNodePathManager().GetPath();
-    ioDecompositionContext.RecordNodeSnapshot(CurrentNodePath, inResult, inNodeStep, inIsChoicePoint);
+    ioDecompositionContext.RecordNodeSnapshot(CurrentNodePath, inNodeResult, inNodeStep, inIsChoicePoint);
 }
 #endif
 } // namespace

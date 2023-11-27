@@ -71,7 +71,7 @@ bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
 
 #ifdef HTN_DEBUG
             const std::string Message = std::format("Expected '/' after [{}] for a comment", Character);
-            HTNLexerHelpers::PrintErrorMessage(Message, ioDomainLexerContext);
+            HTNLexerHelpers::PrintError(Message, ioDomainLexerContext);
 #endif
             Result = false;
             ioDomainLexerContext.AdvancePosition();
@@ -123,7 +123,7 @@ bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
 
 #ifdef HTN_DEBUG
             const std::string Message = std::format("Character [{}] not recognized", HTNLexerHelpers::GetSpecialCharacterEscapeSequence(Character));
-            HTNLexerHelpers::PrintErrorMessage(Message, ioDomainLexerContext);
+            HTNLexerHelpers::PrintError(Message, ioDomainLexerContext);
 #endif
             Result = false;
             ioDomainLexerContext.AdvancePosition();

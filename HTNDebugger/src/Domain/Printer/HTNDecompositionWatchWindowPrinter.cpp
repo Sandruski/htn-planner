@@ -3,7 +3,7 @@
 #include "Domain/Printer/HTNDecompositionWatchWindowPrinter.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Interpreter/HTNNodeResult.h"
+#include "Domain/Interpreter/HTNNodeSnapshot.h"
 #include "Domain/Interpreter/HTNVariablesManager.h"
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Domain/Printer/HTNDecompositionWatchWindowPrinterContext.h"
@@ -15,8 +15,8 @@
 void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinterContext& ioDecompositionWatchWindowPrinterContext) const
 {
     const HTNNodeInstance& NodeInstance = ioDecompositionWatchWindowPrinterContext.GetNodeInstance();
-    const HTNNodeResult*   NodeResult   = NodeInstance.GetNodeResult();
-    if (!NodeResult)
+    const HTNNodeSnapshot* NodeSnapshot = NodeInstance.GetNodeSnapshot();
+    if (!NodeSnapshot)
     {
         return;
     }
@@ -56,7 +56,7 @@ void HTNDecompositionWatchWindowPrinter::Print(HTNDecompositionWatchWindowPrinte
 
         // Print remaining variables
         const std::vector<std::string>& NodeVariablePaths = ioDecompositionWatchWindowPrinterContext.GetNodeVariablePaths();
-        const HTNVariablesManager&      VariablesManager  = NodeResult->GetVariablesManager();
+        const HTNVariablesManager&      VariablesManager  = NodeSnapshot->GetVariablesManager();
         const HTNVariables&             Variables         = VariablesManager.GetVariables();
         for (const HTNVariable& Variable : Variables)
         {

@@ -13,7 +13,7 @@ class HTNIdentifierExpressionNode;
 class HTNTaskNodeBase;
 
 /**
- * Node representing a branch
+ * Node representing a branch of a method
  */
 class HTNBranchNode final : public HTNNodeBase
 {
@@ -22,12 +22,19 @@ public:
                            const std::shared_ptr<const HTNConditionNodeBase>&         inPreConditionNode,
                            const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& inTaskNodes);
 
+    // Calls the 'Visit' member method overloaded for the node on the given node visitor with the given context
     HTN_NODISCARD HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const final;
 
+    // Returns the ID of the node, which is the same as the ID of the branch because it is already unique within its method
     HTN_NODISCARD std::string GetID() const final;
 
+    // Returns the node representing the ID of the branch
     HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>& GetIDNode() const;
+
+    // Returns the node representing the pre-condition of the branch
     HTN_NODISCARD const std::shared_ptr<const HTNConditionNodeBase>& GetPreConditionNode() const;
+
+    // Returns the nodes representing the tasks of the branch
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNTaskNodeBase>>& GetTaskNodes() const;
 
 private:

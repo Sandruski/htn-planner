@@ -20,7 +20,7 @@ void HTNLexerBase::LexIdentifier(const std::unordered_map<std::string, HTNTokenT
 
     ioLexerContext.AdvancePosition();
 
-    for (char Character = ioLexerContext.GetCharacter(); HTNLexerHelpers::IsAlphaNumeric(Character); Character = ioLexerContext.GetCharacter())
+    for (char Character = ioLexerContext.GetCharacter(); HTNLexerHelpers::IsAlphanumeric(Character); Character = ioLexerContext.GetCharacter())
     {
         ioLexerContext.AdvancePosition();
     }

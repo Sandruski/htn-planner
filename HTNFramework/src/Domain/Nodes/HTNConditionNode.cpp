@@ -4,13 +4,19 @@
 
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
-HTNConditionNodeBase::HTNConditionNodeBase() : mID(GenerateID())
+HTNConditionNodeBase::HTNConditionNodeBase() : mID(GenerateGUID())
 {
 }
 
 std::string HTNConditionNodeBase::GetID() const
 {
     return std::to_string(mID);
+}
+
+uint32 HTNConditionNodeBase::GenerateGUID() const
+{
+    static uint32 mGUIDGenerator = 0;
+    return ++mGUIDGenerator;
 }
 
 HTNConditionNode::HTNConditionNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,

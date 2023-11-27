@@ -27,7 +27,7 @@ enum class HTNNodeStep : uint8;
 using HTNDecompositionRecordHistory = std::vector<HTNDecompositionRecord>;
 
 /**
- * Data of a decomposition
+ * Contextual data of a decomposition
  */
 class HTNDecompositionContext final : public HTNNodeVisitorContextBase
 {
@@ -111,7 +111,7 @@ public:
     void RecordNodeSnapshot(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
 
     // Records a snapshot of the given node
-    void RecordNodeSnapshot(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
+    void RecordNodeSnapshot(const std::string& inNodePath, const bool inNodeResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
 
     // Returns the decomposition snapshot
     HTN_NODISCARD const HTNDecompositionSnapshot& GetDecompositionSnapshot() const;

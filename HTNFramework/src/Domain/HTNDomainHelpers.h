@@ -11,12 +11,22 @@ class HTNCompoundTaskNode;
 
 namespace HTNDomainHelpers
 {
-HTN_NODISCARD std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const std::string& inEntryPointID);
+// Returns a compound task node for the given method ID
+HTN_NODISCARD std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const std::string& inMethodID);
 
+// Returns whether the variable ID represents an input parameter
 HTN_NODISCARD bool IsInputParameter(const std::string& inVariableID);
+
+// Returns whether the variable ID represents an output parameter
 HTN_NODISCARD bool IsOutputParameter(const std::string& inVariableID);
+
+// Returns whether the variable ID represents an input/output parameter
 HTN_NODISCARD bool IsInputOutputParameter(const std::string& inVariableID);
+
+// Returns whether the variable ID represents a parameter
 HTN_NODISCARD bool IsParameter(const std::string& inVariableID);
+
+// Returns whether the variable ID represents any argument
 HTN_NODISCARD bool IsAnyArgument(const std::string& inVariableID);
 
 inline const std::string kAnonymousNamespaceID = "unnamed";

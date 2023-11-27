@@ -4,6 +4,9 @@
 
 #include "HTNCoreMinimal.h"
 
+/**
+ * Base class for the contextual data of a node visitor
+ */
 class HTNNodeVisitorContextBase
 {
 public:

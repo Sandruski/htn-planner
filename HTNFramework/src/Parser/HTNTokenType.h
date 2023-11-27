@@ -4,6 +4,9 @@
 
 #include "HTNCoreMinimal.h"
 
+/**
+ * Type of a token
+ */
 enum class HTNTokenType : uint8
 {
     COLON,

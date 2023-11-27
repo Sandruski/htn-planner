@@ -12,14 +12,17 @@ class HTNDomainNode;
 class HTNToken;
 
 /**
- * Data of a parser of a domain
+ * Contextual data of a parser of a domain
  */
 class HTNDomainParserContext final : public HTNParserContextBase
 {
 public:
     explicit HTNDomainParserContext(const std::vector<HTNToken>& inTokens, std::shared_ptr<const HTNDomainNode>& outDomainNode);
 
+    // Returns the domain node
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
+
+    // Returns the domain node
     HTN_NODISCARD std::shared_ptr<const HTNDomainNode>& GetDomainNodeMutable();
 
 private:

@@ -13,5 +13,6 @@ class HTNDomainLexerContext;
 class HTNDomainLexer final : public HTNLexerBase
 {
 public:
+    // Main lex member method
     bool Lex(HTNDomainLexerContext& ioDomainLexerContext) const;
 };

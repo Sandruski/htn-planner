@@ -17,7 +17,7 @@
 #include "Parser/HTNToken.h"
 #include "Parser/HTNTokenType.h"
 
-/*
+/**
  * Backus Naur Form (BNF)
  * <domain node> ::= '(' ':' 'domain' <identifier expression node> 'top_level_domain'? <axiom node>* <method node>* ')'
  * <constants node> ::= '(' ':' 'constants' <identifier expression node>? <constant node>* ')'

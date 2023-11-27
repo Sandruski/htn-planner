@@ -7,11 +7,11 @@
 
 namespace HTNDomainHelpers
 {
-std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const std::string& inEntryPointID)
+std::shared_ptr<const HTNCompoundTaskNode> MakeTopLevelCompoundTaskNode(const std::string& inMethodID)
 {
     static constexpr uint32 TopLevelCompoundTaskNodeID = 0;
     static constexpr bool   IsTopLevel                 = true;
-    return std::make_shared<HTNCompoundTaskNode>(std::make_shared<const HTNIdentifierExpressionNode>(inEntryPointID),
+    return std::make_shared<HTNCompoundTaskNode>(std::make_shared<const HTNIdentifierExpressionNode>(inMethodID),
                                                  std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>(), TopLevelCompoundTaskNodeID,
                                                  IsTopLevel);
 }

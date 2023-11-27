@@ -13,7 +13,7 @@ class HTNToken;
 enum class HTNTokenType : uint8;
 
 /**
- * Base class for the data of a lexer
+ * Base class for the contextual data of a lexer
  */
 class HTNLexerContextBase : public HTNNodeVisitorContextBase
 {
@@ -21,13 +21,19 @@ public:
     explicit HTNLexerContextBase(const std::string& inText, std::vector<HTNToken>& outTokens);
     virtual ~HTNLexerContextBase() = 0;
 
+    // Returns the text
     HTN_NODISCARD const std::string& GetText() const;
 
+    // Adds a new token
     void AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme));
 
+    // Returns the character at the position plus the given offset
     HTN_NODISCARD char GetCharacter(const uint32 inOffset = 0) const;
 
-    void                 AdvancePosition(HTN_DEBUG_ONLY(const bool inIsNewLine = false));
+    // Increments the position
+    void AdvancePosition(HTN_DEBUG_ONLY(const bool inIsNewLine = false));
+
+    // Returns the position
     HTN_NODISCARD uint32 GetPosition() const;
 
 private:
@@ -48,7 +54,10 @@ private:
 
 #ifdef HTN_DEBUG
 public:
+    // Returns the row
     HTN_NODISCARD uint32 GetRow() const;
+
+    // Returns the column
     HTN_NODISCARD uint32 GetColumn() const;
 
 private:

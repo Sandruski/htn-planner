@@ -24,6 +24,9 @@ const std::string kMainDefaultTopLevelMethodID      = "behave";
 const std::string kUpperBodyDefaultTopLevelMethodID = "behave_upper_body";
 } // namespace
 
+/**
+ * Test of a decomposition
+ */
 class HTNDecompositionTest : public testing::TestWithParam<std::tuple<std::string, std::string, std::string, size>>
 {
 public:
@@ -33,10 +36,17 @@ public:
 protected:
     void SetUp() override;
 
+    // Returns the name of the world state file
     HTN_NODISCARD const std::string& GetWorldStateFileName() const;
+
+    // Returns the name of the domain file
     HTN_NODISCARD const std::string& GetDomainFileName() const;
+
+    // Returns the name of the entry point ID
     HTN_NODISCARD const std::string& GetEntryPointID() const;
-    HTN_NODISCARD const size&        GetPlanningUnitsSize() const;
+
+    // Returns the number of planning units
+    HTN_NODISCARD const size& GetPlanningUnitsSize() const;
 
     HTNDatabaseHook              mDatabaseHook;
     HTNPlannerHook               mPlannerHook;

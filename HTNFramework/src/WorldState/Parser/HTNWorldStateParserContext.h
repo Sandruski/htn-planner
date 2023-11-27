@@ -11,15 +11,18 @@ class HTNToken;
 class HTNWorldState;
 
 /**
- * Data of a parser of a world state
+ * Contextual data of a parser of a world state
  */
 class HTNWorldStateParserContext final : public HTNParserContextBase
 {
 public:
     explicit HTNWorldStateParserContext(const std::vector<HTNToken>& inTokens, HTNWorldState& outWorldState);
 
+    // Returns the world state
     HTN_NODISCARD const HTNWorldState& GetWorldState() const;
-    HTN_NODISCARD HTNWorldState&       GetWorldStateMutable();
+
+    // Returns the world state
+    HTN_NODISCARD HTNWorldState& GetWorldStateMutable();
 
 private:
     //----------------------------------------------------------------------//

@@ -11,7 +11,8 @@ class HTNNodeVisitorBase;
 class HTNNodeVisitorContextBase;
 
 /**
- * Visitor pattern
+ * Base class for a node
+ * - Uses the visitor pattern
  * @see HTNNodeVisitorBase
  */
 class HTNNodeBase
@@ -19,9 +20,13 @@ class HTNNodeBase
 public:
     virtual ~HTNNodeBase() = 0;
 
+    // Calls the 'Visit' member method overloaded for the node on the given node visitor with the given context
     virtual void Accept(const HTNNodeVisitorBase& inNodeVisitor, const HTNAtom& inNodeValue, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
+
+    // Calls the 'Visit' member method overloaded for the node on the given node visitor with the given context
     HTN_NODISCARD virtual HTNAtom Accept(const HTNNodeVisitorBase& inNodeVisitor, HTNNodeVisitorContextBase& ioNodeVisitorContext) const;
 
-    // TODO salvarez Use string interning as an optimization
+    // Returns the ID of the node
+    // - TODO salvarez Use string interning as an optimization
     HTN_NODISCARD virtual std::string GetID() const = 0;
 };

@@ -24,7 +24,7 @@ bool IsDigit(const char inCharacter)
     return (inCharacter >= '0') && (inCharacter <= '9');
 }
 
-bool IsAlphaNumeric(const char inCharacter)
+bool IsAlphanumeric(const char inCharacter)
 {
     return IsLetter(inCharacter) || IsDigit(inCharacter);
 }
@@ -38,7 +38,7 @@ std::string GetSpecialCharacterEscapeSequence(const char inCharacter)
 }
 
 #ifdef HTN_DEBUG
-void PrintErrorMessage(const std::string& inMessage, const HTNLexerContextBase& inLexerContext)
+void PrintError(const std::string& inMessage, const HTNLexerContextBase& inLexerContext)
 {
     const uint32 Row    = inLexerContext.GetRow();
     const uint32 Column = inLexerContext.GetColumn();

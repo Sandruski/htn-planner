@@ -7,8 +7,8 @@ HTNNodeSnapshot::HTNNodeSnapshot(const HTNVariablesManager& inVariablesManager) 
 {
 }
 
-HTNNodeSnapshot::HTNNodeSnapshot(const HTNVariablesManager& inVariablesManager, const bool inResult)
-    : mVariablesManager(inVariablesManager), mResult(inResult)
+HTNNodeSnapshot::HTNNodeSnapshot(const HTNVariablesManager& inVariablesManager, const bool inNodeResult)
+    : mVariablesManager(inVariablesManager), mNodeResult(inNodeResult)
 {
 }
 #endif

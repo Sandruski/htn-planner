@@ -20,8 +20,15 @@ public:
     virtual ~HTNLexerBase() = 0;
 
 protected:
+    // Lexes an identifier
     void LexIdentifier(const std::unordered_map<std::string, HTNTokenType>& inKeywords, HTNLexerContextBase& ioLexerContext) const;
+
+    // Lexes a number
     void LexNumber(HTNLexerContextBase& ioLexerContext) const;
+
+    // Lexes a string
     bool LexString(HTNLexerContextBase& ioLexerContext) const;
+
+    // Lexes a comment
     void LexComment(HTNLexerContextBase& ioLexerContext) const;
 };

@@ -14,7 +14,7 @@ class HTNDecompositionContext;
 class HTNDomainInterpreter final : public HTNNodeVisitorBase
 {
 public:
-    // Main decomposition function
+    // Main decomposition member method
     bool Interpret(HTNDecompositionContext& ioDecompositionContext) const;
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioDecompositionContext) const final;
