@@ -92,7 +92,7 @@ public:
     // Returns the decomposition step of the node at the given path
     HTN_NODISCARD int32 GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
 
-    // Returns whether the node at the given path is open
+    // Returns whether the node at the given path is open at the given decomposition step
     HTN_NODISCARD bool IsNodeOpen(const std::string& inNodePath, const int32 inDecompositionStep, const bool inIsChoicePoint) const;
 
     // Returns the current node path manager
@@ -181,7 +181,9 @@ private:
     // - Exclusive
     int32 mMaxDecompositionStep = std::numeric_limits<int32>::max();
 
-    bool mIsCurrentNodeVisible    = true;
+    // Whether the current node is shown or hidden
+    bool mIsCurrentNodeVisible = true;
+
     bool mShouldRefreshNodeStates = false;
 };
 

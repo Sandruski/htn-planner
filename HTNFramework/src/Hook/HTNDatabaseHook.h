@@ -12,9 +12,10 @@
 class HTNDatabaseHook
 {
 public:
-    // Parses a world state file and initializes a world state
+    // Parses a world state file, building a world state
     bool ParseWorldStateFile(const std::string& inWorldStateFilePath);
 
+    // Returns the world state
     HTN_NODISCARD const HTNWorldState& GetWorldState() const;
 
 private:

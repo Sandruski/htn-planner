@@ -22,14 +22,22 @@ public:
     explicit HTNPlanningUnit(const HTNDatabaseHook& inDatabaseHook, const HTNPlannerHook& inPlannerHook,
                              const std::string& inDefaultTopLevelMethodID);
 
-    // Execute planning unit top level method
+    // Executes the given top-level method of the domain
     bool ExecuteTopLevelMethod(const std::string& inEntryPointID);
+
+    // Executes the default top-level method of the domain
     bool ExecuteTopLevelMethod();
 
+    // Returns the database hook
     HTN_NODISCARD const HTNDatabaseHook& GetDatabaseHook() const;
-    HTN_NODISCARD const HTNPlannerHook&  GetPlannerHook() const;
+
+    // Returns the planner hook
+    HTN_NODISCARD const HTNPlannerHook& GetPlannerHook() const;
+
+    // Returns the default top-level method ID
     HTN_NODISCARD const std::string& GetDefaultTopLevelMethodID() const;
 
+    // Returns the last decomposition
     HTN_NODISCARD const HTNDecompositionRecord& GetLastDecomposition() const;
 
 private:
@@ -41,6 +49,7 @@ private:
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 public:
+    // Returns the snapshot of the last decomposition
     HTN_NODISCARD const HTNDecompositionSnapshot& GetLastDecompositionSnapshot() const;
 
 private:

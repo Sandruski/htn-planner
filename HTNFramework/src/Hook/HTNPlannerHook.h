@@ -19,13 +19,15 @@ class HTNDomainNode;
 class HTNPlannerHook
 {
 public:
-    // Parses a domain file and builds a domain node
+    // Parses a domain file, building a domain
     bool ParseDomainFile(const std::string& inDomainFilePath);
 
-    // This member function is const, so it cannot modify member variables, and receives the data that it can modify via a context
-    // This makes it safe to be called in parallel, which allows to run multiple decompositions simultaneously
+    // Performs a decomposition on the domain
+    // - This member function is const, so it cannot modify member variables, and receives the data that it can modify via a context
+    // - This makes it safe to be called in parallel, which allows to run multiple decompositions simultaneously
     bool MakePlan(HTNDecompositionContext& ioDecompositionContext) const;
 
+    // Returns the domain node
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 
 private:
