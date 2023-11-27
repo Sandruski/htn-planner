@@ -92,7 +92,7 @@ inline bool HTNNodeSnapshotHistory::IsChoicePoint() const
 inline const HTNNodeSnapshotHistory* HTNDecompositionSnapshot::FindNodeSnapshotHistory(const std::string& inNodePath) const
 {
     const auto NodeSnapshotHistoryCollectionIt = mNodeSnapshotHistoryCollection.find(inNodePath);
-    if (NodeSnapshotHistoryCollectionIt == mNodeSnapshotHistoryCollection.end())
+    if (NodeSnapshotHistoryCollectionIt == mNodeSnapshotHistoryCollection.cend())
     {
         return nullptr;
     }

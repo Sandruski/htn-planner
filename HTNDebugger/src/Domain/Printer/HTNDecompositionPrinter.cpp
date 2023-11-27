@@ -77,11 +77,11 @@ void PrePrintRegularNode(const std::string& inNodePath, const HTNNodeSnapshotSte
         if (IsCurrentDecompositionStepValid)
         {
             const auto NodeSnapshotStepsCollectionIt = inNodeSnapshotStepsCollection.find(CurrentDecompositionStep);
-            if (NodeSnapshotStepsCollectionIt != inNodeSnapshotStepsCollection.end())
+            if (NodeSnapshotStepsCollectionIt != inNodeSnapshotStepsCollection.cend())
             {
                 const HTNNodeSnapshotCollection& NodeSnapshotCollection   = NodeSnapshotStepsCollectionIt->second;
                 const auto                       NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
-                if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
+                if (NodeSnapshotCollectionIt != NodeSnapshotCollection.cend())
                 {
                     NodeState->SetDecompositionStep(CurrentDecompositionStep);
                 }
@@ -147,11 +147,11 @@ void PostPrintRegularNode(const std::string& inNodePath, const bool inIsNodeOpen
     if (IsCurrentDecompositionStepValid)
     {
         const auto NodeSnapshotStepsCollectionIt = inNodeSnapshotStepsCollection.find(CurrentDecompositionStep);
-        if (NodeSnapshotStepsCollectionIt != inNodeSnapshotStepsCollection.end())
+        if (NodeSnapshotStepsCollectionIt != inNodeSnapshotStepsCollection.cend())
         {
             const HTNNodeSnapshotCollection& NodeSnapshotCollection   = NodeSnapshotStepsCollectionIt->second;
             const auto                       NodeSnapshotCollectionIt = NodeSnapshotCollection.find(HTNNodeStep::END);
-            if (NodeSnapshotCollectionIt != NodeSnapshotCollection.end())
+            if (NodeSnapshotCollectionIt != NodeSnapshotCollection.cend())
             {
                 NodeState.SetDecompositionStep(CurrentDecompositionStep);
             }
@@ -695,7 +695,7 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
 
     bool NewIsCurrentNodeOpen = IsCurrentNodeOpen;
 
-    for (auto It = NodeSnapshotStepsCollection.begin(); It != NodeSnapshotStepsCollection.end(); ++It)
+    for (auto It = NodeSnapshotStepsCollection.cbegin(); It != NodeSnapshotStepsCollection.cend(); ++It)
     {
         const size DecompositionStep = It->first;
         if (!IsNodeValid(DecompositionStep, IsChoicePoint, CurrentNodeDecompositionStep, MinDecompositionStep, MaxDecompositionStep))
@@ -808,7 +808,7 @@ bool HTNDecompositionPrinter::PrintNode(const HTNNodeBase& inNode, const HTNNode
             ++NextIt;
             const int32 NewMaxDecompositionStep =
                 NewIsCurrentNodeOpen
-                    ? ((NodeSnapshotStepsCollection.end() != NextIt) ? static_cast<const int32>(NextIt->first) : std::numeric_limits<int32>::max())
+                    ? ((NodeSnapshotStepsCollection.cend() != NextIt) ? static_cast<const int32>(NextIt->first) : std::numeric_limits<int32>::max())
                     : std::numeric_limits<int32>::min();
             DecompositionPrinterContext.SetMaxDecompositionStep(NewMaxDecompositionStep);
         }

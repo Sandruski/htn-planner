@@ -5,6 +5,9 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "HTNCoreMinimal.h"
 
+/**
+ * Mode for the tooltip used in the decomposition printer
+ */
 enum class HTNDecompositionTooltipMode : uint8
 {
     NONE,

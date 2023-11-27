@@ -11,7 +11,7 @@
 #include "Domain/Printer/HTNNodeState.h"
 #include "HTNCoreMinimal.h"
 #include "Window/HTNOperationResult.h"
-#include "Window/HTNPlanningQuery.h"
+#include "Window/HTNPlanningRequest.h"
 #include "WorldState/Printer/HTNWorldStatePrinter.h"
 
 #include <filesystem>
@@ -35,24 +35,41 @@ public:
     explicit HTNDebuggerWindow(HTNDatabaseHook& ioDatabaseHook, HTNPlannerHook& ioPlannerHook, HTNPlanningUnit& ioMainPlanningUnit,
                                HTNPlanningUnit& ioSecondaryPlanningUnit);
 
+    // Initializes the state of the debugger window
     void Init();
+
+    // Renders the contents of the debugger window
     void Render();
 
 private:
+    // Renders the active plan
     void RenderActivePlan();
+
+    // Renders the decomposition
     void RenderDecomposition();
+
+    // Renders the domain
     void RenderDomain();
+
+    // Renders the world state
     void RenderWorldState();
 
-    void RenderDecompositionByPlanningQuery(const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, HTNPlanningQuery& ioPlanningQuery,
-                                            HTNNodeStates& ioNodeStates, HTNChoicePointNodeStates& ioChoicePointNodeStates,
-                                            HTNNodeInstance& ioSelectedNodeInstance);
+    // Renders a decomposition
+    void RenderDecompositionByPlanningRequest(const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes,
+                                              HTNPlanningRequest& ioPlanningRequest, HTNNodeStates& ioNodeStates,
+                                              HTNChoicePointNodeStates& ioChoicePointNodeStates, HTNNodeInstance& ioSelectedNodeInstance);
 
-    void ResetDecompositionState(HTNNodeStates& ioNodeStates, HTNChoicePointNodeStates& ioChoicePointNodeStates,
-                                 HTNNodeInstance& ioSelectedNodeInstance);
+    // Resets the state of the given decomposition printer
+    void ResetDecompositionPrinterState(HTNNodeStates& ioNodeStates, HTNChoicePointNodeStates& ioChoicePointNodeStates,
+                                        HTNNodeInstance& ioSelectedNodeInstance);
+
+    // Resets the selected node instance in a decomposition printer
     void ResetSelectedNodeInstance(HTNNodeInstance& ioSelectedNodeInstance);
 
+    // Returns whether the last parse world state file operation is successful
     HTN_NODISCARD bool IsLastParseWorldStateFileOperationSuccessful() const;
+
+    // Returns whether the last parse domain file operation is successful
     HTN_NODISCARD bool IsLastParseDomainFileOperationSuccessful() const;
 
     HTNDatabaseHook& mDatabaseHook;
@@ -63,10 +80,10 @@ private:
     HTNPlanningUnit& mMainPlanningUnit;
     HTNPlanningUnit& mSecondaryPlanningUnit;
 
-    std::mutex                     mPlanningQueryMutex;
-    HTNPlanningQuery               mMainPlanningQuery      = HTNPlanningQuery(mMainPlanningUnit);
-    HTNPlanningQuery               mSecondaryPlanningQuery = HTNPlanningQuery(mSecondaryPlanningUnit);
-    std::vector<HTNPlanningQuery*> mPlanningQueries        = {&mMainPlanningQuery, &mSecondaryPlanningQuery};
+    std::mutex                       mPlanningRequestMutex;
+    HTNPlanningRequest               mMainPlanningRequest      = HTNPlanningRequest(mMainPlanningUnit);
+    HTNPlanningRequest               mSecondaryPlanningRequest = HTNPlanningRequest(mSecondaryPlanningUnit);
+    std::vector<HTNPlanningRequest*> mPlanningRequests          = {&mMainPlanningRequest, &mSecondaryPlanningRequest};
 
     //----------------------------------------------------------------------//
     // WorldState Printer

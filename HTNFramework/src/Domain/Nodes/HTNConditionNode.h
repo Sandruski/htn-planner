@@ -139,6 +139,7 @@ private:
 
 /**
  * Node representing an ALT condition of a branch
+ * - AND condition but with backtracking
  * - In order to succeed, one of its sub-conditions must succeed
  * - If it succeeds, it binds the unbound arguments of the successful sub-condition
  * - If it binds any unbound arguments of the successful sub-condition, the successful sub-condition is considered for backtracking

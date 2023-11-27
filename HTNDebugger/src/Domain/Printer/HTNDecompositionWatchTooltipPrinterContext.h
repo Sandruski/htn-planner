@@ -12,12 +12,16 @@
 class HTNNodeInstance;
 class HTNDomainNode;
 
+/**
+ * Contextual data of a decomposition watch tooltip printer
+ */
 class HTNDecompositionWatchTooltipPrinterContext final : public HTNDecompositionWatchPrinterContextBase
 {
 public:
     explicit HTNDecompositionWatchTooltipPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
                                                         const HTNNodeInstance& inNodeInstance, const HTNDecompositionTooltipMode inTooltipMode);
 
+    // Returns the mode of the tooltip
     HTN_NODISCARD HTNDecompositionTooltipMode GetTooltipMode() const;
 
 private:

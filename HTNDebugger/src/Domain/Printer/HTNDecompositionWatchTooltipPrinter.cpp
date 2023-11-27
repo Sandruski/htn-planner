@@ -86,12 +86,14 @@ void HTNDecompositionWatchTooltipPrinter::Print(HTNDecompositionWatchTooltipPrin
             // Print remaining variables
             if (HasVariables)
             {
-                const std::vector<std::string>& NodeVariablePaths = ioDecompositionWatchTooltipPrinterContext.GetNodeVariablePaths();
+                const std::vector<std::string>& VariablePaths = ioDecompositionWatchTooltipPrinterContext.GetVariablePaths();
+                const auto                      ItBegin       = VariablePaths.cbegin();
+                const auto                      ItEnd         = VariablePaths.cend();
                 for (const HTNVariable& Variable : Variables)
                 {
                     const std::string& VariablePath = Variable.first;
-                    const auto         It           = std::find(NodeVariablePaths.begin(), NodeVariablePaths.end(), VariablePath);
-                    if (It != NodeVariablePaths.end())
+                    const auto         It           = std::find(ItBegin, ItEnd, VariablePath);
+                    if (It != ItEnd)
                     {
                         continue;
                     }

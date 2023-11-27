@@ -24,11 +24,11 @@ void HelpMarker(const std::string& inDescription)
     }
 }
 
-void SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen)
+void SetTreeNodeOpen(const std::string& inTreeNodeLabel, const bool inIsOpen)
 {
     ImGuiWindow*  CurrentWindow = ImGui::GetCurrentWindow();
-    const ImGuiID ID            = CurrentWindow->GetID(inLabel.c_str());
-    return ImGui::TreeNodeSetOpen(ID, inIsOpen);
+    const ImGuiID TreeNodeID    = CurrentWindow->GetID(inTreeNodeLabel.c_str());
+    return ImGui::TreeNodeSetOpen(TreeNodeID, inIsOpen);
 }
 
 ImVec4 GetNodeColor(const bool inNodeResult, const HTNNodeStep inNodeStep)

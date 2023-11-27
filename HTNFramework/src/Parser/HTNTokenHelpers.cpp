@@ -30,6 +30,6 @@ std::string GetTokenTypeString(const HTNTokenType inTokenType)
                                                                                       {HTNTokenType::STRING, "string"},
                                                                                       {HTNTokenType::END_OF_FILE, "end of file"}};
     const auto                                                 It                  = TokenTypesToStrings.find(inTokenType);
-    return (It != TokenTypesToStrings.end()) ? It->second : "";
+    return (It != TokenTypesToStrings.cend()) ? It->second : "";
 }
 } // namespace HTNTokenHelpers

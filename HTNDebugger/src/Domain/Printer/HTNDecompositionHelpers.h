@@ -7,10 +7,10 @@
 
 namespace HTNDecompositionHelpers
 {
-// Check if the decomposition step is valid
+// Returns whether the decomposition step is valid
 HTN_NODISCARD bool IsDecompositionStepValid(const int32 inDecompositionStep);
 
-// Check if the decomposition step is in the range [min, max)
+// Returns whether the decomposition step is in the range [min, max)
 HTN_NODISCARD bool IsDecompositionStepInRange(const int32 inDecompositionStep, const int32 inMinDecompositionStep,
                                               const int32 inMaxDecompositionStep);
 

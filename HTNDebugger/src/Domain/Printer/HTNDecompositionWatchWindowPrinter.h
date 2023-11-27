@@ -9,11 +9,12 @@
 class HTNDecompositionWatchWindowPrinterContext;
 
 /**
- * Prints the watch window for the selected node
+ * Prints a window with the state of the variables of the selected node
  */
 class HTNDecompositionWatchWindowPrinter final : public HTNDecompositionWatchPrinterBase
 {
 public:
+    // Main print member method
     void Print(HTNDecompositionWatchWindowPrinterContext& ioDecompositionWatchWindowPrinterContext) const;
 };
 #endif

@@ -50,13 +50,13 @@ HTNNodeState& HTNDecompositionPrinterContext::GetNodeStateMutable(const std::str
 const HTNNodeState* HTNDecompositionPrinterContext::FindNodeState(const std::string& inNodePath) const
 {
     const auto It = mNodeStates.find(inNodePath);
-    return (It != mNodeStates.end()) ? &It->second : nullptr;
+    return (It != mNodeStates.cend()) ? &It->second : nullptr;
 }
 
 HTNNodeState* HTNDecompositionPrinterContext::FindNodeStateMutable(const std::string& inNodePath)
 {
     const auto It = mNodeStates.find(inNodePath);
-    return (It != mNodeStates.end()) ? &It->second : nullptr;
+    return (It != mNodeStates.cend()) ? &It->second : nullptr;
 }
 
 void HTNDecompositionPrinterContext::AddChoicePointNodeState(const std::string& inNodePath, const HTNChoicePointNodeState& inChoicePointNodeState)
@@ -77,13 +77,13 @@ HTNChoicePointNodeState& HTNDecompositionPrinterContext::GetChoicePointNodeState
 const HTNChoicePointNodeState* HTNDecompositionPrinterContext::FindChoicePointNodeState(const std::string& inNodePath) const
 {
     const auto It = mChoicePointNodeStates.find(inNodePath);
-    return (It != mChoicePointNodeStates.end()) ? &It->second : nullptr;
+    return (It != mChoicePointNodeStates.cend()) ? &It->second : nullptr;
 }
 
 HTNChoicePointNodeState* HTNDecompositionPrinterContext::FindChoicePointNodeStateMutable(const std::string& inNodePath)
 {
     const auto It = mChoicePointNodeStates.find(inNodePath);
-    return (It != mChoicePointNodeStates.end()) ? &It->second : nullptr;
+    return (It != mChoicePointNodeStates.cend()) ? &It->second : nullptr;
 }
 
 HTNNodeStep HTNDecompositionPrinterContext::GetNodeStep(const std::string& inNodePath, const bool inIsChoicePoint) const
@@ -121,7 +121,7 @@ bool HTNDecompositionPrinterContext::IsNodeOpen(const std::string& inNodePath, c
     if (inIsChoicePoint)
     {
         const auto It = mChoicePointNodeStates.find(inNodePath);
-        if (It != mChoicePointNodeStates.end())
+        if (It != mChoicePointNodeStates.cend())
         {
             const HTNChoicePointNodeState& NodeState = It->second;
             return NodeState.IsOpen(inDecompositionStep);
@@ -130,7 +130,7 @@ bool HTNDecompositionPrinterContext::IsNodeOpen(const std::string& inNodePath, c
     else
     {
         const auto It = mNodeStates.find(inNodePath);
-        if (It != mNodeStates.end())
+        if (It != mNodeStates.cend())
         {
             const HTNNodeState& NodeState = mNodeStates.at(inNodePath);
             return NodeState.IsOpen();

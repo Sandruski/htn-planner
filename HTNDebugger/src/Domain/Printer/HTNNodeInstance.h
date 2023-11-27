@@ -14,7 +14,7 @@ class HTNValueExpressionNodeBase;
 class HTNVariableExpressionNode;
 
 /**
- *
+ * Instance of a node in a decomposition printer
  * - TODO salvarez Make this a base class with three derived classes - one with node parameters, one with node arguments, and one without either of
  * the two
  */
@@ -30,11 +30,22 @@ public:
                              const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inNodeArguments,
                              const HTNPathManager& inVariablesPathManager, const std::string& inNodeLabel);
 
+    // Returns the snapshot of the node
     HTN_NODISCARD const HTNNodeSnapshot* GetNodeSnapshot() const;
+
+    // Returns the parameters of the node
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNVariableExpressionNode>>& GetNodeParameters() const;
+
+    // Returns the arguments of the node
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& GetNodeArguments() const;
-    HTN_NODISCARD const HTNPathManager&                                                 GetVariablesPathManager() const;
-    HTN_NODISCARD HTNPathManager&                                                       GetVariablesPathManagerMutable();
+
+    // Returns the variables path manager
+    HTN_NODISCARD const HTNPathManager& GetVariablesPathManager() const;
+
+    // Returns the variables path manager
+    HTN_NODISCARD HTNPathManager& GetVariablesPathManagerMutable();
+
+    // Returns the label of the node
     HTN_NODISCARD const std::string& GetNodeLabel() const;
 
 private:

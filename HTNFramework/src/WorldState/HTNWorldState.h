@@ -314,7 +314,7 @@ template<typename T>
 bool HTNWorldState::CheckIndex(const std::string& inFactID, const size inFactArgumentsIndex, T& ioFactArguments) const
 {
     const auto It = mFacts.find(inFactID);
-    if (It == mFacts.end())
+    if (It == mFacts.cend())
     {
         HTN_LOG_ERROR("Fact [{}] not found", inFactID);
         return false;
@@ -332,7 +332,7 @@ template<typename T>
 bool HTNWorldState::ContainsFactArguments(const std::string& inFactID, const T& inFactArguments) const
 {
     const auto It = mFacts.find(inFactID);
-    if (It == mFacts.end())
+    if (It == mFacts.cend())
     {
         HTN_LOG_ERROR("Fact [{}] not found", inFactID);
         return false;

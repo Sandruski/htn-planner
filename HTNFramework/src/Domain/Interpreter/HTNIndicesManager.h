@@ -52,7 +52,7 @@ inline size HTNIndicesManager::IncrementIndex(const std::string& inNodePath)
 inline size HTNIndicesManager::AddOrIncrementIndex(const std::string& inNodePath)
 {
     const auto It = mIndices.find(inNodePath);
-    if (It == mIndices.end())
+    if (It == mIndices.cend())
     {
         return AddIndex(inNodePath);
     }
@@ -68,5 +68,5 @@ inline void HTNIndicesManager::RemoveIndex(const std::string& inNodePath)
 inline size HTNIndicesManager::GetIndex(const std::string& inNodePath) const
 {
     const auto It = mIndices.find(inNodePath);
-    return (It != mIndices.end()) ? It->second : std::numeric_limits<size>::max();
+    return (It != mIndices.cend()) ? It->second : std::numeric_limits<size>::max();
 }

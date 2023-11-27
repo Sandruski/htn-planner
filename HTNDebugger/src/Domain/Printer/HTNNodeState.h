@@ -15,11 +15,14 @@ class HTNNodeState;
 
 enum class HTNNodeStep : uint8;
 
-using HTNNodeStates            = std::unordered_map<std::string, HTNNodeState>;
+// Node path to node state
+using HTNNodeStates = std::unordered_map<std::string, HTNNodeState>;
+
+// Node path to choice point node state
 using HTNChoicePointNodeStates = std::unordered_map<std::string, HTNChoicePointNodeState>;
 
 /**
- * Base decomposition node state
+ * Base class for the state of a node in a decomposition printer
  */
 class HTNNodeStateBase
 {
@@ -39,8 +42,8 @@ private:
 };
 
 /**
- * Decomposition node state (not choice point)
- * - A decomposition step of -1 means use current decomposition step
+ * State of a node that is not a choice point in a decomposition printer
+ * - A decomposition step of -1 means print the current decomposition step
  */
 class HTNNodeState final : public HTNNodeStateBase
 {
@@ -59,8 +62,8 @@ private:
 };
 
 /**
- * Decomposition choice point node state
- * - A decomposition step of -1 means use all decomposition steps
+ * State of a choice point node in a decomposition printer
+ * - A decomposition step of -1 means print all decomposition steps
  */
 class HTNChoicePointNodeState final : public HTNNodeStateBase
 {
@@ -75,7 +78,7 @@ public:
     HTN_NODISCARD int32 FindOpenDecompositionStepInRange(const int32 inMinDecompositionStep, const int32 inMaxDecompositionStep) const;
 
 private:
-    // Decomposition step to whether the node is open or closed
+    // Decomposition step of the node to whether the node is open or closed
     std::map<size, bool> mIsOpen;
 };
 
@@ -107,6 +110,6 @@ inline void HTNChoicePointNodeState::SetIsOpen(const size inDecompositionStep, c
 inline bool HTNChoicePointNodeState::IsOpen(const size inDecompositionStep) const
 {
     const auto It = mIsOpen.find(inDecompositionStep);
-    return (It != mIsOpen.end()) ? It->second : false;
+    return (It != mIsOpen.cend()) ? It->second : false;
 }
 #endif

@@ -5,6 +5,9 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "HTNCoreMinimal.h"
 
+/**
+ * Result of an operation
+ */
 enum class HTNOperationResult : uint8
 {
     FAILED    = 0,

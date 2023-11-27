@@ -20,6 +20,9 @@ class HTNDecompositionSnapshot;
 class HTNDomainNode;
 enum class HTNNodeStep : uint8;
 
+/**
+ * Contextual data of a decomposition printer
+ */
 class HTNDecompositionPrinterContext final : public HTNNodeVisitorContextBase
 {
 public:
@@ -29,47 +32,112 @@ public:
                                             HTNNodeStates& ioNodeStates, HTNChoicePointNodeStates& ioChoicePointNodeStates,
                                             HTNNodeInstance& ioSelectedNodeInstance);
 
+    // Returns the domain node
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
-    HTN_NODISCARD const std::string&              GetEntryPointID() const;
-    HTN_NODISCARD const HTNDecompositionSnapshot& GetDecompositionSnapshot() const;
-    HTN_NODISCARD bool                            IsDecompositionSuccessful() const;
-    HTN_NODISCARD HTNDecompositionTooltipMode     GetTooltipMode() const;
-    HTN_NODISCARD bool                            ShouldIgnoreImGuiState() const;
 
-    void               SelectNodeInstance(const HTNNodeInstance& inNodeInstance);
+    // Returns the entry point ID
+    HTN_NODISCARD const std::string& GetEntryPointID() const;
+
+    // Returns the decomposition snapshot
+    HTN_NODISCARD const HTNDecompositionSnapshot& GetDecompositionSnapshot() const;
+
+    // Returns whether the decomposition is successful
+    HTN_NODISCARD bool IsDecompositionSuccessful() const;
+
+    // Returns the tooltip mode
+    HTN_NODISCARD HTNDecompositionTooltipMode GetTooltipMode() const;
+
+    // Returns whether the state of ImGui should be ignored
+    HTN_NODISCARD bool ShouldIgnoreImGuiState() const;
+
+    // Selects the given node instance
+    void SelectNodeInstance(const HTNNodeInstance& inNodeInstance);
+
+    // Returns whether the node of the given label is selected
     HTN_NODISCARD bool IsNodeSelected(const std::string& inNodeLabel) const;
 
-    void                              AddNodeState(const std::string& inNodePath, const HTNNodeState& inNodeState);
+    // Adds new state for the node at the given path
+    void AddNodeState(const std::string& inNodePath, const HTNNodeState& inNodeState);
+
+    // Returns the state of the node at the given path
     HTN_NODISCARD const HTNNodeState& GetNodeState(const std::string& inNodePath) const;
-    HTN_NODISCARD HTNNodeState&       GetNodeStateMutable(const std::string& inNodePath);
+
+    // Returns the state of the node at the given path
+    HTN_NODISCARD HTNNodeState& GetNodeStateMutable(const std::string& inNodePath);
+
+    // Returns the state of the node at the given path
     HTN_NODISCARD const HTNNodeState* FindNodeState(const std::string& inNodePath) const;
-    HTN_NODISCARD HTNNodeState*       FindNodeStateMutable(const std::string& inNodePath);
-    void                              AddChoicePointNodeState(const std::string& inNodePath, const HTNChoicePointNodeState& inChoicePointNodeState);
+
+    // Returns the state of the node at the given path
+    HTN_NODISCARD HTNNodeState* FindNodeStateMutable(const std::string& inNodePath);
+
+    // Adds new state for the choice point node at the given path
+    void AddChoicePointNodeState(const std::string& inNodePath, const HTNChoicePointNodeState& inChoicePointNodeState);
+
+    // Returns the state of the choice point node at the given path
     HTN_NODISCARD const HTNChoicePointNodeState& GetChoicePointNodeState(const std::string& inNodePath) const;
-    HTN_NODISCARD HTNChoicePointNodeState&       GetChoicePointNodeStateMutable(const std::string& inNodePath);
+
+    // Returns the state of the choice point node at the given path
+    HTN_NODISCARD HTNChoicePointNodeState& GetChoicePointNodeStateMutable(const std::string& inNodePath);
+
+    // Returns the state of the choice point node at the given path
     HTN_NODISCARD const HTNChoicePointNodeState* FindChoicePointNodeState(const std::string& inNodePath) const;
-    HTN_NODISCARD HTNChoicePointNodeState*       FindChoicePointNodeStateMutable(const std::string& inNodePath);
 
+    // Returns the state of the choice point node at the given path
+    HTN_NODISCARD HTNChoicePointNodeState* FindChoicePointNodeStateMutable(const std::string& inNodePath);
+
+    // Returns the node step of the node at the given path
     HTN_NODISCARD HTNNodeStep GetNodeStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
-    HTN_NODISCARD int32       GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
-    HTN_NODISCARD bool        IsNodeOpen(const std::string& inNodePath, const int32 inDecompositionStep, const bool inIsChoicePoint) const;
 
+    // Returns the decomposition step of the node at the given path
+    HTN_NODISCARD int32 GetNodeDecompositionStep(const std::string& inNodePath, const bool inIsChoicePoint) const;
+
+    // Returns whether the node at the given path is open
+    HTN_NODISCARD bool IsNodeOpen(const std::string& inNodePath, const int32 inDecompositionStep, const bool inIsChoicePoint) const;
+
+    // Returns the current node path manager
     HTN_NODISCARD const HTNPathManager& GetCurrentNodePathManager() const;
-    HTN_NODISCARD HTNPathManager&       GetCurrentNodePathManagerMutable();
-    HTN_NODISCARD const HTNPathManager& GetCurrentVariablesPathManager() const;
-    HTN_NODISCARD HTNPathManager&       GetCurrentVariablesPathManagerMutable();
 
-    void                SetCurrentDecompositionStep(const int32 inCurrentDecompositionStep);
+    // Returns the current node path manager
+    HTN_NODISCARD HTNPathManager& GetCurrentNodePathManagerMutable();
+
+    // Returns the current variables path manager
+    HTN_NODISCARD const HTNPathManager& GetCurrentVariablesPathManager() const;
+
+    // Returns the current variables path manager
+    HTN_NODISCARD HTNPathManager& GetCurrentVariablesPathManagerMutable();
+
+    // Sets the current decomposition step to the given one
+    void SetCurrentDecompositionStep(const int32 inDecompositionStep);
+
+    // Returns the current decomposition step
     HTN_NODISCARD int32 GetCurrentDecompositionStep() const;
-    HTN_NODISCARD bool  IsCurrentDecompositionStepValid() const;
-    void                SetMinDecompositionStep(const int32 inMinDecompositionStep);
+
+    // Returns whether the current decomposition step is valid
+    HTN_NODISCARD bool IsCurrentDecompositionStepValid() const;
+
+    // Sets the minimum decomposition step to the given one
+    void SetMinDecompositionStep(const int32 inMinDecompositionStep);
+
+    // Returns the minimum decomposition step
     HTN_NODISCARD int32 GetMinDecompositionStep() const;
-    void                SetMaxDecompositionStep(const int32 inMaxDecompositionStep);
+
+    // Sets the maximum decomposition step to the given one
+    void SetMaxDecompositionStep(const int32 inMaxDecompositionStep);
+
+    // Returns the maximum decomposition step
     HTN_NODISCARD int32 GetMaxDecompositionStep() const;
 
-    void               SetIsCurrentNodeVisible(const bool inIsCurrentNodeVisible);
+    // Sets whether the current node is visible
+    void SetIsCurrentNodeVisible(const bool inIsNodeVisible);
+
+    // Returns whether the current node is visible
     HTN_NODISCARD bool IsCurrentNodeVisible() const;
-    void               RefreshNodeStates();
+
+    // Sets the states of the nodes to be refreshed
+    void RefreshNodeStates();
+
+    // Returns whether the states of the nodes should be refreshed
     HTN_NODISCARD bool ShouldRefreshNodeStates() const;
 
 private:
@@ -97,13 +165,12 @@ private:
     //----------------------------------------------------------------------//
     // Internal
     //----------------------------------------------------------------------//
-    // Path from the root node to the current node being processed
+    // Manager of the path from the root node to the current node being processed
     HTNPathManager mCurrentNodePathManager;
 
-    // Path from the root node to the current node determining the scope of the variables
+    // Manager of the path from the root node to the current node that determines the scope of the variables
     HTNPathManager mCurrentVariablesPathManager;
 
-    // Current decomposition step
     int32 mCurrentDecompositionStep = 0;
 
     // Minimum decomposition step that the current decomposition step can be
@@ -114,10 +181,7 @@ private:
     // - Exclusive
     int32 mMaxDecompositionStep = std::numeric_limits<int32>::max();
 
-    // Whether the current node is shown or hidden
-    bool mIsCurrentNodeVisible = true;
-
-    // Whether to refresh the node states
+    bool mIsCurrentNodeVisible    = true;
     bool mShouldRefreshNodeStates = false;
 };
 
@@ -171,9 +235,9 @@ inline HTNPathManager& HTNDecompositionPrinterContext::GetCurrentVariablesPathMa
     return mCurrentVariablesPathManager;
 }
 
-inline void HTNDecompositionPrinterContext::SetCurrentDecompositionStep(const int32 inCurrentDecompositionStep)
+inline void HTNDecompositionPrinterContext::SetCurrentDecompositionStep(const int32 inDecompositionStep)
 {
-    mCurrentDecompositionStep = inCurrentDecompositionStep;
+    mCurrentDecompositionStep = inDecompositionStep;
 }
 
 inline int32 HTNDecompositionPrinterContext::GetCurrentDecompositionStep() const
@@ -201,9 +265,9 @@ inline int32 HTNDecompositionPrinterContext::GetMaxDecompositionStep() const
     return mMaxDecompositionStep;
 }
 
-inline void HTNDecompositionPrinterContext::SetIsCurrentNodeVisible(const bool inIsCurrentNodeVisible)
+inline void HTNDecompositionPrinterContext::SetIsCurrentNodeVisible(const bool inIsNodeVisible)
 {
-    mIsCurrentNodeVisible = inIsCurrentNodeVisible;
+    mIsCurrentNodeVisible = inIsNodeVisible;
 }
 
 inline bool HTNDecompositionPrinterContext::IsCurrentNodeVisible() const

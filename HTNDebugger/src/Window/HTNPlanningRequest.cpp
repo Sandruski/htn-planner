@@ -1,15 +1,15 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
-#include "Window/HTNPlanningQuery.h"
+#include "Window/HTNPlanningRequest.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Window/HTNOperationResultHelpers.h"
 
-HTNPlanningQuery::HTNPlanningQuery(HTNPlanningUnit& ioPlanningUnit) : mPlanningUnit(ioPlanningUnit)
+HTNPlanningRequest::HTNPlanningRequest(HTNPlanningUnit& ioPlanningUnit) : mPlanningUnit(ioPlanningUnit)
 {
 }
 
-bool HTNPlanningQuery::IsLastDecomposeDomainOperationSuccessful() const
+bool HTNPlanningRequest::IsLastDecomposeDomainOperationSuccessful() const
 {
     return HTNOperationResultHelpers::IsOperationSuccessful(mLastDecomposeDomainOperationResult);
 }

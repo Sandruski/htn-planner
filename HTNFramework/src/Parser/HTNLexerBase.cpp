@@ -30,7 +30,7 @@ void HTNLexerBase::LexIdentifier(const std::unordered_map<std::string, HTNTokenT
     const std::string& Text            = ioLexerContext.GetText();
     const std::string  Lexeme          = Text.substr(StartPosition, EndPosition);
     const auto         It              = inKeywords.find(Lexeme);
-    const HTNTokenType TokenType       = (It != inKeywords.end()) ? It->second : HTNTokenType::IDENTIFIER;
+    const HTNTokenType TokenType       = (It != inKeywords.cend()) ? It->second : HTNTokenType::IDENTIFIER;
     if (TokenType == HTNTokenType::TRUE)
     {
         ioLexerContext.AddToken(true, TokenType HTN_DEBUG_ONLY(, Lexeme));

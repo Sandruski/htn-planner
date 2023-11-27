@@ -10,12 +10,18 @@ class HTNWorldState;
 
 struct ImGuiTextFilter;
 
+/**
+ * Contextual data of a world state printer
+ */
 class HTNWorldStatePrinterContext final : public HTNNodeVisitorContextBase
 {
 public:
     explicit HTNWorldStatePrinterContext(const HTNWorldState& inWorldState, const ImGuiTextFilter& inTextFilter);
 
-    HTN_NODISCARD const HTNWorldState&   GetWorldState() const;
+    // Returns the world state
+    HTN_NODISCARD const HTNWorldState& GetWorldState() const;
+
+    // Returns the text filter
     HTN_NODISCARD const ImGuiTextFilter& GetTextFilter() const;
 
 private:

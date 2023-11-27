@@ -121,8 +121,8 @@ const size& HTNDecompositionTest::GetPlanningUnitsSize() const
 TEST_P(HTNDecompositionTest, IsDecompositionSuccessful)
 {
     const std::string EntryPointID = GetEntryPointID();
-    std::for_each(std::execution::par, mPlanningUnits.begin(), mPlanningUnits.end(), [&](HTNPlanningUnit& inPlanningUnit) {
-        const bool ExecuteTopLevelMethodResult = inPlanningUnit.ExecuteTopLevelMethod(EntryPointID);
+    std::for_each(std::execution::par, mPlanningUnits.begin(), mPlanningUnits.end(), [&](HTNPlanningUnit& ioPlanningUnit) {
+        const bool ExecuteTopLevelMethodResult = ioPlanningUnit.ExecuteTopLevelMethod(EntryPointID);
         EXPECT_TRUE(ExecuteTopLevelMethodResult);
     });
 }

@@ -11,15 +11,19 @@
 class HTNWorldStatePrinterContext;
 
 /**
- * Prints a database representing a world state
+ * Prints a world state
  */
 class HTNWorldStatePrinter
 {
 public:
+    // Main print member method
     bool Print(HTNWorldStatePrinterContext& ioWorldStatePrinterContext) const;
 
 private:
+    // Prints the ID of a fact
     void PrintFactID(const std::string& inFactID) const;
+
+    // Prints the arguments of a fact
     void PrintFactArguments(const HTNFactArguments& inFactArguments) const;
 };
 #endif

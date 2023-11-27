@@ -10,7 +10,7 @@ void HTNFactArgumentsTable::RemoveFactArguments(const size inFactArgumentsIndex)
         return;
     }
 
-    auto It = mFactArguments.begin();
+    auto It = mFactArguments.cbegin();
     std::advance(It, inFactArgumentsIndex);
     mFactArguments.erase(It);
 }
@@ -18,7 +18,7 @@ void HTNFactArgumentsTable::RemoveFactArguments(const size inFactArgumentsIndex)
 void HTNWorldState::RemoveFact(const std::string& inFactID, const size inFactArgumentsSize, const size inFactArgumentsIndex)
 {
     const auto It = mFacts.find(inFactID);
-    if (It == mFacts.end())
+    if (It == mFacts.cend())
     {
         HTN_LOG_ERROR("Fact [{}] not found", inFactID);
         return;
@@ -34,7 +34,7 @@ void HTNWorldState::RemoveFact(const std::string& inFactID, const size inFactArg
 size HTNWorldState::GetFactArgumentsTablesSize(const std::string& inFactID) const
 {
     const auto It = mFacts.find(inFactID);
-    if (It == mFacts.end())
+    if (It == mFacts.cend())
     {
         HTN_LOG_ERROR("Fact [{}] not found", inFactID);
         return 0;
@@ -58,7 +58,7 @@ size HTNWorldState::GetFactArgumentsTablesSize(const std::string& inFactID) cons
 bool HTNWorldState::ContainsFactArgumentTable(const std::string& inFactID, const size inFactArgumentsSize) const
 {
     const auto It = mFacts.find(inFactID);
-    if (It == mFacts.end())
+    if (It == mFacts.cend())
     {
         HTN_LOG_ERROR("Fact [{}] not found", inFactID);
         return false;
@@ -75,7 +75,7 @@ bool HTNWorldState::ContainsFactArgumentTable(const std::string& inFactID, const
 size HTNWorldState::GetFactArgumentsSize(const std::string& inFactID, const size inFactArgumentsSize) const
 {
     const auto It = mFacts.find(inFactID);
-    if (It == mFacts.end())
+    if (It == mFacts.cend())
     {
         HTN_LOG_ERROR("Fact [{}] not found", inFactID);
         return 0;

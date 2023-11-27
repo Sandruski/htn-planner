@@ -10,11 +10,15 @@
 
 class HTNDomainNode;
 
+/**
+ * Contextual data of a domain printer
+ */
 class HTNDomainPrinterContext final : public HTNNodeVisitorContextBase
 {
 public:
     explicit HTNDomainPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode);
 
+    // Returns the domain node
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
 
 private:

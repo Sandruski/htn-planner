@@ -9,11 +9,12 @@
 class HTNDecompositionWatchTooltipPrinterContext;
 
 /**
- * Prints the watch tooltip for the selected node
+ * Prints a tooltip with the state of the variables of the hovered node
  */
 class HTNDecompositionWatchTooltipPrinter final : public HTNDecompositionWatchPrinterBase
 {
 public:
+    // Main print member method
     void Print(HTNDecompositionWatchTooltipPrinterContext& ioDecompositionWatchTooltipPrinterContext) const;
 };
 #endif

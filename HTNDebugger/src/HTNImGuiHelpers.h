@@ -19,7 +19,7 @@ namespace HTNImGuiHelpers
 void HelpMarker(const std::string& inDescription);
 
 // Sets the given state to the tree node of the given label
-void SetTreeNodeOpen(const std::string& inLabel, const bool inIsOpen);
+void SetTreeNodeOpen(const std::string& inTreeNodeLabel, const bool inIsOpen);
 
 // Return whether the current item is selected
 HTN_NODISCARD bool IsCurrentItemSelected();

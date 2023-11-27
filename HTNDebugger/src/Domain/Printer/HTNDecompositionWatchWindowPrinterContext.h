@@ -11,6 +11,9 @@
 class HTNNodeInstance;
 class HTNDomainNode;
 
+/**
+ * Contextual data of a decomposition watch window printer
+ */
 class HTNDecompositionWatchWindowPrinterContext final : public HTNDecompositionWatchPrinterContextBase
 {
 public:

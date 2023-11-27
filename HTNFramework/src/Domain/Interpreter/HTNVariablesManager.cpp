@@ -4,7 +4,7 @@
 
 void HTNVariablesManager::RemoveVariables(const std::string& inVariablesPath)
 {
-    for (auto It = mVariables.begin(); It != mVariables.end();)
+    for (auto It = mVariables.cbegin(); It != mVariables.cend();)
     {
         const std::string& VariablePath = It->first;
 

@@ -9,6 +9,7 @@ enum class HTNOperationResult : uint8;
 
 namespace HTNOperationResultHelpers
 {
+// Returns whether an operation is successful
 HTN_NODISCARD bool IsOperationSuccessful(const HTNOperationResult inOperationResult);
 } // namespace HTNOperationResultHelpers
 #endif

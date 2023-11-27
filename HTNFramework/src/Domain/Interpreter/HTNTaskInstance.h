@@ -11,7 +11,7 @@
 class HTNTaskNodeBase;
 
 /*
- * Primitive or compound task in a decomposition
+ * Instance of a task in a decomposition
  */
 class HTNTaskInstance
 {
