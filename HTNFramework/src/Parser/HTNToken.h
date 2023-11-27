@@ -3,8 +3,8 @@
 #pragma once
 
 #include "Core/HTNAtom.h"
-#include "Core/HTNTokenType.h"
 #include "HTNCoreMinimal.h"
+#include "Parser/HTNTokenType.h"
 
 #include <string>
 

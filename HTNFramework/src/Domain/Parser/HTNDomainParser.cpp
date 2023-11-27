@@ -2,8 +2,6 @@
 
 #include "Domain/Parser/HTNDomainParser.h"
 
-#include "Core/HTNToken.h"
-#include "Core/HTNTokenType.h"
 #include "Domain/HTNDomainHelpers.h"
 #include "Domain/Nodes/HTNAxiomNode.h"
 #include "Domain/Nodes/HTNBranchNode.h"
@@ -16,6 +14,8 @@
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 #include "Domain/Parser/HTNDomainParserContext.h"
 #include "Parser/HTNParserHelpers.h"
+#include "Parser/HTNToken.h"
+#include "Parser/HTNTokenType.h"
 
 /*
  * Backus Naur Form (BNF)
@@ -722,7 +722,7 @@ bool HTNDomainParser::ParseLiteral(HTNDomainParserContext& ioDomainParserContext
         HTNAtom LiteralElement;
         while (ParseLiteral(ioDomainParserContext, LiteralElement))
         {
-            Literal.AddListElement(LiteralElement);
+            Literal.PushBackElementToList(LiteralElement);
         }
 
         if (Literal.IsListEmpty())

@@ -10,7 +10,7 @@
 class HTNPathManager;
 
 /**
- * Helper that uses RAII to automatically push/pop a node to/from a node path
+ * Helper that uses RAII to automatically push/pop a segment to/from a path
  */
 class HTNScope : private HTNUncopyable
 {

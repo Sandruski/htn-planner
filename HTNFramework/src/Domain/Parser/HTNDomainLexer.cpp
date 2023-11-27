@@ -2,9 +2,9 @@
 
 #include "Domain/Parser/HTNDomainLexer.h"
 
-#include "Core/HTNTokenType.h"
 #include "Domain/Parser/HTNDomainLexerContext.h"
 #include "Parser/HTNLexerHelpers.h"
+#include "Parser/HTNTokenType.h"
 
 bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
 {

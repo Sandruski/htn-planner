@@ -3,11 +3,11 @@
 #include "Hook/HTNPlannerHook.h"
 
 #include "Core/HTNFileReader.h"
-#include "Core/HTNToken.h"
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Domain/Nodes/HTNDomainNode.h"
 #include "Domain/Parser/HTNDomainLexerContext.h"
 #include "Domain/Parser/HTNDomainParserContext.h"
+#include "Parser/HTNToken.h"
 
 bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
 {

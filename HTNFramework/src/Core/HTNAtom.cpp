@@ -26,7 +26,7 @@ HTNAtom::HTNAtom(const HTNAtomList& inValue) : mData(inValue)
 {
 }
 
-void HTNAtom::AddListElement(const HTNAtom& inElement)
+void HTNAtom::PushBackElementToList(const HTNAtom& inValue)
 {
     if (!IsBound())
     {
@@ -39,7 +39,7 @@ void HTNAtom::AddListElement(const HTNAtom& inElement)
     }
 
     HTNAtomList& List = GetValueMutable<HTNAtomList>();
-    List.PushBack(inElement);
+    List.PushBack(inValue);
 }
 
 const HTNAtom& HTNAtom::GetListElement(const uint32 inIndex) const

@@ -2,10 +2,10 @@
 
 #include "Parser/HTNParserBase.h"
 
-#include "Core/HTNToken.h"
-#include "Core/HTNTokenHelpers.h"
-#include "Core/HTNTokenType.h"
 #include "Parser/HTNParserContextBase.h"
+#include "Parser/HTNToken.h"
+#include "Parser/HTNTokenHelpers.h"
+#include "Parser/HTNTokenType.h"
 
 HTNParserBase::~HTNParserBase() = default;
 

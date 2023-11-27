@@ -2,8 +2,8 @@
 
 #include "WorldState/Parser/HTNWorldStateLexer.h"
 
-#include "Core/HTNTokenType.h"
 #include "Parser/HTNLexerHelpers.h"
+#include "Parser/HTNTokenType.h"
 #include "WorldState/Parser/HTNWorldStateLexerContext.h"
 
 bool HTNWorldStateLexer::Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext) const

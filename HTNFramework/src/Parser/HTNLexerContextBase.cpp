@@ -2,8 +2,8 @@
 
 #include "Parser/HTNLexerContextBase.h"
 
-#include "Core/HTNToken.h"
-#include "Core/HTNTokenType.h"
+#include "Parser/HTNToken.h"
+#include "Parser/HTNTokenType.h"
 
 HTNLexerContextBase::HTNLexerContextBase(const std::string& inText, std::vector<HTNToken>& outTokens) : mText(inText), mTokens(outTokens)
 {

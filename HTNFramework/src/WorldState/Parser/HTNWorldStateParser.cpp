@@ -2,9 +2,9 @@
 
 #include "WorldState/Parser/HTNWorldStateParser.h"
 
-#include "Core/HTNToken.h"
-#include "Core/HTNTokenType.h"
 #include "Parser/HTNParserHelpers.h"
+#include "Parser/HTNToken.h"
+#include "Parser/HTNTokenType.h"
 #include "WorldState/HTNWorldState.h"
 #include "WorldState/Parser/HTNWorldStateParserContext.h"
 
@@ -90,7 +90,7 @@ bool HTNWorldStateParser::ParseArgument(HTNWorldStateParserContext& ioWorldState
         HTNAtom ArgumentElement;
         while (ParseArgument(ioWorldStateParserContext, ArgumentElement))
         {
-            Argument.AddListElement(ArgumentElement);
+            Argument.PushBackElementToList(ArgumentElement);
         }
 
         if (Argument.IsListEmpty())

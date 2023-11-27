@@ -2,9 +2,9 @@
 
 #include "Parser/HTNLexerBase.h"
 
-#include "Core/HTNTokenType.h"
 #include "HTNLexerHelpers.h"
 #include "Parser/HTNLexerContextBase.h"
+#include "Parser/HTNTokenType.h"
 
 #ifdef HTN_DEBUG
 #include <limits>

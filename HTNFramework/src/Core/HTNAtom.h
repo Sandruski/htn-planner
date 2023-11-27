@@ -9,6 +9,9 @@
 #include <string>
 #include <variant>
 
+/**
+ * Container that holds a value of one of several types (bool, int32, float, std::string, or a list of atoms)
+ */
 class HTNAtom
 {
 public:
@@ -21,30 +24,38 @@ public:
 
     bool operator==(const HTNAtom& inOther) const;
 
-    // Adds a new element to this list type
-    void AddListElement(const HTNAtom& inElement);
-
-    // Return the list element
-    HTN_NODISCARD const HTNAtom& GetListElement(const uint32 inIndex) const;
-    HTN_NODISCARD const HTNAtom* FindListElement(const uint32 inIndex) const;
-
-    HTN_NODISCARD int32 GetListSize() const;
-    HTN_NODISCARD bool  IsListEmpty() const;
-
+    // Returns the value of the atom
     template<typename T>
     HTN_NODISCARD const T& GetValue() const;
 
+    // Returns the value of the atom
     template<typename T>
     HTN_NODISCARD T& GetValueMutable();
 
+    // Returns the type of the value of the atom
     template<typename T>
     HTN_NODISCARD bool IsType() const;
 
-    // Unbinds this HtnAtom, this can be used in the context of multiresult queries where we might want to reuse the same HtnAtom
-    // multiple times because the backtracking mechanism (we will talk about this later) is making us reevaluate the planner.
+    // Resets the value of the atom
     void Unbind();
 
+    // Returns whether the atom has a value
     HTN_NODISCARD bool IsBound() const;
+
+    // Pushes the given element to the back of the list
+    void PushBackElementToList(const HTNAtom& inValue);
+
+    // Return the element of the list at the given index
+    HTN_NODISCARD const HTNAtom& GetListElement(const uint32 inIndex) const;
+
+    // Return the element of the list at the given index
+    HTN_NODISCARD const HTNAtom* FindListElement(const uint32 inIndex) const;
+
+    // Returns the number of elements in the list
+    HTN_NODISCARD int32 GetListSize() const;
+
+    // Returns whether the list has no elements
+    HTN_NODISCARD bool IsListEmpty() const;
 
     // Returns a string optionally delimited by double quotes
     HTN_NODISCARD std::string ToString(const bool inShouldDoubleQuoteString) const;

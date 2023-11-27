@@ -5,17 +5,28 @@
 #include "Core/HTNAtom.h"
 #include "HTNCoreMinimal.h"
 
+/**
+ * Node of a list of atoms
+ */
 class HTNAtomNode
 {
 public:
     explicit HTNAtomNode(const HTNAtom& inValue);
 
+    // Returns the value of the node
     HTN_NODISCARD const HTNAtom& GetData() const;
 
-    void                             SetNextNode(HTNAtomNode* inNode);
+    // Sets the next node to the given one
+    void SetNextNode(HTNAtomNode* inNode);
+
+    // Returns the next node
     HTN_NODISCARD const HTNAtomNode* GetNextNode() const;
-    HTN_NODISCARD HTNAtomNode*       GetNextNodeMutable();
-    HTN_NODISCARD bool               HasNextNode() const;
+
+    // Returns the next node
+    HTN_NODISCARD HTNAtomNode* GetNextNodeMutable();
+
+    // Returns whether it has a next node
+    HTN_NODISCARD bool HasNextNode() const;
 
 private:
     HTNAtom      mData;

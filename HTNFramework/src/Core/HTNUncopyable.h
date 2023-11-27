@@ -4,7 +4,9 @@
 
 #include "HTNCoreMinimal.h"
 
-// Base class to prevent copying
+/**
+ * Base class to prevent copying
+ */
 class HTNUncopyable
 {
 public:

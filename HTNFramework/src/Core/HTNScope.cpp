@@ -18,7 +18,6 @@ HTNScope::~HTNScope()
         return;
     }
 
-    // Remove the current node from the path
     const bool Result = mPathManager.TryPopSegmentFromPath();
     assert(Result);
 }

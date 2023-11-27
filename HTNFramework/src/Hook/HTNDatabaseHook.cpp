@@ -3,7 +3,7 @@
 #include "Hook/HTNDatabaseHook.h"
 
 #include "Core/HTNFileReader.h"
-#include "Core/HTNToken.h"
+#include "Parser/HTNToken.h"
 #include "WorldState/Parser/HTNWorldStateLexerContext.h"
 #include "WorldState/Parser/HTNWorldStateParserContext.h"
 

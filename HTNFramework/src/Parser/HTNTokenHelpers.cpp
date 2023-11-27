@@ -1,8 +1,8 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
-#include "Core/HTNTokenHelpers.h"
+#include "Parser/HTNTokenHelpers.h"
 
-#include "Core/HTNTokenType.h"
+#include "Parser/HTNTokenType.h"
 
 namespace HTNTokenHelpers
 {

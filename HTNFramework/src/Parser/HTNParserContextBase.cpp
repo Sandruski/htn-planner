@@ -2,7 +2,7 @@
 
 #include "Parser/HTNParserContextBase.h"
 
-#include "Core/HTNToken.h"
+#include "Parser/HTNToken.h"
 
 HTNParserContextBase::HTNParserContextBase(const std::vector<HTNToken>& inTokens) : mTokens(inTokens)
 {
