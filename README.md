@@ -47,6 +47,7 @@ The decomposition process performs a depth-first search (DFS) on the domain grap
 
 ![main_decomposition_successful_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point.png)
 <small>*Successful choice point. The Main decomposition had to backtrack 4 times to find the successful path*</small>
+*Successful choice point. The Main decomposition had to backtrack 4 times to find the successful path*
 
 ![main_decomposition_choice_points](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points.png)
 <small>*Choice points*</small>
