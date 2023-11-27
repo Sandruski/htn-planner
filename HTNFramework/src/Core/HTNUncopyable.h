@@ -7,12 +7,9 @@
 // Base class to prevent copying
 class HTNUncopyable
 {
-protected:
-    // Allow construction and destruction
-    HTNUncopyable()  = default;
-    ~HTNUncopyable() = default;
+public:
+    HTNUncopyable() = default;
 
-    // Prevent copying
     HTNUncopyable(const HTNUncopyable& inOther)            = delete;
     HTNUncopyable& operator=(const HTNUncopyable& inOther) = delete;
 };
