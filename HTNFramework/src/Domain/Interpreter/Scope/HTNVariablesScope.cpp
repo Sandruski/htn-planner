@@ -1,18 +1,18 @@
 // Copyright (c) 2023 Sandra Alvarez sandruskiag@gmail.com
 
-#include "Domain/Interpreter/Scope/HTNDecompositionVariablesScope.h"
+#include "Domain/Interpreter/Scope/HTNVariablesScope.h"
 
 #include "Domain/Interpreter/HTNDecompositionContext.h"
 #include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNVariablesManager.h"
 
-HTNDecompositionVariablesScope::HTNDecompositionVariablesScope(const std::string& inNodeID, HTNDecompositionContext& ioDecompositionContext)
+HTNVariablesScope::HTNVariablesScope(const std::string& inNodeID, HTNDecompositionContext& ioDecompositionContext)
     : HTNScope(inNodeID, ioDecompositionContext.GetCurrentVariablesPathManagerMutable()),
       mVariablesManager(ioDecompositionContext.GetCurrentDecompositionMutable().GetEnvironmentMutable().GetVariablesManagerMutable())
 {
 }
 
-HTNDecompositionVariablesScope::~HTNDecompositionVariablesScope()
+HTNVariablesScope::~HTNVariablesScope()
 {
     if (!mResult)
     {

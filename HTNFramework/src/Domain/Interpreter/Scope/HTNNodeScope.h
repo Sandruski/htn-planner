@@ -14,11 +14,11 @@ class HTNIndicesManager;
  * Helper that uses RAII to automatically push/pop a node to/from the node path
  * - Removes the indices associated to the node scope when leaving it
  */
-class HTNDecompositionNodeScope final : public HTNScope
+class HTNNodeScope final : public HTNScope
 {
 public:
-    explicit HTNDecompositionNodeScope(const std::string& inNodeID, HTNDecompositionContext& ioDecompositionContext);
-    ~HTNDecompositionNodeScope();
+    explicit HTNNodeScope(const std::string& inNodeID, HTNDecompositionContext& ioDecompositionContext);
+    ~HTNNodeScope();
 
 private:
     HTNIndicesManager& mIndicesManager;
