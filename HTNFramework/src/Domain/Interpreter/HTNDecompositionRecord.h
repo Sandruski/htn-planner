@@ -27,10 +27,10 @@ private:
     // State of variables and indices
     HTNEnvironment mEnvironment;
 
-    // Tasks pending to be processed
+    // Stack (LIFO) of tasks pending to be processed
     std::vector<HTNTaskInstance> mPendingTaskInstances;
 
-    // Final plan of tasks
+    // Sequence of primitive tasks
     HTNPlan mPlan;
 };
 

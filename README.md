@@ -29,24 +29,21 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 ### HTNDemo
 1. In the `World State` tab, click the `Parse` button to parse the selected world state file. World state files are identified by the `.worldstate` extension and are located in the folder of the same name.
 
-A world state is a database of tables of facts.
+A world state is a database of tables of facts. It represents the knowledge about the world.
 
 ![world_state](https://github.com/Sandruski/htn-planner/blob/main/docs/images/world_state.png)
 *World state*
 
 2. In the `Domain` tab, click the `Parse` button to parse the selected domain file. Domain files are identified by the `.domain` extension and are located in the folder of the same name.
 
-A domain is a graph.
+A domain is a graph of constants, axioms, and methods. It represents the available actions.
 
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/domain.png)
 *Domain*
 
 3. In the `Decomposition` tab, click the `Decompose` button to decompose the selected entry point of the parsed domain using the parsed world state. Entry points are methods tagged with `top_level_method` of a domain tagged with `top_level_domain`.
 
-// TODO salvarez explain
-- Uses DFS.
-- Uses backtracking to test alternative options for choice points.
-The decomposition performs a depth first search (DFS) on the domain graph. Since this graph can contain cycles, the backtracking...
+The decomposition performs a depth-first search (DFS) on the domain graph, starting at the top level compound task and expanding hierarchically by exploring compound tasks. The algorithm uses backtracking as a mechanism to try alternative options leading to different paths at choice points.
 
 ![main_decomposition_successful_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point.png)
 *Successful choice point*
@@ -62,6 +59,8 @@ The decomposition performs a depth first search (DFS) on the domain graph. Since
 
 4. In the `Active Plan` tab, see the tasks of the active plan resulting from the decomposition.
 
+A plan is a sequence of primitive tasks, which consist of an identifier and a list of arguments.
+
 ![main_active_plan](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_active_plan.png)
 *Main active plan*
 
@@ -69,10 +68,10 @@ The decomposition performs a depth first search (DFS) on the domain graph. Since
 *Secondary active plan*
 
 ### HTNTest
-1. In the console window, see the results of the tests.
+1. In the console window, see the results of the unit tests.
 
-![tests_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/tests_results.png)
-*Tests results*
+![unit_tests_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/unit_tests_results.png)
+*Unit tests results*
 
 ## Performance Analysis
 
