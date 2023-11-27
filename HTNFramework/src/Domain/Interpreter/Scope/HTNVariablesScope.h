@@ -11,8 +11,7 @@ class HTNDecompositionContext;
 class HTNVariablesManager;
 
 /**
- * Helper that uses RAII to automatically push/pop a node to/from the variable scope path
- * - Removes the variables associated to the node scope when leaving it
+ * Helper that uses RAII to automatically push/pop a node ID to/from the variables path
  */
 class HTNVariablesScope final : public HTNScope
 {

@@ -23,8 +23,12 @@ class HTNWorldState;
 enum class HTNNodeStep : uint8;
 #endif
 
+// Previous records of a decomposition
 using HTNDecompositionRecordHistory = std::vector<HTNDecompositionRecord>;
 
+/**
+ * Data of a decomposition
+ */
 class HTNDecompositionContext final : public HTNNodeVisitorContextBase
 {
 public:
@@ -32,26 +36,50 @@ public:
     explicit HTNDecompositionContext(const HTNWorldState& inWorldState, const std::shared_ptr<const HTNDomainNode>& inDomainNode,
                                      const std::string& inEntryPointID);
 
+    // Returns the world state
     HTN_NODISCARD const HTNWorldState& GetWorldState() const;
+
+    // Returns the domain node
     HTN_NODISCARD const std::shared_ptr<const HTNDomainNode>& GetDomainNode() const;
+
+    // Returns the entry point ID
     HTN_NODISCARD const std::string& GetEntryPointID() const;
 
-    void               RecordDecomposition(const HTNDecompositionRecord& inDecomposition);
+    // Pushes the given decomposition record to the decomposition record history
+    void RecordDecomposition(const HTNDecompositionRecord& inDecompositionRecord);
+
+    // Pops a decomposition record from the decomposition record history and sets it as the current decomposition
     HTN_NODISCARD bool RestoreDecomposition();
 
+    // Returns the current decomposition
     HTN_NODISCARD const HTNDecompositionRecord& GetCurrentDecomposition() const;
-    HTN_NODISCARD HTNDecompositionRecord&       GetCurrentDecompositionMutable();
 
+    // Returns the current decomposition
+    HTN_NODISCARD HTNDecompositionRecord& GetCurrentDecompositionMutable();
+
+    // Sets the decomposition record history to the given one
     void SetDecompositionRecordHistory(const HTNDecompositionRecordHistory& inDecompositionRecordHistory);
+
+    // Returns the decomposition record history
     HTN_NODISCARD const HTNDecompositionRecordHistory& GetDecompositionRecordHistory() const;
 
-    void                                SetCurrentNodePathManager(const HTNPathManager& inCurrentNodePathManager);
-    HTN_NODISCARD const HTNPathManager& GetCurrentNodePathManager() const;
-    HTN_NODISCARD HTNPathManager&       GetCurrentNodePathManagerMutable();
+    // Sets the current node path manager to the given one
+    void SetCurrentNodePathManager(const HTNPathManager& inPathManager);
 
-    void                                SetCurrentVariablesPathManager(const HTNPathManager& inCurrentVariablesPathManager);
+    // Returns the current node path manager
+    HTN_NODISCARD const HTNPathManager& GetCurrentNodePathManager() const;
+
+    // Returns the current node path manager
+    HTN_NODISCARD HTNPathManager& GetCurrentNodePathManagerMutable();
+
+    // Sets the current variables path manager to the given one
+    void SetCurrentVariablesPathManager(const HTNPathManager& inPathManager);
+
+    // Returns the current variables path manager
     HTN_NODISCARD const HTNPathManager& GetCurrentVariablesPathManager() const;
-    HTN_NODISCARD HTNPathManager&       GetCurrentVariablesPathManagerMutable();
+
+    // Returns the current variables path manager
+    HTN_NODISCARD HTNPathManager& GetCurrentVariablesPathManagerMutable();
 
 private:
     //----------------------------------------------------------------------//
@@ -64,26 +92,28 @@ private:
     //----------------------------------------------------------------------//
     // Output
     //----------------------------------------------------------------------//
-    // Current decomposition
     HTNDecompositionRecord mCurrentDecomposition;
 
     //----------------------------------------------------------------------//
     // Internal
     //----------------------------------------------------------------------//
-    // Record of previous decompositions
     HTNDecompositionRecordHistory mDecompositionRecordHistory;
 
-    // Path from the root node to the current node being processed
+    // Manager of the path from the root node to the current node being processed
     HTNPathManager mCurrentNodePathManager;
 
-    // Path from the root node to the current node determining the scope of the variables
+    // Manager of the path from the root node to the current node that determines the scope of the variables
     HTNPathManager mCurrentVariablesPathManager;
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 public:
+    // Records the result of the given node
     void RecordNodeResult(const std::string& inNodePath, const bool inResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
+
+    // Records the result of the given node
     void RecordNodeResult(const std::string& inNodePath, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
 
+    // Returns the decomposition result
     HTN_NODISCARD const HTNDecompositionResult& GetDecompositionResult() const;
 
 private:
@@ -109,9 +139,9 @@ inline const std::string& HTNDecompositionContext::GetEntryPointID() const
     return mEntryPointID;
 }
 
-inline void HTNDecompositionContext::RecordDecomposition(const HTNDecompositionRecord& inDecomposition)
+inline void HTNDecompositionContext::RecordDecomposition(const HTNDecompositionRecord& inDecompositionRecord)
 {
-    mDecompositionRecordHistory.emplace_back(inDecomposition);
+    mDecompositionRecordHistory.emplace_back(inDecompositionRecord);
 }
 
 inline const HTNDecompositionRecord& HTNDecompositionContext::GetCurrentDecomposition() const
@@ -134,9 +164,9 @@ inline const HTNDecompositionRecordHistory& HTNDecompositionContext::GetDecompos
     return mDecompositionRecordHistory;
 }
 
-inline void HTNDecompositionContext::SetCurrentNodePathManager(const HTNPathManager& inNodePathManager)
+inline void HTNDecompositionContext::SetCurrentNodePathManager(const HTNPathManager& inPathManager)
 {
-    mCurrentNodePathManager = inNodePathManager;
+    mCurrentNodePathManager = inPathManager;
 }
 
 inline const HTNPathManager& HTNDecompositionContext::GetCurrentNodePathManager() const
@@ -149,9 +179,9 @@ inline HTNPathManager& HTNDecompositionContext::GetCurrentNodePathManagerMutable
     return mCurrentNodePathManager;
 }
 
-inline void HTNDecompositionContext::SetCurrentVariablesPathManager(const HTNPathManager& inVariablesPathManager)
+inline void HTNDecompositionContext::SetCurrentVariablesPathManager(const HTNPathManager& inPathManager)
 {
-    mCurrentVariablesPathManager = inVariablesPathManager;
+    mCurrentVariablesPathManager = inPathManager;
 }
 
 inline const HTNPathManager& HTNDecompositionContext::GetCurrentVariablesPathManager() const

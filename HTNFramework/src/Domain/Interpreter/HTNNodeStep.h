@@ -5,6 +5,9 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "HTNCoreMinimal.h"
 
+/**
+ * Step in the execution of a node in a decomposition
+ */
 enum class HTNNodeStep : uint8
 {
     START,

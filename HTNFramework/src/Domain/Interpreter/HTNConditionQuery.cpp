@@ -6,8 +6,8 @@
 
 HTNConditionQueryBase::~HTNConditionQueryBase() = default;
 
-bool HTNConditionQueryWorldState::Check(const HTNWorldState& inWorldState, const std::string& inFactID, const size inArgumentsIndex,
-                                        std::vector<HTNAtom>& ioArguments) const
+bool HTNConditionWorldStateQuery::Check(const HTNWorldState& inWorldState, const std::string& inFactID, const size inFactArgumentsIndex,
+                                        std::vector<HTNAtom>& ioFactArguments) const
 {
-    return inWorldState.CheckIndex(inFactID, inArgumentsIndex, ioArguments);
+    return inWorldState.CheckIndex(inFactID, inFactArgumentsIndex, ioFactArguments);
 }

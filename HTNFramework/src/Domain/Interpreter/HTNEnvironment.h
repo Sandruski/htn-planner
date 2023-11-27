@@ -6,16 +6,29 @@
 #include "Domain/Interpreter/HTNVariablesManager.h"
 #include "HTNCoreMinimal.h"
 
+/**
+ * Variables and indices of a decomposition
+ */
 class HTNEnvironment
 {
 public:
-    void                                     SetVariablesManager(const HTNVariablesManager& inVariablesManager);
-    HTN_NODISCARD const HTNVariablesManager& GetVariablesManager() const;
-    HTN_NODISCARD HTNVariablesManager&       GetVariablesManagerMutable();
+    // Sets the variables manager to the given one
+    void SetVariablesManager(const HTNVariablesManager& inVariablesManager);
 
-    void                                   SetIndicesManager(const HTNIndicesManager& inIndicesManager);
+    // Returns the variables manager
+    HTN_NODISCARD const HTNVariablesManager& GetVariablesManager() const;
+
+    // Returns the variables manager
+    HTN_NODISCARD HTNVariablesManager& GetVariablesManagerMutable();
+
+    // Sets the indices manager to the given one
+    void SetIndicesManager(const HTNIndicesManager& inIndicesManager);
+
+    // Returns the indices manager
     HTN_NODISCARD const HTNIndicesManager& GetIndicesManager() const;
-    HTN_NODISCARD HTNIndicesManager&       GetIndicesManagerMutable();
+
+    // Returns the indices manager
+    HTN_NODISCARD HTNIndicesManager& GetIndicesManagerMutable();
 
 private:
     HTNVariablesManager mVariablesManager;

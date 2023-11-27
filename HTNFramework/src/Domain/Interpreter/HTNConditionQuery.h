@@ -10,6 +10,9 @@
 class HTNAtom;
 class HTNWorldState;
 
+/**
+ * Base class for condition queries
+ */
 class HTNConditionQueryBase
 {
 public:
@@ -17,14 +20,12 @@ public:
 };
 
 /**
- * Condition world state query
- * - Queries the arguments in the database
- * - Binds unbound arguments
+ * Condition that performs a query on the world state
  */
-class HTNConditionQueryWorldState final : public HTNConditionQueryBase
+class HTNConditionWorldStateQuery final : public HTNConditionQueryBase
 {
 public:
-    // Check if the condition is true
-    HTN_NODISCARD bool Check(const HTNWorldState& inWorldState, const std::string& inFactID, const size inArgumentsIndex,
-                             std::vector<HTNAtom>& ioArguments) const;
+    // Queries the given fact in the world state
+    HTN_NODISCARD bool Check(const HTNWorldState& inWorldState, const std::string& inFactID, const size inFactArgumentsIndex,
+                             std::vector<HTNAtom>& ioFactArguments) const;
 };

@@ -19,7 +19,7 @@ HTNVariablesScope::~HTNVariablesScope()
         return;
     }
 
-    // Remove the variables associated to the node path when the node goes out of scope to minimize memory storage requirements
-    const std::string& NodePath = mPathManager.GetPath();
-    mVariablesManager.RemoveVariables(NodePath);
+    // Remove the variables associated to the variables path when the node goes out of scope to minimize memory storage requirements
+    const std::string& VariablesPath = mPathManager.GetPath();
+    mVariablesManager.RemoveVariables(VariablesPath);
 }

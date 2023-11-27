@@ -60,10 +60,6 @@ bool HTNDomainInterpreter::Interpret(HTNDecompositionContext& ioDecompositionCon
     return GetNodeValue(*DomainNode, ioDecompositionContext).GetValue<bool>();
 }
 
-/*
- * Depth first search on a graph
- * Domain is a graph that may contain cycles because of backtracking
- */
 HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetDomainNodeValue");
@@ -107,8 +103,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
         HTNTaskInstance(TopLevelCompoundTaskNode, HTNEnvironment(), CurrentNodePathManager, CurrentVariablesPathManager);
     CurrentDecomposition.PushPendingTaskInstance(TopLevelCompoundTaskInstance);
 
-    // Perform depth-first search on the domain
-    // The domain is a graph
+    // Perform a depth-first search (DFS) on the domain graph
     while (CurrentDecomposition.HasPendingTaskInstances())
     {
         const HTNTaskInstance TaskInstance = CurrentDecomposition.PopPendingTaskInstance();
@@ -393,8 +388,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
     for (size FactArgumentsIndex = IndicesManager.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsSize;
          FactArgumentsIndex      = IndicesManager.AddOrIncrementIndex(CurrentNodePath))
     {
-        static const HTNConditionQueryWorldState ConditionQueryWorldState;
-        if (!ConditionQueryWorldState.Check(WorldState, FactID, FactArgumentsIndex, FactArguments))
+        static const HTNConditionWorldStateQuery ConditionWorldStateQuery;
+        if (!ConditionWorldStateQuery.Check(WorldState, FactID, FactArgumentsIndex, FactArguments))
         {
             continue;
         }

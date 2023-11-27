@@ -8,12 +8,13 @@
 class HTNDecompositionContext;
 
 /**
- * Decision-making
+ * Decomposes an entry point of a domain using a world state
  * Returns a plan
  */
 class HTNDomainInterpreter final : public HTNNodeVisitorBase
 {
 public:
+    // Main decomposition function
     bool Interpret(HTNDecompositionContext& ioDecompositionContext) const;
 
     HTNAtom Visit(const HTNDomainNode& inDomainNode, HTNNodeVisitorContextBase& ioDecompositionContext) const final;

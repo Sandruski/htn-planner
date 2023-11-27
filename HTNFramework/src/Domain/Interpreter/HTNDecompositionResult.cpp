@@ -19,7 +19,7 @@ void HTNDecompositionResult::AddNodeResult(const std::string& inNodePath, const 
     assert(inIsChoicePoint == NodeResultHistory.IsChoicePoint());
 
     HTNNodeResultStepsCollection& NodeResultStepsCollection = NodeResultHistory.GetNodeResultStepsCollectionMutable();
-    HTNNodeResultCollection&      NodeResultCollection      = NodeResultStepsCollection[mDecompositionStep];
+    HTNNodeResultCollection&      NodeResultCollection      = NodeResultStepsCollection[mCurrentDecompositionStep];
     NodeResultCollection[inNodeStep]                        = inNodeResult;
 }
 #endif

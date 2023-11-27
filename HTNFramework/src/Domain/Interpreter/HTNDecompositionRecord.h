@@ -9,34 +9,48 @@
 
 #include <vector>
 
+/**
+ * Record of a decomposition
+ */
 class HTNDecompositionRecord
 {
 public:
-    void                          PushPendingTaskInstance(const HTNTaskInstance& inPendingTaskInstance);
+    // Pushes the given task instance to the pending ones
+    void PushPendingTaskInstance(const HTNTaskInstance& inTaskInstance);
+
+    // Pops a task instance from the pending ones
     HTN_NODISCARD HTNTaskInstance PopPendingTaskInstance();
-    HTN_NODISCARD bool            HasPendingTaskInstances() const;
 
-    void                                SetEnvironment(const HTNEnvironment& inEnvironment);
+    // Returns whether there are pending task instances
+    HTN_NODISCARD bool HasPendingTaskInstances() const;
+
+    // Sets the environment to the given one
+    void SetEnvironment(const HTNEnvironment& inEnvironment);
+
+    // Returns the environment
     HTN_NODISCARD const HTNEnvironment& GetEnvironment() const;
-    HTN_NODISCARD HTNEnvironment&       GetEnvironmentMutable();
 
-    void                         AddTaskResultToPlan(const HTNTaskResult& inTaskResult);
+    // Returns the environment
+    HTN_NODISCARD HTNEnvironment& GetEnvironmentMutable();
+
+    // Adds the given task result to the plan
+    void AddTaskResultToPlan(const HTNTaskResult& inTaskResult);
+
+    // Returns the plan
     HTN_NODISCARD const HTNPlan& GetPlan() const;
 
 private:
-    // State of variables and indices
     HTNEnvironment mEnvironment;
 
-    // Stack (LIFO) of tasks pending to be processed
+    // Stack of tasks pending to be processed
     std::vector<HTNTaskInstance> mPendingTaskInstances;
 
-    // Sequence of primitive tasks
     HTNPlan mPlan;
 };
 
-inline void HTNDecompositionRecord::PushPendingTaskInstance(const HTNTaskInstance& inPendingTaskInstance)
+inline void HTNDecompositionRecord::PushPendingTaskInstance(const HTNTaskInstance& inTaskInstance)
 {
-    mPendingTaskInstances.emplace_back(inPendingTaskInstance);
+    mPendingTaskInstances.emplace_back(inTaskInstance);
 }
 
 inline HTNTaskInstance HTNDecompositionRecord::PopPendingTaskInstance()

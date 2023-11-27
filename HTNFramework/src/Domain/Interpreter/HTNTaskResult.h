@@ -10,33 +10,34 @@
 
 class HTNTaskResult;
 
+// Sequence of primitive tasks
 using HTNPlan = std::vector<HTNTaskResult>;
 
 /*
- * Result of a primitive task
+ * Result of a primitive task in a decomposition
  */
 class HTNTaskResult
 {
 public:
-    explicit HTNTaskResult(const std::string& inID, const std::vector<HTNAtom>& inArguments);
+    explicit HTNTaskResult(const std::string& inTaskID, const std::vector<HTNAtom>& inTaskArguments);
 
-    HTN_NODISCARD const std::string& GetID() const;
-    HTN_NODISCARD const std::vector<HTNAtom>& GetArguments() const;
+    // Returns the ID of the task
+    HTN_NODISCARD const std::string& GetTaskID() const;
+
+    // Returns the arguments of the task
+    HTN_NODISCARD const std::vector<HTNAtom>& GetTaskArguments() const;
 
 private:
-    // ID of the task
-    std::string mID;
-
-    // Arguments of the task
-    std::vector<HTNAtom> mArguments;
+    std::string          mTaskID;
+    std::vector<HTNAtom> mTaskArguments;
 };
 
-inline const std::string& HTNTaskResult::GetID() const
+inline const std::string& HTNTaskResult::GetTaskID() const
 {
-    return mID;
+    return mTaskID;
 }
 
-inline const std::vector<HTNAtom>& HTNTaskResult::GetArguments() const
+inline const std::vector<HTNAtom>& HTNTaskResult::GetTaskArguments() const
 {
-    return mArguments;
+    return mTaskArguments;
 }

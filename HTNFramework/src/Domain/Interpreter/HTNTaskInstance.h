@@ -11,7 +11,7 @@
 class HTNTaskNodeBase;
 
 /*
- * Primitive or compound task
+ * Primitive or compound task in a decomposition
  */
 class HTNTaskInstance
 {
@@ -19,10 +19,17 @@ public:
     explicit HTNTaskInstance(const std::shared_ptr<const HTNTaskNodeBase>& inTaskNode, const HTNEnvironment& inEnvironment,
                              const HTNPathManager& inNodePathManager, const HTNPathManager& inVariablesPathManager);
 
+    // Returns the task node
     HTN_NODISCARD const std::shared_ptr<const HTNTaskNodeBase>& GetTaskNode() const;
-    HTN_NODISCARD const HTNEnvironment&                         GetEnvironment() const;
-    HTN_NODISCARD const HTNPathManager&                         GetNodePathManager() const;
-    HTN_NODISCARD const HTNPathManager&                         GetVariablesPathManager() const;
+
+    // Returns the environment
+    HTN_NODISCARD const HTNEnvironment& GetEnvironment() const;
+
+    // Returns the node path manager
+    HTN_NODISCARD const HTNPathManager& GetNodePathManager() const;
+
+    // Returns the variables path manager
+    HTN_NODISCARD const HTNPathManager& GetVariablesPathManager() const;
 
 private:
     std::shared_ptr<const HTNTaskNodeBase> mTaskNode;

@@ -13,6 +13,11 @@ class HTNNodeResult;
 class HTNValueExpressionNodeBase;
 class HTNVariableExpressionNode;
 
+/**
+ *
+ * - TODO salvarez Make this a base class with three derived classes - one with node parameters, one with node arguments, and one without either of
+ * the two
+ */
 class HTNNodeInstance
 {
 public:

@@ -2,6 +2,7 @@
 
 #include "Domain/Interpreter/HTNTaskResult.h"
 
-HTNTaskResult::HTNTaskResult(const std::string& inID, const std::vector<HTNAtom>& inArguments) : mID(inID), mArguments(inArguments)
+HTNTaskResult::HTNTaskResult(const std::string& inTaskID, const std::vector<HTNAtom>& inTaskArguments)
+    : mTaskID(inTaskID), mTaskArguments(inTaskArguments)
 {
 }

@@ -11,8 +11,7 @@ class HTNDecompositionContext;
 class HTNIndicesManager;
 
 /**
- * Helper that uses RAII to automatically push/pop a node to/from the node path
- * - Removes the indices associated to the node scope when leaving it
+ * Helper that uses RAII to automatically push/pop a node ID to/from the node path
  */
 class HTNNodeScope final : public HTNScope
 {

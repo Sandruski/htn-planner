@@ -12,13 +12,16 @@
 using HTNVariables = std::unordered_map<std::string, HTNAtom>;
 using HTNVariable  = std::pair<const std::string, HTNAtom>;
 
+/**
+ * Manager of the variables of a decomposition
+ */
 class HTNVariablesManager
 {
 public:
     // Sets the value of an existing variable or adds a new variable and sets its value
     void SetVariable(const std::string& inVariablePath, const HTNAtom& inVariableValue);
 
-    // Returns an existing variable or an unset HTNAtom if not existing
+    // Returns an existing variable or an unbound atom if the variable does not exist
     HTN_NODISCARD HTNAtom FindVariable(const std::string& inVariablePath) const;
 
     // Removes an existing variable
@@ -27,6 +30,7 @@ public:
     // Removes all existing variables under the variables path
     void RemoveVariables(const std::string& inVariablesPath);
 
+    // Returns the variables
     HTN_NODISCARD const HTNVariables& GetVariables() const;
 
 private:

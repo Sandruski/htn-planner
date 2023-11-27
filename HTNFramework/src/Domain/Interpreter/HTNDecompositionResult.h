@@ -17,39 +17,60 @@ class HTNNodeResultHistory;
 // Node step to node result
 using HTNNodeResultCollection = std::unordered_map<HTNNodeStep, HTNNodeResult>;
 
-// Decomposition step to node result steps
+// Decomposition step to node result collection
 using HTNNodeResultStepsCollection = std::map<size, HTNNodeResultCollection>;
 
 // Node path to node result history
 using HTNNodeResultHistoryCollection = std::unordered_map<std::string, HTNNodeResultHistory>;
 
+/**
+ * Previous node results of a decomposition
+ */
 class HTNNodeResultHistory
 {
 public:
     HTNNodeResultHistory() = default;
     explicit HTNNodeResultHistory(const bool inIsChoicePoint);
 
+    // Returns the node result steps collection
     HTN_NODISCARD const HTNNodeResultStepsCollection& GetNodeResultStepsCollection() const;
-    HTN_NODISCARD HTNNodeResultStepsCollection&       GetNodeResultStepsCollectionMutable();
-    HTN_NODISCARD bool                                IsChoicePoint() const;
+
+    // Returns the node result steps collection
+    HTN_NODISCARD HTNNodeResultStepsCollection& GetNodeResultStepsCollectionMutable();
+
+    // Returns whether the node is a choice point
+    HTN_NODISCARD bool IsChoicePoint() const;
 
 private:
     HTNNodeResultStepsCollection mNodeResultStepsCollection;
-    bool                         mIsChoicePoint = false;
+
+    // Whether the node is a choice point
+    bool mIsChoicePoint = false;
 };
 
+/**
+ * Result of a decomposition
+ */
 class HTNDecompositionResult
 {
 public:
+    // Adds the given node result to the history collection
     void AddNodeResult(const std::string& inNodePath, const HTNNodeResult& inNodeResult, const HTNNodeStep inNodeStep, const bool inIsChoicePoint);
+
+    // Returns the node result history at the given node path
     HTN_NODISCARD const HTNNodeResultHistory* FindNodeResultHistory(const std::string& inNodePath) const;
 
-    void               IncrementDecompositionStep();
-    HTN_NODISCARD size GetDecompositionStep() const;
+    // Increments the current decomposition step
+    void IncrementCurrentDecompositionStep();
+
+    // Returns the current decomposition step
+    HTN_NODISCARD size GetCurrentDecompositionStep() const;
 
 private:
     HTNNodeResultHistoryCollection mNodeResultHistoryCollection;
-    size                           mDecompositionStep = 0;
+
+    // Number of times the algorithm has backtracked
+    size mCurrentDecompositionStep = 0;
 };
 
 inline const HTNNodeResultStepsCollection& HTNNodeResultHistory::GetNodeResultStepsCollection() const
@@ -78,13 +99,13 @@ inline const HTNNodeResultHistory* HTNDecompositionResult::FindNodeResultHistory
     return &NodeResultHistoryCollectionIt->second;
 }
 
-inline void HTNDecompositionResult::IncrementDecompositionStep()
+inline void HTNDecompositionResult::IncrementCurrentDecompositionStep()
 {
-    ++mDecompositionStep;
+    ++mCurrentDecompositionStep;
 }
 
-inline size HTNDecompositionResult::GetDecompositionStep() const
+inline size HTNDecompositionResult::GetCurrentDecompositionStep() const
 {
-    return mDecompositionStep;
+    return mCurrentDecompositionStep;
 }
 #endif
