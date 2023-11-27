@@ -1,7 +1,7 @@
 # HTN
 This project is a hierarchical task network (HTN) planner library for AI decision-making. It is implemented in C++ and it interprets a custom domain language.
 
-Not being just a planner but a complete langauge instead makes it a powerful tool for content creators to script complex behaviors with simple statements.
+Not being just a planner but a complete langauge instead makes it a powerful tool for content creators to script complex behaviors using simple statements.
 
 ![main_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition.png)
 *Main decomposition*
@@ -43,10 +43,10 @@ A domain is a graph of constants, axioms, and methods. It represents the availab
 
 3. In the `Decomposition` tab, click the `Decompose` button to decompose the selected entry point of the parsed domain using the parsed world state. Entry points are methods tagged with `top_level_method` of a domain tagged with `top_level_domain`.
 
-The decomposition performs a depth-first search (DFS) on the domain graph, starting at the top level compound task and expanding hierarchically by exploring compound tasks. The algorithm uses backtracking as a mechanism to try alternative options leading to different paths at choice points.
+The decomposition process performs a depth-first search (DFS) on the domain graph. The algorithm starts at the top-level compound task and hierarchically expands it into a sequence of primitive tasks, which represent a plan. It uses backtracking as a mechanism to try alternative options leading to different paths at choice points.
 
 ![main_decomposition_successful_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point.png)
-*Successful choice point*
+*Successful choice point. The Main decomposition had to backtrack 4 times to find the successful path*
 
 ![main_decomposition_choice_points](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points.png)
 *Choice points*
@@ -80,14 +80,10 @@ Since the purpose of this initial iteration of the project has been to understan
 The following are the profiling results obtained during a session for the `HTNDemo` project in Release configuration with both `HTN_VALIDATE_DOMAIN`, which enables validating the domain during a decomposition, and `HTN_DEBUG_DECOMPOSITION`, which enables storing the decomposition results during a decomposition, macros defined. Both the function responsible for decomposing a domain, named `InterpretDomain`, and displaying it on the debug window, named `PrintDecomposition`, are mesured, because they are expected to be the ones that are called more frequently. Additional code has also been instrumented.
 
 ![main_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png)
-*Main decomposition profiling results*
-
-On average, a decomposing the main planning unit takes 0.4ms and displaying the results takes 0.15ms.
+*Main decomposition profiling results. On average, a decomposing the main planning unit takes 0.4ms and displaying the results takes 0.15ms*
 
 ![secondary_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_profiling_results.png)
-*Secondary decomposition profiling results*
-
-On average, a decomposing the secondary planning unit takes 0.03ms and displaying the results takes 0.02ms.
+*Secondary decomposition profiling results. On average, a decomposing the secondary planning unit takes 0.03ms and displaying the results takes 0.02ms*
 
 Furthermore, a profiling session is started each time the `HTNTest` project is run, and the resulting capture is saved in the `Captures` directory.
 
