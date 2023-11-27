@@ -4,7 +4,7 @@ This project is a hierarchical task network (HTN) planner library for AI decisio
 Not being just a planner but a complete langauge instead makes it a powerful tool for content creators to script complex behaviors using simple statements.
 
 ![main_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition.png)
-<small>*Main decomposition*</small>
+*Main decomposition*
 
 **Watch the [demo](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/demo.mp4) video.**
 
@@ -32,14 +32,14 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 A world state is a database of tables of facts. It represents the knowledge about the world.
 
 ![world_state](https://github.com/Sandruski/htn-planner/blob/main/docs/images/world_state.png)
-<small>*World state*</small>
+*World state*
 
 2. In the `Domain` tab, click the `Parse` button to parse the selected domain file. Domain files are identified by the `.domain` extension and are located in the folder of the same name.
 
 A domain is a graph of constants, axioms, and methods. It represents the available actions.
 
 ![domain](https://github.com/Sandruski/htn-planner/blob/main/docs/images/domain.png)
-<small>*Domain*</small>
+*Domain*
 
 3. In the `Decomposition` tab, click the `Decompose` button to decompose the selected entry point of the parsed domain using the parsed world state. Entry points are methods tagged with `top_level_method` of a domain tagged with `top_level_domain`.
 
@@ -50,29 +50,28 @@ The decomposition process performs a depth-first search (DFS) on the domain grap
 
 ![main_decomposition_choice_points](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points.png)
 *Choice points*
-*<small>Choice points</small>*
 
 ![main_decomposition_failed_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_failed_choice_point.png)
-<small>*Failed choice point*</small>
+*Failed choice point*
 
 ![secondary_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition.png)
-<small>*Secondary decomposition*</small>
+*Secondary decomposition*
 
 4. In the `Active Plan` tab, see the tasks of the active plan resulting from the decomposition.
 
 A plan is a sequence of primitive tasks, which consist of an identifier and a list of arguments.
 
 ![main_active_plan](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_active_plan.png)
-<small>*Main active plan*</small>
+*Main active plan*
 
 ![secondary_active_plan](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_active_plan.png)
-<small>*Secondary active plan*</small>
+*Secondary active plan*
 
 ### HTNTest
 1. In the console window, see the results of the unit tests.
 
 ![unit_tests_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/unit_tests_results.png)
-<small>*Unit tests results*</small>
+*Unit tests results*
 
 ## Performance Analysis
 
@@ -81,10 +80,10 @@ Since the purpose of this initial iteration of the project has been to understan
 The following are the profiling results obtained during a session for the `HTNDemo` project in Release configuration with both `HTN_VALIDATE_DOMAIN`, which enables validating the domain during a decomposition, and `HTN_DEBUG_DECOMPOSITION`, which enables storing the decomposition results during a decomposition, macros defined. Both the function responsible for decomposing a domain, named `InterpretDomain`, and displaying it on the debug window, named `PrintDecomposition`, are mesured, because they are expected to be the ones that are called more frequently. Additional code has also been instrumented.
 
 ![main_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png)
-<small>*Main decomposition profiling results. On average, a decomposing the main planning unit takes 0.4ms and displaying the results takes 0.15ms*</small>
+*Main decomposition profiling results. On average, a decomposing the main planning unit takes 0.4ms and displaying the results takes 0.15ms*
 
 ![secondary_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_profiling_results.png)
-<small>*Secondary decomposition profiling results. On average, a decomposing the secondary planning unit takes 0.03ms and displaying the results takes 0.02ms*</small>
+*Secondary decomposition profiling results. On average, a decomposing the secondary planning unit takes 0.03ms and displaying the results takes 0.02ms*
 
 Furthermore, a profiling session is started each time the `HTNTest` project is run, and the resulting capture is saved in the `Captures` directory.
 
