@@ -63,7 +63,7 @@ The `HTNDomainLexer` class is responsible for lexing the text of a domain file a
 
 3. In the `Decomposition` tab, click the `Decompose` button to decompose the selected entry point of the parsed domain using the parsed world state. Entry points are methods tagged with `top_level_method` of a domain tagged with `top_level_domain`.
 
-The decomposition process performs a depth-first search (DFS) on the domain graph. The algorithm starts at the top-level compound task and hierarchically expands it into a sequence of primitive tasks, which represent a plan. It uses a backtracking mechanism to try different options at choice points, which lead to different paths.
+The decomposition process performs a depth-first search (DFS) on the domain graph. The algorithm starts at the top-level compound task and hierarchically expands it into a sequence of primitive tasks, which represent a plan. It uses a backtracking mechanism to try different options at choice points, which lead to different paths. It is architected to be executed in parallel and take advantage of multithreading.
 
 The `HTNDomainInterpreter` class is responsible for the decomposition process. The `HTNDecompositionPrinter` class is responsible for displaying its results on the debug window.
 
@@ -118,10 +118,10 @@ The following are the profiling results obtained on an AMD Ryzen 9 5900X 12-Core
 Furthermore, a profiling session is started each time the `HTNTest` project is run, and the resulting capture is saved in the `Captures` directory.
 
 ## Third-Party
-- [SDL](https://www.libsdl.org/)
+- [SDL](https://www.libsdl.org)
 - [Dear ImGui](https://github.com/ocornut/imgui)
-- [GoogleTest](https://google.github.io/googletest/)
-- [Premake](https://premake.github.io/)
+- [GoogleTest](https://google.github.io/googletest)
+- [Premake](https://premake.github.io)
 - [Optick](https://github.com/bombomby/optick)
 
 ## Reference
@@ -131,6 +131,7 @@ through Example](https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter12_Explori
 - [The AI of Horizon Zero Dawn](https://www.guerrilla-games.com/read/the-ai-of-horizon-zero-dawn)
 - [Hierarchical AI for Multiplayer
 Bots in Killzone 3](https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter29_Hierarchical_AI_for_Multiplayer_Bots_in_Killzone_3.pdf)
+- [Crafting Interpreters](https://craftinginterpreters.com)
 
 ## Future Work
 - Implement call terms for invoking functions defined in C++.
