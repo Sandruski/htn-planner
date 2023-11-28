@@ -22,8 +22,6 @@ Not being just a planner but a complete langauge instead makes it a powerful too
 ![example_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/example_decomposition.png "Example decomposition")
 *Example decomposition*
 
-**Watch the [demo](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/demo.mp4) video.**
-
 ## Disclaimer
 Note that the project is a work in progress (WIP). As such, certain features may be incomplete or subject to change. Feedback and contributions are welcomed.
 
@@ -43,6 +41,8 @@ Note that the project is a work in progress (WIP). As such, certain features may
 The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, and `HTNTest`. `HTNFramework` and `HTNDebugger` are libraries, `HTNFramework` is the planner itself and `HTNDebugger` is the debugger of the planner. `HTNDemo` and `HTNTest` are applications, `HTNDemo` is a playground for using the planner and `HTNTest` contains a set of unit tests for testing the planner using automation.
 
 ### HTNDemo
+**Watch the [demo](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/demo.mp4) video.**
+
 1. In the `World State` tab, click the `Parse` button to parse the selected world state file. World state files are identified by the `.worldstate` extension and are located in the folder of the same name.
 
 A world state is a database of facts that represent the knowledge about the world.
