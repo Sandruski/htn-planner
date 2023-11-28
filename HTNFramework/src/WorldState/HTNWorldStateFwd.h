@@ -8,6 +8,7 @@
 #include <array>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 class HTNAtom;
 class HTNFactArgumentsTable;
@@ -17,5 +18,7 @@ using HTNFactArguments           = std::array<HTNAtom, HTNWorldStateHelpers::kFa
 using HTNFactArgumentsCollection = std::vector<HTNFactArguments>;
 
 using HTNFactArgumentsTables = std::array<HTNFactArgumentsTable, HTNWorldStateHelpers::kFactArgumentsSize>;
-using HTNFacts               = std::unordered_map<std::string, HTNFactArgumentsTables>;
-using HTNFact                = std::pair<const std::string, HTNFactArgumentsTables>;
+
+// Fact ID to fact argument tables
+using HTNFacts = std::unordered_map<std::string, HTNFactArgumentsTables>;
+using HTNFact  = std::pair<const std::string, HTNFactArgumentsTables>;

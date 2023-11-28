@@ -16,8 +16,7 @@ HTN_NODISCARD uint32 CountFactArgumentsBound(const T& inFactArguments);
 // Maximum number of fact arguments
 inline constexpr size kMaxFactArgumentsNum = 10;
 
-// Maximum number of fact tables
-// One more than the maximum number of fact arguments for the fact with zero arguments
+// Maximum number of fact arguments including the fact with no arguments
 inline constexpr size kFactArgumentsSize = kMaxFactArgumentsNum + 1;
 } // namespace HTNWorldStateHelpers
 

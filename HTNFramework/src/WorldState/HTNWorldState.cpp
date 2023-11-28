@@ -55,7 +55,7 @@ size HTNWorldState::GetFactArgumentsTablesSize(const std::string& inFactID) cons
     return FactArgumentsTablesSize;
 }
 
-bool HTNWorldState::ContainsFactArgumentTable(const std::string& inFactID, const size inFactArgumentsSize) const
+bool HTNWorldState::ContainsFactArgumentsTable(const std::string& inFactID, const size inFactArgumentsSize) const
 {
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.cend())

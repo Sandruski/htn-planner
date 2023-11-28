@@ -15,7 +15,7 @@ class HTNIdentifierExpressionNode;
 class HTNMethodNode;
 
 /**
- * Node representing a domain
+ * Node representing a domain, a graph of constants, axioms, and methods that represent the available actions
  */
 class HTNDomainNode final : public HTNNodeBase
 {

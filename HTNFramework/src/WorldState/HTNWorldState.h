@@ -10,45 +10,47 @@
 #include <cassert>
 #include <iterator>
 #include <string>
-#include <vector>
 
 #ifdef HTN_DEBUG
 #include <format>
 #endif
 
 /**
- * Table of fact arguments mapped to a fact ID in the world state
+ * Collection of fact arguments
  * - The table has a fixed number of fact arguments
- * - Each row of the table represents a group of fact arguments, and each column represents a single fact argument within its group
- * - Each group of fact arguments can only be contained once in the table
+ * - Each row represents a group of fact arguments, and each column represents a single fact argument within its group
+ * - Each group of fact arguments can only appear once in the table
  */
 class HTNFactArgumentsTable
 {
 public:
-    // Adds a unique row to the table
+    // Adds a unique row with the given fact arguments to the table
     template<typename T>
     bool AddUniqueFactArguments(const T& inFactArguments);
 
-    // Removes the row at the index from the table
+    // Removes the row at the given index from the table
     void RemoveFactArguments(const size inFactArgumentsIndex);
 
     // Removes all rows from the table
     void RemoveAllFactArguments();
 
-    // Checks if the passed fact arguments match the ones of the row at the index in the table
-    // Binds the passed fact arguments that are unbound
+    // Checks if the given fact arguments match the fact arguments of the row at the given index
+    // Binds the fact arguments that are unbound
     template<typename T>
     HTN_NODISCARD bool Check(const size inFactArgumentsIndex, T& ioFactArguments) const;
 
-    // Checks if the passed arguments match the fact arguments of any row in the table
+    // Checks if the given fact arguments match the fact arguments of any row
     template<typename T>
     HTN_NODISCARD bool ContainsFactArguments(const T& inFactArguments) const;
 
+    // Returns the fact arguments collection
     HTN_NODISCARD const HTNFactArgumentsCollection& GetFactArgumentsCollection() const;
-    HTN_NODISCARD size                              GetFactArgumentsCollectionSize() const;
+
+    // Returns the number of entries in the table
+    HTN_NODISCARD size GetFactArgumentsCollectionSize() const;
 
 private:
-    // Adds a row to the table
+    // Adds a new row with the given fact arguments to the table
     template<typename T>
     void AddFactArguments(const T& inFactArguments);
 
@@ -56,54 +58,53 @@ private:
 };
 
 /**
- * Database of facts used for knowledge representation
- * Map of fact IDs to fact tables
- * - Each fact ID can contain multiple fact tables, but it can only contain once a fact table of a number of fact arguments
+ * Database of facts that represent the knowledge about the world
+ * - Each fact ID can be mapped to multiple fact arguments tables, but it can only contain one fact argument table for each number of fact arguments
  */
 class HTNWorldState
 {
 public:
-    // Adds a unique row to the table associated to the fact ID
+    // Adds a unique row with the given fact arguments to the corresponding table
     template<typename T>
     void AddFact(const std::string& inFactID, const T& inFactArguments);
 
-    // Removes the row at the index from the table of the number of fact arguments associated to the fact ID
+    // Removes the row at the given index from the corresponding table
     void RemoveFact(const std::string& inFactID, const size inFactArgumentsSize, const size inFactArgumentsIndex);
 
     // Removes all facts
     void RemoveAllFacts();
 
     // If all fact arguments are bound, returns 1
-    // Otherwise, returns the number of rows of the table associated to the fact ID
+    // Otherwise, returns the number of rows of the corresponding table
     template<typename T>
     HTN_NODISCARD size Query(const std::string& inFactID, const T& inFactArguments) const;
 
     // If all fact arguments are bound, returns true
-    // Otherwise, checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
+    // Otherwise, checks the given fact arguments with the fact arguments of the row at the given index of the corresponding table
     template<typename T>
     HTN_NODISCARD bool QueryIndex(const std::string& inFactID, const size inFactArgumentsIndex, T& ioFactArguments) const;
 
-    // Checks the passed fact arguments with the fact arguments of the row at the index of the table associated to the fact ID
+    // Checks the given fact arguments with the fact arguments of the row at the given index of the corresponding table
     template<typename T>
     HTN_NODISCARD bool CheckIndex(const std::string& inFactID, const size inFactArgumentsIndex, T& ioFactArguments) const;
 
-    // Returns the number of tables associated to the fact ID
+    // Returns the number of tables associated to the given fact ID
     HTN_NODISCARD size GetFactArgumentsTablesSize(const std::string& inFactID) const;
 
-    // Returns whether the table of the number of arguments is associated to the fact ID
-    HTN_NODISCARD bool ContainsFactArgumentTable(const std::string& inFactID, const size inFactArgumentsSize) const;
+    // Returns whether the table of the given number of fact arguments is associated to the given fact ID
+    HTN_NODISCARD bool ContainsFactArgumentsTable(const std::string& inFactID, const size inFactArgumentsSize) const;
 
-    // Returns the number of rows of the table of the number of arguments associated to the fact ID
+    // Returns the number of rows of the given table
     HTN_NODISCARD size GetFactArgumentsCollectionSize(const std::string& inFactID, const size inFactArgumentsSize) const;
 
-    // Returns whether the fact arguments are contained by the fact ID
+    // Returns whether the given fact arguments are contained by the table associated to the given fact ID
     template<typename T>
     HTN_NODISCARD bool ContainsFactArguments(const std::string& inFactID, const T& inFactArguments) const;
 
+    // Returns the facts
     HTN_NODISCARD const HTNFacts& GetFacts() const;
 
 private:
-    // Fact ID to fact argument tables
     HTNFacts mFacts;
 };
 
@@ -157,7 +158,7 @@ bool HTNFactArgumentsTable::Check(const size inFactArgumentsIndex, T& ioFactArgu
     const size              FactArgumentsSize = std::distance(ItBegin, std::end(ioFactArguments));
     assert(FactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsSize);
 
-    // Check arguments bound
+    // Check bound arguments
     for (size i = 0; i < FactArgumentsSize; ++i)
     {
         auto It = ItBegin;
@@ -176,7 +177,7 @@ bool HTNFactArgumentsTable::Check(const size inFactArgumentsIndex, T& ioFactArgu
         }
     }
 
-    // Bind arguments unbound
+    // Bind unbound arguments
     for (size i = 0; i < FactArgumentsSize; ++i)
     {
         auto It = ItBegin;
@@ -229,7 +230,7 @@ bool HTNFactArgumentsTable::ContainsFactArguments(const T& inFactArguments) cons
     return false;
 }
 
-inline const std::vector<HTNFactArguments>& HTNFactArgumentsTable::GetFactArgumentsCollection() const
+inline const HTNFactArgumentsCollection& HTNFactArgumentsTable::GetFactArgumentsCollection() const
 {
     return mFactArgumentsCollection;
 }

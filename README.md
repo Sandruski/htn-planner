@@ -29,7 +29,7 @@ The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, a
 ### HTNDemo
 1. In the `World State` tab, click the `Parse` button to parse the selected world state file. World state files are identified by the `.worldstate` extension and are located in the folder of the same name.
 
-A world state is a database of tables of facts representing the knowledge about the world.
+A world state is a database of facts that represent the knowledge about the world.
 
 The `HTNWorldStateLexer` class is responsible for lexing the text of a world state file and the `HTNWorldStateParser` class is responsible for parsing the resulting tokens into an object of the `HTNWorldState` class, which is the actual world state.
 
@@ -38,7 +38,7 @@ The `HTNWorldStateLexer` class is responsible for lexing the text of a world sta
 
 2. In the `Domain` tab, click the `Parse` button to parse the selected domain file. Domain files are identified by the `.domain` extension and are located in the folder of the same name.
 
-A domain is a graph of constants, axioms, and methods representing the available actions.
+A domain is a graph of constants, axioms, and methods that represent the available actions.
 
 The `HTNDomainLexer` class is responsible for lexing the text of a domain file and the `HTNDomainParser` class is responsible for parsing the resulting tokens into an object of the `HTNDomainNode` class, which is the actual domain.
 
