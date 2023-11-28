@@ -1,7 +1,7 @@
 # HTN
 This project is a hierarchical task network (HTN) planner library for AI decision-making. It is implemented in C++ and it interprets a custom domain language.
 
-Not being just a planner but a complete langauge instead makes it a powerful tool for content creators to script complex behaviors using simple statements.
+Not being just a planner but a complete language instead makes it a powerful tool for content creators to script complex behaviors using simple statements.
 
 ```
 (:domain Example top_level_domain
