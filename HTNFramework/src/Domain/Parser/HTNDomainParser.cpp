@@ -23,7 +23,7 @@
  * <domain node> ::= '(' ':' 'domain' <identifier expression node> 'top_level_domain'? <constants node>* <axiom node>* <method node>* ')'
  * <constants node> ::= '(' ':' 'constants' <identifier expression node>? <constant node>* ')'
  * <constant node> ::= '(' <identifier expression node> <literal expression node> ')'
- * <axiom node> ::= '(' ':' 'axiom' '(' <identifier expression node> <variable expression node>* ')' ('(' <condition node> ')')? ')'
+ * <axiom node> ::= '(' ':' 'axiom' '(' <identifier expression node> <variable expression node>* ')' '(' <condition node>? ')' ')'
  * <method node> ::= '(' ':' 'method' '(' <identifier expression node> <variable expression node>* 'top_level_method'? ')' <branch node>* ')'
  * <branch node> ::= '(' <identifier expression node> '(' <condition node>? ')' '(' <task node>* ')' ')'
  * <condition node> ::= ('and' | 'or' | 'alt') <sub-condition node>+
@@ -263,20 +263,19 @@ bool HTNDomainParser::ParseAxiomNode(HTNDomainParserContext& ioDomainParserConte
         return false;
     }
 
-    std::shared_ptr<const HTNConditionNodeBase> ConditionNode;
-    if (ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
+    if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
     {
-        if (!ParseConditionNode(ioDomainParserContext, ConditionNode))
-        {
-            ioDomainParserContext.SetPosition(StartPosition);
-            return false;
-        }
+        ioDomainParserContext.SetPosition(StartPosition);
+        return false;
+    }
 
-        if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, ioDomainParserContext))
-        {
-            ioDomainParserContext.SetPosition(StartPosition);
-            return false;
-        }
+    std::shared_ptr<const HTNConditionNodeBase> ConditionNode;
+    ParseConditionNode(ioDomainParserContext, ConditionNode);
+
+    if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, ioDomainParserContext))
+    {
+        ioDomainParserContext.SetPosition(StartPosition);
+        return false;
     }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, ioDomainParserContext))
