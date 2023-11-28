@@ -101,13 +101,23 @@ Currently, there is a single unit test that decomposes a specified entry point o
 
 Since the purpose of this initial iteration of the project has been to understand the problem domain, the focus has been on functionality rather than performance. Because of this, the current implementation of the planner uses an interpreter for the custom domain language. However, the plan is to transition to a compiler in the future, which will improve the overall performance among other things.
 
-The following are the profiling results obtained during a session for the `HTNDemo` project in Release configuration with both `HTN_VALIDATE_DOMAIN`, which enables validating the domain during a decomposition, and `HTN_DEBUG_DECOMPOSITION`, which enables storing the decomposition results during a decomposition, macros defined. Both the function responsible for decomposing a domain, named `InterpretDomain`, and displaying it on the debug window, named `PrintDecomposition`, are mesured, because they are expected to be the ones that are called more frequently. Additional code has also been instrumented.
+The following are the profiling results obtained during a session for the `HTNDemo` project in Release configuration with both `HTN_VALIDATE_DOMAIN`, which enables validating the domain during a decomposition, and `HTN_DEBUG_DECOMPOSITION`, which enables storing the decomposition results during a decomposition, macros defined. 
+
+The following measurements were taken on an AMD Ryzen 9 5900X 12-Core Processor with 64GB of RAM.
+
+Both the function responsible for decomposing a domain, named `InterpretDomain`, and displaying it on the debug window, named `PrintDecomposition`, are measured, because they are expected to be the ones that are called more frequently. Additional code has also been instrumented.
 
 ![main_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png "Main decomposition profiling results")
 *Main decomposition profiling results. On average, decomposing the Main planning unit takes 0.4ms and displaying the decomposition results takes 0.15ms*
 
 ![secondary_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_profiling_results.png "Secondary decomposition profiling results")
 *Secondary decomposition profiling results. On average, decomposing the Secondary planning unit takes 0.03ms and displaying the decomposition results takes 0.02ms*
+
+![main_decomposition_printer_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_printer_profiling_results.png "Main decomposition printer profiling results")
+*Main decomposition printer profiling results. On average, decomposing the Main planning unit takes 0.4ms and displaying the decomposition results takes 0.15ms*
+
+![secondary_decomposition_printer_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_printer_profiling_results.png "Secondary decomposition printer profiling results")
+*Secondary decomposition printer profiling results. On average, decomposing the Secondary planning unit takes 0.03ms and displaying the decomposition results takes 0.02ms*
 
 Furthermore, a profiling session is started each time the `HTNTest` project is run, and the resulting capture is saved in the `Captures` directory.
 
