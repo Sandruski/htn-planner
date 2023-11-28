@@ -309,7 +309,7 @@ bool HTNWorldState::CheckIndex(const std::string& inFactID, const size inFactArg
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.cend())
     {
-        HTN_LOG_ERROR("Fact [{}] not found", inFactID);
+        HTN_LOG_ERROR("Fact [{}] could not be found", inFactID);
         return false;
     }
 
@@ -327,7 +327,7 @@ bool HTNWorldState::ContainsFactArguments(const std::string& inFactID, const T& 
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.cend())
     {
-        HTN_LOG_ERROR("Fact [{}] not found", inFactID);
+        HTN_LOG_ERROR("Fact [{}] could not be found", inFactID);
         return false;
     }
 

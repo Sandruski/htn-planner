@@ -20,7 +20,7 @@ void HTNWorldState::RemoveFact(const std::string& inFactID, const size inFactArg
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.cend())
     {
-        HTN_LOG_ERROR("Fact [{}] not found", inFactID);
+        HTN_LOG_ERROR("Fact [{}] could not be found", inFactID);
         return;
     }
 
@@ -36,7 +36,7 @@ size HTNWorldState::GetFactArgumentsTablesSize(const std::string& inFactID) cons
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.cend())
     {
-        HTN_LOG_ERROR("Fact [{}] not found", inFactID);
+        HTN_LOG_ERROR("Fact [{}] could not be found", inFactID);
         return 0;
     }
 
@@ -60,7 +60,7 @@ bool HTNWorldState::ContainsFactArgumentsTable(const std::string& inFactID, cons
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.cend())
     {
-        HTN_LOG_ERROR("Fact [{}] not found", inFactID);
+        HTN_LOG_ERROR("Fact [{}] could not be found", inFactID);
         return false;
     }
 
@@ -77,7 +77,7 @@ size HTNWorldState::GetFactArgumentsCollectionSize(const std::string& inFactID, 
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.cend())
     {
-        HTN_LOG_ERROR("Fact [{}] not found", inFactID);
+        HTN_LOG_ERROR("Fact [{}] could not be found", inFactID);
         return 0;
     }
 

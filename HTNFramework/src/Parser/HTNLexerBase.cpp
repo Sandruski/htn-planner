@@ -115,7 +115,7 @@ bool HTNLexerBase::LexString(HTNLexerContextBase& ioLexerContext) const
         const uint32 Row    = ioLexerContext.GetRow();
         const uint32 Column = ioLexerContext.GetColumn();
 #endif
-        HTN_DOMAIN_LOG_ERROR(Row, Column, "Character '\"' not found at end of string");
+        HTN_DOMAIN_LOG_ERROR(Row, Column, "Character '\"' could not be found at end of the string");
         return false;
     }
 

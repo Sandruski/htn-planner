@@ -122,11 +122,17 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode&
 
     // Constant value
     {
-        const std::shared_ptr<const HTNDomainNode>& DomainNode              = DecompositionWatchPrinterContext.GetDomainNode();
-        const std::string&                          ConstantID              = inConstantExpressionNode.GetValue().GetValue<std::string>();
-        std::shared_ptr<const HTNConstantNode>      ConstantNode            = DomainNode->FindConstantNodeByID(ConstantID);
-        static constexpr bool                       ShouldDoubleQuoteString = true;
-        const std::string ConstantValueString = GetNodeValue(*ConstantNode, ioDecompositionWatchPrinterContext).ToString(ShouldDoubleQuoteString);
+        const std::shared_ptr<const HTNDomainNode>& DomainNode     = DecompositionWatchPrinterContext.GetDomainNode();
+        const std::string&                          ConstantNodeID = inConstantExpressionNode.GetValue().GetValue<std::string>();
+        std::shared_ptr<const HTNConstantNode>      ConstantNode   = DomainNode->FindConstantNodeByID(ConstantNodeID);
+        if (!ConstantNode)
+        {
+            HTN_LOG_ERROR("Constant node [{}] could not be found", ConstantNodeID);
+            return Result;
+        }
+
+        static constexpr bool ShouldDoubleQuoteString = true;
+        const std::string     ConstantValueString = GetNodeValue(*ConstantNode, ioDecompositionWatchPrinterContext).ToString(ShouldDoubleQuoteString);
         Result.PushBack(ConstantValueString);
     }
 

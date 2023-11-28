@@ -1137,7 +1137,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConstantExpressionNode& inConstantE
     std::shared_ptr<const HTNConstantNode>      ConstantNode   = DomainNode->FindConstantNodeByID(ConstantNodeID);
     if (!ConstantNode)
     {
-        HTN_LOG_ERROR("Constant node [{}] not found", ConstantNodeID);
+        HTN_LOG_ERROR("Constant node [{}] could not be found", ConstantNodeID);
         return HTNAtom();
     }
 

@@ -452,6 +452,12 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNAxiomConditionNode& inAxiomCondi
         const std::string AxiomNodeID =
             GetNodeValue(*IDNode, ioDecompositionPrinterContext).GetListElement(HTNValueExpressionNodeSnapshot::STRING).GetValue<std::string>();
         const std::shared_ptr<const HTNAxiomNode> AxiomNode = DomainNode->FindAxiomNodeByID(AxiomNodeID);
+        if (!AxiomNode)
+        {
+            HTN_LOG_ERROR("Axiom node [{}] could not be found", AxiomNodeID);
+            return;
+        }
+
         GetNodeValue(*AxiomNode, ioDecompositionPrinterContext);
     };
 
@@ -608,6 +614,12 @@ HTNAtom HTNDecompositionPrinter::Visit(const HTNCompoundTaskNode& inCompoundTask
         const std::string MethodNodeID =
             GetNodeValue(*IDNode, ioDecompositionPrinterContext).GetListElement(HTNValueExpressionNodeSnapshot::STRING).GetValue<std::string>();
         const std::shared_ptr<const HTNMethodNode> MethodNode = DomainNode->FindMethodNodeByID(MethodNodeID);
+        if (!MethodNode)
+        {
+            HTN_LOG_ERROR("Method node [{}] could not be found", MethodNodeID);
+            return;
+        }
+
         GetNodeValue(*MethodNode, ioDecompositionPrinterContext);
     };
 
