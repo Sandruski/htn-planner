@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-class HTNNodeInstance;
 class HTNDomainNode;
+class HTNNodeInstance;
 
 /**
  * Base class for the contextual data of a decomposition watch printer

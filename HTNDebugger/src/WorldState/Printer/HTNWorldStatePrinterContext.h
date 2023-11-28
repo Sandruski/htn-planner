@@ -5,8 +5,7 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "HTNCoreMinimal.h"
-
-class HTNWorldState;
+#include "WorldState/HTNWorldStateFwd.h"
 
 struct ImGuiTextFilter;
 

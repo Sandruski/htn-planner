@@ -3,7 +3,6 @@
 #pragma once
 
 #ifdef HTN_DEBUG_DECOMPOSITION
-#include "Domain/Interpreter/HTNEnvironment.h"
 #include "Domain/Interpreter/HTNNodeSnapshot.h"
 #include "Domain/Interpreter/HTNNodeStep.h"
 #include "HTNCoreMinimal.h"

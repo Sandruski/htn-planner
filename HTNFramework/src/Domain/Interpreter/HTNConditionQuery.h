@@ -3,12 +3,12 @@
 #pragma once
 
 #include "HTNCoreMinimal.h"
+#include "WorldState/HTNWorldStateFwd.h"
 
 #include <string>
 #include <vector>
 
 class HTNAtom;
-class HTNWorldState;
 
 /**
  * Base class for condition queries

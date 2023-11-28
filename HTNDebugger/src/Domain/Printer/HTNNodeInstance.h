@@ -7,6 +7,7 @@
 #include "HTNCoreMinimal.h"
 
 #include <memory>
+#include <string>
 #include <vector>
 
 class HTNNodeSnapshot;

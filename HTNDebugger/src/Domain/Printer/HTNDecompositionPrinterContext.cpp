@@ -7,6 +7,7 @@
 #include "Domain/Interpreter/HTNNodeStep.h"
 #include "Domain/Printer/HTNDecompositionHelpers.h"
 #include "Domain/Printer/HTNNodeInstance.h"
+#include "Domain/Printer/HTNNodeState.h"
 
 HTNDecompositionPrinterContext::HTNDecompositionPrinterContext(const std::shared_ptr<const HTNDomainNode>& inDomainNode,
                                                                const std::string&                          inEntryPointID,

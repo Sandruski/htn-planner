@@ -9,7 +9,6 @@
 #include <memory>
 #include <string>
 
-class HTNIdentifierExpressionNode;
 class HTNNodeVisitorContextBase;
 class HTNValueExpressionNodeBase;
 

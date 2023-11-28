@@ -4,11 +4,11 @@
 
 #include "HTNCoreMinimal.h"
 #include "Parser/HTNParserContextBase.h"
+#include "WorldState/HTNWorldStateFwd.h"
 
 #include <vector>
 
 class HTNToken;
-class HTNWorldState;
 
 /**
  * Contextual data of a parser of a world state

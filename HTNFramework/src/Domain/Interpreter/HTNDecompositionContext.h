@@ -6,6 +6,7 @@
 #include "Domain/Interpreter/HTNDecompositionRecord.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "HTNCoreMinimal.h"
+#include "WorldState/HTNWorldStateFwd.h"
 
 #include <memory>
 #include <string>
@@ -17,7 +18,6 @@
 
 class HTNDecompositionRecord;
 class HTNDomainNode;
-class HTNWorldState;
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 enum class HTNNodeStep : uint8;

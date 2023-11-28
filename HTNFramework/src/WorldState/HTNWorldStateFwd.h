@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "HTNCoreMinimal.h"
 #include "WorldState/HTNWorldStateHelpers.h"
 
 #include <array>

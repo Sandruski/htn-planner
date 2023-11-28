@@ -5,7 +5,6 @@
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/Printer/HTNDecompositionWatchTooltipPrinter.h"
 #include "Domain/Printer/HTNDomainPrinterBase.h"
-#include "Domain/Printer/HTNNodeInstance.h"
 #include "HTNCoreMinimal.h"
 
 #include <functional>
@@ -13,6 +12,7 @@
 
 class HTNDecompositionPrinterContext;
 class HTNNodeBase;
+class HTNNodeInstance;
 class HTNNodeSnapshot;
 class HTNNodeVisitorContextBase;
 enum class HTNNodeStep : uint8;

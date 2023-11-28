@@ -4,22 +4,12 @@
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "Domain/Printer/HTNDecompositionHelpers.h"
+#include "Domain/Printer/HTNNodeStateFwd.h"
 #include "HTNCoreMinimal.h"
 
 #include <map>
-#include <string>
-#include <unordered_map>
-
-class HTNChoicePointNodeState;
-class HTNNodeState;
 
 enum class HTNNodeStep : uint8;
-
-// Node path to node state
-using HTNNodeStates = std::unordered_map<std::string, HTNNodeState>;
-
-// Node path to choice point node state
-using HTNChoicePointNodeStates = std::unordered_map<std::string, HTNChoicePointNodeState>;
 
 /**
  * Base class for the state of a node in a decomposition printer

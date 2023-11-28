@@ -6,18 +6,16 @@
 #include "Core/HTNPathManager.h"
 #include "Domain/Nodes/HTNNodeVisitorContextBase.h"
 #include "Domain/Printer/HTNDecompositionTooltipMode.h"
-#include "Domain/Printer/HTNNodeState.h"
+#include "Domain/Printer/HTNNodeStateFwd.h"
 #include "HTNCoreMinimal.h"
 
 #include <limits>
 #include <memory>
 #include <string>
 
-class HTNChoicePointNodeState;
-class HTNNodeInstance;
-class HTNNodeState;
 class HTNDecompositionSnapshot;
 class HTNDomainNode;
+class HTNNodeInstance;
 enum class HTNNodeStep : uint8;
 
 /**

@@ -64,9 +64,6 @@ int main(int, char**)
 
     static constexpr ImVec4 ClearColor = ImVec4(0.45f, 0.55f, 0.6f, 1.f);
 
-    // Main loop
-    bool IsDone = false;
-
 #ifdef HTN_DEBUG_DECOMPOSITION
     HTNDatabaseHook DatabaseHook;
     HTNPlannerHook  PlannerHook;
@@ -82,6 +79,8 @@ int main(int, char**)
     bool ShouldShowHTNDebuggerWindow = true;
 #endif
 
+    // Main loop
+    bool IsDone = false;
     while (!IsDone)
     {
         OPTICK_FRAME("MainThread");

@@ -4,9 +4,9 @@
 
 #include "HTNCoreMinimal.h"
 #include "Parser/HTNParserBase.h"
+#include "WorldState/HTNWorldStateFwd.h"
 
 class HTNAtom;
-class HTNWorldState;
 class HTNWorldStateParserContext;
 
 /**

@@ -20,6 +20,7 @@
 #include "Domain/Printer/HTNDecompositionHelpers.h"
 #include "Domain/Printer/HTNDecompositionPrinterContext.h"
 #include "Domain/Printer/HTNDecompositionWatchTooltipPrinterContext.h"
+#include "Domain/Printer/HTNNodeInstance.h"
 #include "Domain/Printer/HTNNodeState.h"
 #include "HTNImGuiHelpers.h"
 
