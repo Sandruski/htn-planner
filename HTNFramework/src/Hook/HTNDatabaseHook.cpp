@@ -9,6 +9,8 @@
 
 bool HTNDatabaseHook::ParseWorldStateFile(const std::string& inWorldStateFilePath)
 {
+    mWorldState = HTNWorldState();
+
     const HTNFileReader WorldStateFileReader = HTNFileReader(inWorldStateFilePath);
     std::string         WorldStateText;
     if (!WorldStateFileReader.ReadFile(WorldStateText))
@@ -25,7 +27,6 @@ bool HTNDatabaseHook::ParseWorldStateFile(const std::string& inWorldStateFilePat
         return false;
     }
 
-    mWorldState                                        = HTNWorldState();
     HTNWorldStateParserContext WorldStateParserContext = HTNWorldStateParserContext(Tokens, mWorldState);
     if (!mWorldStateParser.Parse(WorldStateParserContext))
     {

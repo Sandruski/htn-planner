@@ -11,6 +11,8 @@
 
 bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
 {
+    mDomainNode.reset();
+
     const HTNFileReader DomainFileReader = HTNFileReader(inDomainFilePath);
     std::string         DomainFileText;
     if (!DomainFileReader.ReadFile(DomainFileText))
@@ -27,7 +29,6 @@ bool HTNPlannerHook::ParseDomainFile(const std::string& inDomainFilePath)
         return false;
     }
 
-    mDomainNode.reset();
     HTNDomainParserContext DomainParserContext = HTNDomainParserContext(Tokens, mDomainNode);
     if (!mDomainParser.Parse(DomainParserContext))
     {
