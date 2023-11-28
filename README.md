@@ -3,8 +3,24 @@ This project is a hierarchical task network (HTN) planner library for AI decisio
 
 Not being just a planner but a complete langauge instead makes it a powerful tool for content creators to script complex behaviors using simple statements.
 
-![main_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition.png "Main decomposition")
-*Main decomposition*
+```
+(:domain Example top_level_domain
+
+    (:method (main) top_level_method
+
+        (branch_hello_world
+            (
+            )
+            (       (!log "Hello world!")
+            )
+        )
+    )
+)
+```
+*Example domain syntax*
+
+![example_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/example_decomposition.png "Example decomposition")
+*Example decomposition*
 
 **Watch the [demo](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/demo.mp4) video.**
 

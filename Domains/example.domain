@@ -1,0 +1,13 @@
+
+(:domain Example top_level_domain
+
+    (:method (main) top_level_method
+
+        (branch_hello_world
+            (
+            )
+            (       (!log "Hello world!")
+            )
+        )
+    )
+)
