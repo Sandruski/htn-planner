@@ -3,6 +3,7 @@
 #include "WorldState/Printer/HTNWorldStatePrinter.h"
 
 #ifdef HTN_DEBUG_DECOMPOSITION
+#include "WorldState/HTNWorldState.h"
 #include "WorldState/Printer/HTNWorldStatePrinterContext.h"
 
 #include "imgui.h"

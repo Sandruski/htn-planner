@@ -4,6 +4,7 @@
 
 #include "Core/HTNAtom.h"
 #include "HTNCoreMinimal.h"
+#include "WorldState/HTNWorldStateFwd.h"
 #include "WorldState/HTNWorldStateHelpers.h"
 
 #include <array>
@@ -16,13 +17,6 @@
 #ifdef HTN_DEBUG
 #include <format>
 #endif
-
-class HTNFactArgumentsTable;
-
-using HTNFactArguments       = std::array<HTNAtom, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
-using HTNFactArgumentsTables = std::array<HTNFactArgumentsTable, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
-using HTNFacts               = std::unordered_map<std::string, HTNFactArgumentsTables>;
-using HTNFact                = std::pair<const std::string, HTNFactArgumentsTables>;
 
 /**
  * Table of fact arguments mapped to a fact ID in the world state

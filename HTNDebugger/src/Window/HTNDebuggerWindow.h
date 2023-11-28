@@ -83,7 +83,7 @@ private:
     std::mutex                       mPlanningRequestMutex;
     HTNPlanningRequest               mMainPlanningRequest      = HTNPlanningRequest(mMainPlanningUnit);
     HTNPlanningRequest               mSecondaryPlanningRequest = HTNPlanningRequest(mSecondaryPlanningUnit);
-    std::vector<HTNPlanningRequest*> mPlanningRequests          = {&mMainPlanningRequest, &mSecondaryPlanningRequest};
+    std::vector<HTNPlanningRequest*> mPlanningRequests         = {&mMainPlanningRequest, &mSecondaryPlanningRequest};
 
     //----------------------------------------------------------------------//
     // WorldState Printer

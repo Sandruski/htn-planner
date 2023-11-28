@@ -4,7 +4,7 @@
 
 #ifdef HTN_DEBUG_DECOMPOSITION
 #include "HTNCoreMinimal.h"
-#include "WorldState/HTNWorldState.h"
+#include "WorldState/HTNWorldStateFwd.h"
 
 #include <string>
 
