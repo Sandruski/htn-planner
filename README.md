@@ -92,16 +92,16 @@ A plan is a sequence of primitive tasks, which consist of an identifier and a li
 ### HTNTest
 1. In the console window, see the results of the unit tests.
 
-Currently, there is a single unit test that decomposes a specified entry point of a specified domain file using a specified a world state file.
+Currently, there is a single unit test that decomposes a specified entry point of a specified domain file using a specified a world state file. However, the plan is to expand the test suite with additional tests that cover the individual functionalities of the systems.
 
 ![unit_tests_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/unit_tests_results.png "Unit tests results")
 *Unit tests results*
 
 ## Performance Analysis
 
-Since the purpose of this initial iteration of the project has been to understand the problem domain, the focus has been on functionality rather than performance. For this reason, the current implementation of the planner uses an interpreter for the custom domain language and has no optimizations. However, the plan is to transition to a compiler in the future, which will improve the overall performance, among other things.
+Since the purpose of this initial iteration of the project has been to understand the problem domain, the focus has been on functionality rather than performance. For this reason, the current implementation of the planner uses an interpreter for the custom domain language and has no optimizations. However, the plan is to transition to a compiler, which will improve the overall performance.
 
-The following are the profiling results obtained on an AMD Ryzen 9 5900X 12-Core Processor with 64GB of RAM. The functions measured are the one responsible for decomposing a domain, named `InterpretDomain`, and the one responsible for displaying it on the debug window, named `PrintDecomposition`, because they are expected to be the ones that are called more frequently. The `InterpretDomain` function is measured without any custom macros defined and the `PrintDecomposition` function is measured with the `HTN_DEBUG_DECOMPOSITION` macro defined, which enables storing the steps of a decomposition for debug purposes.
+The following are the profiling results obtained on an AMD Ryzen 9 5900X 12-Core Processor with 64GB of RAM. The two functions measured are the one responsible for decomposing a domain, named `InterpretDomain`, and the one responsible for displaying it on the debug window, named `PrintDecomposition`, because they are expected to be the ones that are called more frequently. The `InterpretDomain` function is measured without any custom macros defined and the `PrintDecomposition` function is measured with the `HTN_DEBUG_DECOMPOSITION` macro defined, which enables storing the steps of a decomposition for debug purposes.
 
 ![main_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png "Main decomposition profiling results")
 *Main decomposition profiling results. On average, performing the main decomposition takes 0.1ms*
@@ -140,6 +140,7 @@ Bots in Killzone 3](https://www.gameaipro.com/GameAIPro/GameAIPro_Chapter29_Hier
 - Implement a domain validator to ensure that the parsed domain has semantic coherence.
 - Time-slice the decomposition process to maintain a stable framerate.
 - Transition from an interpreter to a compiler to improve the overall performance.
+- Add additional unit tests that cover the individual functionalitites of the systems.
 
 ## License
 This project is under the [MIT license](https://github.com/Sandruski/htn-planner/blob/main/LICENSE).
