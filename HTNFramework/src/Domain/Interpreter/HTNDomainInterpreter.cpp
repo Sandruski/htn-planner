@@ -116,7 +116,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVi
         DecompositionContext.SetCurrentNodePathManager(TaskInstance.GetNodePathManager());
         DecompositionContext.SetCurrentVariablesPathManager(TaskInstance.GetVariablesPathManager());
 
-        // Also set the environment because it is synced to the current node and variable scope paths
+        // Also set the environment because it is synced to the current node and variables paths
         CurrentDecomposition.SetEnvironment(TaskInstance.GetEnvironment());
 
         const std::shared_ptr<const HTNTaskNodeBase>& TaskNode = TaskInstance.GetTaskNode();
@@ -651,8 +651,6 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
     return Result;
 }
 
-// YES bindings
-// YES backtracking
 HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetAndConditionNodeValue");
@@ -722,8 +720,6 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAndConditionNode& inAndConditionNod
     return Result;
 }
 
-// YES bindings
-// NO backtracking
 HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetOrConditionNodeValue");
@@ -782,8 +778,6 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNOrConditionNode& inOrConditionNode,
     return Result;
 }
 
-// YES bindings
-// YES backtracking
 HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetAltConditionNodeValue");
@@ -852,8 +846,6 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAltConditionNode& inAltConditionNod
     return Result;
 }
 
-// NO bindings
-// NO backtracking
 HTNAtom HTNDomainInterpreter::Visit(const HTNNotConditionNode& inNotConditionNode, HTNNodeVisitorContextBase& ioDecompositionContext) const
 {
     OPTICK_EVENT("GetNotConditionNodeValue");
