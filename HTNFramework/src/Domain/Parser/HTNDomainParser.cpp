@@ -23,11 +23,11 @@
  * <domain node> ::= '(' ':' 'domain' <identifier expression node> 'top_level_domain'? <constants node>* <axiom node>* <method node>* ')'
  * <constants node> ::= '(' ':' 'constants' <identifier expression node>? <constant node>* ')'
  * <constant node> ::= '(' <identifier expression node> <literal expression node> ')'
- * <axiom node> ::= '(' ':' 'axiom' '(' <identifier expression node> <variable expression node>* ')' <condition node>? ')'
+ * <axiom node> ::= '(' ':' 'axiom' '(' <identifier expression node> <variable expression node>* ')' '(' <condition node>? ')' ')'
  * <method node> ::= '(' ':' 'method' '(' <identifier expression node> <variable expression node>* 'top_level_method'? ')' <branch node>* ')'
- * <branch node> ::= '(' <identifier expression node> <condition node>? '(' <task node>* ')' ')'
- * <condition node> ::= '(' (('and' | 'or' | 'alt') <sub-condition node>*)? ')'
- * <sub-condition node> ::= <condition node> | ('(' 'not' <sub-condition node> ')') | ('(' '#'? <identifier expression node> <argument node>* ')')
+ * <branch node> ::= '(' <identifier expression node> '(' <condition node>? ')' '(' <task node>* ')' ')'
+ * <condition node> ::= ('and' | 'or' | 'alt') <sub-condition node>+
+ * <sub-condition node> ::= '(' (<condition node> | ('not' <sub-condition node>) | ('#'? <identifier expression node> <argument node>*)) ')'
  * <task node> ::= '(' '!'? <identifier expression node> <argument node>* ')'
  * <argument node> ::= <variable expression node> | <constant expression node> | <literal expression node>
  * <variable expression node> ::= '?' 'identifier'
@@ -263,8 +263,20 @@ bool HTNDomainParser::ParseAxiomNode(HTNDomainParserContext& ioDomainParserConte
         return false;
     }
 
+    if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
+    {
+        ioDomainParserContext.SetPosition(StartPosition);
+        return false;
+    }
+
     std::shared_ptr<const HTNConditionNodeBase> ConditionNode;
     ParseConditionNode(ioDomainParserContext, ConditionNode);
+
+    if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, ioDomainParserContext))
+    {
+        ioDomainParserContext.SetPosition(StartPosition);
+        return false;
+    }
 
     if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, ioDomainParserContext))
     {
@@ -366,8 +378,20 @@ bool HTNDomainParser::ParseBranchNode(HTNDomainParserContext& ioDomainParserCont
         return false;
     }
 
+    if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
+    {
+        ioDomainParserContext.SetPosition(StartPosition);
+        return false;
+    }
+
     std::shared_ptr<const HTNConditionNodeBase> PreConditionNode;
     ParseConditionNode(ioDomainParserContext, PreConditionNode);
+
+    if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, ioDomainParserContext))
+    {
+        ioDomainParserContext.SetPosition(StartPosition);
+        return false;
+    }
 
     if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
     {
@@ -405,12 +429,6 @@ bool HTNDomainParser::ParseConditionNode(HTNDomainParserContext&                
     OPTICK_EVENT("ParseConditionNode");
 
     const uint32 StartPosition = ioDomainParserContext.GetPosition();
-
-    if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
-    {
-        ioDomainParserContext.SetPosition(StartPosition);
-        return false;
-    }
 
     std::shared_ptr<const HTNConditionNodeBase> ConditionNode;
 
@@ -466,12 +484,6 @@ bool HTNDomainParser::ParseConditionNode(HTNDomainParserContext&                
         ConditionNode = std::make_shared<HTNAltConditionNode>(SubConditionNodes);
     }
 
-    if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, ioDomainParserContext))
-    {
-        ioDomainParserContext.SetPosition(StartPosition);
-        return false;
-    }
-
     outConditionNode = ConditionNode;
 
     return nullptr != outConditionNode;
@@ -484,15 +496,15 @@ bool HTNDomainParser::ParseSubConditionNode(HTNDomainParserContext&             
 
     const uint32 StartPosition = ioDomainParserContext.GetPosition();
 
+    if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
+    {
+        ioDomainParserContext.SetPosition(StartPosition);
+        return false;
+    }
+
     std::shared_ptr<const HTNConditionNodeBase> ConditionNode;
     if (!ParseConditionNode(ioDomainParserContext, ConditionNode))
     {
-        if (!ParseToken(HTNTokenType::LEFT_PARENTHESIS, ioDomainParserContext))
-        {
-            ioDomainParserContext.SetPosition(StartPosition);
-            return false;
-        }
-
         if (ParseToken(HTNTokenType::NOT, ioDomainParserContext))
         {
             std::shared_ptr<const HTNConditionNodeBase> SubConditionNode;
@@ -531,12 +543,12 @@ bool HTNDomainParser::ParseSubConditionNode(HTNDomainParserContext&             
                 ConditionNode = std::make_shared<HTNConditionNode>(IDNode, ArgumentNodes);
             }
         }
+    }
 
-        if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, ioDomainParserContext))
-        {
-            ioDomainParserContext.SetPosition(StartPosition);
-            return false;
-        }
+    if (!ParseToken(HTNTokenType::RIGHT_PARENTHESIS, ioDomainParserContext))
+    {
+        ioDomainParserContext.SetPosition(StartPosition);
+        return false;
     }
 
     outConditionNode = ConditionNode;
