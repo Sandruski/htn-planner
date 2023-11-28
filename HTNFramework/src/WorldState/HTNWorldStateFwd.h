@@ -4,6 +4,11 @@
 
 #include "WorldState/HTNWorldStateHelpers.h"
 
+#include <array>
+#include <string>
+#include <unordered_map>
+
+class HTNAtom;
 class HTNFactArgumentsTable;
 class HTNWorldState;
 

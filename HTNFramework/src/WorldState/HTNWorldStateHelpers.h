@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Core/HTNAtom.h"
 #include "HTNCoreMinimal.h"
 
 namespace HTNWorldStateHelpers

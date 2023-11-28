@@ -7,11 +7,9 @@
 #include "WorldState/HTNWorldStateFwd.h"
 #include "WorldState/HTNWorldStateHelpers.h"
 
-#include <array>
 #include <cassert>
 #include <iterator>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #ifdef HTN_DEBUG
@@ -293,7 +291,7 @@ size HTNWorldState::Query(const std::string& inFactID, const T& inFactArguments)
 template<typename T>
 bool HTNWorldState::QueryIndex(const std::string& inFactID, const size inFactArgumentsIndex, T& ioFactArguments) const
 {
-    const uint32 FactArgumentsBoundNum = CountFactArgumentsBound(ioFactArguments);
+    const uint32 FactArgumentsBoundNum = HTNWorldStateHelpers::CountFactArgumentsBound(ioFactArguments);
     const size   FactArgumentsSize     = std::distance(std::cbegin(ioFactArguments), std::cend(ioFactArguments));
     if (FactArgumentsBoundNum == FactArgumentsSize)
     {
