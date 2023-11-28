@@ -6,17 +6,17 @@
     )
 
     (:axiom (is_item_spoiled ?inp_item)
-		(or     (is_old ?inp_item)
+        (or     (is_old ?inp_item)
                 (has_mold ?inp_item)
-		)
-	)
+        )
+    )
 
     (:axiom (find_edible_item ?inp_item_type ?out_item)
-		(and    (item ?out_item)
+        (and    (item ?out_item)
                 (edible ?out_item)
                 (type ?out_item ?inp_item_type)
-		)
-	)
+        )
+    )
 
     (:method (behave) top_level_method
 

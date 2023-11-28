@@ -8,12 +8,14 @@
 #include "WorldState/HTNWorldState.h"
 #include "WorldState/Parser/HTNWorldStateParserContext.h"
 
+// clang-format off
 /**
  * Backus Naur Form (BNF)
  * <fact> ::= <identifier> <argument>*
  * <identifier> ::= 'identifier'
  * <argument> ::= ('(' <argument>+ ')') | 'true' | 'false' | 'number' | 'string'
  */
+// clang-format on
 
 bool HTNWorldStateParser::Parse(HTNWorldStateParserContext& ioWorldStateParserContext) const
 {

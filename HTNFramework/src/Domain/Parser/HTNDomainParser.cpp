@@ -17,21 +17,26 @@
 #include "Parser/HTNToken.h"
 #include "Parser/HTNTokenType.h"
 
+// clang-format off
 /**
  * Backus Naur Form (BNF)
- * <domain node> ::= '(' ':' 'domain' <identifier expression node> 'top_level_domain'? <axiom node>* <method node>* ')'
+ * <domain node> ::= '(' ':' 'domain' <identifier expression node> 'top_level_domain'? <constants node>* <axiom node>* <method node>* ')'
  * <constants node> ::= '(' ':' 'constants' <identifier expression node>? <constant node>* ')'
- * <constant node> ::= '(' <identifier expression node> <value node>* ')'
- * <axiom node> ::= '(' ':' 'axiom' '(' <identifier expression node> <parameter node>* ')' <condition node>? ')'
- * <method node> ::= '(' ':' 'method' '(' <identifier expression node> <parameter node>* 'top_level_method'? ')' <branch node>* ')'
- * <branch node> ::= '(' <identifier expression node> '(' <condition node>? ')' '(' <task node>* ')' ')'
- * <condition node> ::= '(' (('and' | 'or' | 'alt') <sub-condition node>)* ')'
- * <sub-condition node> ::= <condition node> | ('(' ('not' <sub-condition node>)* ')') | ('(' ('#'? <identifier expression node> <argument node>*)*
- * ')') <task node> ::= '(' '!'? <identifier expression node> <argument node>* ')' <argument node> ::= <variable expression node> | <constant
- * expression node> | <literal expression node> <variable expression node> ::= '?' <identifier expression node> <constant expression node> ::= '@'
- * <identifier expression node> <identifier expression node> ::= 'identifier' <literal expression node> ::= <literal> <literal> ::= ('(' <literal>+
- * ')') | 'true' | 'false' | 'number' | 'string'
+ * <constant node> ::= '(' <identifier expression node> <literal expression node> ')'
+ * <axiom node> ::= '(' ':' 'axiom' '(' <identifier expression node> <variable expression node>* ')' <condition node>? ')'
+ * <method node> ::= '(' ':' 'method' '(' <identifier expression node> <variable expression node>* 'top_level_method'? ')' <branch node>* ')'
+ * <branch node> ::= '(' <identifier expression node> <condition node>? '(' <task node>* ')' ')'
+ * <condition node> ::= '(' (('and' | 'or' | 'alt') <sub-condition node>*)? ')'
+ * <sub-condition node> ::= <condition node> | ('(' 'not' <sub-condition node> ')') | ('(' '#'? <identifier expression node> <argument node>* ')')
+ * <task node> ::= '(' '!'? <identifier expression node> <argument node>* ')'
+ * <argument node> ::= <variable expression node> | <constant expression node> | <literal expression node>
+ * <variable expression node> ::= '?' 'identifier'
+ * <constant expression node> ::= '@' 'identifier'
+ * <identifier expression node> ::= 'identifier'
+ * <literal expression node> ::= <literal>
+ * <literal> ::= ('(' <literal>+ ')') | 'true' | 'false' | 'number' | 'string'
  */
+// clang-format on
 
 bool HTNDomainParser::Parse(HTNDomainParserContext& ioDomainParserContext) const
 {
