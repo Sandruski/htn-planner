@@ -63,21 +63,21 @@ The `HTNDomainLexer` class is responsible for lexing the text of a domain file a
 
 3. In the `Decomposition` tab, click the `Decompose` button to decompose the selected entry point of the parsed domain using the parsed world state. Entry points are methods tagged with `top_level_method` of a domain tagged with `top_level_domain`.
 
-The decomposition process performs a depth-first search (DFS) on the domain graph. The algorithm starts at the top-level compound task and hierarchically expands it into a sequence of primitive tasks, which represent a plan. It uses the backtracking mechanism to try different options at choice points, which lead to different paths.
+The decomposition process performs a depth-first search (DFS) on the domain graph. The algorithm starts at the top-level compound task and hierarchically expands it into a sequence of primitive tasks, which represent a plan. It uses a backtracking mechanism to try different options at choice points, which lead to different paths.
 
 The `HTNDomainInterpreter` class is responsible for the decomposition process. The `HTNDecompositionPrinter` class is responsible for displaying its results on the debug window.
 
 ![main_decomposition_choice_point_successful_option](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_point_successful_option.png "Main decomposition choice point successful option")
-*Main decomposition choice point successful option. The Main decomposition found the successful path at the 5th try*
+*Main decomposition choice point successful option. The main decomposition found the successful path at the 5th try*
 
 ![main_decomposition_choice_points](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_point_options.png "Main decomposition choice point options")
-*Main decomposition choice point options. The Main decomposition tried 5 different options at its only choice point, meaning that it backtracked 4 times*
+*Main decomposition choice point options. The main decomposition tried 5 different options at its only choice point, meaning that it backtracked 4 times*
 
 ![main_decomposition_choice_point_failed_option](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_point_failed_option.png "Main decomposition choice point failed option")
-*Main decomposition choice point failed option. The Main decomposition found a failed path at the first try*
+*Main decomposition choice point failed option. The main decomposition found a failed path at the first try*
 
 ![secondary_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition.png "Secondary decomposition")
-*Secondary decomposition. The Secondary decomposition found the successful path at the first try, therefore it did not try different options at its only choice point, meaning that it did not backtrack*
+*Secondary decomposition. The secondary decomposition found the successful path at the first try, therefore it did not try different options at its only choice point, meaning that it did not backtrack*
 
 4. In the `Active Plan` tab, see the tasks of the active plan resulting from the decomposition.
 
@@ -95,7 +95,7 @@ A plan is a sequence of primitive tasks, which consist of an identifier and a li
 Currently, there is a single unit test that decomposes a specified entry point of a specified domain file using a specified a world state file.
 
 ![unit_tests_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/unit_tests_results.png "Unit tests results")
-*Unit tests results. Both Main and Secondary planning units are decomposed*
+*Unit tests results*
 
 ## Performance Analysis
 
@@ -104,16 +104,16 @@ Since the purpose of this initial iteration of the project has been to understan
 The following are the profiling results obtained on an AMD Ryzen 9 5900X 12-Core Processor with 64GB of RAM. The functions measured are the one responsible for decomposing a domain, named `InterpretDomain`, and the one responsible for displaying it on the debug window, named `PrintDecomposition`, because they are expected to be the ones that are called more frequently. The `InterpretDomain` function is measured without any custom macros defined and the `PrintDecomposition` function is measured with the `HTN_DEBUG_DECOMPOSITION` macro defined, which enables storing the steps of a decomposition for debug purposes.
 
 ![main_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_profiling_results.png "Main decomposition profiling results")
-*Main decomposition profiling results. On average, performing the Main decomposition takes 0.1ms*
+*Main decomposition profiling results. On average, performing the main decomposition takes 0.1ms*
 
 ![main_decomposition_printer_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_printer_profiling_results.png "Main decomposition printer profiling results")
-*Main decomposition printer profiling results. On average, displaying the Main decomposition takes 0.11ms*
+*Main decomposition printer profiling results. On average, displaying the main decomposition takes 0.11ms*
 
 ![secondary_decomposition_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_profiling_results.png "Secondary decomposition profiling results")
-*Secondary decomposition profiling results. On average, performing the Secondary decomposition takes 0.01ms*
+*Secondary decomposition profiling results. On average, performing the secondary decomposition takes 0.01ms*
 
 ![secondary_decomposition_printer_profiling_results](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition_printer_profiling_results.png "Secondary decomposition printer profiling results")
-*Secondary decomposition printer profiling results. On average, displaying the Secondary decomposition takes 0.025ms*
+*Secondary decomposition printer profiling results. On average, displaying the secondary decomposition takes 0.025ms*
 
 Furthermore, a profiling session is started each time the `HTNTest` project is run, and the resulting capture is saved in the `Captures` directory.
 
