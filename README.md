@@ -1,5 +1,5 @@
 # HTN
-This project is a hierarchical task network (HTN) planner library for AI decision-making. It is implemented in C++ and it interprets a custom domain language.
+This project is a hierarchical task network (HTN) planner library for AI decision-making. It is implemented in C++ and interprets a custom domain language.
 
 Not being just a planner but a complete language instead makes it a powerful tool for content creators to script complex behaviors using simple statements.
 
@@ -34,11 +34,11 @@ Note that the project is a work in progress (WIP). As such, certain features may
 ### Build it yourself
 1. Clone the repository with `git clone https://github.com/Sandruski/htn-planner` or download it as a ZIP from [htn-planner](https://github.com/Sandruski/htn-planner).
 2. Generate the solution by running [GenerateProjectFiles.bat](https://github.com/Sandruski/htn-planner/blob/main/GenerateProjectFiles.bat). By default, it is generated for Visual Studio 2022. You can change the version of Visual Studio by editing this file.
-3. If you add or remove project files, regenerate the solution by rerunning [GenerateProjectFiles.bat](https://github.com/Sandruski/htn-planner/blob/main/GenerateProjectFiles.bat).
+3. If you add or remove project files or modify `premake5.lua`, regenerate the solution by rerunning [GenerateProjectFiles.bat](https://github.com/Sandruski/htn-planner/blob/main/GenerateProjectFiles.bat).
 4. Build the solution and run the startup project. The startup project should be configured to either `HTNDemo`, as is the default setting, or `HTNTest`.
 
 ## Quick Introduction
-The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, and `HTNTest`. `HTNFramework` and `HTNDebugger` are libraries, `HTNFramework` is the planner itself and `HTNDebugger` is the debugger of the planner. `HTNDemo` and `HTNTest` are applications, `HTNDemo` is a playground for using the planner and `HTNTest` contains a set of unit tests for testing the planner using automation.
+The solution contains four projects, `HTNFramework`, `HTNDebugger`, `HTNDemo`, and `HTNTest`. `HTNFramework` and `HTNDebugger` are libraries, being `HTNFramework` the planner itself and `HTNDebugger` the debugger of the planner. `HTNDemo` and `HTNTest` are applications, being `HTNDemo` a playground for using the planner and `HTNTest` a set of unit tests for testing the planner.
 
 ### HTNDemo
 **Watch the [demo](https://github.com/Sandruski/htn-planner/tree/main/docs/videos/demo.mp4) video.**
@@ -65,19 +65,19 @@ The `HTNDomainLexer` class is responsible for lexing the text of a domain file a
 
 The decomposition process performs a depth-first search (DFS) on the domain graph. The algorithm starts at the top-level compound task and hierarchically expands it into a sequence of primitive tasks, which represent a plan. It uses the backtracking mechanism to try different options at choice points, which lead to different paths.
 
-The `HTNDomainInterpreter` class is responsible for the decomposition process. The `HTNDecompositionPrinter` class is responsible for displaying its results.
+The `HTNDomainInterpreter` class is responsible for the decomposition process. The `HTNDecompositionPrinter` class is responsible for displaying its results on the debug window.
 
-![main_decomposition_successful_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_successful_choice_point.png "Main decomposition successful choice point")
-*Main decomposition successful choice point. The Main decomposition found the successful path at the 5th try*
+![main_decomposition_choice_point_successful_option](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_point_successful_option.png "Main decomposition choice point successful option")
+*Main decomposition choice point successful option. The Main decomposition found the successful path at the 5th try*
 
-![main_decomposition_choice_points](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_points.png "Main decomposition choice points")
-*Main decomposition choice points. The Main decomposition tried 5 different options at its only choice point, meaning that it backtracked 4 times*
+![main_decomposition_choice_points](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_point_options.png "Main decomposition choice point options")
+*Main decomposition choice point options. The Main decomposition tried 5 different options at its only choice point, meaning that it backtracked 4 times*
 
-![main_decomposition_failed_choice_point](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_failed_choice_point.png "Main decomposition failed choice point")
-*Main decomposition failed choice point. The Main decomposition found a failed path at the first try*
+![main_decomposition_choice_point_failed_option](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_decomposition_choice_point_failed_option.png "Main decomposition choice point failed option")
+*Main decomposition choice point failed option. The Main decomposition found a failed path at the first try*
 
 ![secondary_decomposition](https://github.com/Sandruski/htn-planner/blob/main/docs/images/secondary_decomposition.png "Secondary decomposition")
-*Secondary decomposition. The Secondary decomposition found the successful path at the first try, therefore it did not backtrack*
+*Secondary decomposition. The Secondary decomposition found the successful path at the first try, therefore it did not try different options at its only choice point, meaning that it did not backtrack*
 
 4. In the `Active Plan` tab, see the tasks of the active plan resulting from the decomposition.
 
