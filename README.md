@@ -81,7 +81,7 @@ The `HTNDomainInterpreter` class is responsible for the decomposition process. T
 
 4. In the `Active Plan` tab, see the tasks of the active plan resulting from the decomposition.
 
-A plan is a sequence of primitive tasks, which consist of an identifier and a list of arguments.
+A plan is a sequence of primitive tasks, which consist of an identifier and a list of arguments. The primitive tasks themselves lack inherent meaning, relying on the user to interpret them according to their needs.
 
 ![main_active_plan](https://github.com/Sandruski/htn-planner/blob/main/docs/images/main_active_plan.png "Main active plan")
 *Main active plan*
