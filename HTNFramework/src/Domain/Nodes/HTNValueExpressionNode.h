@@ -6,8 +6,6 @@
 #include "Domain/Nodes/HTNNodeBase.h"
 #include "HTNCoreMinimal.h"
 
-#include <string>
-
 /**
  * Node representing a value expression
  */

@@ -4,11 +4,11 @@
 
 #include "HTNCoreMinimal.h"
 
-class HTNAtom;
 class HTNAltConditionNode;
 class HTNAndConditionNode;
-class HTNAxiomNode;
+class HTNAtom;
 class HTNAxiomConditionNode;
+class HTNAxiomNode;
 class HTNBranchNode;
 class HTNCompoundTaskNode;
 class HTNConditionNode;

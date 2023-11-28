@@ -17,14 +17,14 @@ class HTNNodeSnapshot;
 class HTNNodeVisitorContextBase;
 enum class HTNNodeStep : uint8;
 
-// Function that prints the title of the node
-using HTNNodeTitleFunction = std::function<void(const HTNNodeSnapshot& inNodeSnapshot, const HTNNodeStep inNodeStep)>;
-
 // Function that executes the behavior of the node
 using HTNNodeBehaviorFunction = std::function<void()>;
 
 // Function that returns an instance of the node
 using HTNNodeInstanceFunction = std::function<HTNNodeInstance(const HTNNodeSnapshot& inNodeSnapshot, const std::string& inNodeLabel)>;
+
+// Function that prints the title of the node
+using HTNNodeTitleFunction = std::function<void(const HTNNodeSnapshot& inNodeSnapshot, const HTNNodeStep inNodeStep)>;
 
 typedef int32 ImGuiTreeNodeFlags;
 

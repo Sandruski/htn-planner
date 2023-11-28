@@ -12,9 +12,9 @@ class HTNChoicePointNodeState;
 class HTNNodeState;
 class HTNNodeStateBase;
 
-// Node path to node state
-using HTNNodeStates = std::unordered_map<std::string, HTNNodeState>;
-
 // Node path to choice point node state
 using HTNChoicePointNodeStates = std::unordered_map<std::string, HTNChoicePointNodeState>;
+
+// Node path to node state
+using HTNNodeStates = std::unordered_map<std::string, HTNNodeState>;
 #endif

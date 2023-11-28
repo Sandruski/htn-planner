@@ -16,11 +16,11 @@ class HTNNodeSnapshotHistory;
 // Node step to node snapshot
 using HTNNodeSnapshotCollection = std::unordered_map<HTNNodeStep, HTNNodeSnapshot>;
 
-// Decomposition step to node snapshot collection
-using HTNNodeSnapshotStepsCollection = std::map<size, HTNNodeSnapshotCollection>;
-
 // Node path to node snapshot history
 using HTNNodeSnapshotHistoryCollection = std::unordered_map<std::string, HTNNodeSnapshotHistory>;
+
+// Decomposition step to node snapshot collection
+using HTNNodeSnapshotStepsCollection = std::map<size, HTNNodeSnapshotCollection>;
 
 /**
  * Previous node snapshots of a decomposition

@@ -5,7 +5,6 @@
 #include "Domain/Interpreter/HTNDecompositionRecord.h"
 #include "HTNCoreMinimal.h"
 
-#include <memory>
 #include <string>
 
 #ifdef HTN_DEBUG_DECOMPOSITION

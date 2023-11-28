@@ -16,7 +16,6 @@
 #include "Domain/Interpreter/HTNDecompositionSnapshot.h"
 #endif
 
-class HTNDecompositionRecord;
 class HTNDomainNode;
 
 #ifdef HTN_DEBUG_DECOMPOSITION

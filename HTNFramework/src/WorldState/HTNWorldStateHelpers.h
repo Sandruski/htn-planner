@@ -5,6 +5,8 @@
 #include "Core/HTNAtom.h"
 #include "HTNCoreMinimal.h"
 
+#include <iterator>
+
 namespace HTNWorldStateHelpers
 {
 // Returns the number of fact arguments that are bound
