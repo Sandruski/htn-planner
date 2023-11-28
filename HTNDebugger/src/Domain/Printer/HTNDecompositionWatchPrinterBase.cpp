@@ -128,6 +128,8 @@ HTNAtom HTNDecompositionWatchPrinterBase::Visit(const HTNConstantExpressionNode&
         if (!ConstantNode)
         {
             HTN_LOG_ERROR("Constant node [{}] could not be found", ConstantNodeID);
+            const std::string ConstantValueString = "";
+            Result.PushBack(ConstantValueString);
             return Result;
         }
 
