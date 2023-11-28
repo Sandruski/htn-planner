@@ -2,18 +2,13 @@
 
 #include "Domain/Nodes/HTNTaskNode.h"
 
+#include "Core/HTNGuidGenerator.h"
 #include "Domain/Nodes/HTNNodeVisitorBase.h"
 
 HTNTaskNodeBase::HTNTaskNodeBase(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,
                                  const std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>>& inArgumentNodes)
-    : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mID(GenerateGUID())
+    : mIDNode(inIDNode), mArgumentNodes(inArgumentNodes), mID(HTNGuidGenerator::GenerateGUID())
 {
-}
-
-uint32 HTNTaskNodeBase::GenerateGUID() const
-{
-    static uint32 mGUIDGenerator = 0;
-    return ++mGUIDGenerator;
 }
 
 HTNTaskNodeBase::HTNTaskNodeBase(const std::shared_ptr<const HTNIdentifierExpressionNode>&             inIDNode,

@@ -40,9 +40,6 @@ protected:
     std::vector<std::shared_ptr<const HTNValueExpressionNodeBase>> mArgumentNodes;
 
 private:
-    // Generates a new globally unique ID
-    HTN_NODISCARD uint32 GenerateGUID() const;
-
     // ID of the task
     // - Globally unique
     const uint32 mID = 0;

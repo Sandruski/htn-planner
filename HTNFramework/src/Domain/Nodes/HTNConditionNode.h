@@ -23,9 +23,6 @@ public:
     HTN_NODISCARD std::string GetID() const final;
 
 private:
-    // Generates a new globally unique ID
-    HTN_NODISCARD uint32 GenerateGUID() const;
-
     // ID of the node
     // - Globally unique
     const uint32 mID = 0;
