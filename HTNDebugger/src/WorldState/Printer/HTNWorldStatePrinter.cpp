@@ -38,18 +38,18 @@ bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinte
         const HTNFactArgumentsTables& FactArgumentsTables = Fact.second;
         for (const HTNFactArgumentsTable& FactArgumentsTable : FactArgumentsTables)
         {
-            const std::vector<HTNFactArguments>& FactArgumentsContainer = FactArgumentsTable.GetFactArguments();
-            for (const HTNFactArguments& FactArgumentsElement : FactArgumentsContainer)
+            const std::vector<HTNFactArguments>& FactArgumentsCollection = FactArgumentsTable.GetFactArgumentsCollection();
+            for (const HTNFactArguments& FactArguments : FactArgumentsCollection)
             {
                 bool        ShouldDoubleQuoteString = false;
-                std::string Text                    = MakeFactDescription(FactID, FactArgumentsElement, ShouldDoubleQuoteString);
+                std::string Text                    = MakeFactDescription(FactID, FactArguments, ShouldDoubleQuoteString);
 
                 // Filter text with and without double quotes for usability
                 bool PassFilterResult = TextFilter.PassFilter(Text.c_str());
                 if (!PassFilterResult)
                 {
                     ShouldDoubleQuoteString = true;
-                    Text                    = MakeFactDescription(FactID, FactArgumentsElement, ShouldDoubleQuoteString);
+                    Text                    = MakeFactDescription(FactID, FactArguments, ShouldDoubleQuoteString);
 
                     PassFilterResult = TextFilter.PassFilter(Text.c_str());
                     if (!PassFilterResult)
@@ -59,7 +59,7 @@ bool HTNWorldStatePrinter::Print(HTNWorldStatePrinterContext& ioWorldStatePrinte
                 }
 
                 PrintFactID(FactID);
-                PrintFactArguments(FactArgumentsElement);
+                PrintFactArguments(FactArguments);
             }
         }
     }

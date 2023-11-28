@@ -60,7 +60,7 @@ HTNAtom HTNDomainPrinter::Visit(const HTNDomainNode& inDomainNode, HTNNodeVisito
     ImGui::NewLine();
 
     ImGui::Indent();
-    const std::vector<std::shared_ptr<const HTNConstantsNode>>& ConstantsNodes = inDomainNode.GetConstantNodes();
+    const std::vector<std::shared_ptr<const HTNConstantsNode>>& ConstantsNodes = inDomainNode.GetConstantsNodes();
     for (const std::shared_ptr<const HTNConstantsNode>& ConstantsNode : ConstantsNodes)
     {
         GetNodeValue(*ConstantsNode, ioDomainPrinterContext);

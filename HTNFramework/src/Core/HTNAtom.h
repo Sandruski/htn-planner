@@ -10,7 +10,7 @@
 #include <variant>
 
 /**
- * Container that holds a value of one of several types (bool, int32, float, std::string, or a list of atoms)
+ * Holds a value of one of several types (bool, int32, float, std::string, or a list of atoms)
  */
 class HTNAtom
 {

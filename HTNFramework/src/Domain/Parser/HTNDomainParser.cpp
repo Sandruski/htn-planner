@@ -90,11 +90,11 @@ bool HTNDomainParser::ParseDomainNode(HTNDomainParserContext& ioDomainParserCont
 
     const bool IsTopLevelDomain = ParseToken(HTNTokenType::HTN_TOP_LEVEL_DOMAIN, ioDomainParserContext);
 
-    std::vector<std::shared_ptr<const HTNConstantsNode>> ConstantNodes;
-    std::shared_ptr<const HTNConstantsNode>              ConstantNodesContainer;
-    while (ParseConstantsNode(ioDomainParserContext, ConstantNodesContainer))
+    std::vector<std::shared_ptr<const HTNConstantsNode>> ConstantsNodes;
+    std::shared_ptr<const HTNConstantsNode>              ConstantsNode;
+    while (ParseConstantsNode(ioDomainParserContext, ConstantsNode))
     {
-        ConstantNodes.emplace_back(ConstantNodesContainer);
+        ConstantsNodes.emplace_back(ConstantsNode);
     }
 
     std::vector<std::shared_ptr<const HTNAxiomNode>> AxiomNodes;
@@ -117,7 +117,7 @@ bool HTNDomainParser::ParseDomainNode(HTNDomainParserContext& ioDomainParserCont
         return false;
     }
 
-    outDomainNode = std::make_shared<HTNDomainNode>(IDNode, ConstantNodes, AxiomNodes, MethodNodes, IsTopLevelDomain);
+    outDomainNode = std::make_shared<HTNDomainNode>(IDNode, ConstantsNodes, AxiomNodes, MethodNodes, IsTopLevelDomain);
 
     return true;
 }

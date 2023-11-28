@@ -10,10 +10,10 @@
 #include "Domain/Nodes/HTNValueExpressionNode.h"
 
 HTNDomainNode::HTNDomainNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&   inIDNode,
-                             const std::vector<std::shared_ptr<const HTNConstantsNode>>& inConstantNodes,
+                             const std::vector<std::shared_ptr<const HTNConstantsNode>>& inConstantsNodes,
                              const std::vector<std::shared_ptr<const HTNAxiomNode>>&     inAxiomNodes,
                              const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel)
-    : mIDNode(inIDNode), mConstantNodes(inConstantNodes), mAxiomNodes(inAxiomNodes), mMethodNodes(inMethodNodes), mIsTopLevel(inIsTopLevel)
+    : mIDNode(inIDNode), mConstantsNodes(inConstantsNodes), mAxiomNodes(inAxiomNodes), mMethodNodes(inMethodNodes), mIsTopLevel(inIsTopLevel)
 {
 }
 
@@ -29,10 +29,10 @@ std::string HTNDomainNode::GetID() const
 
 std::shared_ptr<const HTNConstantNode> HTNDomainNode::FindConstantNodeByID(const std::string& inConstantNodeID) const
 {
-    for (const std::shared_ptr<const HTNConstantsNode>& ConstantNodes : mConstantNodes)
+    for (const std::shared_ptr<const HTNConstantsNode>& ConstantsNodes : mConstantsNodes)
     {
-        const std::vector<std::shared_ptr<const HTNConstantNode>>& ConstantNodesContainer = ConstantNodes->GetConstantNodes();
-        for (const std::shared_ptr<const HTNConstantNode>& ConstantNode : ConstantNodesContainer)
+        const std::vector<std::shared_ptr<const HTNConstantNode>>& ConstantNodes = ConstantsNodes->GetConstantNodes();
+        for (const std::shared_ptr<const HTNConstantNode>& ConstantNode : ConstantNodes)
         {
             if (inConstantNodeID == ConstantNode->GetID())
             {

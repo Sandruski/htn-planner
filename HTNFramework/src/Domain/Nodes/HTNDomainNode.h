@@ -21,7 +21,7 @@ class HTNDomainNode final : public HTNNodeBase
 {
 public:
     explicit HTNDomainNode(const std::shared_ptr<const HTNIdentifierExpressionNode>&   inIDNode,
-                           const std::vector<std::shared_ptr<const HTNConstantsNode>>& inConstantNodes,
+                           const std::vector<std::shared_ptr<const HTNConstantsNode>>& inConstantsNodes,
                            const std::vector<std::shared_ptr<const HTNAxiomNode>>&     inAxiomNodes,
                            const std::vector<std::shared_ptr<const HTNMethodNode>>& inMethodNodes, const bool inIsTopLevel);
 
@@ -44,7 +44,7 @@ public:
     HTN_NODISCARD const std::shared_ptr<const HTNIdentifierExpressionNode>& GetIDNode() const;
 
     // Returns the nodes representing the constants of the domain
-    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNConstantsNode>>& GetConstantNodes() const;
+    HTN_NODISCARD const std::vector<std::shared_ptr<const HTNConstantsNode>>& GetConstantsNodes() const;
 
     // Returns the nodes representing the axioms of the domain
     HTN_NODISCARD const std::vector<std::shared_ptr<const HTNAxiomNode>>& GetAxiomNodes() const;
@@ -61,7 +61,7 @@ private:
     std::shared_ptr<const HTNIdentifierExpressionNode> mIDNode;
 
     // Nodes representing the constants of the domain
-    std::vector<std::shared_ptr<const HTNConstantsNode>> mConstantNodes;
+    std::vector<std::shared_ptr<const HTNConstantsNode>> mConstantsNodes;
 
     // Nodes representing the axioms of the domain
     std::vector<std::shared_ptr<const HTNAxiomNode>> mAxiomNodes;
@@ -78,9 +78,9 @@ inline const std::shared_ptr<const HTNIdentifierExpressionNode>& HTNDomainNode::
     return mIDNode;
 }
 
-inline const std::vector<std::shared_ptr<const HTNConstantsNode>>& HTNDomainNode::GetConstantNodes() const
+inline const std::vector<std::shared_ptr<const HTNConstantsNode>>& HTNDomainNode::GetConstantsNodes() const
 {
-    return mConstantNodes;
+    return mConstantsNodes;
 }
 
 inline const std::vector<std::shared_ptr<const HTNAxiomNode>>& HTNDomainNode::GetAxiomNodes() const

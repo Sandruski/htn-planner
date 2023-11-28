@@ -391,9 +391,9 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
 
     // Check fact
     const std::shared_ptr<const HTNIdentifierExpressionNode>& ConditionNodeIDNode = inConditionNode.GetIDNode();
-    const std::string FactID            = GetNodeValue(*ConditionNodeIDNode, ioDecompositionContext).GetValue<std::string>();
-    const size        FactArgumentsSize = WorldState.GetFactArgumentsSize(FactID, FactArguments.size());
-    for (size FactArgumentsIndex = IndicesManager.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsSize;
+    const std::string FactID                      = GetNodeValue(*ConditionNodeIDNode, ioDecompositionContext).GetValue<std::string>();
+    const size        FactArgumentsCollectionSize = WorldState.GetFactArgumentsCollectionSize(FactID, FactArguments.size());
+    for (size FactArgumentsIndex = IndicesManager.AddOrIncrementIndex(CurrentNodePath); FactArgumentsIndex < FactArgumentsCollectionSize;
          FactArgumentsIndex      = IndicesManager.AddOrIncrementIndex(CurrentNodePath))
     {
         static const HTNConditionWorldStateQuery ConditionWorldStateQuery;
@@ -422,7 +422,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNConditionNode& inConditionNode, HTN
             SetNodeValue(*ArgumentNode, FactArgument, ioDecompositionContext);
         }
 
-        const bool IsLastFactEntry = FactArgumentsIndex == (FactArgumentsSize - 1);
+        const bool IsLastFactEntry = FactArgumentsIndex == (FactArgumentsCollectionSize - 1);
         if (IsLastFactEntry)
         {
             static constexpr bool Result = true;

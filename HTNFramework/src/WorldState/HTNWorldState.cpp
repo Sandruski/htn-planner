@@ -4,15 +4,15 @@
 
 void HTNFactArgumentsTable::RemoveFactArguments(const size inFactArgumentsIndex)
 {
-    if (inFactArgumentsIndex >= mFactArguments.size())
+    if (inFactArgumentsIndex >= mFactArgumentsCollection.size())
     {
-        HTN_LOG_ERROR("Fact arguments index [{}] outside of bounds [{}]", inFactArgumentsIndex, mFactArguments.size());
+        HTN_LOG_ERROR("Fact arguments index [{}] outside of bounds [{}]", inFactArgumentsIndex, mFactArgumentsCollection.size());
         return;
     }
 
-    auto It = mFactArguments.cbegin();
+    auto It = mFactArgumentsCollection.cbegin();
     std::advance(It, inFactArgumentsIndex);
-    mFactArguments.erase(It);
+    mFactArgumentsCollection.erase(It);
 }
 
 void HTNWorldState::RemoveFact(const std::string& inFactID, const size inFactArgumentsSize, const size inFactArgumentsIndex)
@@ -25,7 +25,7 @@ void HTNWorldState::RemoveFact(const std::string& inFactID, const size inFactArg
     }
 
     HTNFactArgumentsTables& FactArgumentsTables = It->second;
-    assert(inFactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
+    assert(inFactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsSize);
 
     HTNFactArgumentsTable& FactArgumentsTable = FactArgumentsTables[inFactArgumentsSize];
     FactArgumentsTable.RemoveFactArguments(inFactArgumentsIndex);
@@ -45,8 +45,8 @@ size HTNWorldState::GetFactArgumentsTablesSize(const std::string& inFactID) cons
     const HTNFactArgumentsTables& FactArgumentsTables = It->second;
     for (const HTNFactArgumentsTable& FactArgumentsTable : FactArgumentsTables)
     {
-        const size FactArgumentsSize = FactArgumentsTable.GetFactArgumentsSize();
-        if (FactArgumentsSize > 0)
+        const size FactArgumentsCollectionSize = FactArgumentsTable.GetFactArgumentsCollectionSize();
+        if (FactArgumentsCollectionSize > 0)
         {
             ++FactArgumentsTablesSize;
         }
@@ -65,14 +65,14 @@ bool HTNWorldState::ContainsFactArgumentTable(const std::string& inFactID, const
     }
 
     const HTNFactArgumentsTables& FactArgumentsTables = It->second;
-    assert(inFactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
+    assert(inFactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsSize);
 
-    const HTNFactArgumentsTable& FactArgumentsTable = FactArgumentsTables[inFactArgumentsSize];
-    const size                   FactArgumentsSize  = FactArgumentsTable.GetFactArgumentsSize();
-    return FactArgumentsSize > 0;
+    const HTNFactArgumentsTable& FactArgumentsTable          = FactArgumentsTables[inFactArgumentsSize];
+    const size                   FactArgumentsCollectionSize = FactArgumentsTable.GetFactArgumentsCollectionSize();
+    return FactArgumentsCollectionSize > 0;
 }
 
-size HTNWorldState::GetFactArgumentsSize(const std::string& inFactID, const size inFactArgumentsSize) const
+size HTNWorldState::GetFactArgumentsCollectionSize(const std::string& inFactID, const size inFactArgumentsSize) const
 {
     const auto It = mFacts.find(inFactID);
     if (It == mFacts.cend())
@@ -82,8 +82,8 @@ size HTNWorldState::GetFactArgumentsSize(const std::string& inFactID, const size
     }
 
     const HTNFactArgumentsTables& FactArgumentsTables = It->second;
-    assert(inFactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsContainerSize);
+    assert(inFactArgumentsSize < HTNWorldStateHelpers::kFactArgumentsSize);
 
     const HTNFactArgumentsTable& FactArgumentsTable = FactArgumentsTables[inFactArgumentsSize];
-    return FactArgumentsTable.GetFactArgumentsSize();
+    return FactArgumentsTable.GetFactArgumentsCollectionSize();
 }

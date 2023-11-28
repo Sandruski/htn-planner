@@ -18,7 +18,7 @@ inline constexpr size kMaxFactArgumentsNum = 10;
 
 // Maximum number of fact tables
 // One more than the maximum number of fact arguments for the fact with zero arguments
-inline constexpr size kFactArgumentsContainerSize = kMaxFactArgumentsNum + 1;
+inline constexpr size kFactArgumentsSize = kMaxFactArgumentsNum + 1;
 } // namespace HTNWorldStateHelpers
 
 namespace HTNWorldStateHelpers

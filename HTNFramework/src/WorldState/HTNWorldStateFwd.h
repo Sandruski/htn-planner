@@ -13,7 +13,9 @@ class HTNAtom;
 class HTNFactArgumentsTable;
 class HTNWorldState;
 
-using HTNFactArguments       = std::array<HTNAtom, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
-using HTNFactArgumentsTables = std::array<HTNFactArgumentsTable, HTNWorldStateHelpers::kFactArgumentsContainerSize>;
+using HTNFactArguments           = std::array<HTNAtom, HTNWorldStateHelpers::kFactArgumentsSize>;
+using HTNFactArgumentsCollection = std::vector<HTNFactArguments>;
+
+using HTNFactArgumentsTables = std::array<HTNFactArgumentsTable, HTNWorldStateHelpers::kFactArgumentsSize>;
 using HTNFacts               = std::unordered_map<std::string, HTNFactArgumentsTables>;
 using HTNFact                = std::pair<const std::string, HTNFactArgumentsTables>;
