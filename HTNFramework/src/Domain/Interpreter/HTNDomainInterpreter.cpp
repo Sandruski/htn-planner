@@ -545,9 +545,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
 #endif
                         return Result;
                     }
-#endif
                 }
-
+#endif
                 continue;
             }
 
@@ -576,8 +575,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
                         return Result;
                     }
                 }
-#endif
             }
+#endif
 
             SetNodeValue(*AxiomNodeParameterNode, AxiomConditionNodeArgument, ioDecompositionContext);
         }
@@ -638,8 +637,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
                     return Result;
                 }
             }
-#endif
         }
+#endif
 
         const HTNAtom& AxiomNodeParameter = AxiomNodeParameters[i];
         SetNodeValue(*AxiomConditionNodeArgumentNode, AxiomNodeParameter, ioDecompositionContext);
@@ -960,8 +959,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
 #endif
             return Result;
         }
-#endif
     }
+#endif
 
     std::vector<HTNAtom> CompoundTaskNodeArguments;
     CompoundTaskNodeArguments.reserve(CompoundTaskNodeArgumentNodes.size());
@@ -992,9 +991,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
                 RecordCurrentNodeSnapshot(Result, EndNodeStep, IsChoicePoint, DecompositionContext);
 #endif
                 return Result;
-#endif
             }
-
+#endif
             continue;
         }
 
@@ -1018,8 +1016,8 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
 #endif
                 return Result;
             }
-#endif
         }
+#endif
 
         SetNodeValue(*MethodNodeParameterNode, CompoundTaskNodeArgument, ioDecompositionContext);
     }

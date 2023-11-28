@@ -46,7 +46,7 @@ protected:
     HTN_NODISCARD const std::string& GetEntryPointID() const;
 
     // Returns the number of planning units
-    HTN_NODISCARD const size& GetPlanningUnitsSize() const;
+    HTN_NODISCARD size GetPlanningUnitsSize() const;
 
     HTNDatabaseHook              mDatabaseHook;
     HTNPlannerHook               mPlannerHook;
@@ -113,7 +113,7 @@ const std::string& HTNDecompositionTest::GetEntryPointID() const
     return std::get<2>(GetParam());
 }
 
-const size& HTNDecompositionTest::GetPlanningUnitsSize() const
+size HTNDecompositionTest::GetPlanningUnitsSize() const
 {
     return std::get<3>(GetParam());
 }
@@ -128,5 +128,5 @@ TEST_P(HTNDecompositionTest, IsDecompositionSuccessful)
 }
 
 INSTANTIATE_TEST_CASE_P(Human, HTNDecompositionTest,
-                        testing::Values(std::make_tuple("human", "human", kMainDefaultTopLevelMethodID, 1),
-                                        std::make_tuple("human", "human", kUpperBodyDefaultTopLevelMethodID, 1)));
+                        testing::Values(std::make_tuple("human", "human", kMainDefaultTopLevelMethodID, 1000),
+                                        std::make_tuple("human", "human", kUpperBodyDefaultTopLevelMethodID, 1000)));
