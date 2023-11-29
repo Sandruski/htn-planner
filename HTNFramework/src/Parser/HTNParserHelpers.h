@@ -4,13 +4,13 @@
 
 #include "HTNCoreMinimal.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 class HTNParserContextBase;
 #endif
 
 namespace HTNParserHelpers
 {
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 // Prints the last error of the given parser context
 void PrintLastError(const HTNParserContextBase& inParserContext);
 #endif

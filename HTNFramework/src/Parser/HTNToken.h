@@ -15,7 +15,7 @@ class HTNToken
 {
 public:
     explicit HTNToken(const HTNAtom&            inValue,
-                      const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme, const uint32 inRow, const uint32 inColumn));
+                      const HTNTokenType inType HTN_LOG_ONLY(, const std::string& inLexeme, const uint32 inRow, const uint32 inColumn));
 
     // Returns the value of the token
     HTN_NODISCARD const HTNAtom& GetValue() const;
@@ -27,7 +27,7 @@ private:
     HTNAtom      mValue;
     HTNTokenType mType;
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 public:
     // Returns the lexeme of the token
     HTN_NODISCARD const std::string& GetLexeme() const;
@@ -55,7 +55,7 @@ inline HTNTokenType HTNToken::GetType() const
     return mType;
 }
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 inline const std::string& HTNToken::GetLexeme() const
 {
     return mLexeme;

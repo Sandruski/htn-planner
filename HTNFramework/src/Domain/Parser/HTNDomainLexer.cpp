@@ -19,43 +19,43 @@ bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
         {
         case ':': {
             // Colon
-            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::COLON HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::COLON HTN_LOG_ONLY(, std::string(1, Character)));
             ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '(': {
             // Left parenthesis
-            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::LEFT_PARENTHESIS HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::LEFT_PARENTHESIS HTN_LOG_ONLY(, std::string(1, Character)));
             ioDomainLexerContext.AdvancePosition();
             break;
         }
         case ')': {
             // Right parenthesis
-            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::RIGHT_PARENTHESIS HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::RIGHT_PARENTHESIS HTN_LOG_ONLY(, std::string(1, Character)));
             ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '!': {
             // Exclamation mark
-            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::EXCLAMATION_MARK HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::EXCLAMATION_MARK HTN_LOG_ONLY(, std::string(1, Character)));
             ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '?': {
             // Question mark
-            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::QUESTION_MARK HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::QUESTION_MARK HTN_LOG_ONLY(, std::string(1, Character)));
             ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '#': {
             // Hash
-            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::HASH HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::HASH HTN_LOG_ONLY(, std::string(1, Character)));
             ioDomainLexerContext.AdvancePosition();
             break;
         }
         case '@': {
             // At
-            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::AT HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::AT HTN_LOG_ONLY(, std::string(1, Character)));
             ioDomainLexerContext.AdvancePosition();
             break;
         }
@@ -69,7 +69,7 @@ bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
                 break;
             }
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
             const std::string Message = std::format("Expected '/' after [{}] for a comment", Character);
             HTNLexerHelpers::PrintError(Message, ioDomainLexerContext);
 #endif
@@ -94,10 +94,10 @@ bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
         }
         case '\n': {
 // Newline
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
             static constexpr bool IsNewLine = true;
 #endif
-            ioDomainLexerContext.AdvancePosition(HTN_DEBUG_ONLY(IsNewLine));
+            ioDomainLexerContext.AdvancePosition(HTN_LOG_ONLY(IsNewLine));
             break;
         }
         default: {
@@ -121,7 +121,7 @@ bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
                 break;
             }
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
             const std::string Message = std::format("Character [{}] not recognized", HTNLexerHelpers::GetSpecialCharacterEscapeSequence(Character));
             HTNLexerHelpers::PrintError(Message, ioDomainLexerContext);
 #endif
@@ -131,7 +131,7 @@ bool HTNDomainLexer::Lex(HTNDomainLexerContext& ioDomainLexerContext) const
         }
     }
 
-    ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::END_OF_FILE HTN_DEBUG_ONLY(, ""));
+    ioDomainLexerContext.AddToken(HTNAtom(), HTNTokenType::END_OF_FILE HTN_LOG_ONLY(, ""));
 
     return Result;
 }

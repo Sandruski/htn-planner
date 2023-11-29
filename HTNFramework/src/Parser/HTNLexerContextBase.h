@@ -25,13 +25,13 @@ public:
     HTN_NODISCARD const std::string& GetText() const;
 
     // Adds a new token
-    void AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme));
+    void AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_LOG_ONLY(, const std::string& inLexeme));
 
     // Returns the character at the position plus the given offset
     HTN_NODISCARD char GetCharacter(const uint32 inOffset = 0) const;
 
     // Increments the position
-    void AdvancePosition(HTN_DEBUG_ONLY(const bool inIsNewLine = false));
+    void AdvancePosition(HTN_LOG_ONLY(const bool inIsNewLine = false));
 
     // Returns the position
     HTN_NODISCARD uint32 GetPosition() const;
@@ -52,7 +52,7 @@ private:
     //----------------------------------------------------------------------//
     uint32 mPosition = 0;
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 public:
     // Returns the row
     HTN_NODISCARD uint32 GetRow() const;
@@ -79,7 +79,7 @@ inline uint32 HTNLexerContextBase::GetPosition() const
     return mPosition;
 }
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 inline uint32 HTNLexerContextBase::GetRow() const
 {
     return mRow;

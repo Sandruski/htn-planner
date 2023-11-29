@@ -19,13 +19,13 @@ bool HTNWorldStateLexer::Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext
         {
         case '(': {
             // Left parenthesis
-            ioWorldStateLexerContext.AddToken(HTNAtom(), HTNTokenType::LEFT_PARENTHESIS HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioWorldStateLexerContext.AddToken(HTNAtom(), HTNTokenType::LEFT_PARENTHESIS HTN_LOG_ONLY(, std::string(1, Character)));
             ioWorldStateLexerContext.AdvancePosition();
             break;
         }
         case ')': {
             // Right parenthesis
-            ioWorldStateLexerContext.AddToken(HTNAtom(), HTNTokenType::RIGHT_PARENTHESIS HTN_DEBUG_ONLY(, std::string(1, Character)));
+            ioWorldStateLexerContext.AddToken(HTNAtom(), HTNTokenType::RIGHT_PARENTHESIS HTN_LOG_ONLY(, std::string(1, Character)));
             ioWorldStateLexerContext.AdvancePosition();
             break;
         }
@@ -39,7 +39,7 @@ bool HTNWorldStateLexer::Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext
                 break;
             }
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
             const std::string Message = std::format("Expected '/' after [{}] for a comment", Character);
             HTNLexerHelpers::PrintError(Message, ioWorldStateLexerContext);
 #endif
@@ -59,10 +59,10 @@ bool HTNWorldStateLexer::Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext
         }
         case '\n': {
 // Newline
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
             static constexpr bool IsNewLine = true;
 #endif
-            ioWorldStateLexerContext.AdvancePosition(HTN_DEBUG_ONLY(IsNewLine));
+            ioWorldStateLexerContext.AdvancePosition(HTN_LOG_ONLY(IsNewLine));
             break;
         }
         default: {
@@ -80,7 +80,7 @@ bool HTNWorldStateLexer::Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext
                 break;
             }
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
             const std::string Message = std::format("Character [{}] not recognized", HTNLexerHelpers::GetSpecialCharacterEscapeSequence(Character));
             HTNLexerHelpers::PrintError(Message, ioWorldStateLexerContext);
 #endif
@@ -90,7 +90,7 @@ bool HTNWorldStateLexer::Lex(HTNWorldStateLexerContext& ioWorldStateLexerContext
         }
     }
 
-    ioWorldStateLexerContext.AddToken(HTNAtom(), HTNTokenType::END_OF_FILE HTN_DEBUG_ONLY(, ""));
+    ioWorldStateLexerContext.AddToken(HTNAtom(), HTNTokenType::END_OF_FILE HTN_LOG_ONLY(, ""));
 
     return Result;
 }

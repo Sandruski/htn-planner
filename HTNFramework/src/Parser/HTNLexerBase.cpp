@@ -6,7 +6,7 @@
 #include "Parser/HTNLexerContextBase.h"
 #include "Parser/HTNTokenType.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 #include <limits>
 #endif
 
@@ -33,15 +33,15 @@ void HTNLexerBase::LexIdentifier(const std::unordered_map<std::string, HTNTokenT
     const HTNTokenType TokenType       = (It != inKeywords.cend()) ? It->second : HTNTokenType::IDENTIFIER;
     if (TokenType == HTNTokenType::TRUE)
     {
-        ioLexerContext.AddToken(true, TokenType HTN_DEBUG_ONLY(, Lexeme));
+        ioLexerContext.AddToken(true, TokenType HTN_LOG_ONLY(, Lexeme));
     }
     else if (TokenType == HTNTokenType::FALSE)
     {
-        ioLexerContext.AddToken(false, TokenType HTN_DEBUG_ONLY(, Lexeme));
+        ioLexerContext.AddToken(false, TokenType HTN_LOG_ONLY(, Lexeme));
     }
     else
     {
-        ioLexerContext.AddToken(Lexeme, TokenType HTN_DEBUG_ONLY(, Lexeme));
+        ioLexerContext.AddToken(Lexeme, TokenType HTN_LOG_ONLY(, Lexeme));
     }
 }
 
@@ -51,7 +51,7 @@ void HTNLexerBase::LexNumber(HTNLexerContextBase& ioLexerContext) const
 
     const uint32 StartPosition = ioLexerContext.GetPosition();
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
     const uint32 StartRow    = ioLexerContext.GetRow();
     const uint32 StartColumn = ioLexerContext.GetColumn();
 #endif
@@ -85,14 +85,14 @@ void HTNLexerBase::LexNumber(HTNLexerContextBase& ioLexerContext) const
         const float       Number      = std::stof(Lexeme);
         HTN_DOMAIN_CLOG_ERROR(std::stod(Lexeme) < std::numeric_limits<float>::min() || std::stod(Lexeme) > std::numeric_limits<float>::max(),
                               StartRow, StartColumn, "Number out of bounds");
-        ioLexerContext.AddToken(Number, HTNTokenType::NUMBER HTN_DEBUG_ONLY(, Lexeme));
+        ioLexerContext.AddToken(Number, HTNTokenType::NUMBER HTN_LOG_ONLY(, Lexeme));
     }
     else
     {
         const uint32      EndPosition = CurrentPosition - StartPosition;
         const std::string Lexeme      = Text.substr(StartPosition, EndPosition);
         const int32       Number      = std::stoi(Lexeme);
-        ioLexerContext.AddToken(Number, HTNTokenType::NUMBER HTN_DEBUG_ONLY(, Lexeme));
+        ioLexerContext.AddToken(Number, HTNTokenType::NUMBER HTN_LOG_ONLY(, Lexeme));
     }
 }
 
@@ -111,7 +111,7 @@ bool HTNLexerBase::LexString(HTNLexerContextBase& ioLexerContext) const
 
     if (ioLexerContext.GetCharacter() != '"')
     {
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
         const uint32 Row    = ioLexerContext.GetRow();
         const uint32 Column = ioLexerContext.GetColumn();
 #endif
@@ -126,7 +126,7 @@ bool HTNLexerBase::LexString(HTNLexerContextBase& ioLexerContext) const
 
     const std::string& Text   = ioLexerContext.GetText();
     const std::string  Lexeme = Text.substr(StartPosition + 1, EndPosition - 1);
-    ioLexerContext.AddToken(Lexeme, HTNTokenType::STRING HTN_DEBUG_ONLY(, Lexeme));
+    ioLexerContext.AddToken(Lexeme, HTNTokenType::STRING HTN_LOG_ONLY(, Lexeme));
 
     return true;
 }
@@ -140,8 +140,8 @@ void HTNLexerBase::LexComment(HTNLexerContextBase& ioLexerContext) const
         ioLexerContext.AdvancePosition();
     }
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
     static constexpr bool IsNewLine = true;
 #endif
-    ioLexerContext.AdvancePosition(HTN_DEBUG_ONLY(IsNewLine));
+    ioLexerContext.AdvancePosition(HTN_LOG_ONLY(IsNewLine));
 }

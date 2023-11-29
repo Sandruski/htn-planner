@@ -561,7 +561,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
                 {
                     if (!AxiomConditionNodeArgument.IsBound())
                     {
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
                         static constexpr bool    ShouldDoubleQuoteString = false;
                         static const std::string ParameterType           = IsInputParameter ? "input" : "input/output";
 #endif
@@ -623,7 +623,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNAxiomConditionNode& inAxiomConditio
                 const HTNAtom& AxiomConditionNodeArgument = AxiomConditionNodeArguments[i];
                 if (AxiomConditionNodeArgument.IsBound())
                 {
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
                     static constexpr bool    ShouldDoubleQuoteString = false;
                     static const std::string ParameterType           = IsOutputParameter ? "output" : "input/output";
 #endif
@@ -997,7 +997,7 @@ HTNAtom HTNDomainInterpreter::Visit(const HTNCompoundTaskNode& inCompoundTaskNod
             // TODO salvarez Move to a validation step after parsing
             if (!CompoundTaskNodeArgument.IsBound())
             {
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
                 static constexpr bool ShouldDoubleQuoteString = false;
 #endif
                 HTN_LOG_ERROR("Method's input parameter [{}] cannot be initialized with compound task node's argument [{}] because it is unbound",

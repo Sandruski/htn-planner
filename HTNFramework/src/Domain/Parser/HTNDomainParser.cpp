@@ -45,7 +45,7 @@ bool HTNDomainParser::Parse(HTNDomainParserContext& ioDomainParserContext) const
     std::shared_ptr<const HTNDomainNode>& DomainNode = ioDomainParserContext.GetDomainNodeMutable();
     if (!ParseDomainNode(ioDomainParserContext, DomainNode))
     {
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
         HTNParserHelpers::PrintLastError(ioDomainParserContext);
 #endif
         return false;
@@ -53,7 +53,7 @@ bool HTNDomainParser::Parse(HTNDomainParserContext& ioDomainParserContext) const
 
     if (!ParseToken(HTNTokenType::END_OF_FILE, ioDomainParserContext))
     {
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
         HTNParserHelpers::PrintLastError(ioDomainParserContext);
 #endif
         return false;

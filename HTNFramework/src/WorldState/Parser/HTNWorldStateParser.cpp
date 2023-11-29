@@ -26,7 +26,7 @@ bool HTNWorldStateParser::Parse(HTNWorldStateParserContext& ioWorldStateParserCo
     {
         if (!ParseFact(ioWorldStateParserContext, WorldState))
         {
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
             HTNParserHelpers::PrintLastError(ioWorldStateParserContext);
 #endif
             return false;

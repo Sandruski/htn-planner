@@ -6,7 +6,7 @@
 
 #include <string>
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 class HTNLexerContextBase;
 #endif
 
@@ -27,7 +27,7 @@ HTN_NODISCARD bool IsAlphanumeric(const char inCharacter);
 // Returns the escape sequence for the given special character
 HTN_NODISCARD std::string GetSpecialCharacterEscapeSequence(const char inCharacter);
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 // Prints the error of the given message and lexer context
 void PrintError(const std::string& inMessage, const HTNLexerContextBase& inLexerContext);
 #endif

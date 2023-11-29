@@ -2,12 +2,12 @@
 
 #pragma once
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 #include <format>
 #include <iostream>
 #endif
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 #define HTN_LOG(Message, ...) std::cout << std::format("{}({}): {}", __func__, __LINE__, std::format(Message, __VA_ARGS__)) << std::endl;
 #define HTN_CLOG(Condition, Message, ...)                                                                                                            \
     if (Condition)                                                                                                                                   \

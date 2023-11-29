@@ -11,7 +11,7 @@
 #include <iterator>
 #include <string>
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 #include <format>
 #endif
 
@@ -113,7 +113,7 @@ bool HTNFactArgumentsTable::AddUniqueFactArguments(const T& inFactArguments)
 {
     if (ContainsFactArguments(inFactArguments))
     {
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
         std::string FactArgumentsDescription;
 
         const T::const_iterator ItEnd = std::cend(inFactArguments);

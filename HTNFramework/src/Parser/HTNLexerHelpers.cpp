@@ -2,7 +2,7 @@
 
 #include "Parser/HTNLexerHelpers.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 #include "Parser/HTNLexerContextBase.h"
 #endif
 
@@ -37,7 +37,7 @@ std::string GetSpecialCharacterEscapeSequence(const char inCharacter)
     return (It != SpecialCharactersToEscapeSequences.cend()) ? It->second : std::string(1, inCharacter);
 }
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 void PrintError(const std::string& inMessage, const HTNLexerContextBase& inLexerContext)
 {
     const uint32 Row    = inLexerContext.GetRow();

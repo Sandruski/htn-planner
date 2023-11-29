@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#if HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 #include <string>
 #endif
 
@@ -48,7 +48,7 @@ private:
     //----------------------------------------------------------------------//
     uint32 mPosition = 0;
 
-#if HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 public:
     // Sets the last error to the given one
     void SetLastError(const std::string& inLastErrorMessage, const int32 inLastErrorRow, const int32 inLastErrorColumn);
@@ -87,7 +87,7 @@ inline uint32 HTNParserContextBase::GetPosition() const
     return mPosition;
 }
 
-#if HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 inline void HTNParserContextBase::SetLastError(const std::string& inLastErrorMessage, const int32 inLastErrorRow, const int32 inLastErrorColumn)
 {
     mLastErrorMessage = inLastErrorMessage;

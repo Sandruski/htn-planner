@@ -11,9 +11,9 @@ HTNLexerContextBase::HTNLexerContextBase(const std::string& inText, std::vector<
 
 HTNLexerContextBase::~HTNLexerContextBase() = default;
 
-void HTNLexerContextBase::AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_DEBUG_ONLY(, const std::string& inLexeme))
+void HTNLexerContextBase::AddToken(const HTNAtom& inValue, const HTNTokenType inType HTN_LOG_ONLY(, const std::string& inLexeme))
 {
-    mTokens.emplace_back(inValue, inType HTN_DEBUG_ONLY(, inLexeme, mRow, mColumn));
+    mTokens.emplace_back(inValue, inType HTN_LOG_ONLY(, inLexeme, mRow, mColumn));
 }
 
 char HTNLexerContextBase::GetCharacter(const uint32 inOffset) const
@@ -27,7 +27,7 @@ char HTNLexerContextBase::GetCharacter(const uint32 inOffset) const
     return '\0';
 }
 
-void HTNLexerContextBase::AdvancePosition(HTN_DEBUG_ONLY(const bool inIsNewLine))
+void HTNLexerContextBase::AdvancePosition(HTN_LOG_ONLY(const bool inIsNewLine))
 {
     if (mPosition >= mText.length())
     {
@@ -36,7 +36,7 @@ void HTNLexerContextBase::AdvancePosition(HTN_DEBUG_ONLY(const bool inIsNewLine)
 
     ++mPosition;
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
     if (inIsNewLine)
     {
         ++mRow;

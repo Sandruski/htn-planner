@@ -11,11 +11,11 @@ workspace "HTN"
     -- HTN_DEBUG_DECOMPOSITION enables storing the steps of a decomposition
 
     filter "configurations:Debug"
-        defines { "HTN_DEBUG", "HTN_VALIDATE_DOMAIN", "HTN_DEBUG_DECOMPOSITION" }
+        defines { "HTN_DEBUG", "HTN_ENABLE_LOGGING", "HTN_VALIDATE_DOMAIN", "HTN_DEBUG_DECOMPOSITION" }
         symbols "On"
 
     filter "configurations:Release"
-        defines { "HTN_RELEASE", "HTN_VALIDATE_DOMAIN", "HTN_DEBUG_DECOMPOSITION" }
+        defines { "HTN_RELEASE", "HTN_ENABLE_LOGGING", "HTN_VALIDATE_DOMAIN", "HTN_DEBUG_DECOMPOSITION" }
         optimize "On"
 
     filter "system:windows"

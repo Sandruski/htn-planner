@@ -2,13 +2,13 @@
 
 #include "Parser/HTNParserHelpers.h"
 
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 #include "Parser/HTNParserContextBase.h"
 #endif
 
 namespace HTNParserHelpers
 {
-#ifdef HTN_DEBUG
+#ifdef HTN_ENABLE_LOGGING
 void PrintLastError(const HTNParserContextBase& inParserContext)
 {
     const int32        LastErrorRow     = inParserContext.GetLastErrorRow();
