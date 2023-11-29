@@ -26,7 +26,7 @@
  * <axiom node> ::= '(' ':' 'axiom' '(' <identifier expression node> <variable expression node>* ')' '(' <condition node>? ')' ')'
  * <method node> ::= '(' ':' 'method' '(' <identifier expression node> <variable expression node>* 'top_level_method'? ')' <branch node>* ')'
  * <branch node> ::= '(' <identifier expression node> '(' <condition node>? ')' '(' <task node>* ')' ')'
- * <condition node> ::= ('and' | 'or' | 'alt') <sub-condition node>+
+ * <condition node> ::= ('and' | 'or' | 'alt') <sub-condition node>?
  * <sub-condition node> ::= '(' (<condition node> | ('not' <sub-condition node>) | ('#'? <identifier expression node> <argument node>*)) ')'
  * <task node> ::= '(' '!'? <identifier expression node> <argument node>* ')'
  * <argument node> ::= <variable expression node> | <constant expression node> | <literal expression node>
@@ -441,12 +441,6 @@ bool HTNDomainParser::ParseConditionNode(HTNDomainParserContext&                
             SubConditionNodes.emplace_back(SubConditionNode);
         }
 
-        if (SubConditionNodes.empty())
-        {
-            ioDomainParserContext.SetPosition(StartPosition);
-            return false;
-        }
-
         ConditionNode = std::make_shared<HTNAndConditionNode>(SubConditionNodes);
     }
     else if (ParseToken(HTNTokenType::OR, ioDomainParserContext))
@@ -456,12 +450,6 @@ bool HTNDomainParser::ParseConditionNode(HTNDomainParserContext&                
         while (ParseSubConditionNode(ioDomainParserContext, SubConditionNode))
         {
             SubConditionNodes.emplace_back(SubConditionNode);
-        }
-
-        if (SubConditionNodes.empty())
-        {
-            ioDomainParserContext.SetPosition(StartPosition);
-            return false;
         }
 
         ConditionNode = std::make_shared<HTNOrConditionNode>(SubConditionNodes);
@@ -475,18 +463,17 @@ bool HTNDomainParser::ParseConditionNode(HTNDomainParserContext&                
             SubConditionNodes.emplace_back(SubConditionNode);
         }
 
-        if (SubConditionNodes.empty())
-        {
-            ioDomainParserContext.SetPosition(StartPosition);
-            return false;
-        }
-
         ConditionNode = std::make_shared<HTNAltConditionNode>(SubConditionNodes);
+    }
+    else
+    {
+        ioDomainParserContext.SetPosition(StartPosition);
+        return false;
     }
 
     outConditionNode = ConditionNode;
 
-    return nullptr != outConditionNode;
+    return true;
 }
 
 bool HTNDomainParser::ParseSubConditionNode(HTNDomainParserContext&                      ioDomainParserContext,
