@@ -8,7 +8,7 @@ workspace "HTN"
     flags { "FatalWarnings" }
 
     -- HTN_VALIDATE_DOMAIN enables validating the domain during a decomposition
-    -- HTN_DEBUG_DECOMPOSITION enables storing the steps of a decomposition
+    -- HTN_DEBUG_DECOMPOSITION enables storing the state of each step of a decomposition for debug purposes
 
     filter "configurations:Debug"
         defines { "HTN_DEBUG", "HTN_ENABLE_LOGGING", "HTN_VALIDATE_DOMAIN", "HTN_DEBUG_DECOMPOSITION" }
